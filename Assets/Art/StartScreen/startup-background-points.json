@@ -1,0 +1,133 @@
+{
+ "canvasWidth": 960,
+ "canvasHeight": 270,
+ "minerals": [
+  {
+   "x": 481,
+   "y": 263,
+   "kind": "Helmet"
+  },
+  {
+   "x": 43,
+   "y": 255,
+   "kind": "Helmet"
+  },
+  {
+   "x": 609,
+   "y": 258,
+   "kind": "Helmet"
+  },
+  {
+   "x": 598,
+   "y": 253,
+   "kind": "Scarf"
+  },
+  {
+   "x": 876,
+   "y": 254,
+   "kind": "Scarf"
+  },
+  {
+   "x": 167,
+   "y": 256,
+   "kind": "Scarf"
+  },
+  {
+   "x": 787,
+   "y": 259,
+   "kind": "Goggle lens"
+  },
+  {
+   "x": 338,
+   "y": 263,
+   "kind": "Helmet"
+  },
+  {
+   "x": 706,
+   "y": 247,
+   "kind": "Helmet"
+  },
+  {
+   "x": 368,
+   "y": 250,
+   "kind": "Helmet"
+  },
+  {
+   "x": 807,
+   "y": 259,
+   "kind": "Helmet"
+  },
+  {
+   "x": 692,
+   "y": 246,
+   "kind": "Helmet"
+  },
+  {
+   "x": 107,
+   "y": 246,
+   "kind": "Scarf"
+  }
+ ],
+ "landforms": [
+  {
+   "x": -5,
+   "name": "Mountain"
+  },
+  {
+   "x": 142,
+   "name": "Mountain"
+  },
+  {
+   "x": 267,
+   "name": "Mountain"
+  },
+  {
+   "x": 402,
+   "name": "Mountain"
+  },
+  {
+   "x": 576,
+   "name": "Mountain"
+  },
+  {
+   "x": 692,
+   "name": "Mountain"
+  },
+  {
+   "x": 807,
+   "name": "Mountain"
+  },
+  {
+   "x": 927,
+   "name": "Mountain"
+  },
+  {
+   "x": 173,
+   "name": "Plateau"
+  },
+  {
+   "x": 464,
+   "name": "Plateau"
+  },
+  {
+   "x": 793,
+   "name": "Plateau"
+  },
+  {
+   "x": 26,
+   "name": "Hill"
+  },
+  {
+   "x": 219,
+   "name": "Hill"
+  },
+  {
+   "x": 368,
+   "name": "Hill"
+  },
+  {
+   "x": 846,
+   "name": "Hill"
+  }
+ ]
+}
