@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 using Cainos.Common;
-using Cainos.Common;
 
 namespace Cainos.PixelArtPlatformer_VillageProps
 {
