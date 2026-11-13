@@ -42,7 +42,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             Debug.LogError($"Missing art. Run: python Tools/Art/make_landform_map_art.py and python {ArtScript}"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        var font = M.EnsureFont(); // The pixel font as a TextMeshPro font
+        var font = M.EnsureFont(); // The pixel font at 2x (decision D-050)
         if (font == null) return; // EnsureFont already said what is wrong
         M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art; nothing here needs to be readable
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
@@ -73,7 +73,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             M.Picture("Star", panel, S("Trail/star_full"), c + new Vector2(-14f, -24f), c); // Star icon, left of the middle
             var stars = M.Label("Stars", panel, font, "0/9", c + new Vector2(18f, -24f), c, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress, starting 4 pixels right of the star
             var padlock = M.Picture("Padlock", panel, K.Sprite(MapSpriteFolder, "padlock", "Tools/Art/make_landform_map_art.py"), c + new Vector2(0f, 8f), c); // Big padlock while locked, in the middle of the card
-            var guide = M.Label("Guide", panel, font, "", c + new Vector2(0f, 42f), c, new Vector2(104f, 30f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels", under the padlock
+            var guide = M.Label("Guide", panel, font, "", c + new Vector2(0f, 48f), c, new Vector2(104f, 48f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels" on two lines, under the padlock
             guide.textWrappingMode = TextWrappingModes.Normal; // Long guides break onto two lines
             cards[i] = new DifficultySelectionController.Card // Everything the controller needs for this card
             {
@@ -157,6 +157,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
     static void Save(UnityEngine.SceneManagement.Scene scene, string path, string afterPath) // Saves a scene and puts it in the build list
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)); // Make the Scenes folder if it is missing
+        K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         EditorSceneManager.SaveScene(scene, path); // Save the scene
         K.AddSceneAfter(path, afterPath); // Right after the screen before it
     }

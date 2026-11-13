@@ -235,6 +235,48 @@ def mark_icon(ok):
     return img  # Done
 
 
+PROGRESS_W = 144  # Width of the trail progress bar under the timer (decision D-049)
+
+
+def progress_track():
+    """The 144x6 empty trail bar: a dark frame around a grey groove."""
+    img = mm.new_image(PROGRESS_W, 6)  # Empty bar
+    mm.fill_rect(img, 0, 0, PROGRESS_W, 6, mm.OUTLINE)  # Dark frame
+    mm.fill_rect(img, 1, 1, PROGRESS_W - 2, 4, mm.STRAP)  # Grey groove
+    mm.fill_rect(img, 1, 1, PROGRESS_W - 2, 1, mm.OUTLINE)  # Inner shadow along the top of the groove
+    return img  # Done
+
+
+def progress_fill():
+    """A 1x4 green column; Unity stretches it sideways to show how far the explorer has walked."""
+    img = mm.new_image(1, 4)  # One pixel wide
+    put(img, 0, 0, mm.PLAINS)  # Sunny top line
+    put(img, 0, 1, mm.HILLS)  # Green
+    put(img, 0, 2, mm.HILLS)  # Green
+    put(img, 0, 3, mm.HILLS_SH)  # Shaded bottom line
+    return img  # Done
+
+
+def progress_marker():
+    """A 9x9 explorer marker for the bar: a round yellow helmet over a cream face, with a dark edge."""
+    img = mm.new_image(9, 9)  # Room for the dot and its outline
+    for y in range(1, 8):  # Rows of the dot
+        for x in range(1, 8):  # Columns of the dot
+            if (x - 4) ** 2 + (y - 4) ** 2 <= 10:  # Inside a round dot 7 pixels across
+                put(img, x, y, mm.HELMET if y <= 4 else mm.HEADLAMP)  # Helmet on top, face below
+    put(img, 5, 2, mm.WHITE)  # Shine on the helmet
+    return outline(img)  # Dark edge
+
+
+def progress_flag(color, shade):
+    """An 8x12 small flag for the bar: a wooden pole with a coloured flag, standing on the bar."""
+    img = mm.new_image(8, 12)  # Room for the flag and its outline
+    mm.fill_rect(img, 1, 1, 1, 10, lm.HANDLE)  # Pole
+    mm.fill_rect(img, 2, 1, 4, 4, color)  # Flag
+    mm.fill_rect(img, 2, 4, 4, 1, shade)  # Shaded bottom edge of the flag
+    return outline(img)  # Dark edge
+
+
 def save(img, name):
     """Saves an image under Assets/Art/Level/Sprites/."""
     os.makedirs(os.path.dirname(os.path.join(OUT, name)), exist_ok=True)  # Make the folder if it is missing
@@ -278,6 +320,12 @@ def main():
         save(mm.button(120, 26, "RETRY", *brown, pressed=pressed, scale=2), "btn_retry%s.png" % tag)  # Retry
         save(mm.button(120, 26, "MAIN MENU", *brown, pressed=pressed, scale=2), "btn_menu%s.png" % tag)  # Back to Main Menu
     save(gem_icon(), "icon_gem.png")  # Counter icon
+    save(progress_track(), "progress_track.png")  # Empty trail bar
+    save(progress_fill(), "progress_fill.png")  # Walked part of the bar
+    save(progress_marker(), "progress_marker.png")  # Where the explorer is
+    save(progress_flag(mm.MASK_SH, mm.STRAP), "progress_checkpoint_off.png")  # Checkpoint not reached: grey, like the level flag
+    save(progress_flag(mm.HILLS, mm.HILLS_SH), "progress_checkpoint_on.png")  # Checkpoint reached: green, like the level flag
+    save(progress_flag(mm.SCARF, mm.SCARF_SH), "progress_goal.png")  # The goal: red, like the goal flag
     save(mm.button(80, 26, "OK", *green, pressed=False, scale=2), "btn_ok.png")  # OK button of the first-find pop-up
     save(mm.button(80, 26, "OK", *green, pressed=True, scale=2), "btn_ok_pressed.png")  # OK button, pressed
     save(mm.text_image("LEVEL CLEARED!", mm.DARK, 2), "text_cleared.png")  # Result heading

@@ -108,13 +108,25 @@ internal static class PixelSceneKit // Helpers for the scene builders
         return back; // The controller connects it
     }
 
+    /// <summary>Call just before saving a scene. Reloads the pixel font and puts it on every text, at its sharp size,
+    /// so no label is saved with a stale font reference or TextMeshPro's smooth default font (decisions D-047, D-050).</summary>
+    internal static void FixFonts() // Puts the pixel font on every text in the open scene
+    {
+        var font = M.EnsureFont(); // The 2x font, loaded fresh after any refresh during the build
+        foreach (var text in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include)) // Every text in the scene, hidden panels too
+        {
+            text.font = font; // The pixel font
+            text.fontSize = M.FontSize; // At its sharp 2x size
+        }
+    }
+
     /// <summary>Connects the shared parts to a screen controller: guide panel at the top, music, click and canvas group.</summary>
     internal static void Wire(PixelScreen screen, Transform root, TMP_FontAsset font, StartScreenMusic music, CanvasGroup group) // Fills the PixelScreen fields
     {
         var guideC = new Vector2(240f, 16f); // Middle of the guide panel, top centre
-        var guide = M.Panel("Guide", root, guideC, new Vector2(200f, 24f)); // Panel background
+        var guide = M.Panel("Guide", root, guideC, new Vector2(240f, 26f)); // Panel background, wide enough for "Oops! Back to the checkpoint" at 2x
         guide.GetComponent<Image>().raycastTarget = false; // Taps pass through
-        screen.guideText = M.Label("Text", guide, font, "", guideC, guideC, new Vector2(188f, 14f), Ink, TextAlignmentOptions.Midline); // The guide words
+        screen.guideText = M.Label("Text", guide, font, "", guideC, guideC, new Vector2(228f, 22f), Ink, TextAlignmentOptions.Midline); // The guide words
         screen.guidePanel = guide.gameObject; // Guide panel
         screen.music = music; // Music player, so it can fade out
         screen.clickSound = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "sfx_ui_click.wav"); // Tap sound

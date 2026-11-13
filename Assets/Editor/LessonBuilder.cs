@@ -44,10 +44,10 @@ public static class LessonBuilder // Makes the Lesson Screen scene
             Debug.LogError($"Missing art. Run: python {ArtScript} and python Tools/Art/make_selection_art.py"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        var font = M.EnsureFont(); // The pixel font as a TextMeshPro font
-        if (font == null) return; // EnsureFont already said what is wrong
-        M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the lesson parts
+        M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the lesson parts; this refreshes the assets, so the fonts are loaded after it
         M.ConfigurePixelSprites(ItemFolder, _ => false); // Crisp pixel art for the items
+        var font = M.EnsureFont(); // The pixel font at 2x, for all text (decision D-050)
+        if (font == null) return; // EnsureFont already said what is wrong
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Start from an empty scene
@@ -60,49 +60,52 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         controller.title = M.Picture("Text", plaque, Sel("Titles/title_mountains_easy"), titleC, titleC); // "MOUNTAINS: EASY"
         controller.titles = Landforms.SelectMany(n => Difficulties.Select(d => Sel($"Titles/title_{n}_{d}"))).ToArray(); // Landform * 3 + difficulty
 
+        // Layout for the 22-pixel text (decision D-050). The panel is 464 wide so the longest lesson sentence (310 pixels) fits on one line.
         var pc = PanelCenter; // Short name for the panel middle
-        var panel = M.Panel("Lesson Panel", root, pc, new Vector2(448f, 220f)); // Big cream panel from x 16 to 464, y 42 to 262
+        var panel = M.Panel("Lesson Panel", root, pc, new Vector2(464f, 220f)); // Big cream panel from x 8 to 472, y 42 to 262
 
-        // Top part: the landform picture on the left, the heading and lesson sentences on the right.
-        controller.picture = M.Picture("Picture", panel, S("lesson_mountains"), new Vector2(88f, 95f), pc); // 120x82 picture, x 28 to 148
-        controller.heading = Spaced(M.Label("Heading", panel, font, "Level 1: Mountains", new Vector2(306f, 60f), pc, new Vector2(292f, 14f), Clay, TextAlignmentOptions.MidlineLeft)); // Heading, x 160 to 452
-        var body = Spaced(M.Label("Body", panel, font, "", new Vector2(306f, 104f), pc, new Vector2(292f, 72f), K.Ink, TextAlignmentOptions.TopLeft)); // Lesson sentences under the heading: four spaced-out lines
-        body.textWrappingMode = TextWrappingModes.Normal; // A long sentence breaks onto the next line
+        // Top row: the heading on the left and the draft note on the right.
+        controller.heading = Spaced(M.Label("Heading", panel, font, "Level 1: Mountains", new Vector2(120f, 56f), pc, new Vector2(200f, 22f), Clay, TextAlignmentOptions.MidlineLeft)); // Heading, from x 20
+        controller.draftNote = Spaced(M.Label("Draft Note", panel, font, "", new Vector2(350f, 56f), pc, new Vector2(220f, 22f), DraftRed, TextAlignmentOptions.MidlineRight)); // Draft note, ending at x 460
+
+        // Middle: the landform picture on the left, the four lesson sentences beside it, one per line.
+        controller.picture = M.Picture("Picture", panel, S("lesson_mountains"), new Vector2(80f, 108f), pc); // 120x82 picture, x 20 to 140, y 67 to 149
+        var body = Spaced(M.Label("Body", panel, font, "", new Vector2(304f, 114f), pc, new Vector2(312f, 96f), K.Ink, TextAlignmentOptions.TopLeft)); // Lesson sentences, x 148 to 460, four 24-pixel lines from y 66
+        body.textWrappingMode = TextWrappingModes.Normal; // A sentence that is too long breaks onto the next line
         controller.body = body; // The controller fills in the sentences
-        controller.draftNote = Spaced(M.Label("Draft Note", panel, font, "", new Vector2(138f, 147f), pc, new Vector2(220f, 14f), DraftRed, TextAlignmentOptions.MidlineLeft)); // Draft note under the picture
 
-        // Bottom-left part: "You will find:" and one box per item kind.
-        controller.itemsHeading = Spaced(M.Label("Items Heading", panel, font, "You will find:", new Vector2(138f, 162f), pc, new Vector2(220f, 14f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Items heading
+        // Bottom-left: one box per item kind with its name under it. There is no room for a "You will find:" heading at 2x, so it stays empty.
+        controller.itemsHeading = Spaced(M.Label("Items Heading", panel, font, "", new Vector2(138f, 164f), pc, new Vector2(220f, 22f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Kept empty; the controller still hides it when a level has no items
         var slots = new List<LessonController.ItemSlot>(); // Filled below
         for (int i = 0; i < 4; i++) // Four boxes: enough for granite, quartz, feldspar and mica
         {
-            var c = new Vector2(50f + i * 56f, 186f); // Middle of this box; 56 apart leaves room for the goals on the right
+            var c = new Vector2(44f + i * 58f, 184f); // Middle of this box; 58 apart keeps the names (Feldspar is 58 pixels) apart and leaves room for the goals
             var box = M.Picture("Item " + (i + 1), panel, S("item_slot"), c, pc); // 30x30 tan box
             var picture = M.Picture("Picture", box.transform, I("granite"), c, c); // Item picture inside the box
-            var label = Spaced(M.Label("Name", box.transform, font, "", c + new Vector2(0f, 23f), c, new Vector2(56f, 14f), K.Ink, TextAlignmentOptions.Midline)); // Item name under the box
+            var label = Spaced(M.Label("Name", box.transform, font, "", c + new Vector2(0f, 28f), c, new Vector2(58f, 22f), K.Ink, TextAlignmentOptions.Midline)); // Item name under the box
             slots.Add(new LessonController.ItemSlot { root = box.gameObject, picture = picture, label = label }); // Everything the controller needs
         }
         controller.items = slots.ToArray(); // The four boxes
 
-        // Bottom-right part: "Goals:" and one row per goal, each with an icon.
-        controller.goalsHeading = Spaced(M.Label("Goals Heading", panel, font, "Goals:", new Vector2(354f, 162f), pc, new Vector2(196f, 14f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Goals heading, x 256 to 452
+        // Bottom-right: one row per goal, each with an icon. Like the items, no heading at 2x.
+        controller.goalsHeading = Spaced(M.Label("Goals Heading", panel, font, "", new Vector2(356f, 164f), pc, new Vector2(208f, 22f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Kept empty; the controller still hides it when a level has no goals
         string[] icons = { "icon_star", "icon_clock" }; // Star for collecting, clock for time
         var rows = new GameObject[icons.Length]; // Filled below
         var goals = new TMP_Text[icons.Length]; // Filled below
         for (int i = 0; i < icons.Length; i++) // One row per goal
         {
-            var c = new Vector2(354f, 182f + i * 18f); // Middle of this row
+            var c = new Vector2(356f, 184f + i * 24f); // Middle of this row, x 252 to 460
             var row = M.Rect("Goal " + (i + 1), panel, c, pc); // Row holder
-            row.sizeDelta = new Vector2(196f, 16f); // Room for the icon and the text
-            M.Picture("Icon", row, S(icons[i]), new Vector2(264f, c.y), c); // Icon on the left of the row
-            goals[i] = Spaced(M.Label("Text", row, font, "", new Vector2(363f, c.y), c, new Vector2(178f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft)); // Goal words, x 274 to 452
+            row.sizeDelta = new Vector2(208f, 22f); // Room for the icon and the text
+            M.Picture("Icon", row, S(icons[i]), new Vector2(252f, c.y), c); // Icon on the left of the row
+            goals[i] = Spaced(M.Label("Text", row, font, "", new Vector2(360f, c.y), c, new Vector2(196f, 22f), K.Ink, TextAlignmentOptions.MidlineLeft)); // Goal words, x 262 to 458
             rows[i] = row.gameObject; // The controller hides rows it does not need
         }
         controller.goalRows = rows; // The goal rows
         controller.goals = goals; // The goal texts
 
         // Start button, bottom centre of the panel.
-        var start = M.Picture("Start", panel, S("btn_start"), new Vector2(240f, 238f), pc); // Green Start button
+        var start = M.Picture("Start", panel, S("btn_start"), new Vector2(240f, 244f), pc); // Green Start button, under the items and goals
         start.raycastTarget = true; // Buttons must catch taps
         var startButton = start.gameObject.AddComponent<Button>(); // Makes it tappable
         startButton.transition = Selectable.Transition.SpriteSwap; // Change picture instead of colour when pressed
@@ -119,16 +122,17 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         controller.backButton = K.BackIcon(root); // Back icon, top-left corner (made last, so it is on top)
 
         Directory.CreateDirectory(Path.GetDirectoryName(LessonPath)); // Make the Scenes folder if it is missing
+        K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         EditorSceneManager.SaveScene(scene, LessonPath); // Save the scene
         K.AddSceneAfter(LessonPath, LevelPath); // Right after the level trail in the build list
         Debug.Log($"Lesson scene built: {LessonPath}. Open StartScreen, press Play, and tap Mountains, Easy, then level 1."); // Tell the user it worked
     }
 
-    /// <summary>Gives lesson text wider gaps between words and lines, so words do not run together. 25 units = 3 pixels at the 12-pixel font size.</summary>
+    /// <summary>Sets lesson text spacing. At 2x, Micro 5 spaces are 6 pixels and lines 24 pixels apart, so no extra spacing is needed.</summary>
     static TMP_Text Spaced(TMP_Text label) // Adds the extra spacing
     {
-        label.wordSpacing = 20f; // 3 more pixels between words (Micro 5 spaces are only 4 pixels)
-        label.lineSpacing = 12f; // About 2 more pixels between lines
+        label.wordSpacing = 0f; // The font's own 6-pixel spaces
+        label.lineSpacing = 0f; // The font's own 24-pixel line height
         return label; // Give the same label back
     }
 

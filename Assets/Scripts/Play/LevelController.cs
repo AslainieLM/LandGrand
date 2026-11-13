@@ -27,6 +27,15 @@ namespace LandGrand.Play // Level play scripts live here
         [Header("Collecting (ticket 08)")] // Inspector heading for the pickups, counter and pop-up
         public PickupSpot[] pickups; // The collectibles in the level, in the order of LevelData
         public TMP_Text counterLabel; // The "2/5" count, top left
+        public TMP_Text levelNameLabel; // "Mountains Easy 1", above the count (decision D-049)
+
+        [Header("Trail progress (D-049)")] // Inspector heading for the bar under the countdown
+        public RectTransform progressFill; // Green part of the bar; its width shows how far the explorer has walked
+        public RectTransform progressMarker; // The explorer marker riding on the bar
+        public Image progressCheckpoint; // The small checkpoint flag on the bar
+        public Sprite progressCheckpointOn; // Its green picture once the checkpoint is reached
+        public float progressLeft; // Left edge of the bar's groove, as a UI offset from the screen's middle
+        public float progressWidth = 142f; // Width of the groove in pixels
         public GameObject findPanel; // The "You found an item!" pop-up with its dark backdrop
         public Image findPicture; // The item picture in the pop-up
         public TMP_Text findName; // The item name in the pop-up
@@ -112,6 +121,8 @@ namespace LandGrand.Play // Level play scripts live here
             findPanel.SetActive(false); // No pop-up yet
             findOk.onClick.AddListener(CloseFind); // OK closes the pop-up
             ShowCount(); // Show 0/5
+            if (levelNameLabel != null) levelNameLabel.text = episode + " " + difficulty + " " + number; // For example "Mountains Easy 1"
+            ShowProgress(); // The marker starts at the left end of the bar
             pausePanel.SetActive(false); // Menus start hidden
             timeUpPanel.SetActive(false); // Menus start hidden
             pauseButton.onClick.AddListener(OpenPause); // The pause button opens the menu
@@ -130,6 +141,7 @@ namespace LandGrand.Play // Level play scripts live here
         {
             base.Update(); // Android Back (or Escape)
             if (Leaving) return; // Nothing more while leaving
+            ShowProgress(); // Move the marker along the bar
             if (run.Outcome == RunOutcome.Playing) // The clock runs only while playing; the rules stop it for a pause or a pop-up
             {
                 run.Tick(Time.deltaTime); // Time passes, also while the explorer is sent back (D-040)
@@ -152,6 +164,7 @@ namespace LandGrand.Play // Level play scripts live here
             if (!run.CheckpointReached && p.x >= run.Level.Checkpoint.X - checkpointReach && run.ReachCheckpoint()) // First touch of the flag
             {
                 checkpointFlag.sprite = checkpointOnSprite; // Show the raised green flag
+                if (progressCheckpoint != null) progressCheckpoint.sprite = progressCheckpointOn; // The flag on the bar turns green too
                 ShowGuide("Checkpoint reached!"); // Tell the player
                 PlaySfx(checkpointSound); // A short ding
             }
@@ -220,6 +233,16 @@ namespace LandGrand.Play // Level play scripts live here
             if (result != CollectResult.FirstFind) return; // A known kind: no pop-up
             GameProgress.Save(); // Keep the found kind on the device now
             OpenFind(run.PendingFind); // Show the pop-up
+        }
+
+        void ShowProgress() // Shows on the trail bar how far the explorer is from the start to the goal
+        {
+            if (progressFill == null || progressMarker == null) return; // A scene built before D-049 has no bar
+            float walked = Mathf.Round(Mathf.Clamp01(explorer.Position.x / run.Level.Goal.X) * progressWidth); // Whole pixels along the groove
+            progressFill.sizeDelta = new Vector2(walked, progressFill.sizeDelta.y); // Green up to the explorer
+            var at = progressMarker.anchoredPosition; // The marker's place
+            at.x = progressLeft + walked + 0.5f; // On the end of the green part; the half pixel keeps the 9-pixel marker on whole pixels
+            progressMarker.anchoredPosition = at; // Move it
         }
 
         void ShowCount() => counterLabel.text = run.Collected + "/" + run.Level.Pickups.Count; // For example 2/5

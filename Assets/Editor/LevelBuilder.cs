@@ -35,11 +35,13 @@ public static class LevelBuilder // Makes the first level scene
     // Ledges: left edge, top height, width. They are solid 10-pixel slabs: the explorer cannot walk or jump through them, but can jump up beside them and stand on top.
     static readonly (float x, float top, float w)[] Ledges = { (520f, 40f, 80f), (1050f, 28f, 80f), (1500f, 28f, 64f), (2300f, 28f, 64f), (2920f, 28f, 80f), (3560f, 28f, 48f), (3620f, 56f, 96f), (3950f, 28f, 80f), (4480f, 28f, 48f) }; // Low ledges, plus a step and a high ledge
 
-    // Background layers from the start screen: name, share of the camera's movement, own drift in pixels per second.
-    // L6 and L7 are ground strips; the level draws its own ground, so they are left out.
+    // Mountains-only background layers (decision D-049, drawn by Tools/Art/make_mountains_backdrop.py): name, share of the camera's movement, own drift in pixels per second.
+    // They replace the start-screen layers, which mixed every landform.
+    const string BackdropFolder = "Backdrop/Mountains/"; // Inside the level sprite folder
+    const string BackdropScript = "Tools/Art/make_mountains_backdrop.py"; // Script that draws the layers
     static readonly (string name, float follow, float drift)[] Layers = // Far layers move least
     {
-        ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far and near mountains, plateaus, hills
+        ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far snowy range, middle rocky range, pine forest, alpine meadow
     };
 
     [MenuItem("LandGrand/Build Mountains Easy 1 Level")] // Adds the command to Unity's LandGrand menu
@@ -51,14 +53,15 @@ public static class LevelBuilder // Makes the first level scene
             Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        if (!File.Exists(SpriteFolder + "grass_top.png") || !File.Exists(SelectionSprites + "Trail/star_full.png")) // The art must be drawn first
+        if (!File.Exists(SpriteFolder + "progress_track.png") || !File.Exists(SpriteFolder + BackdropFolder + "L0.png") || !File.Exists(SelectionSprites + "Trail/star_full.png")) // The art must be drawn first
         {
-            Debug.LogError($"Missing art. Run: python {ArtScript} and python Tools/Art/make_selection_art.py"); // Tell the user what to do
+            Debug.LogError($"Missing art. Run: python {ArtScript}, python {BackdropScript} and python Tools/Art/make_selection_art.py"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        var font = M.EnsureFont(); // The pixel font as a TextMeshPro font
+        M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the level parts; this refreshes the assets, so the font is loaded after it
+        M.ConfigurePixelSprites(ItemSprites, _ => false); // Crisp pixel art for the item pictures, also before the font
+        var font = M.EnsureFont(); // The pixel font at 2x (decision D-050), loaded after every refresh so the reference stays valid
         if (font == null) return; // EnsureFont already said what is wrong
-        M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the level parts
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Start from an empty scene
@@ -66,9 +69,9 @@ public static class LevelBuilder // Makes the first level scene
         var background = new GameObject("Background").transform; // Holds the moving mountain layers
         background.SetParent(ppc.transform, false); // Rides on the camera
         background.localPosition = new Vector3(0f, 0f, 10f); // In front of the camera's near edge
-        for (int i = 0; i < Layers.Length; i++) // Each start-screen layer, far to near
+        for (int i = 0; i < Layers.Length; i++) // Each mountain layer, far to near
         {
-            var layerSprite = Spr("Background/" + Layers[i].name); // The layer art from the start screen
+            var layerSprite = K.Sprite(SpriteFolder + BackdropFolder, Layers[i].name, BackdropScript); // The Mountains layer art
             var layer = new GameObject(Layers[i].name).AddComponent<BackdropLayer>(); // Slides the layer with the camera
             layer.transform.SetParent(background, false); // Keep it under Background
             layer.follow = Layers[i].follow; // How much it copies the camera
@@ -137,7 +140,6 @@ public static class LevelBuilder // Makes the first level scene
         explorer.flipFrames = Enumerable.Range(0, 4).Select(i => S($"Flip/flip_{i:00}")).ToArray(); // Somersault for the double jump
         explorer.dustFrames = Enumerable.Range(0, 3).Select(i => Spr($"Dust/dust_{i:00}")).ToArray(); // Dust puff for the double jump
 
-        M.ConfigurePixelSprites(ItemSprites, _ => false); // Crisp pixel art for the item pictures
         var spots = new List<PickupSpot>(); // The collectibles placed in the level
         for (int i = 0; i < level.Pickups.Count; i++) // One object per pickup, in the order of LevelData
         {
@@ -185,6 +187,7 @@ public static class LevelBuilder // Makes the first level scene
         BuildTimerAndMenus(controller, root, font); // The countdown, the pause button, the pause menu and the Time up panel
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
 
+        K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         Directory.CreateDirectory(Path.GetDirectoryName(LevelPath)); // Make the Scenes folder if it is missing
         EditorSceneManager.SaveScene(scene, LevelPath); // Save the scene
         K.AddSceneAfter(LevelPath, LessonPath); // Right after the Lesson Screen in the build list
@@ -194,9 +197,11 @@ public static class LevelBuilder // Makes the first level scene
     static void BuildCollecting(LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var counter = M.Panel("Counter", root, new Vector2(34f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top left
-        M.Picture("Gem", counter, S("icon_gem"), new Vector2(15f, 18f), new Vector2(34f, 18f)); // Collectible icon
-        controller.counterLabel = M.Label("Count", counter, font, "0/" + LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1).Pickups.Count,new Vector2(40f, 18f), new Vector2(34f, 18f), new Vector2(36f, 16f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count
+        var counterAt = new Vector2(74f, 30f); // Middle of the top-left panel: 6 pixels from the left and top edges (decisions D-049, D-050)
+        var counter = M.Panel("Counter", root, counterAt, new Vector2(136f, 46f)); // Cream panel at the top left, x 6 to 142, with two 22-pixel lines: the level name, then the count
+        controller.levelNameLabel = M.Label("Level Name", counter, font, "Mountains Easy 1", new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is; the controller writes it from the scene's level
+        M.Picture("Gem", counter, S("icon_gem"), new Vector2(20f, 41f), counterAt); // Collectible icon, under the name
+        controller.counterLabel = M.Label("Count", counter, font, "0/" + LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1).Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
 
         counter.SetAsFirstSibling(); // Draw the counter behind the Result Screen and the pop-up
         var find = M.Rect("Find Item", root, c, c); // Holder of the whole pop-up, hidden at the start
@@ -204,17 +209,17 @@ public static class LevelBuilder // Makes the first level scene
         var dim = find.gameObject.AddComponent<Image>(); // Dark backdrop
         dim.color = new Color(0f, 0f, 0f, 0.55f); // See-through black
         dim.raycastTarget = true; // Blocks taps on the controls while the pop-up is open
-        var panel = M.Panel("Panel", find, c, new Vector2(300f, 150f)); // Cream pop-up panel
-        M.Label("Heading", panel, font, "You found an item!", new Vector2(240f, 80f), c, new Vector2(260f, 16f), Clay, TMPro.TextAlignmentOptions.Midline); // Title
-        M.Picture("Slot", panel, LessonSprite("item_slot"), new Vector2(112f, 128f), c); // Frame behind the picture
-        controller.findPicture = M.Picture("Picture", panel, null, new Vector2(112f, 128f), c); // The item picture; set when the pop-up opens
+        var panel = M.Panel("Panel", find, c, new Vector2(360f, 176f)); // Cream pop-up panel, x 60 to 420, y 47 to 223, roomy enough for 22-pixel text (decision D-050)
+        M.Label("Heading", panel, font, "You found an item!", new Vector2(240f, 64f), c, new Vector2(320f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // Title
+        M.Picture("Slot", panel, LessonSprite("item_slot"), new Vector2(92f, 98f), c); // Frame behind the picture
+        controller.findPicture = M.Picture("Picture", panel, null, new Vector2(92f, 98f), c); // The item picture; set when the pop-up opens
         controller.findPicture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
-        controller.findName = M.Label("Name", panel, font, "", new Vector2(250f, 110f), c, new Vector2(220f, 16f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name
-        controller.findDescription = M.Label("Description", panel, font, "", new Vector2(250f, 146f), c, new Vector2(220f, 48f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description, wrapped
+        controller.findName = M.Label("Name", panel, font, "", new Vector2(216f, 98f), c, new Vector2(200f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name, right of the picture
+        controller.findDescription = M.Label("Description", panel, font, "", new Vector2(240f, 158f), c, new Vector2(336f, 72f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description, x 72 to 408, up to three 24-pixel lines from y 122
         controller.findDescription.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentence wrap onto three lines
-        controller.findDescription.wordSpacing = 20f; // 3 more pixels between words, as on the Lesson Screen
-        controller.findDescription.lineSpacing = 12f; // About 2 more pixels between lines
-        var ok = M.Picture("OK", panel, S("btn_ok"), new Vector2(240f, 190f), c); // OK button
+        controller.findDescription.wordSpacing = 0f; // The font's own 6-pixel spaces are wide enough at 2x
+        controller.findDescription.lineSpacing = 0f; // The font's own 24-pixel line height
+        var ok = M.Picture("OK", panel, S("btn_ok"), new Vector2(240f, 200f), c); // OK button, bottom of the pop-up
         ok.raycastTarget = true; // Buttons must catch taps
         var button = ok.gameObject.AddComponent<Button>(); // Makes it tappable
         button.transition = Selectable.Transition.SpriteSwap; // Change picture instead of colour when pressed
@@ -233,7 +238,8 @@ public static class LevelBuilder // Makes the first level scene
         var c = K.CanvasCenter; // Middle of the screen
         var timer = M.Panel("Timer", root, new Vector2(240f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top centre
         controller.timerLabel = M.Label("Time", timer, font, "2:00", new Vector2(240f, 18f), new Vector2(240f, 18f), new Vector2(52f, 16f), K.Ink, TMPro.TextAlignmentOptions.Midline); // The countdown
-        controller.pauseButton = SpriteButton("Pause", root, "btn_pause", new Vector2(462f, 18f), c); // Pause button, top right
+        controller.pauseButton = SpriteButton("Pause", root, "btn_pause", new Vector2(462f, 19f), c); // Pause button, top right, 6 pixels from the right and top edges
+        BuildProgress(controller, root); // The trail bar under the countdown
         timer.SetAsFirstSibling(); // Draw the countdown behind the pop-up and the result panel
         controller.pauseButton.transform.SetAsFirstSibling(); // Same for the pause button
 
@@ -245,6 +251,28 @@ public static class LevelBuilder // Makes the first level scene
         controller.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel
         controller.timeUpRetryButton = SpriteButton("Retry", timeUpBox, "btn_retry", new Vector2(240f, 128f), c); // Start again from the lesson
         controller.timeUpMenuButton = SpriteButton("Main Menu", timeUpBox, "btn_menu", new Vector2(240f, 158f), c); // Leave to the Main Menu
+    }
+
+    static void BuildProgress(LevelController controller, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
+    {
+        var c = K.CanvasCenter; // Middle of the screen
+        var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // Where the checkpoint and the goal are
+        var bar = M.Rect("Trail Progress", root, c, c); // Holder of the bar's parts, filling the screen's middle
+        M.Picture("Track", bar, S("progress_track"), new Vector2(240f, 39f), c); // Empty bar from x 168 to 311, rows 36 to 41, just under the countdown
+        float left = 169f, width = 142f; // The groove inside the frame: its left edge and width in screen pixels
+        var fill = M.Picture("Fill", bar, S("progress_fill"), new Vector2(left, 39f), c); // Walked part of the bar
+        fill.rectTransform.pivot = new Vector2(0f, 0.5f); // It grows to the right from its left edge
+        fill.rectTransform.anchoredPosition = new Vector2(left - c.x, c.y - 39f); // Left edge at the groove's start, rows 37 to 40
+        fill.rectTransform.sizeDelta = new Vector2(0f, 4f); // Nothing walked yet; the controller sets the width
+        float checkpointX = left + Mathf.Round(level.Checkpoint.X / level.Goal.X * width); // Checkpoint place on the bar
+        controller.progressCheckpoint = M.Picture("Checkpoint", bar, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag; its pole (3 pixels left of the picture's middle) stands at the checkpoint place
+        controller.progressCheckpointOn = S("progress_checkpoint_on"); // Green flag once reached
+        M.Picture("Goal", bar, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the cave
+        controller.progressMarker = M.Picture("Explorer", bar, S("progress_marker"), new Vector2(left, 39f), c).rectTransform; // The explorer marker, in front of the flags
+        controller.progressFill = fill.rectTransform; // The controller widens it
+        controller.progressLeft = left - c.x; // Groove start as a UI offset
+        controller.progressWidth = width; // Groove width
+        bar.SetAsFirstSibling(); // Draw the bar behind the pop-up and the result panel
     }
 
     static GameObject MenuPanel(string name, Transform root, TMPro.TMP_FontAsset font, string heading, float height, out RectTransform panel) // A dark full-screen backdrop with a cream panel and a heading
@@ -276,9 +304,9 @@ public static class LevelBuilder // Makes the first level scene
     {
         var c = K.CanvasCenter; // Middle of the screen
         var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // The level data, for the item row
-        var panel = M.Panel("Result", root, c, new Vector2(440f, 246f)); // Big cream panel from y 12 to 258
-        M.Picture("Heading", panel, S("text_cleared"), new Vector2(240f, 34f), c); // "LEVEL CLEARED!"
-        controller.resultStars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 62f), c)).ToArray(); // Three stars at 2x size
+        var panel = M.Panel("Result", root, c, new Vector2(456f, 250f)); // Big cream panel, x 12 to 468, y 10 to 260, laid out for 22-pixel text (decision D-050)
+        M.Picture("Heading", panel, S("text_cleared"), new Vector2(240f, 30f), c); // "LEVEL CLEARED!"
+        controller.resultStars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 58f), c)).ToArray(); // Three stars at 2x size
         controller.starFull = Sel("Trail/star_full"); // Earned star
         controller.starEmpty = Sel("Trail/star_empty"); // Star not earned
 
@@ -286,7 +314,7 @@ public static class LevelBuilder // Makes the first level scene
         var items = new Image[n]; // One picture per item
         for (int i = 0; i < n; i++) // Each item slot
         {
-            var at = new Vector2(240f + (i - (n - 1) / 2f) * 40f, 96f); // Evenly spaced in a row
+            var at = new Vector2(240f + (i - (n - 1) / 2f) * 40f, 90f); // Evenly spaced in a row
             M.Picture("Slot " + (i + 1), panel, LessonSprite("item_slot"), at, c); // Frame behind the item
             items[i] = M.Picture("Item " + (i + 1), panel, null, at, c); // The item picture; set when the result opens
             items[i].rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
@@ -295,24 +323,24 @@ public static class LevelBuilder // Makes the first level scene
 
         controller.goalIcons = new Image[2]; // A tick or cross per goal
         controller.goalTexts = new TMPro.TMP_Text[2]; // The goal lines
-        for (int i = 0; i < 2; i++) // Both goals
+        for (int i = 0; i < 2; i++) // Both goals, side by side on one row to leave room for the review
         {
-            float y = 130f + i * 18f; // One line under the other
-            controller.goalIcons[i] = M.Picture("Goal Icon " + (i + 1), panel, S("icon_tick"), new Vector2(112f, y), c); // Tick or cross
-            controller.goalTexts[i] = M.Label("Goal " + (i + 1), panel, font, "", new Vector2(250f, y), c, new Vector2(240f, 16f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words
+            float x = 70f + i * 126f; // Icon place: "Collect 5/5" on the left, "Finish before time runs out" from the middle
+            controller.goalIcons[i] = M.Picture("Goal Icon " + (i + 1), panel, S("icon_tick"), new Vector2(x, 120f), c); // Tick or cross
+            controller.goalTexts[i] = M.Label("Goal " + (i + 1), panel, font, "", new Vector2(x + 10f + 115f, 120f), c, new Vector2(230f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words, starting 10 pixels right of the icon
         }
         controller.tickSprite = S("icon_tick"); // Goal met
         controller.crossSprite = S("icon_cross"); // Goal not met
 
-        controller.reviewLabel = M.Label("Review", panel, font, "", new Vector2(240f, 184f), c, new Vector2(400f, 48f), Clay, TMPro.TextAlignmentOptions.Top); // Two or three review sentences, wrapped
+        controller.reviewLabel = M.Label("Review", panel, font, "", new Vector2(240f, 170f), c, new Vector2(424f, 72f), Clay, TMPro.TextAlignmentOptions.Top); // Review sentences, wrapped onto up to three 24-pixel lines from y 134
         controller.reviewLabel.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentences wrap onto lines
-        controller.reviewLabel.wordSpacing = 20f; // 3 more pixels between words, as on the Lesson Screen
-        controller.reviewLabel.lineSpacing = 12f; // About 2 more pixels between lines
-        controller.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 217f), c, new Vector2(300f, 14f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking
+        controller.reviewLabel.wordSpacing = 0f; // The font's own 6-pixel spaces are wide enough at 2x
+        controller.reviewLabel.lineSpacing = 0f; // The font's own 24-pixel line height
+        controller.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 218f), c, new Vector2(300f, 22f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking, under the review
 
-        controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(100f, 241f), c); // Start again from the lesson
-        controller.continueButton = SpriteButton("Continue", panel, "btn_continue", new Vector2(240f, 241f), c); // Next level
-        controller.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(382f, 241f), c); // Back to the Landform Map
+        controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(100f, 243f), c); // Start again from the lesson
+        controller.continueButton = SpriteButton("Continue", panel, "btn_continue", new Vector2(240f, 243f), c); // Next level
+        controller.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(382f, 243f), c); // Back to the Landform Map
         controller.resultPanel = panel.gameObject; // The controller shows it at the goal
     }
 

@@ -24,8 +24,10 @@ public static class MainMenuBuilder
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
     const string ScenePath = "Assets/Scenes/MainMenu.unity"; // Where the scene is saved
     const string FontFile = "Assets/Fonts/Micro5.ttf"; // The pixel font (SIL Open Font License, see Assets/Fonts/OFL-Micro5.txt)
-    const string FontAssetPath = "Assets/Fonts/Micro5 Raster.asset"; // TextMeshPro font made from it by this builder
-    const int FontSize = 15; // Text height in UI pixels; the font picture is drawn at exactly this size so it stays sharp
+    // Micro 5's own pixel grid fits a font size of about 10.5 pixels. Only whole multiples stay sharp; 1x (11) is too small to read,
+    // so all text uses 2x (22). Sizes in between, such as the old 15, draw some strokes 1 pixel and others 2 pixels wide, and letters look bent (decision D-050).
+    const string FontAssetPath = "Assets/Fonts/Micro5 2x.asset"; // TextMeshPro font at 2x, made from the font file by this builder
+    internal const int FontSize = 22; // 2x size: every stroke exactly 2 pixels wide, capital letters 10 pixels tall
     static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text
     static readonly Color32 Warning = new Color32(160, 40, 40, 255); // Red for "name not accepted" messages
     const float PPU = 32f; // Sprite pixels per Unity unit, same as the start screen
@@ -48,7 +50,7 @@ public static class MainMenuBuilder
             Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        var font = EnsureFont(); // The pixel font as a TextMeshPro font
+        var font = EnsureFont(); // The pixel font at 2x (decision D-050)
         if (font == null) return; // EnsureFont already said what is wrong
 
         ConfigureImporters(); // Make every Main Menu PNG crisp pixel art
@@ -171,10 +173,10 @@ public static class MainMenuBuilder
 
         // Name panel: what Play shows the first time, before the Landform Map.
         var nameC = new Vector2(240f, 140f); // Middle of the name panel
-        var namePanelRect = Panel("Name panel", root, nameC, new Vector2(280f, 130f)); // Panel background
+        var namePanelRect = Panel("Name panel", root, nameC, new Vector2(300f, 130f)); // Panel background, wide enough for the longest name message at 2x
         Label("Heading", namePanelRect, font, "What is your name?", new Vector2(240f, 100f), nameC, new Vector2(260f, 16f), Ink, TextAlignmentOptions.Midline); // Question
         var typedName = InputBox("Name box", namePanelRect, font, "Type here", new Vector2(240f, 128f), nameC, new Vector2(160f, 24f)); // Where the player types
-        var typedMessage = Label("Message", namePanelRect, font, "", new Vector2(240f, 150f), nameC, new Vector2(260f, 14f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
+        var typedMessage = Label("Message", namePanelRect, font, "", new Vector2(240f, 150f), nameC, new Vector2(284f, 22f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
         var nameOk = MakeButton("OK", namePanelRect, "ok", new Vector2(204f, 178f), nameC); // Saves the name
         var nameBack = MakeButton("Back", namePanelRect, "back", new Vector2(276f, 178f), nameC); // Closes the name panel
         var namePanelLogic = namePanelRect.gameObject.AddComponent<NamePanel>(); // Checks and saves the typed name
@@ -244,6 +246,7 @@ public static class MainMenuBuilder
         exitPanel.gameObject.SetActive(false); // Exit hidden
 
         Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)); // Make the Scenes folder if it is missing
+        PixelSceneKit.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         EditorSceneManager.SaveScene(scene, ScenePath); // Save the new scene
         AddSceneToBuildSecond(ScenePath); // Put it right after the start screen in the build list
         Debug.Log($"Main Menu built: {ScenePath}. Open StartScreen and press Play, then tap to reach the menu."); // Tell the user it worked
@@ -345,22 +348,28 @@ public static class MainMenuBuilder
         return slider;
     }
 
-    /// <summary>Makes the TextMeshPro font from the pixel font file, once. Later runs reuse it.</summary>
-    internal static TMP_FontAsset EnsureFont() // Gives the pixel font as a TextMeshPro font
+    /// <summary>The pixel font at 2x (22 px), for all game text. Made once; later runs reuse it.</summary>
+    internal static TMP_FontAsset EnsureFont() => MakeFont(FontAssetPath, FontSize, "Micro5 2x"); // Gives the pixel font
+
+    static TMP_FontAsset MakeFont(string path, int size, string name) // Makes a TextMeshPro font from the pixel font file at one sharp size, once
     {
-        var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontAssetPath); // Already made on an earlier run?
+        var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path); // Already made on an earlier run?
         if (existing != null) return existing; // Reuse it
-        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Make Unity see the newly added font file
         var source = AssetDatabase.LoadAssetAtPath<Font>(FontFile); // The .ttf file
+        if (source == null) // Unity may not have seen a newly added font file yet
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Look again; only here, because a refresh can make fonts loaded earlier in a build go stale
+            source = AssetDatabase.LoadAssetAtPath<Font>(FontFile); // Try once more
+        }
         if (source == null) { Debug.LogError($"Missing font {FontFile}. Add Micro 5 (SIL OFL) there."); return null; } // Say what is missing
-        var asset = TMP_FontAsset.CreateFontAsset(source, FontSize, 2, UnityEngine.TextCore.LowLevel.GlyphRenderMode.RASTER_HINTED, 256, 256, AtlasPopulationMode.Dynamic, false); // Hard-edged letters, new letters added on demand
+        var asset = TMP_FontAsset.CreateFontAsset(source, size, 2, UnityEngine.TextCore.LowLevel.GlyphRenderMode.RASTER_HINTED, 256, 256, AtlasPopulationMode.Dynamic, false); // Hard-edged letters drawn at exactly this size, new letters added on demand
         asset.TryAddCharacters(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~—", out _); // Draw the basic letters now, including the long dash
-        AssetDatabase.CreateAsset(asset, FontAssetPath); // Save the font asset
-        asset.material.name = "Micro5 Raster Material"; // Name its material
+        AssetDatabase.CreateAsset(asset, path); // Save the font asset
+        asset.material.name = name + " Material"; // Name its material
         AssetDatabase.AddObjectToAsset(asset.material, asset); // Keep the material inside the font asset
         foreach (var atlas in asset.atlasTextures) // Each letter-picture sheet
         {
-            atlas.name = "Micro5 Raster Atlas"; // Name the sheet
+            atlas.name = name + " Atlas"; // Name the sheet
             atlas.filterMode = FilterMode.Point; // No blur between pixels
             AssetDatabase.AddObjectToAsset(atlas, asset); // Keep the sheet inside the font asset
         }
@@ -375,8 +384,8 @@ public static class MainMenuBuilder
         var rt = Rect(name, parent, center, parentCenter); // Place it
         rt.sizeDelta = size; // Room for the text
         var label = rt.gameObject.AddComponent<TextMeshProUGUI>(); // The text itself
-        label.font = font; // Pixel font
-        label.fontSize = FontSize; // Same size as the font picture, so it stays sharp
+        label.font = font != null ? font : EnsureFont(); // Pixel font; if the given one went stale after an asset refresh, load it again so TextMeshPro never falls back to its smooth default font
+        label.fontSize = FontSize; // Exactly the size the font picture was drawn at, so it stays sharp
         label.text = text; // Words to show
         label.color = color; // Text colour
         label.alignment = align; // Where the words sit in the box

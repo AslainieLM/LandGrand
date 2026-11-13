@@ -93,6 +93,7 @@ public static class LandformMapBuilder // Makes the Landform Map scene
         controller.backButton = K.BackIcon(root); // Back icon, top-left corner
 
         Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)); // Make the Scenes folder if it is missing
+        K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         EditorSceneManager.SaveScene(scene, ScenePath); // Save the new scene
         K.AddSceneAfter(ScenePath, MainMenuPath); // Put it in the build list so Play can open it
         Debug.Log($"Landform Map built: {ScenePath}. Open StartScreen, press Play, and tap Play on the Main Menu."); // Tell the user it worked
