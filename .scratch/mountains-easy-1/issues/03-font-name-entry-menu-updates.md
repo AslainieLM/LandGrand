@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 02
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] The font's licence is checked and its licence file is kept in the project; if Pixelify Sans cannot be used, another OFL pixel font is chosen and noted in the vault
 - [ ] First Play shows the name panel; names of 1–12 letters, numbers or spaces are accepted, others are refused with a clear message

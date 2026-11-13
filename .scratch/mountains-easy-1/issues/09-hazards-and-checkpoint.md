@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** built 2026-11-13, awaiting the user's Editor check; the hazard-keeps-the-timer test is now in LevelRunTests (ticket 10)
+**Status:** built and committed by the user; awaiting the full-slice Editor check (2026-11-14)
 
 - [ ] Tests: a hazard moves the respawn point to the last checkpoint or start; items and remaining time are unchanged
 - [ ] Reaching the checkpoint flag shows it as reached

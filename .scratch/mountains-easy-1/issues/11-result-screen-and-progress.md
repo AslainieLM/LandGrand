@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 08, 10
 
-**Status:** built 2026-11-13, awaiting the user's Editor check
+**Status:** built and committed by the user; awaiting the full-slice Editor check (2026-11-14)
 
 - [ ] Stars, items and goals match what happened in the run
 - [ ] Replay, Continue and Back to Map work; Continue goes to the next available level (Easy 2 shows as next, even if not built yet)

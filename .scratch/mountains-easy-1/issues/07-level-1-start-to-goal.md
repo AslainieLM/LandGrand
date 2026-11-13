@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 06
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] The level runs at the target pixel-perfect look and frame rate in the Editor
 - [ ] Walk, jump and double jump feel responsive with the touch buttons and the keyboard

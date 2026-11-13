@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** built 2026-11-13, awaiting the user's Editor check
+**Status:** built and committed by the user; awaiting the full-slice Editor check (2026-11-14)
 
 - [ ] Tests: each pickup counts once; a first find asks for the pop-up; a known kind does not; a kind found in an earlier session does not
 - [ ] The pop-up pauses the game and blocks other input until OK

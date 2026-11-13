@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** built 2026-11-13, awaiting the user's Editor check
+**Status:** built and committed by the user; awaiting the full-slice Editor check (2026-11-14)
 
 - [ ] Tests: time counts down while playing, stops while paused and during the pop-up, and reaching zero gives time up; retry resets the attempt
 - [ ] The pause menu's three buttons work; the Android Back button opens the pause menu during play

@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 01
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] Tests: only Mountains is unlocked in a fresh profile; only the first uncleared level and earlier ones are available
 - [ ] Tests: Normal unlocks when all 3 Easy levels are cleared, Hard when all 5 Normal levels are cleared, whatever the stars

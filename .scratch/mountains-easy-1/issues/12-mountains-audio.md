@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** built 2026-11-13, awaiting the user's Editor check. Decision: while paused or after Time up the music and breeze play on at 30% loudness (smooth change); the first-find pop-up does not lower them.
+**Status:** built and committed by the user; awaiting the full-slice Editor check (2026-11-14)
 
 - [ ] Music and ambience are original, made with the project's music script approach, and loop seamlessly
 - [ ] Settings sliders change the level music, ambience and sound effects

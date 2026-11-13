@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 02, 03
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] The Main Menu's Play opens the map with the screen fade
 - [ ] Region looks follow the saved progress: unlocked animate, locked are grey with a padlock and still

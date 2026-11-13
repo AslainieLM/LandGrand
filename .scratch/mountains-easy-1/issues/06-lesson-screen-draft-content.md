@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 05
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] Level data includes episode, difficulty, number, time limit (120 s), lesson, collectibles, checkpoint, hazards and goal
 - [ ] Item kinds are shared data, so the same kind can appear in later levels

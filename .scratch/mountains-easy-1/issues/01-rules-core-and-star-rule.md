@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] Rules core and test assemblies exist and compile in the Unity Editor alongside the existing scripts
 - [ ] Star rule: 0/5, 1/5 and 2/5 give 1; 3/5 and 4/5 give 2; 5/5 gives 3

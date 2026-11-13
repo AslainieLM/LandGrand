@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 04
 
-**Status:** ready-for-agent
+**Status:** done, committed by the user
 
 - [ ] Difficulty cards show stars and locks from the saved progress
 - [ ] Tapping a locked card shows its guide and stays on the screen
