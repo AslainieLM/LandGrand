@@ -23,9 +23,9 @@ public static class MainMenuBuilder
     const string StartSprites = "Assets/Art/StartScreen/Sprites/"; // Start-screen PNGs we reuse
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
     const string ScenePath = "Assets/Scenes/MainMenu.unity"; // Where the scene is saved
-    const string FontFile = "Assets/Fonts/PixelifySans.ttf"; // The pixel font (SIL Open Font License, see Assets/Fonts/OFL.txt)
-    const string FontAssetPath = "Assets/Fonts/PixelifySans Raster.asset"; // TextMeshPro font made from it by this builder
-    const int FontSize = 12; // Text height in UI pixels; the font picture is drawn at exactly this size so it stays sharp
+    const string FontFile = "Assets/Fonts/Micro5.ttf"; // The pixel font (SIL Open Font License, see Assets/Fonts/OFL-Micro5.txt)
+    const string FontAssetPath = "Assets/Fonts/Micro5 Raster.asset"; // TextMeshPro font made from it by this builder
+    const int FontSize = 15; // Text height in UI pixels; the font picture is drawn at exactly this size so it stays sharp
     static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text
     static readonly Color32 Warning = new Color32(160, 40, 40, 255); // Red for "name not accepted" messages
     const float PPU = 32f; // Sprite pixels per Unity unit, same as the start screen
@@ -352,15 +352,15 @@ public static class MainMenuBuilder
         if (existing != null) return existing; // Reuse it
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Make Unity see the newly added font file
         var source = AssetDatabase.LoadAssetAtPath<Font>(FontFile); // The .ttf file
-        if (source == null) { Debug.LogError($"Missing font {FontFile}. Add Pixelify Sans (SIL OFL) there."); return null; } // Say what is missing
+        if (source == null) { Debug.LogError($"Missing font {FontFile}. Add Micro 5 (SIL OFL) there."); return null; } // Say what is missing
         var asset = TMP_FontAsset.CreateFontAsset(source, FontSize, 2, UnityEngine.TextCore.LowLevel.GlyphRenderMode.RASTER_HINTED, 256, 256, AtlasPopulationMode.Dynamic, false); // Hard-edged letters, new letters added on demand
-        asset.TryAddCharacters(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", out _); // Draw the basic letters now
+        asset.TryAddCharacters(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~—", out _); // Draw the basic letters now, including the long dash
         AssetDatabase.CreateAsset(asset, FontAssetPath); // Save the font asset
-        asset.material.name = "Pixelify Sans Raster Material"; // Name its material
+        asset.material.name = "Micro5 Raster Material"; // Name its material
         AssetDatabase.AddObjectToAsset(asset.material, asset); // Keep the material inside the font asset
         foreach (var atlas in asset.atlasTextures) // Each letter-picture sheet
         {
-            atlas.name = "Pixelify Sans Raster Atlas"; // Name the sheet
+            atlas.name = "Micro5 Raster Atlas"; // Name the sheet
             atlas.filterMode = FilterMode.Point; // No blur between pixels
             AssetDatabase.AddObjectToAsset(atlas, asset); // Keep the sheet inside the font asset
         }

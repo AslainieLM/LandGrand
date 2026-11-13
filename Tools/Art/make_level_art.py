@@ -6,6 +6,7 @@ It writes PNGs to Assets/Art/Level/Sprites/.
 All colours come from Assets/Art/Palettes/landgrand.gpl.
 """
 import os  # os is used to make folders and join paths
+from PIL import Image  # Image is used to read and turn the explorer pictures
 import make_mainmenu_art as mm  # Main Menu palette, button and drawing helpers
 import make_landform_map_art as lm  # Map colours and the noise helper
 
@@ -142,9 +143,24 @@ def touch_button(size, pattern, flip, pressed):
     return img
 
 
+def somersault(n=4):
+    """Makes the somersault frames from the start-screen explorer: the body is tucked into a ball, then turned a
+    quarter turn at a time. Quarter turns keep every pixel sharp, so no blurry rotation. Returns n 32x32 images."""
+    src = Image.open(os.path.join(ROOT, "Assets", "Art", "StartScreen", "Sprites", "Explorer", "explorer_08.png")).convert("RGBA")  # Standing explorer
+    body = src.crop(src.getbbox())  # Only the drawn pixels
+    ball = body.resize((20, 20), Image.NEAREST)  # Squashed into a compact curled-up shape
+    frames = []  # The finished pictures
+    for i in range(n):  # One picture per quarter turn
+        turned = ball.rotate(-90 * i, expand=True)  # Clockwise, so the flip goes forward when the explorer faces right
+        img = Image.new("RGBA", (32, 32), (0, 0, 0, 0))  # Same size as the walk frames
+        img.paste(turned, (16 - turned.width // 2, 18 - turned.height // 2), turned)  # Ball centre where the body centre was, 13 pixels above the feet
+        frames.append(img)  # Keep it
+    return frames  # All frames
+
+
 def save(img, name):
     """Saves an image under Assets/Art/Level/Sprites/."""
-    os.makedirs(OUT, exist_ok=True)  # Make the folder if it is missing
+    os.makedirs(os.path.dirname(os.path.join(OUT, name)), exist_ok=True)  # Make the folder if it is missing
     img.save(os.path.join(OUT, name))  # Write the PNG
 
 
@@ -162,6 +178,8 @@ def main():
         save(touch_button(40, ARROW, True, pressed), "btn_left%s.png" % tag)  # Left arrow
         save(touch_button(40, ARROW, False, pressed), "btn_right%s.png" % tag)  # Right arrow
         save(touch_button(44, JUMP, False, pressed), "btn_jump%s.png" % tag)  # Jump
+    for i, frame in enumerate(somersault()):  # The somersault frames for the double jump
+        save(frame, "Flip/flip_%02d.png" % i)  # flip_00 to flip_03
     green = (mm.HILLS, mm.HILLS_SH, mm.LEAF)  # Same colours as the Play button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=False, scale=2), "btn_continue.png")  # Continue button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=True, scale=2), "btn_continue_pressed.png")  # Continue button, pressed

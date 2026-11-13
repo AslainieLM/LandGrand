@@ -14,6 +14,8 @@
 - [ ] Every new line of code has a short basic-English comment (D-033)
 - [ ] Behaviour matches the spec and the final manuscript (D-036); anything new is raised with the user first
 
+**Built 2026-11-13, awaiting the user's Editor check (so boxes stay open):**
+
 **Added 2026-11-13 after the first build (D-046, vault `Project/Gameplay Design.md` "Level look and feel"):**
 
 - [ ] The background scrolls in layers (parallax) as the explorer walks, reusing the start screen's 8 mountain layers and its layer-scrolling script

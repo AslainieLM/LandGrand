@@ -159,20 +159,20 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                 }, "lesson_mountains", true), // Picture name, and still a draft
                 new[] // Five collectibles; granite appears twice
                 {
-                    new Pickup(ItemCatalog.Granite, new Spot(200f, 24f)), // On the first boulder
-                    new Pickup(ItemCatalog.Quartz, new Spot(380f, 56f)), // On a ledge
-                    new Pickup(ItemCatalog.Feldspar, new Spot(760f, 40f)), // After the checkpoint
-                    new Pickup(ItemCatalog.Mica, new Spot(1000f, 64f)), // On a high ledge
-                    new Pickup(ItemCatalog.Granite, new Spot(1240f, 16f)), // Near the cave
+                    new Pickup(ItemCatalog.Granite, new Spot(316f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Quartz, new Spot(550f, 56f)), // On a ledge
+                    new Pickup(ItemCatalog.Feldspar, new Spot(1090f, 40f)), // On a low ledge
+                    new Pickup(ItemCatalog.Mica, new Spot(3668f, 64f)), // On a high ledge, after the checkpoint
+                    new Pickup(ItemCatalog.Granite, new Spot(4600f, 16f)), // Near the cave
                 },
                 new Spot(32f, 0f), // Start at the left edge
-                new Spot(640f, 0f), // Checkpoint flag in the middle
+                new Spot(2400f, 0f), // Checkpoint flag in the middle
                 new[] // One pit and one spike trap
                 {
-                    new Hazard(HazardType.Pit, new Spot(480f, 0f), 48f), // Pit before the checkpoint
-                    new Hazard(HazardType.Spikes, new Spot(880f, 0f), 32f), // Spikes after the checkpoint
+                    new Hazard(HazardType.Pit, new Spot(1880f, 0f), 48f), // Pit before the checkpoint
+                    new Hazard(HazardType.Spikes, new Spot(3500f, 0f), 32f), // Spikes after the checkpoint
                 },
-                new Spot(1380f, 0f)), // Cave entrance at the right end
+                new Spot(4740f, 0f)), // Cave entrance at the right end
         };
 
         /// <summary>The level's data, or null when that level has no data yet.</summary>

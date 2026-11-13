@@ -19,6 +19,7 @@ namespace LandGrand.Play // Level play scripts live here
         public Sprite riseFrame; // Going up in a jump
         public Sprite fallFrame; // Coming down
         public Sprite[] dustFrames; // Dust puff for the double jump
+        public Sprite[] flipFrames; // Curled-up somersault pictures for the double jump (decision D-046)
 
         [Header("Feel (pixels and seconds)")] // Inspector heading for the movement numbers
         public float walkSpeed = 72f; // Walking speed
@@ -29,6 +30,7 @@ namespace LandGrand.Play // Level play scripts live here
         public float coyoteSeconds = 0.08f; // A jump still works this long after walking off an edge
         public float jumpBufferSeconds = 0.1f; // A jump pressed this long before landing still happens
         public float walkFramesPerSecond = 10f; // Walk animation speed
+        public float flipSeconds = 0.3f; // How long the somersault lasts
         public Vector2 size = new Vector2(12f, 26f); // Body box: width and height
         public float fallOutY = -120f; // Falling below this puts the explorer back at the respawn point
 
@@ -50,6 +52,7 @@ namespace LandGrand.Play // Level play scripts live here
         float jumpBufferLeft; // Seconds left for a waiting jump press
         float walkClock; // Time spent walking, for the animation
         int facing = 1; // 1 faces right, -1 faces left
+        float flipClock = -1f; // Seconds into the somersault; below 0 means no somersault
 
         /// <summary>Puts the explorer at a place, standing still.</summary>
         public void PlaceAt(Vector2 feet) // Moves the explorer at once
@@ -59,6 +62,7 @@ namespace LandGrand.Play // Level play scripts live here
             grounded = false; // Gravity will settle it on the ground
             airJumpUsed = false; // Both jumps ready again
             jumpedFromGround = false; // Both jumps ready again
+            flipClock = -1f; // No somersault
             Apply(); // Show it there
         }
 
@@ -85,6 +89,7 @@ namespace LandGrand.Play // Level play scripts live here
             {
                 velocity.y = doubleJumpSpeed; // A little lower than the first jump
                 airJumpUsed = true; // Only one double jump per landing
+                flipClock = 0f; // Start the somersault
                 jumpBufferLeft = 0f; // The press is used
                 Dust(); // Small dust puff under the feet
             }
@@ -139,6 +144,7 @@ namespace LandGrand.Play // Level play scripts live here
                 lastGroundedTime = Time.time; // Remember for the edge grace time
                 jumpedFromGround = false; // Ground jump ready again
                 airJumpUsed = false; // Double jump ready again
+                flipClock = -1f; // A landing ends any somersault
             }
         }
 
@@ -156,6 +162,12 @@ namespace LandGrand.Play // Level play scripts live here
         void Animate() // Picks the picture for what the explorer is doing
         {
             body.flipX = facing < 0; // The art faces right; flip it to face left
+            if (!grounded && flipClock >= 0f && flipFrames != null && flipFrames.Length > 0) // Somersault after a double jump
+            {
+                flipClock += Time.deltaTime; // Somersault time goes on
+                if (flipClock < flipSeconds) { body.sprite = flipFrames[(int)(flipClock / flipSeconds * flipFrames.Length)]; return; } // One full turn over flipSeconds
+                flipClock = -1f; // Turn finished; the normal falling picture takes over
+            }
             if (!grounded) { body.sprite = velocity.y > 0f ? riseFrame : fallFrame; return; } // In the air
             if (velocity.x == 0f) { body.sprite = standFrame; walkClock = 0f; return; } // Standing still
             walkClock += Time.deltaTime; // Walking time goes on

@@ -21,16 +21,23 @@ public static class LevelBuilder // Makes the first level scene
     const string SpriteFolder = "Assets/Art/Level/Sprites/"; // Level PNGs
     const string ArtScript = "Tools/Art/make_level_art.py"; // Script that draws them
     const string StartSprites = "Assets/Art/StartScreen/Sprites/"; // The explorer and dust come from the start screen
-    const string SelectionSprites = "Assets/Art/Selection/Sprites/"; // Mountains backdrop and stars come from the selection art
+    const string SelectionSprites = "Assets/Art/Selection/Sprites/"; // The result stars come from the selection art
     const string LessonPath = "Assets/Scenes/Lesson.unity"; // The level goes after this scene
     const string LevelPath = "Assets/Scenes/MountainsEasy1.unity"; // Where the level is saved
-    const float Width = 1440f; // Level width: three screens
+    const float Width = 4800f; // Level width: ten screens, about 65 s of walking (decision D-046)
 
     // Boulders: left edge, picture. They block from every side; the explorer jumps onto or over them.
-    static readonly (float x, string sprite)[] Boulders = { (180f, "boulder_small"), (560f, "boulder_big"), (1100f, "boulder_small") }; // Three boulders along the trail
+    static readonly (float x, string sprite)[] Boulders = { (300f, "boulder_small"), (900f, "boulder_big"), (1300f, "boulder_small"), (2150f, "boulder_big"), (2700f, "boulder_small"), (3250f, "boulder_big"), (3850f, "boulder_big"), (4150f, "boulder_small"), (4350f, "boulder_big") }; // Nine boulders along the trail
 
     // Ledges: left edge, top height, width. The explorer stands on them and can jump up through them.
-    static readonly (float x, float top, float w)[] Ledges = { (350f, 40f, 80f), (720f, 28f, 80f), (900f, 28f, 48f), (960f, 56f, 96f) }; // Low, middle, step and high ledges
+    static readonly (float x, float top, float w)[] Ledges = { (520f, 40f, 80f), (1050f, 28f, 80f), (1500f, 28f, 64f), (2300f, 28f, 64f), (2920f, 28f, 80f), (3560f, 28f, 48f), (3620f, 56f, 96f), (3950f, 28f, 80f), (4480f, 28f, 48f) }; // Low ledges, plus a step and a high ledge
+
+    // Background layers from the start screen: name, share of the camera's movement, own drift in pixels per second.
+    // L6 and L7 are ground strips; the level draws its own ground, so they are left out.
+    static readonly (string name, float follow, float drift)[] Layers = // Far layers move least
+    {
+        ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far and near mountains, plateaus, hills
+    };
 
     [MenuItem("LandGrand/Build Mountains Easy 1 Level")] // Adds the command to Unity's LandGrand menu
     public static void Build() // Builds and saves the level scene
@@ -41,7 +48,7 @@ public static class LevelBuilder // Makes the first level scene
             Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        if (!File.Exists(SpriteFolder + "grass_top.png") || !File.Exists(SelectionSprites + "bg_mountains.png")) // The art must be drawn first
+        if (!File.Exists(SpriteFolder + "grass_top.png") || !File.Exists(SelectionSprites + "Trail/star_full.png")) // The art must be drawn first
         {
             Debug.LogError($"Missing art. Run: python {ArtScript} and python Tools/Art/make_selection_art.py"); // Tell the user what to do
             return; // Stop before building a broken scene
@@ -53,8 +60,20 @@ public static class LevelBuilder // Makes the first level scene
 
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Start from an empty scene
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
-        var backdrop = M.Renderer("Mountains", Sel("bg_mountains"), -100, ppc.transform); // Mountains sky behind everything
-        backdrop.transform.localPosition = new Vector3(0f, 0f, 10f); // Moves with the camera, in front of its near edge
+        var background = new GameObject("Background").transform; // Holds the moving mountain layers
+        background.SetParent(ppc.transform, false); // Rides on the camera
+        background.localPosition = new Vector3(0f, 0f, 10f); // In front of the camera's near edge
+        for (int i = 0; i < Layers.Length; i++) // Each start-screen layer, far to near
+        {
+            var layerSprite = Spr("Background/" + Layers[i].name); // The layer art from the start screen
+            var layer = new GameObject(Layers[i].name).AddComponent<BackdropLayer>(); // Slides the layer with the camera
+            layer.transform.SetParent(background, false); // Keep it under Background
+            layer.follow = Layers[i].follow; // How much it copies the camera
+            layer.driftPixelsPerSecond = Layers[i].drift; // Clouds drift on their own
+            layer.widthPixels = 960f; // Layer art is two screens wide
+            layer.pixelsPerUnit = LevelGeometry.PixelsPerUnit; // Same pixel size as the sprites
+            M.Renderer("Art", layerSprite, -100 + i * 10, layer.transform); // The picture; farther layers draw first
+        }
 
         var geometry = new GameObject("Level").AddComponent<LevelGeometry>(); // The level's shapes
         geometry.width = Width; // Three screens wide
@@ -95,6 +114,7 @@ public static class LevelBuilder // Makes the first level scene
         explorer.standFrame = Spr("Explorer/explorer_08"); // Standing
         explorer.riseFrame = Spr("Explorer/explorer_03"); // Long stride for going up
         explorer.fallFrame = Spr("Explorer/explorer_07"); // Feet together for coming down
+        explorer.flipFrames = Enumerable.Range(0, 4).Select(i => S($"Flip/flip_{i:00}")).ToArray(); // Somersault for the double jump
         explorer.dustFrames = Enumerable.Range(0, 3).Select(i => Spr($"Dust/dust_{i:00}")).ToArray(); // Dust puff for the double jump
 
         var follow = ppc.gameObject.AddComponent<CameraFollow>(); // The camera follows the explorer

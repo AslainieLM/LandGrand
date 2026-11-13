@@ -13,7 +13,7 @@ namespace LandGrand.Play // Level play scripts live here
 
         public Rect[] solids = new Rect[0]; // Ground and boulders (the explorer is kept inside the level width by the motor)
         public Rect[] ledges = new Rect[0]; // Ledges the explorer can stand on and jump up through
-        public float width = 1440f; // Level width in pixels
+        public float width = 4800f; // Level width in pixels
 
         /// <summary>A level pixel position as a world position.</summary>
         public static Vector3 ToWorld(float x, float y) => new Vector3(x / PixelsPerUnit, y / PixelsPerUnit, 0f); // 32 pixels make one unit

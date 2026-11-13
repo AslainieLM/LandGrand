@@ -127,8 +127,8 @@ public static class LessonBuilder // Makes the Lesson Screen scene
     /// <summary>Gives lesson text wider gaps between words and lines, so words do not run together. 25 units = 3 pixels at the 12-pixel font size.</summary>
     static TMP_Text Spaced(TMP_Text label) // Adds the extra spacing
     {
-        label.wordSpacing = 25f; // 3 more pixels between words
-        label.lineSpacing = 25f; // 3 more pixels between lines
+        label.wordSpacing = 20f; // 3 more pixels between words (Micro 5 spaces are only 4 pixels)
+        label.lineSpacing = 12f; // About 2 more pixels between lines
         return label; // Give the same label back
     }
 
