@@ -51,7 +51,7 @@ namespace LandGrand // Game code lives here
         {
             if (index < 0 || index >= titles.Length) return; // No title for this choice
             title.sprite = titles[index]; // The title picture
-            title.SetNativeSize(); // One sprite pixel = one UI pixel
+            title.rectTransform.sizeDelta = title.sprite.rect.size; // One sprite pixel = one UI pixel (SetNativeSize is too early in Awake and made the title about 3 times too big)
         }
 
         protected virtual void Update() // Runs every frame: watches for the Android Back button
