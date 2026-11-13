@@ -265,6 +265,36 @@ def cloud():
     return img
 
 
+BACK_ARROW = [  # Left-pointing arrow for the Back icon
+    "...#.....",
+    "..##.....",
+    ".########",
+    "#########",
+    ".########",
+    "..##.....",
+    "...#.....",
+]
+
+
+def back_icon(pressed):
+    """A 24x20 brown button with a white back arrow and no words, matching the Main Menu buttons."""
+    w, h = 24, 20  # Button size in pixels
+    img = mm.new_image(w, h)  # Empty button image
+    mm.rounded_box(img, 0, 0, w, h)  # Dark outline
+    mm.fill_rect(img, 1, 1, w - 2, h - 2, mm.PLATEAU_SH)  # Main face colour
+    if pressed:  # Pressed: the button looks pushed in
+        mm.fill_rect(img, 1, 1, w - 2, 2, mm.BACKPACK_SH)  # Dark band on top, like an inset
+    else:  # Normal: the button looks raised
+        mm.fill_rect(img, 1, 1, w - 2, 2, mm.PLATEAU)  # Light band on top
+        mm.fill_rect(img, 1, h - 3, w - 2, 2, mm.BACKPACK_SH)  # Dark band on the bottom
+    arrow = mm.mono(BACK_ARROW, mm.WHITE)  # White arrow picture
+    x = (w - arrow.width) // 2  # Centre the arrow across
+    y = (h - arrow.height) // 2 + (1 if pressed else 0)  # Centre it up and down; drop 1 pixel when pressed
+    mm.paste(img, mm.mono(BACK_ARROW, mm.DARK), x, y + 1)  # Dark shadow one pixel lower
+    mm.paste(img, arrow, x, y)  # The arrow on top
+    return img
+
+
 def save(img, *parts):
     """Saves an image under Assets/Art/LandformMap/Sprites/."""
     path = os.path.join(OUT, *parts)  # Full file path
@@ -281,6 +311,8 @@ def main():
         save(mm.text_image(name.upper(), mm.DARK), "Labels", "label_%s.png" % name)  # Its name for the label
     save(pattern(PADLOCK, {"s": mm.MASK, "b": mm.HELMET_SH, "h": mm.HELMET, "k": mm.OUTLINE}, 2), "padlock.png")  # Padlock on locked regions
     save(mm.outlined(mm.STAR, mm.HELMET), "star.png")  # Small star beside the star count
+    save(back_icon(False), "Buttons", "btn_back_icon.png")  # Back icon, normal
+    save(back_icon(True), "Buttons", "btn_back_icon_pressed.png")  # Back icon, pressed
     save(cloud(), "Mountains", "cloud.png")  # Drifting cloud
     save(pattern(EAGLE_UP, {"e": BACKPACK, "w": mm.HEADLAMP}), "Mountains", "eagle_0.png")  # Eagle, wings up
     save(pattern(EAGLE_DOWN, {"e": BACKPACK, "w": mm.HEADLAMP}), "Mountains", "eagle_1.png")  # Eagle, wings down

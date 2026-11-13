@@ -477,7 +477,7 @@ public static class MainMenuBuilder
     /// <summary>9-slice edges (left, bottom, right, top) for the stretchable panel and slider bars.</summary>
     static Vector4 Border(string path) // Gives the 9-slice edges for a sprite
     {
-        if (path.EndsWith("/panel.png")) return new Vector4(6f, 6f, 6f, 6f); // Panel frame is 6 pixels wide
+        if (path.EndsWith("/panel.png") || path.EndsWith("/card_open.png") || path.EndsWith("/card_locked.png")) return new Vector4(6f, 6f, 6f, 6f); // Panel and card frames are 6 pixels wide
         if (path.EndsWith("/slider_track.png") || path.EndsWith("/slider_fill.png")) return new Vector4(3f, 3f, 3f, 3f); // Bar ends are 3 pixels wide
         return Vector4.zero; // Other sprites do not stretch
     }

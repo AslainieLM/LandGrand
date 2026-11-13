@@ -63,6 +63,12 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// <summary>Most stars any one landform can give: 3 stars for each of its 15 levels (45). Every landform has the same levels.</summary>
         public static int MaxEpisodeStars => (LevelCount(Difficulty.Easy) + LevelCount(Difficulty.Normal) + LevelCount(Difficulty.Hard)) * 3; // (3 + 5 + 7) levels, 3 stars each
 
+        /// <summary>Most stars one difficulty can give: 3 stars per level (Easy 9, Normal 15, Hard 21).</summary>
+        public static int MaxDifficultyStars(Difficulty d) => LevelCount(d) * 3; // Levels times 3 stars
+
+        /// <summary>Best stars earned so far in one difficulty of one landform.</summary>
+        public int DifficultyStars(Episode e, Difficulty d) => bestStars.Where(k => k.Key.Item1 == e && k.Key.Item2 == d).Sum(k => k.Value); // Only this card's levels
+
         /// <summary>Best stars earned so far in one landform, added over all its levels.</summary>
         public int EpisodeStars(Episode e) => bestStars.Where(k => k.Key.Item1 == e).Sum(k => k.Value); // Only this landform's levels
 
