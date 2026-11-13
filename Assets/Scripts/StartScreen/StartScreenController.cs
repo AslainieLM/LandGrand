@@ -1,11 +1,9 @@
-using System.Collections; // Gives access to IEnumerator for the fade-out
 using UnityEngine; // Gives access to Unity basics such as MonoBehaviour and Application
 using UnityEngine.InputSystem; // Gives access to taps and clicks
-using UnityEngine.SceneManagement; // Gives access to scene loading
 
 namespace LandGrand.StartScreen
 {
-    /// <summary>Waits for a tap anywhere, fades the music out, then opens the Main Menu scene.</summary>
+    /// <summary>Waits for a tap anywhere, then fades the screen and music out and opens the Main Menu scene.</summary>
     public class StartScreenController : MonoBehaviour
     {
         public string nextScene = "MainMenu"; // Scene a tap opens
@@ -25,7 +23,7 @@ namespace LandGrand.StartScreen
             if (Application.CanStreamedLevelBeLoaded(nextScene)) // If the next scene is in the build list
             {
                 leaving = true; // Start leaving
-                StartCoroutine(Leave()); // Fade out, then load
+                Leave(); // Fade the screen and music out, then load
             }
             else // If the next scene is not in the build list
             {
@@ -33,10 +31,10 @@ namespace LandGrand.StartScreen
             }
         }
 
-        IEnumerator Leave() // Fades the music, then loads the next scene
+        void Leave() // Fades the screen and the music together, then opens the next scene
         {
-            if (music != null) yield return music.FadeOut(musicFadeOutSeconds); // Wait for the music to fade
-            SceneManager.LoadScene(nextScene); // Open the next scene
+            if (music != null) StartCoroutine(music.FadeOut(musicFadeOutSeconds)); // Music fades while the screen darkens
+            ScreenFader.LoadScene(nextScene, musicFadeOutSeconds); // Darken, load the next scene, then fade it in
         }
     }
 }

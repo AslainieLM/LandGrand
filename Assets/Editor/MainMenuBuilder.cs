@@ -4,6 +4,7 @@ using LandGrand.MainMenu; // Gives access to the Main Menu scripts
 using LandGrand.StartScreen; // Gives access to the start-screen scripts we reuse (background, title, birds, music)
 using UnityEditor; // Gives access to editor tools such as menu items and asset loading
 using UnityEditor.SceneManagement; // Gives access to making and saving scenes
+using LandGrand; // Gives access to the shared scripts (UI zoom)
 using UnityEngine; // Gives access to GameObject, Camera, Sprite and other basics
 using UnityEngine.EventSystems; // Gives access to the EventSystem that sends taps to buttons
 using UnityEngine.InputSystem.UI; // Gives access to the UI input module for the new Input System
@@ -93,13 +94,13 @@ public static class MainMenuBuilder
         shine.framesPerSecond = 10f; // Frame speed of the shine
         title.gameObject.AddComponent<PixelBob>(); // Moves the title up and down by one pixel
 
-        // Music: the Quest loop and the wind-and-birds ambience, as on the start screen.
+        // Music: the calm menu loop (a quieter relative of Quest) and the wind-and-birds ambience.
         var music = new GameObject("Music").AddComponent<StartScreenMusic>(); // Music player
-        music.music = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "bgm_startscreen.ogg"); // Quest music
+        music.music = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "bgm_mainmenu.ogg"); // Calm menu music, made by Tools/Audio/make_menu_music.py
         music.ambience = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "amb_wind_birds.ogg"); // Wind and birds
-        music.musicVolume = 0.55f; // Base music loudness
-        music.ambienceVolume = 0.35f; // Base ambience loudness
-        if (music.music == null) Debug.LogError($"Missing {AudioFolder}bgm_startscreen.ogg"); // Warn if the music file is missing
+        music.musicVolume = 0.40f; // Base music loudness: about 2 dB softer than Quest on the start screen
+        music.ambienceVolume = 0.30f; // Base ambience loudness, a little lower so the menu stays calm
+        if (music.music == null) Debug.LogError($"Missing {AudioFolder}bgm_mainmenu.ogg. Run Tools/Audio/make_menu_music.py."); // Warn if the music file is missing
         if (music.ambience == null) Debug.LogError($"Missing {AudioFolder}amb_wind_birds.ogg"); // Warn if the ambience file is missing
 
         // Event system: sends taps and clicks to the buttons.
@@ -112,12 +113,11 @@ public static class MainMenuBuilder
         var canvas = canvasGo.AddComponent<Canvas>(); // The UI canvas
         canvas.renderMode = RenderMode.ScreenSpaceOverlay; // Draw on top of the game view
         canvas.pixelPerfect = true; // Snap UI pixels to screen pixels
-        var scaler = canvasGo.AddComponent<CanvasScaler>(); // Scales the UI to the screen size
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; // Grow and shrink with the screen
-        scaler.referenceResolution = new Vector2(480f, 270f); // UI is laid out for 480x270
-        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight; // Scale by one side of the screen
-        scaler.matchWidthOrHeight = 1f; // Use the height, so wide phones only add space at the sides
+        var scaler = canvasGo.AddComponent<CanvasScaler>(); // Sets the size of the UI on the screen
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize; // Size is a whole-number zoom, set below
+        scaler.scaleFactor = 4f; // 1920x1080 zoom until the game starts and the real zoom is known
         scaler.referencePixelsPerUnit = PPU; // One sprite pixel equals one UI pixel
+        canvasGo.AddComponent<PixelPerfectUiScale>().pixelCamera = ppc; // UI zoom always matches the art zoom, so pixel letters stay even
         canvasGo.AddComponent<GraphicRaycaster>(); // Finds which UI picture was tapped
         var group = canvasGo.AddComponent<CanvasGroup>(); // Lets the controller turn off every button at once
         var root = canvasGo.transform; // Parent for everything below

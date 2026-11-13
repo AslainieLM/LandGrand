@@ -50,7 +50,7 @@ FONT = {  # Letter shapes, looked up by character
     "F": ["#####", "#....", "#....", "####.", "#....", "#....", "#...."],
     "G": [".###.", "#...#", "#....", "#.###", "#...#", "#...#", ".####"],
     "H": ["#...#", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
-    "I": [".###.", "..#..", "..#..", "..#..", "..#..", "..#..", ".###."],
+    "I": ["###", ".#.", ".#.", ".#.", ".#.", ".#.", "###"],  # Narrow, so words with I keep even spacing
     "J": ["..###", "...#.", "...#.", "...#.", "...#.", "#..#.", ".##.."],
     "K": ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
     "L": ["#....", "#....", "#....", "#....", "#....", "#....", "#####"],
@@ -69,7 +69,7 @@ FONT = {  # Letter shapes, looked up by character
     "Y": ["#...#", "#...#", ".#.#.", "..#..", "..#..", "..#..", "..#.."],
     "Z": ["#####", "....#", "...#.", "..#..", ".#...", "#....", "#####"],
     "0": [".###.", "#...#", "#..##", "#.#.#", "##..#", "#...#", ".###."],
-    "1": ["..#..", ".##..", "..#..", "..#..", "..#..", "..#..", ".###."],
+    "1": [".#.", "##.", ".#.", ".#.", ".#.", ".#.", "###"],  # Narrow, so numbers with 1 keep even spacing
     "2": [".###.", "#...#", "....#", "...#.", "..#..", ".#...", "#####"],
     "3": ["####.", "....#", "....#", ".###.", "....#", "....#", "####."],
     "4": ["...#.", "..##.", ".#.#.", "#..#.", "#####", "...#.", "...#."],
@@ -153,7 +153,7 @@ def button(w, h, label, top, face, bottom, pressed, scale):
         fill_rect(img, 1, 1, w - 2, 2, top)  # Light band on top
         fill_rect(img, 1, h - 3, w - 2, 2, bottom)  # Dark band on the bottom
     tx = (w - text_width(label, scale)) // 2  # Centre the label across
-    ty = (h - 7 * scale) // 2 - (0 if pressed else 1)  # Centre the label down; it drops 1 pixel when pressed
+    ty = (h - 7 * scale) // 2 + (1 if pressed else 0)  # Centre the letters in the face between the light and dark bands; drop 1 pixel when pressed
     draw_text(img, tx, ty, label, WHITE, scale, shadow=DARK)  # White label with a dark shadow
     return img
 

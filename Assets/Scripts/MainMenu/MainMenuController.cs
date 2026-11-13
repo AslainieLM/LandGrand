@@ -2,7 +2,6 @@ using System.Collections; // Gives access to IEnumerator for timed steps
 using LandGrand.StartScreen; // Gives access to the shared music player and background scrolling
 using UnityEngine; // Gives access to MonoBehaviour, AudioSource and Application
 using UnityEngine.InputSystem; // Gives access to the keyboard, where Android's Back button shows up as Escape
-using UnityEngine.SceneManagement; // Gives access to scene loading
 using UnityEngine.UI; // Gives access to Button
 
 namespace LandGrand.MainMenu
@@ -43,7 +42,14 @@ namespace LandGrand.MainMenu
         public AudioClip clickSound; // Short sound played by every button
         public CanvasGroup ui; // Whole menu; used to stop taps while leaving
 
+        [Header("Entrance")]
+        public float enterDelaySeconds = 0.2f; // Wait before the first button arrives, while the screen fades in
+        public float enterStaggerSeconds = 0.08f; // Gap between one button and the next
+        public float enterSeconds = 0.25f; // How long each button takes to arrive
+        public float enterRisePixels = 16f; // How far below its place each button starts
+
         AudioSource sfx; // Plays the click sound
+        bool entering; // True while the buttons are arriving
         GameObject openPanel; // The panel that is open now, or null when none is open
         bool leaving; // True once the menu is loading another scene or quitting
 
@@ -67,9 +73,51 @@ namespace LandGrand.MainMenu
             Close(); // Start with no panel open
         }
 
+        void Start() // Runs once before the first frame
+        {
+            StartCoroutine(Enter()); // Bring the four buttons in, one after another
+        }
+
+        IEnumerator Enter() // Slides the main buttons up into place and fades them in, as a sign the new screen has opened
+        {
+            entering = true; // Ignore Back while the buttons arrive
+            ui.interactable = false; // No taps until every button is in place
+            var buttons = new[] { playButton, settingsButton, tutorialButton, exitButton }; // Top to bottom
+            var homes = new Vector2[buttons.Length]; // Each button's final place
+            var fades = new CanvasGroup[buttons.Length]; // Each button's see-through control
+            for (int i = 0; i < buttons.Length; i++) // Get each button ready
+            {
+                var rt = (RectTransform)buttons[i].transform; // Its UI position box
+                homes[i] = rt.anchoredPosition; // Remember where it belongs
+                fades[i] = buttons[i].gameObject.AddComponent<CanvasGroup>(); // Lets it fade in
+                fades[i].alpha = 0f; // Start hidden
+            }
+
+            float start = Time.unscaledTime; // When the entrance began
+            bool done = false; // True once every button has arrived
+            while (!done) // Each frame until all have arrived
+            {
+                done = true; // Assume done until a button is still moving
+                for (int i = 0; i < buttons.Length; i++) // Move each button
+                {
+                    float begin = enterDelaySeconds + i * enterStaggerSeconds; // When this button starts
+                    float t = Mathf.Clamp01((Time.unscaledTime - start - begin) / enterSeconds); // Its progress, from 0 to 1
+                    if (t < 1f) done = false; // Still moving
+                    float eased = 1f - (1f - t) * (1f - t) * (1f - t); // Fast at first, gentle at the end
+                    float below = Mathf.Round(enterRisePixels * (1f - eased)); // Whole pixels still to rise
+                    ((RectTransform)buttons[i].transform).anchoredPosition = homes[i] - new Vector2(0f, below); // Place it that far below home
+                    fades[i].alpha = Mathf.Round(t * 4f) / 4f; // Fade in, in a few pixel-style steps
+                }
+                yield return null; // Wait for the next frame
+            }
+
+            entering = false; // Back works again
+            if (!leaving) ui.interactable = true; // Buttons can be tapped now
+        }
+
         void Update() // Runs every frame: watches for the Back button
         {
-            if (leaving) return; // Ignore the Back button while leaving
+            if (leaving || entering || ScreenFader.IsBusy) return; // Ignore the Back button while leaving, arriving or fading
             var keyboard = Keyboard.current; // The keyboard; on Android it carries the Back button
             if (keyboard == null || !keyboard.escapeKey.wasPressedThisFrame) return; // Do nothing unless Back (or Escape) was just pressed
             PlayClick(); // Back makes the same click as a button
@@ -92,29 +140,35 @@ namespace LandGrand.MainMenu
 
         void Play() // What the Play button does
         {
-            if (Application.CanStreamedLevelBeLoaded(playScene)) StartCoroutine(Leave(() => SceneManager.LoadScene(playScene))); // Open the Landform Map if it is in the build
+            if (Application.CanStreamedLevelBeLoaded(playScene)) // If the Landform Map is in the build
+            {
+                BeginLeaving(); // Stop taps and fade the music
+                ScreenFader.LoadScene(playScene, musicFadeOutSeconds); // Darken, open the Landform Map, then fade it in
+            }
             else Open(comingSoonPanel); // Otherwise tell the player it is coming soon
         }
 
         void Quit() // What the Yes button in "Exit game?" does
         {
-            StartCoroutine(Leave(() => // Fade the music first, then run the code below
-            {
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false; // In the Unity Editor, stop Play mode
-#else
-                Application.Quit(); // On Android, close the game
-#endif
-            }));
+            BeginLeaving(); // Stop taps and fade the music
+            StartCoroutine(QuitAfterFade()); // Darken the screen, then close the game
         }
 
-        IEnumerator Leave(System.Action then) // Fades out, then runs the given step (load a scene or quit)
+        void BeginLeaving() // Shared first step before leaving the menu
         {
             leaving = true; // Stop more taps and Back presses
             ui.interactable = false; // Make every button stop reacting
-            yield return new WaitForSecondsRealtime(0.1f); // Let the click sound start before the music fades
-            if (music != null) yield return music.FadeOut(musicFadeOutSeconds); // Fade the music out
-            then(); // Load the next scene or quit
+            if (music != null) StartCoroutine(music.FadeOut(musicFadeOutSeconds)); // Music fades while the screen darkens
+        }
+
+        IEnumerator QuitAfterFade() // Darkens the screen, then quits
+        {
+            yield return ScreenFader.FadeOutOnly(musicFadeOutSeconds); // Wait for the screen to go dark
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false; // In the Unity Editor, stop Play mode
+#else
+            Application.Quit(); // On Android, close the game
+#endif
         }
 
         void PlayClick() // Plays the button click sound
