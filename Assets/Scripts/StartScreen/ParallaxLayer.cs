@@ -1,4 +1,4 @@
-using UnityEngine;
+using UnityEngine; // Gives access to Unity basics such as MonoBehaviour and Vector3
 
 namespace LandGrand.StartScreen
 {
@@ -12,51 +12,51 @@ namespace LandGrand.StartScreen
         /// Shared multiplier for every layer that follows the explorer's walk.
         /// 1 = walking, 0 = the explorer has stopped (for example, to pick up a mineral).
         /// </summary>
-        public static float WalkSpeedScale = 1f;
+        public static float WalkSpeedScale = 1f; // Shared speed for all layers that follow the walk
 
-        public float speedPixelsPerSecond;
+        public float speedPixelsPerSecond; // How fast this layer scrolls
         [Tooltip("Off for layers that drift on their own, such as clouds.")]
-        public bool followsWalk = true;
-        public float widthPixels = 960f;
-        public float pixelsPerUnit = 32f;
+        public bool followsWalk = true; // Stop with the explorer, or keep drifting
+        public float widthPixels = 960f; // Width of the layer art
+        public float pixelsPerUnit = 32f; // Sprite pixels per world unit
 
         /// <summary>How far the layer has scrolled, in canvas pixels, from 0 up to widthPixels.</summary>
-        public float OffsetPixels { get; private set; }
+        public float OffsetPixels { get; private set; } // How far it has scrolled
 
-        Transform first;
-        Transform second;
+        Transform first; // The layer picture
+        Transform second; // A copy placed right after it
 
-        void Start()
+        void Start() // Runs once before the first frame
         {
-            first = transform.GetChild(0);
-            second = Instantiate(first.gameObject, transform).transform;
-            second.name = first.name + " (wrap copy)";
-            Apply();
+            first = transform.GetChild(0); // Find the layer picture
+            second = Instantiate(first.gameObject, transform).transform; // Copy it
+            second.name = first.name + " (wrap copy)"; // Give the copy a clear name
+            Apply(); // Put both in place
         }
 
-        void Update()
+        void Update() // Runs every frame
         {
-            float scale = followsWalk ? WalkSpeedScale : 1f;
-            OffsetPixels = Mathf.Repeat(OffsetPixels + speedPixelsPerSecond * scale * Time.deltaTime, widthPixels);
-            Apply();
+            float scale = followsWalk ? WalkSpeedScale : 1f; // Walk speed, or full speed for clouds
+            OffsetPixels = Mathf.Repeat(OffsetPixels + speedPixelsPerSecond * scale * Time.deltaTime, widthPixels); // Scroll a little, wrapping back after one full width
+            Apply(); // Move the pictures
         }
 
-        void Apply()
+        void Apply() // Puts both pictures at the current scroll
         {
             // Round to whole pixels so pixel art never shimmers between pixels.
-            float x = -Mathf.Round(OffsetPixels) / pixelsPerUnit;
-            float width = widthPixels / pixelsPerUnit;
-            first.localPosition = new Vector3(x, 0f, 0f);
-            second.localPosition = new Vector3(x + width, 0f, 0f);
+            float x = -Mathf.Round(OffsetPixels) / pixelsPerUnit; // Left edge of the first picture
+            float width = widthPixels / pixelsPerUnit; // Layer width in world units
+            first.localPosition = new Vector3(x, 0f, 0f); // Place the first picture
+            second.localPosition = new Vector3(x + width, 0f, 0f); // Place the copy right after it
         }
 
         /// <summary>World x of a canvas x coordinate, wrapped to the copy nearest the screen centre.</summary>
-        public float CanvasToWorldX(float canvasX)
+        public float CanvasToWorldX(float canvasX) // Turns a spot on the layer art into a world x
         {
-            float width = widthPixels / pixelsPerUnit;
-            float x = (canvasX - widthPixels / 2f - Mathf.Round(OffsetPixels)) / pixelsPerUnit;
-            x = Mathf.Repeat(x + width / 2f, width) - width / 2f;
-            return transform.position.x + x;
+            float width = widthPixels / pixelsPerUnit; // Layer width in world units
+            float x = (canvasX - widthPixels / 2f - Mathf.Round(OffsetPixels)) / pixelsPerUnit; // Spot position after scrolling
+            x = Mathf.Repeat(x + width / 2f, width) - width / 2f; // Use the copy closest to the screen middle
+            return transform.position.x + x; // Add the layer's own position
         }
     }
 }

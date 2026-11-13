@@ -1,5 +1,5 @@
-using System.Collections;
-using UnityEngine;
+using System.Collections; // Gives access to IEnumerator for the fade-out
+using UnityEngine; // Gives access to Unity basics such as MonoBehaviour and AudioSource
 
 namespace LandGrand.StartScreen
 {
@@ -9,58 +9,59 @@ namespace LandGrand.StartScreen
     /// </summary>
     public class StartScreenMusic : MonoBehaviour
     {
-        public AudioClip music;
-        public AudioClip ambience;
-        [Range(0f, 1f)] public float musicVolume = 0.55f;
-        [Range(0f, 1f)] public float ambienceVolume = 0.35f;
-        public float fadeInSeconds = 1.5f;
+        public AudioClip music; // The Quest music loop
+        public AudioClip ambience; // The wind-and-birds loop
+        [Range(0f, 1f)] public float musicVolume = 0.55f; // Base music loudness
+        [Range(0f, 1f)] public float ambienceVolume = 0.35f; // Base ambience loudness
+        public float fadeInSeconds = 1.5f; // How long the fade-in takes
 
-        AudioSource musicSource;
-        AudioSource ambienceSource;
+        AudioSource musicSource; // Plays the music
+        AudioSource ambienceSource; // Plays the ambience
         float fade;          // 0..1 multiplier applied to both volumes
-        float fadeTarget = 1f;
-        float fadeRate;
+        float fadeTarget = 1f; // Fade level to move toward
+        float fadeRate; // How fast the fade moves, per second
 
-        void Awake()
+        void Awake() // Runs once when the object is created
         {
-            musicSource = CreateSource(music);
-            ambienceSource = CreateSource(ambience);
+            musicSource = CreateSource(music); // Make the music player
+            ambienceSource = CreateSource(ambience); // Make the ambience player
         }
 
-        AudioSource CreateSource(AudioClip clip)
+        AudioSource CreateSource(AudioClip clip) // Makes one looping, silent sound player
         {
-            var source = gameObject.AddComponent<AudioSource>();
-            source.clip = clip;
-            source.loop = true;
-            source.playOnAwake = false;
-            source.volume = 0f;
-            return source;
+            var source = gameObject.AddComponent<AudioSource>(); // New sound player
+            source.clip = clip; // Sound to play
+            source.loop = true; // Play it again and again
+            source.playOnAwake = false; // Wait for Start() to begin
+            source.volume = 0f; // Start silent
+            return source; // Give it back
         }
 
-        void Start()
+        void Start() // Runs once before the first frame
         {
-            if (music != null) musicSource.Play();
-            if (ambience != null) ambienceSource.Play();
-            fade = 0f;
-            fadeTarget = 1f;
-            fadeRate = fadeInSeconds > 0f ? 1f / fadeInSeconds : float.MaxValue;
+            if (music != null) musicSource.Play(); // Start the music
+            if (ambience != null) ambienceSource.Play(); // Start the ambience
+            fade = 0f; // Begin silent
+            fadeTarget = 1f; // Fade up to full
+            fadeRate = fadeInSeconds > 0f ? 1f / fadeInSeconds : float.MaxValue; // Speed of the fade-in
         }
 
-        void Update()
+        void Update() // Runs every frame
         {
-            fade = Mathf.MoveTowards(fade, fadeTarget, fadeRate * Time.unscaledDeltaTime);
-            musicSource.volume = musicVolume * fade;
-            ambienceSource.volume = ambienceVolume * fade;
+            fade = Mathf.MoveTowards(fade, fadeTarget, fadeRate * Time.unscaledDeltaTime); // Move the fade level toward its target
+            float setting = GameSettings.MusicVolume; // The player's music volume from Settings (0 to 1)
+            musicSource.volume = musicVolume * fade * setting; // Music loudness: base level, fade, and the player's setting
+            ambienceSource.volume = ambienceVolume * fade * setting; // Wind-and-birds loudness: base level, fade, and the player's setting
         }
 
         /// <summary>Fades both loops to silence over the given time. Wait on the returned routine to know when it is done.</summary>
-        public IEnumerator FadeOut(float seconds)
+        public IEnumerator FadeOut(float seconds) // Fades out; the caller can wait for it
         {
-            fadeTarget = 0f;
-            fadeRate = seconds > 0f ? 1f / seconds : float.MaxValue;
-            while (fade > 0f) yield return null;
-            musicSource.Stop();
-            ambienceSource.Stop();
+            fadeTarget = 0f; // Fade down to silence
+            fadeRate = seconds > 0f ? 1f / seconds : float.MaxValue; // Speed of the fade-out
+            while (fade > 0f) yield return null; // Wait frame by frame until silent
+            musicSource.Stop(); // Stop the music
+            ambienceSource.Stop(); // Stop the ambience
         }
     }
 }
