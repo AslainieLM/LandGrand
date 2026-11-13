@@ -355,7 +355,7 @@ def main():
 
     # Small panel buttons, 56x20, with 7-pixel-tall labels.
     for name, label, colors in [("back", "BACK", brown), ("prev", "PREV", brown), ("next", "NEXT", brown),  # Name, label and colours of each small button
-                                ("yes", "YES", red), ("no", "NO", green)]:  # (continued)
+                                ("yes", "YES", red), ("no", "NO", green), ("ok", "OK", green)]:  # (continued; OK confirms the typed name)
         save(button(56, 20, label, *colors, pressed=False, scale=1), "Buttons", "btn_%s.png" % name)  # Normal picture
         save(button(56, 20, label, *colors, pressed=True, scale=1), "Buttons", "btn_%s_pressed.png" % name)  # Pressed picture
 
@@ -377,13 +377,13 @@ def main():
 
     # Tutorial page text. The first line of each page is its title.
     pages = [  # Words for each tutorial page
-        ["1/4  MOVE AND JUMP", "TAP THE ARROWS TO WALK LEFT OR RIGHT.", "TAP THE UP BUTTON TO JUMP."],
+        ["1/4  MOVE AND JUMP", "TAP THE ARROWS TO WALK LEFT OR RIGHT.", "TAP THE JUMP BUTTON TO JUMP.", "TAP AGAIN IN THE AIR TO DOUBLE JUMP."],
         ["2/4  COLLECT", "WALK INTO A ROCK OR MINERAL TO PICK IT UP.", "READ ITS NAME AND WHAT IT IS."],
         ["3/4  EARN STARS", "REACH THE END TO FINISH THE LEVEL.", "SEE WHAT YOU FOUND AND YOUR STARS."],
         ["4/4  WATCH OUT", "JUMP OVER PITS AND TRAPS.", "FINISH BEFORE THE TIMER RUNS OUT."],
     ]  # End of the page list
     for i, lines in enumerate(pages):  # One text image per page
-        save(text_image(lines, [PLATEAU_SH, OUTLINE, OUTLINE]), "Tutorial", "page_%d_text.png" % (i + 1))  # Title line in clay, body lines dark
+        save(text_image(lines, [PLATEAU_SH] + [OUTLINE] * (len(lines) - 1)), "Tutorial", "page_%d_text.png" % (i + 1))  # Title line in clay, body lines dark
     for i, pic in enumerate(tutorial_pictures()):  # One picture per page
         save(pic, "Tutorial", "page_%d_picture.png" % (i + 1))  # Save the picture
 

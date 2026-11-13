@@ -2,6 +2,7 @@ using System.IO; // Gives access to folders and files
 using System.Linq; // Gives access to list helpers such as Where and Select
 using LandGrand.MainMenu; // Gives access to the Main Menu scripts
 using LandGrand.StartScreen; // Gives access to the start-screen scripts we reuse (background, title, birds, music)
+using TMPro; // Gives access to TextMeshPro text, input boxes and font assets
 using UnityEditor; // Gives access to editor tools such as menu items and asset loading
 using UnityEditor.SceneManagement; // Gives access to making and saving scenes
 using LandGrand; // Gives access to the shared scripts (UI zoom)
@@ -22,6 +23,11 @@ public static class MainMenuBuilder
     const string StartSprites = "Assets/Art/StartScreen/Sprites/"; // Start-screen PNGs we reuse
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
     const string ScenePath = "Assets/Scenes/MainMenu.unity"; // Where the scene is saved
+    const string FontFile = "Assets/Fonts/PixelifySans.ttf"; // The pixel font (SIL Open Font License, see Assets/Fonts/OFL.txt)
+    const string FontAssetPath = "Assets/Fonts/PixelifySans Raster.asset"; // TextMeshPro font made from it by this builder
+    const int FontSize = 12; // Text height in UI pixels; the font picture is drawn at exactly this size so it stays sharp
+    static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text
+    static readonly Color32 Warning = new Color32(160, 40, 40, 255); // Red for "name not accepted" messages
     const float PPU = 32f; // Sprite pixels per Unity unit, same as the start screen
     static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
 
@@ -36,6 +42,14 @@ public static class MainMenuBuilder
     public static void Build() // Builds and saves the whole Main Menu scene
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return; // Stop if the user cancels saving the open scene
+
+        if (!Directory.Exists("Assets/TextMesh Pro")) // TextMeshPro needs its starter files once per project
+        {
+            Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
+            return; // Stop before building a broken scene
+        }
+        var font = EnsureFont(); // The pixel font as a TextMeshPro font
+        if (font == null) return; // EnsureFont already said what is wrong
 
         ConfigureImporters(); // Make every Main Menu PNG crisp pixel art
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
@@ -145,10 +159,28 @@ public static class MainMenuBuilder
         var musicSlider = MakeSlider("Music slider", setPanel, new Vector2(240f, 132f), setC); // Music volume slider
         Picture("Sound label", setPanel, S("Text/label_sfx"), new Vector2(240f, 158f), setC); // "SOUND EFFECTS"
         var sfxSlider = MakeSlider("Sound slider", setPanel, new Vector2(240f, 174f), setC); // Sound-effects volume slider
-        var setBack = MakeButton("Back", setPanel, "back", new Vector2(240f, 238f), setC); // Closes Settings
+        Label("Name label", setPanel, font, "NAME", new Vector2(190f, 200f), setC, new Vector2(60f, 16f), Ink, TextAlignmentOptions.MidlineRight); // "NAME" next to the box
+        var nameBox = InputBox("Name box", setPanel, font, "Your name", new Vector2(292f, 200f), setC, new Vector2(120f, 20f)); // Where the name is shown and changed
+        var nameMessage = Label("Name message", setPanel, font, "", new Vector2(240f, 218f), setC, new Vector2(300f, 14f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
+        var setBack = MakeButton("Back", setPanel, "back", new Vector2(240f, 242f), setC); // Closes Settings
         var settingsPanel = setPanel.gameObject.AddComponent<SettingsPanel>(); // Connects the sliders to the saved volumes
         settingsPanel.musicSlider = musicSlider; // Music slider
         settingsPanel.sfxSlider = sfxSlider; // Sound slider
+        settingsPanel.nameInput = nameBox; // Name box
+        settingsPanel.nameMessage = nameMessage; // Name message
+
+        // Name panel: what Play shows the first time, before the Landform Map.
+        var nameC = new Vector2(240f, 140f); // Middle of the name panel
+        var namePanelRect = Panel("Name panel", root, nameC, new Vector2(280f, 130f)); // Panel background
+        Label("Heading", namePanelRect, font, "What is your name?", new Vector2(240f, 100f), nameC, new Vector2(260f, 16f), Ink, TextAlignmentOptions.Midline); // Question
+        var typedName = InputBox("Name box", namePanelRect, font, "Type here", new Vector2(240f, 128f), nameC, new Vector2(160f, 24f)); // Where the player types
+        var typedMessage = Label("Message", namePanelRect, font, "", new Vector2(240f, 150f), nameC, new Vector2(260f, 14f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
+        var nameOk = MakeButton("OK", namePanelRect, "ok", new Vector2(204f, 178f), nameC); // Saves the name
+        var nameBack = MakeButton("Back", namePanelRect, "back", new Vector2(276f, 178f), nameC); // Closes the name panel
+        var namePanelLogic = namePanelRect.gameObject.AddComponent<NamePanel>(); // Checks and saves the typed name
+        namePanelLogic.input = typedName; // Typing box
+        namePanelLogic.message = typedMessage; // Message line
+        namePanelLogic.okButton = nameOk; // OK button
 
         // Tutorial panel: four draft picture pages (waiting on open questions Q-02 and Q-06).
         var tutC = new Vector2(240f, 164f); // Middle of the Tutorial panel
@@ -192,9 +224,10 @@ public static class MainMenuBuilder
         controller.dim = dim.gameObject; // Dark layer
         controller.settingsPanel = setPanel.gameObject; // Settings panel
         controller.tutorialPanel = tutPanel.gameObject; // Tutorial panel
+        controller.namePanel = namePanelLogic; // Name panel
         controller.comingSoonPanel = soonPanel.gameObject; // Coming Soon panel
         controller.exitPanel = exitPanel.gameObject; // Exit panel
-        controller.backButtons = new[] { setBack, tutBack, soonBack }; // All Back buttons
+        controller.backButtons = new[] { setBack, tutBack, soonBack, nameBack }; // All Back buttons
         controller.exitYesButton = yes; // Yes
         controller.exitNoButton = no; // No
         controller.music = music; // Music player, so it can fade out
@@ -206,6 +239,7 @@ public static class MainMenuBuilder
         dim.gameObject.SetActive(false); // Dark layer hidden
         setPanel.gameObject.SetActive(false); // Settings hidden
         tutPanel.gameObject.SetActive(false); // Tutorial hidden
+        namePanelRect.gameObject.SetActive(false); // Name panel hidden
         soonPanel.gameObject.SetActive(false); // Coming Soon hidden
         exitPanel.gameObject.SetActive(false); // Exit hidden
 
@@ -308,6 +342,87 @@ public static class MainMenuBuilder
         slider.value = 1f; // Start full; the Settings panel shows the saved value when it opens
         slider.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving
         return slider;
+    }
+
+    /// <summary>Makes the TextMeshPro font from the pixel font file, once. Later runs reuse it.</summary>
+    static TMP_FontAsset EnsureFont() // Gives the pixel font as a TextMeshPro font
+    {
+        var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontAssetPath); // Already made on an earlier run?
+        if (existing != null) return existing; // Reuse it
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Make Unity see the newly added font file
+        var source = AssetDatabase.LoadAssetAtPath<Font>(FontFile); // The .ttf file
+        if (source == null) { Debug.LogError($"Missing font {FontFile}. Add Pixelify Sans (SIL OFL) there."); return null; } // Say what is missing
+        var asset = TMP_FontAsset.CreateFontAsset(source, FontSize, 2, UnityEngine.TextCore.LowLevel.GlyphRenderMode.RASTER_HINTED, 256, 256, AtlasPopulationMode.Dynamic, false); // Hard-edged letters, new letters added on demand
+        asset.TryAddCharacters(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", out _); // Draw the basic letters now
+        AssetDatabase.CreateAsset(asset, FontAssetPath); // Save the font asset
+        asset.material.name = "Pixelify Sans Raster Material"; // Name its material
+        AssetDatabase.AddObjectToAsset(asset.material, asset); // Keep the material inside the font asset
+        foreach (var atlas in asset.atlasTextures) // Each letter-picture sheet
+        {
+            atlas.name = "Pixelify Sans Raster Atlas"; // Name the sheet
+            atlas.filterMode = FilterMode.Point; // No blur between pixels
+            AssetDatabase.AddObjectToAsset(atlas, asset); // Keep the sheet inside the font asset
+        }
+        EditorUtility.SetDirty(asset); // Mark it as changed
+        AssetDatabase.SaveAssets(); // Write it to disk
+        return asset; // Give the font back
+    }
+
+    /// <summary>A line of pixel-font text that does not catch taps.</summary>
+    static TextMeshProUGUI Label(string name, Transform parent, TMP_FontAsset font, string text, Vector2 center, Vector2 parentCenter, Vector2 size, Color color, TextAlignmentOptions align) // Makes a text label
+    {
+        var rt = Rect(name, parent, center, parentCenter); // Place it
+        rt.sizeDelta = size; // Room for the text
+        var label = rt.gameObject.AddComponent<TextMeshProUGUI>(); // The text itself
+        label.font = font; // Pixel font
+        label.fontSize = FontSize; // Same size as the font picture, so it stays sharp
+        label.text = text; // Words to show
+        label.color = color; // Text colour
+        label.alignment = align; // Where the words sit in the box
+        label.textWrappingMode = TextWrappingModes.NoWrap; // Keep each message on one line
+        label.raycastTarget = false; // Taps pass through it
+        return label; // Give the label back
+    }
+
+    /// <summary>A one-line typing box. The phone's keyboard opens when it is tapped.</summary>
+    static TMP_InputField InputBox(string name, Transform parent, TMP_FontAsset font, string hint, Vector2 center, Vector2 parentCenter, Vector2 size) // Makes a typing box
+    {
+        var rt = Rect(name, parent, center, parentCenter); // Place it
+        rt.sizeDelta = size; // Box size in pixels
+        var back = rt.gameObject.AddComponent<Image>(); // Box background
+        back.color = new Color32(247, 238, 214, 255); // Light paper colour
+        var field = rt.gameObject.AddComponent<TMP_InputField>(); // The typing logic
+        field.targetGraphic = back; // The part that reacts to taps
+        field.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving
+
+        var area = new GameObject("Text Area", typeof(RectTransform)); // Holds the text and cuts off what does not fit
+        var areaRt = (RectTransform)area.transform; // Its UI position box
+        areaRt.SetParent(rt, false); // Put it inside the box
+        areaRt.anchorMin = Vector2.zero; // Stretch from the bottom-left...
+        areaRt.anchorMax = Vector2.one; // ...to the top-right
+        areaRt.offsetMin = new Vector2(4f, 2f); // Small gap at the bottom-left
+        areaRt.offsetMax = new Vector2(-4f, -2f); // Small gap at the top-right
+        area.AddComponent<RectMask2D>(); // Hide text that would leave the box
+
+        var typed = Label("Text", areaRt, font, "", Vector2.zero, Vector2.zero, Vector2.zero, Ink, TextAlignmentOptions.MidlineLeft); // The typed letters
+        Stretch((RectTransform)typed.transform); // Fill the text area
+        var hintText = Label("Placeholder", areaRt, font, hint, Vector2.zero, Vector2.zero, Vector2.zero, new Color32(140, 130, 110, 255), TextAlignmentOptions.MidlineLeft); // Grey hint shown while empty
+        Stretch((RectTransform)hintText.transform); // Fill the text area
+
+        field.textViewport = areaRt; // The area that clips the text
+        field.textComponent = typed; // Where typed letters show
+        field.placeholder = hintText; // Hint shown while empty
+        field.lineType = TMP_InputField.LineType.SingleLine; // One line only
+        field.contentType = TMP_InputField.ContentType.Standard; // Any text; NameRule checks it
+        return field; // Give the typing box back
+    }
+
+    static void Stretch(RectTransform rt) // Makes a UI box fill its parent
+    {
+        rt.anchorMin = Vector2.zero; // Bottom-left corner of the parent
+        rt.anchorMax = Vector2.one; // Top-right corner of the parent
+        rt.offsetMin = Vector2.zero; // No gap at the bottom-left
+        rt.offsetMax = Vector2.zero; // No gap at the top-right
     }
 
     /// <summary>Loads a Main Menu sprite by its path under Sprites/, without ".png".</summary>

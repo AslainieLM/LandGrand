@@ -24,6 +24,7 @@ namespace LandGrand.MainMenu
         public GameObject dim; // Dark see-through layer behind an open panel
         public GameObject settingsPanel; // Music and sound-effects volume
         public GameObject tutorialPanel; // Picture pages that explain how to play
+        public NamePanel namePanel; // Asks for the player's name the first time Play is tapped
         public GameObject comingSoonPanel; // Shown by Play while the Landform Map is not built
         public GameObject exitPanel; // "Exit game?" with Yes and No
 
@@ -66,6 +67,7 @@ namespace LandGrand.MainMenu
             foreach (var back in backButtons) back.onClick.AddListener(Close); // Every Back button closes its panel
             exitYesButton.onClick.AddListener(Quit); // Yes quits the game
             exitNoButton.onClick.AddListener(Close); // No closes the question
+            namePanel.Accepted += OpenPlayScene; // A saved name carries on to the Landform Map
 
             var everyButton = ui.GetComponentsInChildren<Button>(true); // All menu buttons, also those in closed panels
             foreach (var button in everyButton) button.onClick.AddListener(PlayClick); // Every button makes the click sound
@@ -129,6 +131,7 @@ namespace LandGrand.MainMenu
         {
             settingsPanel.SetActive(panel == settingsPanel); // Show Settings only if it is the one asked for
             tutorialPanel.SetActive(panel == tutorialPanel); // Show Tutorial only if it is the one asked for
+            namePanel.gameObject.SetActive(panel == namePanel.gameObject); // Show the name panel only if it is the one asked for
             comingSoonPanel.SetActive(panel == comingSoonPanel); // Show Coming Soon only if it is the one asked for
             exitPanel.SetActive(panel == exitPanel); // Show "Exit game?" only if it is the one asked for
             dim.SetActive(panel != null); // Darken the background while a panel is open
@@ -139,6 +142,12 @@ namespace LandGrand.MainMenu
         void Close() => Open(null); // Closing means "open no panel"
 
         void Play() // What the Play button does
+        {
+            if (string.IsNullOrEmpty(GameProgress.Current.Name)) Open(namePanel.gameObject); // First time: ask for the name before anything else
+            else OpenPlayScene(); // Name already saved: go straight on
+        }
+
+        void OpenPlayScene() // Opens the Landform Map, or says it is coming soon
         {
             if (Application.CanStreamedLevelBeLoaded(playScene)) // If the Landform Map is in the build
             {
