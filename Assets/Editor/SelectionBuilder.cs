@@ -73,7 +73,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             M.Picture("Star", panel, S("Trail/star_full"), c + new Vector2(-14f, -24f), c); // Star icon, left of the middle
             var stars = M.Label("Stars", panel, font, "0/9", c + new Vector2(18f, -24f), c, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress, starting 4 pixels right of the star
             var padlock = M.Picture("Padlock", panel, K.Sprite(MapSpriteFolder, "padlock", "Tools/Art/make_landform_map_art.py"), c + new Vector2(0f, 8f), c); // Big padlock while locked, in the middle of the card
-            var guide = M.Label("Guide", panel, font, "", c + new Vector2(0f, 48f), c, new Vector2(104f, 48f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels" on two lines, under the padlock
+            var guide = M.ReadingLabel("Guide", panel, "", c + new Vector2(0f, 48f), c, new Vector2(104f, 48f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels" on two lines under the padlock, in the reading font (D-051)
             guide.textWrappingMode = TextWrappingModes.Normal; // Long guides break onto two lines
             cards[i] = new DifficultySelectionController.Card // Everything the controller needs for this card
             {

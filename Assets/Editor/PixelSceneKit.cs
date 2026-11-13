@@ -129,7 +129,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
         var guideC = new Vector2(240f, 16f); // Middle of the guide panel, top centre
         var guide = M.Panel("Guide", root, guideC, new Vector2(240f, 26f)); // Panel background, wide enough for "Oops! Back to the checkpoint" at 2x
         guide.GetComponent<Image>().raycastTarget = false; // Taps pass through
-        screen.guideText = M.Label("Text", guide, font, "", guideC, guideC, new Vector2(228f, 22f), Ink, TextAlignmentOptions.Midline); // The guide words
+        screen.guideText = M.ReadingLabel("Text", guide, "", guideC, guideC, new Vector2(228f, 22f), Ink, TextAlignmentOptions.Midline); // The guide words, in the reading font (D-051); the longest, "Oops! Back to the checkpoint", is 201 pixels
         screen.guidePanel = guide.gameObject; // Guide panel
         screen.music = music; // Music player, so it can fade out
         screen.clickSound = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "sfx_ui_click.wav"); // Tap sound
