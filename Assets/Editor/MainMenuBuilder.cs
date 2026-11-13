@@ -250,9 +250,9 @@ public static class MainMenuBuilder
     }
 
     // Screen pixel (480x270, y down from the top) to world position.
-    static Vector3 Px(float x, float y) => new Vector3((x - 240f) / PPU, (135f - y) / PPU, 0f); // Centre of the screen is world (0, 0)
+    internal static Vector3 Px(float x, float y) => new Vector3((x - 240f) / PPU, (135f - y) / PPU, 0f); // Centre of the screen is world (0, 0)
 
-    static SpriteRenderer Renderer(string name, Sprite sprite, int order, Transform parent) // Makes a world sprite (not UI)
+    internal static SpriteRenderer Renderer(string name, Sprite sprite, int order, Transform parent) // Makes a world sprite (not UI)
     {
         var go = new GameObject(name); // New object for the sprite
         if (parent != null) go.transform.SetParent(parent, false); // Put it under its parent if one is given
@@ -263,7 +263,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>Makes a UI object centred at a screen pixel, placed inside a parent whose centre is parentCenter.</summary>
-    static RectTransform Rect(string name, Transform parent, Vector2 center, Vector2 parentCenter) // Makes a positioned UI box
+    internal static RectTransform Rect(string name, Transform parent, Vector2 center, Vector2 parentCenter) // Makes a positioned UI box
     {
         var go = new GameObject(name, typeof(RectTransform)); // New UI object
         var rt = (RectTransform)go.transform; // Its UI position box
@@ -275,7 +275,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>A UI picture shown at its exact pixel size. It does not catch taps.</summary>
-    static Image Picture(string name, Transform parent, Sprite sprite, Vector2 center, Vector2 parentCenter) // Makes a UI picture
+    internal static Image Picture(string name, Transform parent, Sprite sprite, Vector2 center, Vector2 parentCenter) // Makes a UI picture
     {
         var rt = Rect(name, parent, center, parentCenter); // Place it
         var img = rt.gameObject.AddComponent<Image>(); // UI picture
@@ -286,7 +286,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>A button whose picture swaps to its "pressed" version while held down.</summary>
-    static Button MakeButton(string name, Transform parent, string spriteName, Vector2 center, Vector2 parentCenter) // Makes a UI button
+    internal static Button MakeButton(string name, Transform parent, string spriteName, Vector2 center, Vector2 parentCenter) // Makes a UI button
     {
         var img = Picture(name, parent, S("Buttons/btn_" + spriteName), center, parentCenter); // Normal button picture
         img.raycastTarget = true; // Buttons must catch taps
@@ -299,7 +299,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>A panel background stretched from the 24x24 panel sprite (9-slice).</summary>
-    static RectTransform Panel(string name, Transform parent, Vector2 center, Vector2 size) // Makes a stretchable panel
+    internal static RectTransform Panel(string name, Transform parent, Vector2 center, Vector2 size) // Makes a stretchable panel
     {
         var rt = Rect(name, parent, center, CanvasCenter); // Place it on the screen
         rt.sizeDelta = size; // Panel size in pixels
@@ -345,7 +345,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>Makes the TextMeshPro font from the pixel font file, once. Later runs reuse it.</summary>
-    static TMP_FontAsset EnsureFont() // Gives the pixel font as a TextMeshPro font
+    internal static TMP_FontAsset EnsureFont() // Gives the pixel font as a TextMeshPro font
     {
         var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontAssetPath); // Already made on an earlier run?
         if (existing != null) return existing; // Reuse it
@@ -369,7 +369,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>A line of pixel-font text that does not catch taps.</summary>
-    static TextMeshProUGUI Label(string name, Transform parent, TMP_FontAsset font, string text, Vector2 center, Vector2 parentCenter, Vector2 size, Color color, TextAlignmentOptions align) // Makes a text label
+    internal static TextMeshProUGUI Label(string name, Transform parent, TMP_FontAsset font, string text, Vector2 center, Vector2 parentCenter, Vector2 size, Color color, TextAlignmentOptions align) // Makes a text label
     {
         var rt = Rect(name, parent, center, parentCenter); // Place it
         rt.sizeDelta = size; // Room for the text
@@ -417,7 +417,7 @@ public static class MainMenuBuilder
         return field; // Give the typing box back
     }
 
-    static void Stretch(RectTransform rt) // Makes a UI box fill its parent
+    internal static void Stretch(RectTransform rt) // Makes a UI box fill its parent
     {
         rt.anchorMin = Vector2.zero; // Bottom-left corner of the parent
         rt.anchorMax = Vector2.one; // Top-right corner of the parent
@@ -426,7 +426,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>Loads a Main Menu sprite by its path under Sprites/, without ".png".</summary>
-    static Sprite S(string path) // Loads one Main Menu sprite
+    internal static Sprite S(string path) // Loads one Main Menu sprite
     {
         var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SpriteFolder + path + ".png"); // Load the PNG as a sprite
         if (sprite == null) Debug.LogError($"Missing sprite {SpriteFolder}{path}.png. Run Tools/Art/make_mainmenu_art.py."); // Say which file is missing
@@ -443,10 +443,13 @@ public static class MainMenuBuilder
     }
 
     /// <summary>Pixel-art import settings for every PNG under the Main Menu Sprites folder.</summary>
-    static void ConfigureImporters() // Sets import options on the Main Menu PNGs
+    static void ConfigureImporters() => ConfigurePixelSprites(SpriteFolder, _ => false); // Main Menu PNGs; none need to be readable
+
+    /// <summary>Pixel-art import settings for every PNG under a folder. readable picks the PNGs whose pixels scripts must read (tap areas).</summary>
+    internal static void ConfigurePixelSprites(string folder, System.Func<string, bool> readable) // Sets import options on a folder of PNGs
     {
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Make Unity see newly drawn PNGs and sounds first
-        foreach (var file in Directory.GetFiles(SpriteFolder, "*.png", SearchOption.AllDirectories)) // Every Main Menu PNG
+        foreach (var file in Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories)) // Every PNG in the folder
         {
             var path = file.Replace('\\', '/'); // Unity paths use forward slashes
             if (!(AssetImporter.GetAtPath(path) is TextureImporter importer)) continue; // Skip anything that is not a picture
@@ -459,6 +462,7 @@ public static class MainMenuBuilder
             importer.npotScale = TextureImporterNPOTScale.None; // Keep the exact size
             importer.wrapMode = TextureWrapMode.Clamp; // Do not repeat the edges
             importer.textureCompression = TextureImporterCompression.Uncompressed; // Keep exact palette colours
+            importer.isReadable = readable(path); // Only tap-area pictures keep a readable copy in memory
             var settings = new TextureImporterSettings(); // Extra sprite settings
             importer.ReadTextureSettings(settings); // Start from the current ones
             settings.spriteAlignment = (int)SpriteAlignment.Center; // Pivot in the middle

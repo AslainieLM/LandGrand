@@ -60,6 +60,12 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             bestStars[(e, d, level)] = Math.Max(stars, BestStars(e, d, level)); // Keep the best
         }
 
+        /// <summary>Most stars any one landform can give: 3 stars for each of its 15 levels (45). Every landform has the same levels.</summary>
+        public static int MaxEpisodeStars => (LevelCount(Difficulty.Easy) + LevelCount(Difficulty.Normal) + LevelCount(Difficulty.Hard)) * 3; // (3 + 5 + 7) levels, 3 stars each
+
+        /// <summary>Best stars earned so far in one landform, added over all its levels.</summary>
+        public int EpisodeStars(Episode e) => bestStars.Where(k => k.Key.Item1 == e).Sum(k => k.Value); // Only this landform's levels
+
         /// <summary>True when this kind of rock or mineral was found before, in any session.</summary>
         public bool HasFoundKind(string kind) => foundKinds.Contains(kind); // Looks the kind up
 
