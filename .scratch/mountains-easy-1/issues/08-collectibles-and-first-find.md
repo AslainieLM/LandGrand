@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** ready-for-agent
+**Status:** built 2026-11-13, awaiting the user's Editor check
 
 - [ ] Tests: each pickup counts once; a first find asks for the pop-up; a known kind does not; a kind found in an earlier session does not
 - [ ] The pop-up pauses the game and blocks other input until OK

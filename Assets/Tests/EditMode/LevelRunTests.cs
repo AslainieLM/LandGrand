@@ -54,5 +54,106 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.AreEqual(1, progress.BestStars(Episode.Mountains, Difficulty.Easy, 1)); // With its stars
             Assert.IsTrue(progress.IsLevelAvailable(Episode.Mountains, Difficulty.Easy, 2)); // Level 2 opens
         }
+
+        // ---- Ticket 08: collecting and the first-find pop-up ----
+
+        // Pickups of Mountains Easy 1 in order: 0 granite, 1 quartz, 2 feldspar, 3 mica, 4 granite.
+
+        [Test] // Unity runs this method as a Test
+        public void CollectingAPickup_CountsOnceAndAsksForThePopupOnAFirstFind() // A kind never found before
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            var progress = new PlayerProgress(); // Nothing found yet
+            Assert.AreEqual(CollectResult.FirstFind, run.Collect(0, progress)); // First granite ever: the pop-up is wanted
+            Assert.AreEqual(1, run.Collected); // It counts
+            Assert.AreEqual("granite", run.PendingFind.Id); // The pop-up shows granite
+            Assert.IsTrue(run.IsCollected(0)); // This pickup is taken
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void TouchingACollectedPickupAgain_CountsNothing() // Each pickup counts once
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            var progress = new PlayerProgress(); // Nothing found yet
+            run.Collect(0, progress); // Take it
+            run.DismissFind(); // Close the pop-up
+            Assert.AreEqual(CollectResult.None, run.Collect(0, progress)); // Nothing new
+            Assert.AreEqual(1, run.Collected); // Still one
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void ASecondPickupOfAFoundKind_OnlyChimes() // Granite again in the same level
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            var progress = new PlayerProgress(); // Nothing found yet
+            run.Collect(0, progress); // First granite: pop-up
+            run.DismissFind(); // Close it
+            Assert.AreEqual(CollectResult.Repeat, run.Collect(4, progress)); // Second granite: chime and sparkle only
+            Assert.IsNull(run.PendingFind); // No pop-up
+            Assert.AreEqual(2, run.Collected); // Both count
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void AKindFoundInAnEarlierSession_DoesNotAskForThePopup() // Found kinds are saved
+        {
+            var progress = new PlayerProgress(); // A profile
+            progress.RecordFoundKind("quartz"); // Quartz was found on an earlier play
+            var run = new LevelRun(Level); // Start a new attempt
+            Assert.AreEqual(CollectResult.Repeat, run.Collect(1, progress)); // Quartz is known: chime only
+            Assert.IsNull(run.PendingFind); // No pop-up
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void AFirstFind_IsRememberedInTheProgress() // So the next attempt knows it
+        {
+            var progress = new PlayerProgress(); // A profile
+            new LevelRun(Level).Collect(3, progress); // Find mica
+            Assert.IsTrue(progress.HasFoundKind("mica")); // Saved as found
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void WhileThePopupIsOpen_TheRunIsPaused() // The game waits for OK
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            Assert.IsFalse(run.IsPaused); // Not paused at first
+            run.Collect(0, new PlayerProgress()); // First find
+            Assert.IsTrue(run.IsPaused); // Paused for the pop-up
+            run.DismissFind(); // OK
+            Assert.IsFalse(run.IsPaused); // Playing again
+            Assert.IsNull(run.PendingFind); // Nothing waiting
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void ABadPickupNumber_IsIgnored() // Safe against wrong numbers
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            Assert.AreEqual(CollectResult.None, run.Collect(-1, new PlayerProgress())); // Too low
+            Assert.AreEqual(CollectResult.None, run.Collect(99, new PlayerProgress())); // Too high
+            Assert.AreEqual(0, run.Collected); // Nothing counted
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void TheGoalWaitsForThePopup() // The level cannot end behind an open pop-up
+        {
+            var run = new LevelRun(Level); // Start an attempt
+            run.Collect(0, new PlayerProgress()); // Pop-up open
+            Assert.IsFalse(run.ReachGoal()); // Not cleared yet
+            run.DismissFind(); // OK
+            Assert.IsTrue(run.ReachGoal()); // Now it clears
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void StarsFollowTheCollectedCount() // The star rule from ticket 01 (0-40% 1 star, 41-99% 2, 100% 3)
+        {
+            var progress = new PlayerProgress(); // A profile
+            var two = new LevelRun(Level); // 3 of 5 = 60%
+            for (int i = 0; i < 3; i++) { two.Collect(i, progress); two.DismissFind(); } // Take three
+            two.ReachGoal(); // Finish
+            Assert.AreEqual(2, two.Stars); // Two stars
+            var all = new LevelRun(Level); // All five
+            for (int i = 0; i < 5; i++) { all.Collect(i, progress); all.DismissFind(); } // Take them all
+            all.ReachGoal(); // Finish
+            Assert.AreEqual(3, all.Stars); // Three stars
+        }
     }
 }

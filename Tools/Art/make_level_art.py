@@ -158,6 +158,18 @@ def somersault(n=4):
     return frames  # All frames
 
 
+def gem_icon():
+    """A 12x12 blue-white gem for the collectibles counter at the top left of the level."""
+    img = mm.new_image(12, 12)  # Empty icon
+    rows = ["....oooo....", "...obbbbo...", "..obwwbbbo..", ".obwbbbbbbo.", "obbbbbbbbbbo", "obbbbbbbbbbo", ".obbbbbbbbo.", "..obbbbbbo..", "...obbbbo...", "....obbo....", ".....oo.....", "............"]  # o outline, b blue, w shine
+    colors = {"o": mm.OUTLINE, "b": (92, 160, 214), "w": mm.WHITE}  # What each letter paints
+    for y, row in enumerate(rows):  # Each row, top to bottom
+        for x, ch in enumerate(row):  # Each pixel in the row
+            if ch in colors:  # Skip empty pixels
+                put(img, x, y, colors[ch])  # Paint it
+    return img
+
+
 def save(img, name):
     """Saves an image under Assets/Art/Level/Sprites/."""
     os.makedirs(os.path.dirname(os.path.join(OUT, name)), exist_ok=True)  # Make the folder if it is missing
@@ -183,6 +195,9 @@ def main():
     green = (mm.HILLS, mm.HILLS_SH, mm.LEAF)  # Same colours as the Play button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=False, scale=2), "btn_continue.png")  # Continue button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=True, scale=2), "btn_continue_pressed.png")  # Continue button, pressed
+    save(gem_icon(), "icon_gem.png")  # Counter icon
+    save(mm.button(80, 26, "OK", *green, pressed=False, scale=2), "btn_ok.png")  # OK button of the first-find pop-up
+    save(mm.button(80, 26, "OK", *green, pressed=True, scale=2), "btn_ok_pressed.png")  # OK button, pressed
     save(mm.text_image("LEVEL CLEARED!", mm.DARK, 2), "text_cleared.png")  # Result heading
     print("Level art written to", OUT)  # Tell the person running it where the files went
 

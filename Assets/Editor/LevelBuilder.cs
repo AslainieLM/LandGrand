@@ -22,6 +22,8 @@ public static class LevelBuilder // Makes the first level scene
     const string ArtScript = "Tools/Art/make_level_art.py"; // Script that draws them
     const string StartSprites = "Assets/Art/StartScreen/Sprites/"; // The explorer and dust come from the start screen
     const string SelectionSprites = "Assets/Art/Selection/Sprites/"; // The result stars come from the selection art
+    const string ItemSprites = "Assets/Art/Items/Sprites/"; // Rock and mineral pictures
+    static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for headings
     const string LessonPath = "Assets/Scenes/Lesson.unity"; // The level goes after this scene
     const string LevelPath = "Assets/Scenes/MountainsEasy1.unity"; // Where the level is saved
     const float Width = 4800f; // Level width: ten screens, about 65 s of walking (decision D-046)
@@ -117,6 +119,20 @@ public static class LevelBuilder // Makes the first level scene
         explorer.flipFrames = Enumerable.Range(0, 4).Select(i => S($"Flip/flip_{i:00}")).ToArray(); // Somersault for the double jump
         explorer.dustFrames = Enumerable.Range(0, 3).Select(i => Spr($"Dust/dust_{i:00}")).ToArray(); // Dust puff for the double jump
 
+        var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // The level data again, for its pickups
+        M.ConfigurePixelSprites(ItemSprites, _ => false); // Crisp pixel art for the item pictures
+        var spots = new List<PickupSpot>(); // The collectibles placed in the level
+        for (int i = 0; i < level.Pickups.Count; i++) // One object per pickup, in the order of LevelData
+        {
+            var pickup = level.Pickups[i]; // The data of this pickup
+            var spot = new GameObject("Pickup " + (i + 1) + " " + pickup.Kind.Id).AddComponent<PickupSpot>(); // The collectible
+            spot.transform.SetParent(geometry.transform, false); // Keep it under the level
+            spot.index = i; // Its place in the list, so the rules know it
+            spot.feet = new Vector2(pickup.Place.X, pickup.Place.Y); // Where it lies: middle of its bottom edge
+            spot.art = M.Renderer("Art", Item(pickup.Kind.Picture), 12, spot.transform); // Its picture, in front of the ledges
+            spots.Add(spot); // Remember it
+        }
+
         var follow = ppc.gameObject.AddComponent<CameraFollow>(); // The camera follows the explorer
         follow.target = explorer; // Follow the explorer
         follow.geometry = geometry; // Stop at the level's ends
@@ -136,12 +152,50 @@ public static class LevelBuilder // Makes the first level scene
         controller.explorer = explorer; // The explorer
         controller.touchControls = controls.gameObject; // Hidden after the goal
         BuildResult(controller, root); // The basic result panel
+        controller.pickups = spots.ToArray(); // The collectibles
+        BuildCollecting(controller, root, font); // The counter at the top left and the first-find pop-up
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
 
         Directory.CreateDirectory(Path.GetDirectoryName(LevelPath)); // Make the Scenes folder if it is missing
         EditorSceneManager.SaveScene(scene, LevelPath); // Save the scene
         K.AddSceneAfter(LevelPath, LessonPath); // Right after the Lesson Screen in the build list
         Debug.Log($"Level built: {LevelPath}. Open StartScreen, press Play, and go Mountains > Easy > 1 > Start. Arrows or A/D walk; Space jumps."); // Tell the user it worked
+    }
+
+    static void BuildCollecting(LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
+    {
+        var c = K.CanvasCenter; // Middle of the screen
+        var counter = M.Panel("Counter", root, new Vector2(34f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top left
+        M.Picture("Gem", counter, S("icon_gem"), new Vector2(15f, 18f), new Vector2(34f, 18f)); // Collectible icon
+        controller.counterLabel = M.Label("Count", counter, font, "0/" + LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1).Pickups.Count,new Vector2(40f, 18f), new Vector2(34f, 18f), new Vector2(36f, 16f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count
+
+        var find = M.Rect("Find Item", root, c, c); // Holder of the whole pop-up, hidden at the start
+        find.sizeDelta = new Vector2(480f, 270f); // Covers the screen
+        var dim = find.gameObject.AddComponent<Image>(); // Dark backdrop
+        dim.color = new Color(0f, 0f, 0f, 0.55f); // See-through black
+        dim.raycastTarget = true; // Blocks taps on the controls while the pop-up is open
+        var panel = M.Panel("Panel", find, c, new Vector2(300f, 150f)); // Cream pop-up panel
+        M.Label("Heading", panel, font, "You found an item!", new Vector2(240f, 80f), c, new Vector2(260f, 16f), Clay, TMPro.TextAlignmentOptions.Midline); // Title
+        M.Picture("Slot", panel, LessonSprite("item_slot"), new Vector2(112f, 128f), c); // Frame behind the picture
+        controller.findPicture = M.Picture("Picture", panel, null, new Vector2(112f, 128f), c); // The item picture; set when the pop-up opens
+        controller.findPicture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
+        controller.findName = M.Label("Name", panel, font, "", new Vector2(250f, 110f), c, new Vector2(220f, 16f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name
+        controller.findDescription = M.Label("Description", panel, font, "", new Vector2(250f, 146f), c, new Vector2(220f, 48f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description, wrapped
+        controller.findDescription.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentence wrap onto three lines
+        controller.findDescription.wordSpacing = 20f; // 3 more pixels between words, as on the Lesson Screen
+        controller.findDescription.lineSpacing = 12f; // About 2 more pixels between lines
+        var ok = M.Picture("OK", panel, S("btn_ok"), new Vector2(240f, 190f), c); // OK button
+        ok.raycastTarget = true; // Buttons must catch taps
+        var button = ok.gameObject.AddComponent<Button>(); // Makes it tappable
+        button.transition = Selectable.Transition.SpriteSwap; // Change picture instead of colour when pressed
+        button.targetGraphic = ok; // The picture that changes
+        button.spriteState = new SpriteState { pressedSprite = S("btn_ok_pressed") }; // Pushed-in picture
+        button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between buttons
+        controller.findOk = button; // The controller connects it
+        controller.findPanel = find.gameObject; // The controller shows and hides it
+        controller.itemPictures = ItemCatalog.All.Select(k => Item(k.Picture)).ToArray(); // Pictures of every kind
+        controller.sparkleFrames = Enumerable.Range(0, 4).Select(i => Spr($"Sparkle/sparkle_{i:00}")).ToArray(); // Sparkle frames from the start screen
+        controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Pickup chimes
     }
 
     static void BuildResult(LevelController controller, Transform root) // Makes the hidden "Level cleared!" panel
@@ -183,6 +237,8 @@ public static class LevelBuilder // Makes the first level scene
         sr.transform.position = LevelGeometry.ToWorld(r.center.x, r.center.y); // Centred on the rectangle
     }
 
+    static Sprite Item(string path) => K.Sprite(ItemSprites, path, "Tools/Art/make_lesson_art.py"); // Loads one item picture
+    static Sprite LessonSprite(string path) => K.Sprite("Assets/Art/Lesson/Sprites/", path, "Tools/Art/make_lesson_art.py"); // Loads one Lesson Screen sprite
     static Sprite S(string path) => K.Sprite(SpriteFolder, path, ArtScript); // Loads one level sprite
     static Sprite Spr(string path) => K.Sprite(StartSprites, path, "the start-screen art (already in the project)"); // Loads one start-screen sprite
     static Sprite Sel(string path) => K.Sprite(SelectionSprites, path, "Tools/Art/make_selection_art.py"); // Loads one selection sprite
