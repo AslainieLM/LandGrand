@@ -132,7 +132,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
     }
 
     /// <summary>Camera, the full-screen Mountains picture with slow snow, cloud and eagle, the music and the UI canvas.</summary>
-    static Transform Backdrop(string canvasName, out LandGrand.StartScreen.StartScreenMusic music, out CanvasGroup group) // Shared start of both scenes
+    internal static Transform Backdrop(string canvasName, out LandGrand.StartScreen.StartScreenMusic music, out CanvasGroup group) // Shared start of both scenes (the Lesson Screen uses it too)
     {
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
         M.Renderer("Mountains", S("bg_mountains"), 0, null).transform.position = M.Px(240f, 135f); // Mountains fill the screen
