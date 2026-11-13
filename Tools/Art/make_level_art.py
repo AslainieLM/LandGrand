@@ -117,6 +117,43 @@ def flag():
     return outline(img)  # Dark edge around the flag
 
 
+def checkpoint_flag(reached):
+    """A 16x28 checkpoint flag. Not reached: a grey rag hangs low on the pole. Reached: a green flag flies at the top."""
+    img = mm.new_image(16, 28)  # Empty picture
+    mm.fill_rect(img, 2, 1, 2, 27, lm.HANDLE)  # Wooden pole
+    if reached:  # Raised green flag
+        mm.fill_rect(img, 4, 2, 10, 7, mm.HILLS)  # Green flag
+        mm.fill_rect(img, 4, 7, 10, 2, mm.HILLS_SH)  # Shaded bottom
+        mm.fill_rect(img, 12, 4, 2, 3, mm.HILLS_SH)  # Shading at the tip
+        mm.fill_rect(img, 2, 0, 2, 1, mm.HELMET)  # Gold knob lit up
+    else:  # Grey rag low on the pole
+        mm.fill_rect(img, 4, 14, 8, 6, mm.MASK_SH)  # Grey rag
+        mm.fill_rect(img, 4, 18, 8, 2, mm.STRAP)  # Darker bottom
+    return outline(img)  # Dark edge
+
+
+def spikes():
+    """A 16x10 tile of grey spikes on a dark base. Unity repeats it across the trap."""
+    img = mm.new_image(16, 10)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 2, mm.STRAP)  # Dark base
+    for x0 in (0, 8):  # Two spikes per tile
+        for row in range(8):  # Each row of a spike, from the base up
+            half = (8 - row) // 2  # The spike gets thinner going up
+            mm.fill_rect(img, x0 + 4 - half, 2 + row, max(1, half * 2), 1, mm.MASK)  # One row of the spike
+        put(img, x0 + 3, 4, mm.WHITE)  # A shine pixel
+    img = img.transpose(Image.FLIP_TOP_BOTTOM)  # Drawn base-first at the top; flip so the spikes point up
+    return outline(img)  # Dark edge
+
+
+def pit_fill():
+    """A 16x16 dark tile for the inside of the pit."""
+    img = mm.new_image(16, 16)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 16, mm.OUTLINE)  # Almost black
+    for (x, y) in ((3, 4), (10, 9), (6, 13)):  # A few specks of rock
+        put(img, x, y, mm.BACKPACK_SH)  # One speck
+    return img  # No outline, it is a fill
+
+
 ARROW = ["#.......", "##......", "###.....", "####....", "#####...", "######..", "#####...", "####....", "###.....", "##......", "#......."]  # Right arrow, 11 rows
 JUMP = ["....#....", "...###...", "..#####..", ".#######.", "#########", "...###...", "...###...", "...###...", "...###..."]  # Up arrow
 
@@ -170,6 +207,34 @@ def gem_icon():
     return img
 
 
+def pause_icon(pressed):
+    """A 24x24 brown button with two white bars, for the pause button at the top right."""
+    img = mm.new_image(24, 24)  # Empty button
+    mm.rounded_box(img, 0, 0, 24, 24)  # Dark outline
+    mm.fill_rect(img, 1, 1, 22, 22, mm.PLATEAU_SH if pressed else mm.PLATEAU)  # Button face
+    mm.fill_rect(img, 1, 20, 22, 3, mm.BACKPACK_SH)  # Shaded bottom band
+    off = 1 if pressed else 0  # A pressed button drops its symbol 1 pixel
+    mm.fill_rect(img, 8, 6 + off, 3, 10, mm.WHITE)  # Left bar
+    mm.fill_rect(img, 13, 6 + off, 3, 10, mm.WHITE)  # Right bar
+    return img  # Done
+
+
+def mark_icon(ok):
+    """A 10x10 tick (green) or cross (red) for the goals on the Result Screen."""
+    img = mm.new_image(10, 10)  # Empty icon
+    if ok:  # A tick
+        for (x, y) in ((1, 5), (2, 6), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2)):  # The tick path
+            put(img, x, y, mm.LEAF)  # One pixel
+            put(img, x, y + 1, mm.HILLS_SH)  # A thicker line
+    else:  # A cross
+        for i in range(2, 8):  # The two diagonals
+            put(img, i, i, mm.SCARF_SH)  # Down-right line
+            put(img, i, 9 - i, mm.SCARF_SH)  # Up-right line
+            put(img, i + 1, i, mm.SCARF)  # Thicker
+            put(img, i + 1, 9 - i, mm.SCARF)  # Thicker
+    return img  # Done
+
+
 def save(img, name):
     """Saves an image under Assets/Art/Level/Sprites/."""
     os.makedirs(os.path.dirname(os.path.join(OUT, name)), exist_ok=True)  # Make the folder if it is missing
@@ -195,6 +260,23 @@ def main():
     green = (mm.HILLS, mm.HILLS_SH, mm.LEAF)  # Same colours as the Play button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=False, scale=2), "btn_continue.png")  # Continue button
     save(mm.button(120, 26, "CONTINUE", *green, pressed=True, scale=2), "btn_continue_pressed.png")  # Continue button, pressed
+    save(checkpoint_flag(False), "checkpoint_off.png")  # Checkpoint not reached
+    save(checkpoint_flag(True), "checkpoint_on.png")  # Checkpoint reached
+    save(spikes(), "spikes.png")  # Spike trap tile
+    save(pit_fill(), "pit_fill.png")  # Inside of the pit
+    brown = (mm.PLATEAU, mm.PLATEAU_SH, mm.BACKPACK_SH)  # Same colours as the Back buttons
+    save(mark_icon(True), "icon_tick.png")  # Goal met
+    save(mark_icon(False), "icon_cross.png")  # Goal not met
+    for pressed in (False, True):  # Normal and pressed pictures
+        tag = "_pressed" if pressed else ""  # File name ending
+        save(mm.button(110, 26, "REPLAY", *brown, pressed=pressed, scale=2), "btn_replay%s.png" % tag)  # Replay from the lesson
+        save(mm.button(130, 26, "BACK TO MAP", *brown, pressed=pressed, scale=2), "btn_map%s.png" % tag)  # Back to the Landform Map
+    for pressed in (False, True):  # Normal and pressed pictures
+        tag = "_pressed" if pressed else ""  # File name ending
+        save(pause_icon(pressed), "btn_pause%s.png" % tag)  # Pause button
+        save(mm.button(120, 26, "RESUME", *green, pressed=pressed, scale=2), "btn_resume%s.png" % tag)  # Resume
+        save(mm.button(120, 26, "RETRY", *brown, pressed=pressed, scale=2), "btn_retry%s.png" % tag)  # Retry
+        save(mm.button(120, 26, "MAIN MENU", *brown, pressed=pressed, scale=2), "btn_menu%s.png" % tag)  # Back to Main Menu
     save(gem_icon(), "icon_gem.png")  # Counter icon
     save(mm.button(80, 26, "OK", *green, pressed=False, scale=2), "btn_ok.png")  # OK button of the first-find pop-up
     save(mm.button(80, 26, "OK", *green, pressed=True, scale=2), "btn_ok_pressed.png")  # OK button, pressed

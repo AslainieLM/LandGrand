@@ -97,5 +97,27 @@ namespace LandGrand.Rules.Tests // Test code lives here
             p.RecordClear(Episode.Mountains, Difficulty.Easy, 1, 1); // A clear does not remove kinds
             Assert.IsTrue(p.HasFoundKind("quartz")); // Quartz still found
         }
+
+        [Test] // Unity runs this method as a Test
+        public void NextLevelAfter_IsTheNextAvailableLevelOrZero() // Continue on the Result Screen
+        {
+            var p = new PlayerProgress(); // A fresh profile
+            Assert.AreEqual(0, p.NextLevelAfter(Episode.Mountains, Difficulty.Easy, 1)); // Level 1 not cleared: nothing opens
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 1, 1); // Clear level 1
+            Assert.AreEqual(2, p.NextLevelAfter(Episode.Mountains, Difficulty.Easy, 1)); // Level 2 is next
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 2, 2); // Clear level 2
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 3, 3); // Clear the last Easy level
+            Assert.AreEqual(0, p.NextLevelAfter(Episode.Mountains, Difficulty.Easy, 3)); // No level 4 in Easy
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void ReplayingWithFewerStars_NeverLowersTheBest() // D-045, shown on the trail, the card and the map
+        {
+            var p = new PlayerProgress(); // A fresh profile
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 1, 3); // A perfect clear
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 1, 1); // A poor replay
+            Assert.AreEqual(3, p.BestStars(Episode.Mountains, Difficulty.Easy, 1)); // The best stays
+            Assert.AreEqual(3, p.DifficultyStars(Episode.Mountains, Difficulty.Easy)); // So do the card totals
+        }
     }
 }

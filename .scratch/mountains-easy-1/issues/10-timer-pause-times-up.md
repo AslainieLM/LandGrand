@@ -4,7 +4,7 @@
 
 **Blocked by:** Tickets 07
 
-**Status:** ready-for-agent
+**Status:** built 2026-11-13, awaiting the user's Editor check
 
 - [ ] Tests: time counts down while playing, stops while paused and during the pop-up, and reaching zero gives time up; retry resets the attempt
 - [ ] The pause menu's three buttons work; the Android Back button opens the pause menu during play

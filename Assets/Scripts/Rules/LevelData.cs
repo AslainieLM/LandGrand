@@ -89,8 +89,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public Spot Checkpoint { get; } // The mid-level flag
         public IReadOnlyList<Hazard> Hazards { get; } // Pits and spike traps
         public Spot Goal { get; } // The cave entrance with the flag
+        public IReadOnlyList<string> Review { get; } // Two or three sentences that close the lesson on the Result Screen (draft, D-043)
 
-        public LevelData(Episode episode, Difficulty difficulty, int number, Lesson lesson, Pickup[] pickups, Spot start, Spot checkpoint, Hazard[] hazards, Spot goal) // Makes a level
+        public LevelData(Episode episode, Difficulty difficulty, int number, Lesson lesson, Pickup[] pickups, Spot start, Spot checkpoint, Hazard[] hazards, Spot goal, string[] review = null) // Makes a level
         {
             Episode = episode; // Remember the landform
             Difficulty = difficulty; // Remember the difficulty
@@ -102,6 +103,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             Checkpoint = checkpoint; // Remember the checkpoint
             Hazards = hazards.ToArray(); // Keep our own copy, so nobody can change the level later
             Goal = goal; // Remember the goal
+            Review = (review ?? new string[0]).ToArray(); // Keep our own copy; a level may have no review yet
         }
 
         /// <summary>Countdown length for a difficulty: Easy 2, Normal 3, Hard 4 minutes (D-039).</summary>
@@ -172,7 +174,13 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     new Hazard(HazardType.Pit, new Spot(1880f, 0f), 48f), // Pit before the checkpoint
                     new Hazard(HazardType.Spikes, new Spot(3500f, 0f), 32f), // Spikes after the checkpoint
                 },
-                new Spot(4740f, 0f)), // Cave entrance at the right end
+                new Spot(4740f, 0f), // Cave entrance at the right end
+                new[] // Draft review for the Result Screen; needs a teacher check like the lesson (D-043, Q-04)
+                {
+                    "Mountains are high land with steep sides.", // Repeats the lesson
+                    "Granite is a hard rock made of quartz, feldspar and mica.", // The rock and its minerals
+                    "Hard rock like granite helps mountains stay tall.", // Why it matters
+                }),
         };
 
         /// <summary>The level's data, or null when that level has no data yet.</summary>

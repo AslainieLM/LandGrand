@@ -47,6 +47,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             return true; // Nothing blocks it
         }
 
+        /// <summary>The number of the next level after this one when it is available (for Continue), or 0 when there is none.</summary>
+        public int NextLevelAfter(Episode e, Difficulty d, int level) => IsLevelAvailable(e, d, level + 1) ? level + 1 : 0; // 0 for the last level or when this one is not cleared
+
         /// <summary>True when the level was cleared at least once.</summary>
         public bool IsCleared(Episode e, Difficulty d, int level) => bestStars.ContainsKey((e, d, level)); // Only cleared levels are stored
 

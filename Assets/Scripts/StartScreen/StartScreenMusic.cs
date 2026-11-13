@@ -20,6 +20,11 @@ namespace LandGrand.StartScreen
         float fade;          // 0..1 multiplier applied to both volumes
         float fadeTarget = 1f; // Fade level to move toward
         float fadeRate; // How fast the fade moves, per second
+        float duck = 1f; // 0..1 multiplier that makes the sound quieter while the game is paused (ticket 12)
+        float duckTarget = 1f; // Duck level to move toward
+
+        /// <summary>Makes everything quieter (for example 0.3) while the game is paused, or back to normal (1). It changes smoothly.</summary>
+        public void DuckTo(float level) => duckTarget = Mathf.Clamp01(level); // The next frames glide to this level
 
         void Awake() // Runs once when the object is created
         {
@@ -49,7 +54,8 @@ namespace LandGrand.StartScreen
         void Update() // Runs every frame
         {
             fade = Mathf.MoveTowards(fade, fadeTarget, fadeRate * Time.unscaledDeltaTime); // Move the fade level toward its target
-            float setting = GameSettings.MusicVolume; // The player's music volume from Settings (0 to 1)
+            duck = Mathf.MoveTowards(duck, duckTarget, 3f * Time.unscaledDeltaTime); // Glide to the paused or normal level
+            float setting = GameSettings.MusicVolume * duck; // The player's music volume from Settings (0 to 1), lowered while the game is paused
             musicSource.volume = musicVolume * fade * setting; // Music loudness: base level, fade, and the player's setting
             ambienceSource.volume = ambienceVolume * fade * setting; // Wind-and-birds loudness: base level, fade, and the player's setting
         }

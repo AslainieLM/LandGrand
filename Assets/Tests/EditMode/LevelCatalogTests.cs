@@ -102,5 +102,12 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             Assert.AreEqual("MountainsEasy1", MountainsEasy1.SceneName); // Landform, difficulty and number
         }
+
+        [Test] // Unity runs this method as a Test
+        public void Review_HasTwoOrThreeDraftSentences() // Shown at the end of the Result Screen (ticket 11)
+        {
+            Assert.That(MountainsEasy1.Review.Count, Is.InRange(2, 3)); // Two or three sentences
+            Assert.IsTrue(MountainsEasy1.Review.All(r => !string.IsNullOrWhiteSpace(r))); // None empty
+        }
     }
 }

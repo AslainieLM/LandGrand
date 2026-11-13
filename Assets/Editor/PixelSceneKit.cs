@@ -57,6 +57,19 @@ internal static class PixelSceneKit // Helpers for the scene builders
         return music; // The controller fades it out when leaving
     }
 
+    /// <summary>Music for the Mountains levels: its own tune, quieter than the menu, and the light breeze of Easy (D-042, ticket 12).</summary>
+    internal static StartScreenMusic LevelMusic() // Music for the level scene
+    {
+        var music = new GameObject("Music").AddComponent<StartScreenMusic>(); // Music player
+        music.music = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "bgm_mountains.ogg"); // The Mountains tune
+        music.ambience = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "amb_breeze_easy.ogg"); // Light breeze for Easy
+        music.musicVolume = 0.28f; // Quieter than the menu (0.40), so the breeze and the chimes come through
+        music.ambienceVolume = 0.30f; // Same as the menu ambience
+        if (music.music == null) Debug.LogError($"Missing {AudioFolder}bgm_mountains.ogg. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        if (music.ambience == null) Debug.LogError($"Missing {AudioFolder}amb_breeze_easy.ogg. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        return music; // The controller fades it out when leaving
+    }
+
     /// <summary>The event system that sends taps to the buttons.</summary>
     internal static void Events() // Makes the UI input objects
     {

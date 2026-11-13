@@ -15,6 +15,14 @@ namespace LandGrand.Play // Level play scripts live here
         public Rect[] ledges = new Rect[0]; // Ledges the explorer can stand on and jump up through
         public float width = 4800f; // Level width in pixels
 
+        /// <summary>True when something solid or a ledge top holds up a body standing at this feet spot.</summary>
+        public bool HasGroundAt(float x, float y) // Used to pick a safe place to come back to
+        {
+            foreach (var r in solids) if (x > r.xMin && x < r.xMax && Mathf.Abs(r.yMax - y) < 0.5f) return true; // Standing on a solid top
+            foreach (var r in ledges) if (x > r.xMin && x < r.xMax && Mathf.Abs(r.yMax - y) < 0.5f) return true; // Standing on a ledge top
+            return false; // Nothing under the feet
+        }
+
         /// <summary>A level pixel position as a world position.</summary>
         public static Vector3 ToWorld(float x, float y) => new Vector3(x / PixelsPerUnit, y / PixelsPerUnit, 0f); // 32 pixels make one unit
 

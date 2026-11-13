@@ -43,6 +43,12 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>The middle of the explorer's feet, in level pixels.</summary>
         public Vector2 Position => position; // Read by the camera and the goal check
 
+        /// <summary>True while the explorer stands on something.</summary>
+        public bool Grounded => grounded; // Read by the level controller to remember the last safe spot
+
+        /// <summary>1 when the explorer faces right, -1 when it faces left.</summary>
+        public int Facing => facing; // Tells which way the explorer was walking
+
         Vector2 position; // Feet position in level pixels
         Vector2 velocity; // Speed in pixels per second
         bool grounded; // Standing on something
