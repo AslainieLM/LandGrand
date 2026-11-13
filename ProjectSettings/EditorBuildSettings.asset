@@ -12,6 +12,21 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 87960109b494a474ea7bbedc037a57a0
   - enabled: 1
+    path: Assets/Scenes/LandformMap.unity
+    guid: 822b7116cf8bb494a969487552e626f2
+  - enabled: 1
+    path: Assets/Scenes/DifficultySelection.unity
+    guid: efe7b8225a5f183479b4a65562dfc006
+  - enabled: 1
+    path: Assets/Scenes/LevelSelection.unity
+    guid: c6253e709eab1d94895aa4ad261859e5
+  - enabled: 1
+    path: Assets/Scenes/Lesson.unity
+    guid: c8c967a1c2890894789ce8ed19ce042c
+  - enabled: 1
+    path: Assets/Scenes/MountainsEasy1.unity
+    guid: 1c5b340227d500c42a391b273611db1f
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:

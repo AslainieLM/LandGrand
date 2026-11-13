@@ -65,37 +65,37 @@ public static class LessonBuilder // Makes the Lesson Screen scene
 
         // Top part: the landform picture on the left, the heading and lesson sentences on the right.
         controller.picture = M.Picture("Picture", panel, S("lesson_mountains"), new Vector2(88f, 95f), pc); // 120x82 picture, x 28 to 148
-        controller.heading = M.Label("Heading", panel, font, "Level 1: Mountains", new Vector2(306f, 60f), pc, new Vector2(292f, 14f), Clay, TextAlignmentOptions.MidlineLeft); // Heading, x 160 to 452
-        var body = M.Label("Body", panel, font, "", new Vector2(306f, 103f), pc, new Vector2(292f, 64f), K.Ink, TextAlignmentOptions.TopLeft); // Lesson sentences under the heading
+        controller.heading = Spaced(M.Label("Heading", panel, font, "Level 1: Mountains", new Vector2(306f, 60f), pc, new Vector2(292f, 14f), Clay, TextAlignmentOptions.MidlineLeft)); // Heading, x 160 to 452
+        var body = Spaced(M.Label("Body", panel, font, "", new Vector2(306f, 104f), pc, new Vector2(292f, 72f), K.Ink, TextAlignmentOptions.TopLeft)); // Lesson sentences under the heading: four spaced-out lines
         body.textWrappingMode = TextWrappingModes.Normal; // A long sentence breaks onto the next line
         controller.body = body; // The controller fills in the sentences
-        controller.draftNote = M.Label("Draft Note", panel, font, "", new Vector2(138f, 147f), pc, new Vector2(220f, 14f), DraftRed, TextAlignmentOptions.MidlineLeft); // Draft note under the picture
+        controller.draftNote = Spaced(M.Label("Draft Note", panel, font, "", new Vector2(138f, 147f), pc, new Vector2(220f, 14f), DraftRed, TextAlignmentOptions.MidlineLeft)); // Draft note under the picture
 
         // Bottom-left part: "You will find:" and one box per item kind.
-        controller.itemsHeading = M.Label("Items Heading", panel, font, "You will find:", new Vector2(138f, 162f), pc, new Vector2(220f, 14f), Clay, TextAlignmentOptions.MidlineLeft).gameObject; // Items heading
+        controller.itemsHeading = Spaced(M.Label("Items Heading", panel, font, "You will find:", new Vector2(138f, 162f), pc, new Vector2(220f, 14f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Items heading
         var slots = new List<LessonController.ItemSlot>(); // Filled below
         for (int i = 0; i < 4; i++) // Four boxes: enough for granite, quartz, feldspar and mica
         {
-            var c = new Vector2(52f + i * 58f, 186f); // Middle of this box
+            var c = new Vector2(50f + i * 56f, 186f); // Middle of this box; 56 apart leaves room for the goals on the right
             var box = M.Picture("Item " + (i + 1), panel, S("item_slot"), c, pc); // 30x30 tan box
             var picture = M.Picture("Picture", box.transform, I("granite"), c, c); // Item picture inside the box
-            var label = M.Label("Name", box.transform, font, "", c + new Vector2(0f, 23f), c, new Vector2(56f, 14f), K.Ink, TextAlignmentOptions.Midline); // Item name under the box
+            var label = Spaced(M.Label("Name", box.transform, font, "", c + new Vector2(0f, 23f), c, new Vector2(56f, 14f), K.Ink, TextAlignmentOptions.Midline)); // Item name under the box
             slots.Add(new LessonController.ItemSlot { root = box.gameObject, picture = picture, label = label }); // Everything the controller needs
         }
         controller.items = slots.ToArray(); // The four boxes
 
         // Bottom-right part: "Goals:" and one row per goal, each with an icon.
-        controller.goalsHeading = M.Label("Goals Heading", panel, font, "Goals:", new Vector2(360f, 162f), pc, new Vector2(184f, 14f), Clay, TextAlignmentOptions.MidlineLeft).gameObject; // Goals heading, x 268 to 452
+        controller.goalsHeading = Spaced(M.Label("Goals Heading", panel, font, "Goals:", new Vector2(354f, 162f), pc, new Vector2(196f, 14f), Clay, TextAlignmentOptions.MidlineLeft)).gameObject; // Goals heading, x 256 to 452
         string[] icons = { "icon_star", "icon_clock" }; // Star for collecting, clock for time
         var rows = new GameObject[icons.Length]; // Filled below
         var goals = new TMP_Text[icons.Length]; // Filled below
         for (int i = 0; i < icons.Length; i++) // One row per goal
         {
-            var c = new Vector2(360f, 182f + i * 18f); // Middle of this row
+            var c = new Vector2(354f, 182f + i * 18f); // Middle of this row
             var row = M.Rect("Goal " + (i + 1), panel, c, pc); // Row holder
-            row.sizeDelta = new Vector2(184f, 16f); // Room for the icon and the text
-            M.Picture("Icon", row, S(icons[i]), new Vector2(276f, c.y), c); // Icon on the left of the row
-            goals[i] = M.Label("Text", row, font, "", new Vector2(369f, c.y), c, new Vector2(166f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Goal words, x 286 to 452
+            row.sizeDelta = new Vector2(196f, 16f); // Room for the icon and the text
+            M.Picture("Icon", row, S(icons[i]), new Vector2(264f, c.y), c); // Icon on the left of the row
+            goals[i] = Spaced(M.Label("Text", row, font, "", new Vector2(363f, c.y), c, new Vector2(178f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft)); // Goal words, x 274 to 452
             rows[i] = row.gameObject; // The controller hides rows it does not need
         }
         controller.goalRows = rows; // The goal rows
@@ -122,6 +122,14 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         EditorSceneManager.SaveScene(scene, LessonPath); // Save the scene
         K.AddSceneAfter(LessonPath, LevelPath); // Right after the level trail in the build list
         Debug.Log($"Lesson scene built: {LessonPath}. Open StartScreen, press Play, and tap Mountains, Easy, then level 1."); // Tell the user it worked
+    }
+
+    /// <summary>Gives lesson text wider gaps between words and lines, so words do not run together. 25 units = 3 pixels at the 12-pixel font size.</summary>
+    static TMP_Text Spaced(TMP_Text label) // Adds the extra spacing
+    {
+        label.wordSpacing = 25f; // 3 more pixels between words
+        label.lineSpacing = 25f; // 3 more pixels between lines
+        return label; // Give the same label back
     }
 
     static Sprite S(string path) => K.Sprite(SpriteFolder, path, ArtScript); // Loads one Lesson Screen sprite

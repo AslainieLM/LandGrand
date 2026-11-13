@@ -14,4 +14,10 @@
 - [ ] Every new line of code has a short basic-English comment (D-033)
 - [ ] Behaviour matches the spec and the final manuscript (D-036); anything new is raised with the user first
 
+**Added 2026-11-13 after the first build (D-046, vault `Project/Gameplay Design.md` "Level look and feel"):**
+
+- [ ] The background scrolls in layers (parallax) as the explorer walks, reusing the start screen's 8 mountain layers and its layer-scrolling script
+- [ ] The double jump is a full forward somersault of about 0.3 s, drawn as 4–6 new pixel-art frames (no sprite rotation); the dust puff stays
+- [ ] The level is longer: about 60–90 s to finish without hazards; the item places in `LevelData.cs` move with the new layout
+
 Spec: `../spec.md`. Design source: vault `Project/Gameplay Design.md`.

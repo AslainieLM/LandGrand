@@ -148,7 +148,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     {
         static readonly List<LevelData> Levels = new List<LevelData> // All levels with data
         {
-            // Mountains, Easy, level 1 (D-043). Places are a first draft; ticket 07 sets them when it builds the level.
+            // Mountains, Easy, level 1 (D-043). Places match the boulders and ledges in Assets/Editor/LevelBuilder.cs; change both together.
             new LevelData(Episode.Mountains, Difficulty.Easy, 1, // Mountains, Easy, level 1
                 new Lesson("Mountains", new[] // Draft lesson for Grade 5
                 {
