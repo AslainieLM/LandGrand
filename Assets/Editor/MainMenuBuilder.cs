@@ -28,6 +28,12 @@ public static class MainMenuBuilder
     // so all text uses 2x (22). Sizes in between, such as the old 15, draw some strokes 1 pixel and others 2 pixels wide, and letters look bent (decision D-050).
     const string FontAssetPath = "Assets/Fonts/Micro5 2x.asset"; // TextMeshPro font at 2x, made from the font file by this builder
     internal const int FontSize = 22; // 2x size: every stroke exactly 2 pixels wide, capital letters 10 pixels tall
+    // Sentences and descriptions use Andika instead (decision D-051): a smooth font made by SIL for children learning to read,
+    // whose letters are clearly different from each other. The UI canvas draws at the phone's full resolution, so it stays smooth.
+    const string ReadingFontFile = "Assets/Fonts/Andika-Regular.ttf"; // The reading font (SIL Open Font License, see Assets/Fonts/OFL-Andika.txt)
+    const string ReadingFontPath = "Assets/Fonts/Andika SDF.asset"; // TextMeshPro font made from it by this builder
+    internal const int ReadingFontSize = 15; // UI size: the longest lesson sentence (309 pixels) fits its 312-pixel line
+    internal const float ReadingLineSpacing = -6f; // Pulls lines to about 24 pixels apart, the same as the pixel font
     static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text
     static readonly Color32 Warning = new Color32(160, 40, 40, 255); // Red for "name not accepted" messages
     const float PPU = 32f; // Sprite pixels per Unity unit, same as the start screen
@@ -163,7 +169,7 @@ public static class MainMenuBuilder
         var sfxSlider = MakeSlider("Sound slider", setPanel, new Vector2(240f, 174f), setC); // Sound-effects volume slider
         Label("Name label", setPanel, font, "NAME", new Vector2(190f, 200f), setC, new Vector2(60f, 16f), Ink, TextAlignmentOptions.MidlineRight); // "NAME" next to the box
         var nameBox = InputBox("Name box", setPanel, font, "Your name", new Vector2(292f, 200f), setC, new Vector2(120f, 20f)); // Where the name is shown and changed
-        var nameMessage = Label("Name message", setPanel, font, "", new Vector2(240f, 218f), setC, new Vector2(300f, 14f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
+        var nameMessage = ReadingLabel("Name message", setPanel, "", new Vector2(240f, 218f), setC, new Vector2(300f, 22f), Warning, TextAlignmentOptions.Midline); // Why a name was refused, in the reading font
         var setBack = MakeButton("Back", setPanel, "back", new Vector2(240f, 242f), setC); // Closes Settings
         var settingsPanel = setPanel.gameObject.AddComponent<SettingsPanel>(); // Connects the sliders to the saved volumes
         settingsPanel.musicSlider = musicSlider; // Music slider
@@ -176,7 +182,7 @@ public static class MainMenuBuilder
         var namePanelRect = Panel("Name panel", root, nameC, new Vector2(300f, 130f)); // Panel background, wide enough for the longest name message at 2x
         Label("Heading", namePanelRect, font, "What is your name?", new Vector2(240f, 100f), nameC, new Vector2(260f, 16f), Ink, TextAlignmentOptions.Midline); // Question
         var typedName = InputBox("Name box", namePanelRect, font, "Type here", new Vector2(240f, 128f), nameC, new Vector2(160f, 24f)); // Where the player types
-        var typedMessage = Label("Message", namePanelRect, font, "", new Vector2(240f, 150f), nameC, new Vector2(284f, 22f), Warning, TextAlignmentOptions.Midline); // Why a name was refused
+        var typedMessage = ReadingLabel("Message", namePanelRect, "", new Vector2(240f, 150f), nameC, new Vector2(284f, 22f), Warning, TextAlignmentOptions.Midline); // Why a name was refused, in the reading font
         var nameOk = MakeButton("OK", namePanelRect, "ok", new Vector2(204f, 178f), nameC); // Saves the name
         var nameBack = MakeButton("Back", namePanelRect, "back", new Vector2(276f, 178f), nameC); // Closes the name panel
         var namePanelLogic = namePanelRect.gameObject.AddComponent<NamePanel>(); // Checks and saves the typed name
@@ -350,6 +356,42 @@ public static class MainMenuBuilder
 
     /// <summary>The pixel font at 2x (22 px), for all game text. Made once; later runs reuse it.</summary>
     internal static TMP_FontAsset EnsureFont() => MakeFont(FontAssetPath, FontSize, "Micro5 2x"); // Gives the pixel font
+
+    /// <summary>The Andika reading font, for sentences and descriptions (decision D-051). Made once; later runs reuse it.</summary>
+    internal static TMP_FontAsset EnsureReadingFont() // Gives the reading font
+    {
+        var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(ReadingFontPath); // Already made on an earlier run?
+        if (existing != null) return existing; // Reuse it
+        var source = AssetDatabase.LoadAssetAtPath<Font>(ReadingFontFile); // The .ttf file
+        if (source == null) // Unity may not have seen a newly added font file yet
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); // Look again; only here, because a refresh can make fonts loaded earlier in a build go stale
+            source = AssetDatabase.LoadAssetAtPath<Font>(ReadingFontFile); // Try once more
+        }
+        if (source == null) { Debug.LogError($"Missing font {ReadingFontFile}. Add Andika (SIL OFL) there."); return null; } // Say what is missing
+        var asset = TMP_FontAsset.CreateFontAsset(source, 90, 9, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 1024, 1024, AtlasPopulationMode.Dynamic, true); // Smooth letters that stay sharp at any zoom, new letters added on demand
+        asset.TryAddCharacters(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~—", out _); // Draw the basic letters now, including the long dash
+        AssetDatabase.CreateAsset(asset, ReadingFontPath); // Save the font asset
+        asset.material.name = "Andika SDF Material"; // Name its material
+        AssetDatabase.AddObjectToAsset(asset.material, asset); // Keep the material inside the font asset
+        foreach (var atlas in asset.atlasTextures) // Each letter-picture sheet
+        {
+            atlas.name = "Andika SDF Atlas"; // Name the sheet; it keeps smooth filtering, which distance-field letters need
+            AssetDatabase.AddObjectToAsset(atlas, asset); // Keep the sheet inside the font asset
+        }
+        EditorUtility.SetDirty(asset); // Mark it as changed
+        AssetDatabase.SaveAssets(); // Write it to disk
+        return asset; // Give the font back
+    }
+
+    /// <summary>A line or paragraph of easy-to-read Andika text for sentences and descriptions (decision D-051). It does not catch taps.</summary>
+    internal static TextMeshProUGUI ReadingLabel(string name, Transform parent, string text, Vector2 center, Vector2 parentCenter, Vector2 size, Color color, TextAlignmentOptions align) // Makes a reading-text label
+    {
+        var label = Label(name, parent, EnsureReadingFont(), text, center, parentCenter, size, color, align); // Same placing as the pixel labels
+        label.fontSize = ReadingFontSize; // Reading size
+        label.lineSpacing = ReadingLineSpacing; // Lines about 24 pixels apart
+        return label; // Give the label back
+    }
 
     static TMP_FontAsset MakeFont(string path, int size, string name) // Makes a TextMeshPro font from the pixel font file at one sharp size, once
     {

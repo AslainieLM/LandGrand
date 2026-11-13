@@ -70,7 +70,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
 
         // Middle: the landform picture on the left, the four lesson sentences beside it, one per line.
         controller.picture = M.Picture("Picture", panel, S("lesson_mountains"), new Vector2(80f, 108f), pc); // 120x82 picture, x 20 to 140, y 67 to 149
-        var body = Spaced(M.Label("Body", panel, font, "", new Vector2(304f, 114f), pc, new Vector2(312f, 96f), K.Ink, TextAlignmentOptions.TopLeft)); // Lesson sentences, x 148 to 460, four 24-pixel lines from y 66
+        var body = M.ReadingLabel("Body", panel, "", new Vector2(304f, 114f), pc, new Vector2(312f, 96f), K.Ink, TextAlignmentOptions.TopLeft); // Lesson sentences in the reading font (D-051), x 148 to 460, four 24-pixel lines from y 66
         body.textWrappingMode = TextWrappingModes.Normal; // A sentence that is too long breaks onto the next line
         controller.body = body; // The controller fills in the sentences
 
@@ -82,7 +82,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
             var c = new Vector2(44f + i * 58f, 184f); // Middle of this box; 58 apart keeps the names (Feldspar is 58 pixels) apart and leaves room for the goals
             var box = M.Picture("Item " + (i + 1), panel, S("item_slot"), c, pc); // 30x30 tan box
             var picture = M.Picture("Picture", box.transform, I("granite"), c, c); // Item picture inside the box
-            var label = Spaced(M.Label("Name", box.transform, font, "", c + new Vector2(0f, 28f), c, new Vector2(58f, 22f), K.Ink, TextAlignmentOptions.Midline)); // Item name under the box
+            var label = M.ReadingLabel("Name", box.transform, "", c + new Vector2(0f, 28f), c, new Vector2(58f, 22f), K.Ink, TextAlignmentOptions.Midline); // Item name under the box, in the reading font so G and Q read clearly (D-051)
             slots.Add(new LessonController.ItemSlot { root = box.gameObject, picture = picture, label = label }); // Everything the controller needs
         }
         controller.items = slots.ToArray(); // The four boxes
@@ -98,7 +98,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
             var row = M.Rect("Goal " + (i + 1), panel, c, pc); // Row holder
             row.sizeDelta = new Vector2(208f, 22f); // Room for the icon and the text
             M.Picture("Icon", row, S(icons[i]), new Vector2(252f, c.y), c); // Icon on the left of the row
-            goals[i] = Spaced(M.Label("Text", row, font, "", new Vector2(360f, c.y), c, new Vector2(196f, 22f), K.Ink, TextAlignmentOptions.MidlineLeft)); // Goal words, x 262 to 458
+            goals[i] = M.ReadingLabel("Text", row, "", new Vector2(360f, c.y), c, new Vector2(196f, 22f), K.Ink, TextAlignmentOptions.MidlineLeft); // Goal words in the reading font, x 262 to 458
             rows[i] = row.gameObject; // The controller hides rows it does not need
         }
         controller.goalRows = rows; // The goal rows

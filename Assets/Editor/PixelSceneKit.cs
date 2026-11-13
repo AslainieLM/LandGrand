@@ -108,14 +108,17 @@ internal static class PixelSceneKit // Helpers for the scene builders
         return back; // The controller connects it
     }
 
-    /// <summary>Call just before saving a scene. Reloads the pixel font and puts it on every text, at its sharp size,
-    /// so no label is saved with a stale font reference or TextMeshPro's smooth default font (decisions D-047, D-050).</summary>
-    internal static void FixFonts() // Puts the pixel font on every text in the open scene
+    /// <summary>Call just before saving a scene. Reloads both fonts and puts the right one on every text: Andika on reading text
+    /// (made at the reading size), the pixel font at its sharp size on everything else. So no label is saved with a stale font
+    /// reference or TextMeshPro's default font (decisions D-047, D-050, D-051).</summary>
+    internal static void FixFonts() // Puts the right font on every text in the open scene
     {
-        var font = M.EnsureFont(); // The 2x font, loaded fresh after any refresh during the build
+        var pixel = M.EnsureFont(); // The 2x pixel font, loaded fresh after any refresh during the build
+        var reading = M.EnsureReadingFont(); // The Andika reading font, loaded fresh too
         foreach (var text in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include)) // Every text in the scene, hidden panels too
         {
-            text.font = font; // The pixel font
+            if (Mathf.Approximately(text.fontSize, M.ReadingFontSize)) { text.font = reading; continue; } // Reading text keeps Andika
+            text.font = pixel; // Everything else: the pixel font
             text.fontSize = M.FontSize; // At its sharp 2x size
         }
     }

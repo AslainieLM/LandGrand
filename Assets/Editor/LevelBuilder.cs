@@ -214,11 +214,9 @@ public static class LevelBuilder // Makes the first level scene
         M.Picture("Slot", panel, LessonSprite("item_slot"), new Vector2(92f, 98f), c); // Frame behind the picture
         controller.findPicture = M.Picture("Picture", panel, null, new Vector2(92f, 98f), c); // The item picture; set when the pop-up opens
         controller.findPicture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
-        controller.findName = M.Label("Name", panel, font, "", new Vector2(216f, 98f), c, new Vector2(200f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name, right of the picture
-        controller.findDescription = M.Label("Description", panel, font, "", new Vector2(240f, 158f), c, new Vector2(336f, 72f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description, x 72 to 408, up to three 24-pixel lines from y 122
+        controller.findName = M.ReadingLabel("Name", panel, "", new Vector2(216f, 98f), c, new Vector2(200f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name, right of the picture, in the reading font (D-051)
+        controller.findDescription = M.ReadingLabel("Description", panel, "", new Vector2(240f, 158f), c, new Vector2(336f, 72f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description in the reading font (D-051), x 72 to 408, up to three 24-pixel lines from y 122
         controller.findDescription.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentence wrap onto three lines
-        controller.findDescription.wordSpacing = 0f; // The font's own 6-pixel spaces are wide enough at 2x
-        controller.findDescription.lineSpacing = 0f; // The font's own 24-pixel line height
         var ok = M.Picture("OK", panel, S("btn_ok"), new Vector2(240f, 200f), c); // OK button, bottom of the pop-up
         ok.raycastTarget = true; // Buttons must catch taps
         var button = ok.gameObject.AddComponent<Button>(); // Makes it tappable
@@ -327,15 +325,13 @@ public static class LevelBuilder // Makes the first level scene
         {
             float x = 70f + i * 126f; // Icon place: "Collect 5/5" on the left, "Finish before time runs out" from the middle
             controller.goalIcons[i] = M.Picture("Goal Icon " + (i + 1), panel, S("icon_tick"), new Vector2(x, 120f), c); // Tick or cross
-            controller.goalTexts[i] = M.Label("Goal " + (i + 1), panel, font, "", new Vector2(x + 10f + 115f, 120f), c, new Vector2(230f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words, starting 10 pixels right of the icon
+            controller.goalTexts[i] = M.ReadingLabel("Goal " + (i + 1), panel, "", new Vector2(x + 10f + 115f, 120f), c, new Vector2(230f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words in the reading font, starting 10 pixels right of the icon
         }
         controller.tickSprite = S("icon_tick"); // Goal met
         controller.crossSprite = S("icon_cross"); // Goal not met
 
-        controller.reviewLabel = M.Label("Review", panel, font, "", new Vector2(240f, 170f), c, new Vector2(424f, 72f), Clay, TMPro.TextAlignmentOptions.Top); // Review sentences, wrapped onto up to three 24-pixel lines from y 134
+        controller.reviewLabel = M.ReadingLabel("Review", panel, "", new Vector2(240f, 170f), c, new Vector2(424f, 72f), Clay, TMPro.TextAlignmentOptions.Top); // Review sentences in the reading font (D-051), wrapped onto up to three 24-pixel lines from y 134
         controller.reviewLabel.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentences wrap onto lines
-        controller.reviewLabel.wordSpacing = 0f; // The font's own 6-pixel spaces are wide enough at 2x
-        controller.reviewLabel.lineSpacing = 0f; // The font's own 24-pixel line height
         controller.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 218f), c, new Vector2(300f, 22f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking, under the review
 
         controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(100f, 243f), c); // Start again from the lesson
