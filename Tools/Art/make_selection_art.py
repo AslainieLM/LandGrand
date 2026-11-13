@@ -108,8 +108,8 @@ def main():
             save(mm.text_image("%s: %s" % (e.upper(), d.upper()), mm.DARK, 2), "Titles", "title_%s_%s.png" % (e, d))  # Level trail title
     save(stone(mm.MASK, mm.MASK_SH), "Trail", "stone_open.png")  # Stone that can be played
     save(stone(mm.MASK_SH, mm.STRAP), "Trail", "stone_locked.png")  # Stone that is still locked
-    save(mm.outlined(mm.STAR, mm.HELMET), "Trail", "star_full.png")  # Star that was earned
-    save(mm.outlined(mm.STAR, mm.MASK_SH), "Trail", "star_empty.png")  # Star not earned yet
+    save(lm.star(mm.HELMET, mm.HELMET_SH, mm.HEADLAMP), "Trail", "star_full.png")  # Star that was earned: yellow
+    save(lm.star(mm.MASK_SH, mm.STRAP, mm.MASK), "Trail", "star_empty.png")  # Star not earned yet: grey
     save(lm.pattern(lm.PADLOCK, {"s": mm.MASK, "b": mm.HELMET_SH, "h": mm.HELMET, "k": mm.OUTLINE}), "Trail", "padlock_small.png")  # Small padlock on a locked stone
     save(dot(), "Trail", "dot.png")  # One dash of the trail
     print("Selection art written to", OUT)  # Tell the person running it where the files went

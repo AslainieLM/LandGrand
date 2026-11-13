@@ -240,6 +240,25 @@ PADLOCK = [  # s = shackle, b = body, h = body shine, k = keyhole
     "bbbbkbbb",
     "bbbbbbbb",
 ]
+STAR = [  # Clean five-point star: f = face, s = shade on the lower right, h = shine
+    ".....f.....",
+    "....fff....",
+    "....fhf....",
+    "fffffffffff",
+    ".fffffffss.",
+    "..fffffss..",
+    "..ffffsss..",
+    ".ffff.ssss.",
+    ".fff...sss.",
+    ".ff.....ss.",
+]
+
+
+def star(face, shade, shine):
+    """The star sprite in three colours, with a dark outline (13x12 pixels)."""
+    return pattern(STAR, {"f": face, "s": shade, "h": shine})  # Outlined, coloured star
+
+
 EAGLE_UP = [  # Wings raised
     "e.......e",
     ".e.....e.",
@@ -310,7 +329,7 @@ def main():
         save(locked_overlay(base, which), "Locked", "locked_%s.png" % name)  # Its grey, locked look
         save(mm.text_image(name.upper(), mm.DARK), "Labels", "label_%s.png" % name)  # Its name for the label
     save(pattern(PADLOCK, {"s": mm.MASK, "b": mm.HELMET_SH, "h": mm.HELMET, "k": mm.OUTLINE}, 2), "padlock.png")  # Padlock on locked regions
-    save(mm.outlined(mm.STAR, mm.HELMET), "star.png")  # Small star beside the star count
+    save(star(mm.HELMET, mm.HELMET_SH, mm.HEADLAMP), "star.png")  # Star beside the star count
     save(back_icon(False), "Buttons", "btn_back_icon.png")  # Back icon, normal
     save(back_icon(True), "Buttons", "btn_back_icon_pressed.png")  # Back icon, pressed
     save(cloud(), "Mountains", "cloud.png")  # Drifting cloud

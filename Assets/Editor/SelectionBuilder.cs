@@ -69,11 +69,11 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             var button = panel.gameObject.AddComponent<Button>(); // Makes the card tappable
             button.transition = Selectable.Transition.None; // The card's own picture shows open or locked
             button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between cards
-            var heading = M.Picture("Heading", panel, S($"Cards/heading_{Difficulties[i]}"), c + new Vector2(0f, -50f), c); // "EASY", "NORMAL" or "HARD"
-            M.Picture("Star", panel, S("Trail/star_full"), c + new Vector2(-16f, -24f), c); // Star icon
-            var stars = M.Label("Stars", panel, font, "0/9", c + new Vector2(10f, -24f), c, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress
-            var padlock = M.Picture("Padlock", panel, K.Sprite(MapSpriteFolder, "padlock", "Tools/Art/make_landform_map_art.py"), c + new Vector2(0f, 10f), c); // Big padlock while locked
-            var guide = M.Label("Guide", panel, font, "", c + new Vector2(0f, 46f), c, new Vector2(104f, 30f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels"
+            var heading = M.Picture("Heading", panel, S($"Cards/heading_{Difficulties[i]}"), c + new Vector2(0f, -48f), c); // "EASY", "NORMAL" or "HARD"
+            M.Picture("Star", panel, S("Trail/star_full"), c + new Vector2(-14f, -24f), c); // Star icon, left of the middle
+            var stars = M.Label("Stars", panel, font, "0/9", c + new Vector2(18f, -24f), c, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress, starting 4 pixels right of the star
+            var padlock = M.Picture("Padlock", panel, K.Sprite(MapSpriteFolder, "padlock", "Tools/Art/make_landform_map_art.py"), c + new Vector2(0f, 8f), c); // Big padlock while locked, in the middle of the card
+            var guide = M.Label("Guide", panel, font, "", c + new Vector2(0f, 42f), c, new Vector2(104f, 30f), K.Ink, TextAlignmentOptions.Center); // "Clear all Easy levels", under the padlock
             guide.textWrappingMode = TextWrappingModes.Normal; // Long guides break onto two lines
             cards[i] = new DifficultySelectionController.Card // Everything the controller needs for this card
             {
@@ -110,10 +110,10 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             var button = image.gameObject.AddComponent<Button>(); // Makes the stone tappable
             button.transition = Selectable.Transition.None; // The stone's own picture shows open or locked
             button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between stones
-            var number = M.Label("Number", image.transform, font, (i + 1).ToString(), c + new Vector2(0f, -1f), c, new Vector2(26f, 14f), K.Ink, TextAlignmentOptions.Midline); // Level number
+            var number = M.Label("Number", image.transform, font, (i + 1).ToString(), c + new Vector2(0f, -2f), c, new Vector2(26f, 14f), K.Ink, TextAlignmentOptions.Midline); // Level number
             var padlock = M.Picture("Padlock", image.transform, S("Trail/padlock_small"), c, c); // Small padlock while locked
             var stars = new Image[3]; // Three stars under the stone
-            for (int s = 0; s < 3; s++) stars[s] = M.Picture("Star " + (s + 1), image.transform, S("Trail/star_empty"), c + new Vector2(-12f + s * 12f, 18f), c); // Stars side by side
+            for (int s = 0; s < 3; s++) stars[s] = M.Picture("Star " + (s + 1), image.transform, S("Trail/star_empty"), c + new Vector2(-15f + s * 15f, 20f), c); // Stars side by side, 2 pixels apart, just under the stone
             stones[i] = new LevelSelectionController.Stone { button = button, image = image, number = number, stars = stars, padlock = padlock.gameObject }; // Everything the controller needs
         }
 

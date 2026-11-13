@@ -282,6 +282,7 @@ public static class MainMenuBuilder
         img.sprite = sprite; // Which picture to show
         img.raycastTarget = false; // Taps pass through it
         if (sprite != null) rt.sizeDelta = sprite.rect.size; // One sprite pixel = one UI pixel
+        if (sprite != null) rt.anchoredPosition += new Vector2(sprite.rect.width % 2f, sprite.rect.height % 2f) * 0.5f; // Odd sizes move half a pixel so their edges sit on whole pixels and stay sharp
         return img;
     }
 

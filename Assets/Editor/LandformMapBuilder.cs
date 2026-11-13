@@ -80,8 +80,8 @@ public static class LandformMapBuilder // Makes the Landform Map scene
             var plaque = M.Panel("Label " + r.name, root, r.label, new Vector2(88f, 38f)); // Small cream plaque
             plaque.GetComponent<Image>().raycastTarget = false; // Taps pass through to the region
             M.Picture("Name", plaque, S("Labels/label_" + r.name), r.label + new Vector2(0f, -8f), r.label); // Region name
-            M.Picture("Star", plaque, S("star"), r.label + new Vector2(-18f, 7f), r.label); // Star icon
-            regions[i].stars = M.Label("Stars", plaque, font, "0/45", r.label + new Vector2(10f, 7f), r.label, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress
+            M.Picture("Star", plaque, S("star"), r.label + new Vector2(-14f, 7f), r.label); // Star icon, left of the middle
+            regions[i].stars = M.Label("Stars", plaque, font, "0/45", r.label + new Vector2(18f, 7f), r.label, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress, starting 4 pixels right of the star
             regions[i].padlock = M.Picture("Padlock " + r.name, root, S("padlock"), r.padlock, K.CanvasCenter).gameObject; // Padlock while locked
         }
         regions[0].life = life.gameObject; // Only Mountains has animations so far
