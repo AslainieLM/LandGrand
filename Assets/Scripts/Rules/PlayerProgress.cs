@@ -75,6 +75,12 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// <summary>Best stars earned so far in one landform, added over all its levels.</summary>
         public int EpisodeStars(Episode e) => bestStars.Where(k => k.Key.Item1 == e).Sum(k => k.Value); // Only this landform's levels
 
+        /// <summary>Best stars earned so far over every level, for the Profile (D-052).</summary>
+        public int TotalStars => bestStars.Values.Sum(); // Only best stars are kept, so a replay never lowers it
+
+        /// <summary>Number of levels cleared so far, for the Profile (D-052).</summary>
+        public int ClearedLevelCount => bestStars.Count; // Only cleared levels are stored
+
         /// <summary>True when this kind of rock or mineral was found before, in any session.</summary>
         public bool HasFoundKind(string kind) => foundKinds.Contains(kind); // Looks the kind up
 

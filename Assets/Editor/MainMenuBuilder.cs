@@ -1,7 +1,8 @@
 using System.IO; // Gives access to folders and files
 using System.Linq; // Gives access to list helpers such as Where and Select
 using LandGrand.MainMenu; // Gives access to the Main Menu scripts
-using LandGrand.StartScreen; // Gives access to the start-screen scripts we reuse (background, title, birds, music)
+using LandGrand.StartScreen; // Gives access to the start-screen scripts we reuse (clouds, birds, flipbooks, music)
+using LandGrand.LandformMap; // Gives access to CircleFlight, which flies the eagle and the butterflies
 using TMPro; // Gives access to TextMeshPro text, input boxes and font assets
 using UnityEditor; // Gives access to editor tools such as menu items and asset loading
 using UnityEditor.SceneManagement; // Gives access to making and saving scenes
@@ -39,13 +40,6 @@ public static class MainMenuBuilder
     const float PPU = 32f; // Sprite pixels per Unity unit, same as the start screen
     static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
 
-    // Background layers: PNG name and scroll speed in pixels per second (slower than the start screen).
-    static readonly (string prefix, float speed)[] Layers = // One entry per background layer
-    {
-        ("L0", 0f), ("L1", 1.5f), ("L2", 0.4f), ("L3", 0.9f),
-        ("L4", 1.6f), ("L5", 2.8f), ("L6", 4.9f), ("L7", 7f),
-    };
-
     [MenuItem("LandGrand/Build Main Menu Scene")]
     public static void Build() // Builds and saves the whole Main Menu scene
     {
@@ -72,6 +66,8 @@ public static class MainMenuBuilder
         cam.transform.position = new Vector3(0f, 0f, -10f); // Stand back from the sprites so it can see them
         cam.clearFlags = CameraClearFlags.SolidColor; // Fill empty space with one colour
         cam.backgroundColor = new Color32(191, 232, 247, 255); // Light sky colour
+        cam.allowMSAA = false; // No anti-aliasing: it blurs pixel edges
+        cam.allowHDR = false; // No HDR: pixel art needs exact palette colours
         var ppc = camGo.AddComponent<PixelPerfectCamera>(); // Keeps pixels square and sharp
         ppc.assetsPPU = (int)PPU; // Sprites use 32 pixels per unit
         ppc.refResolutionX = 480; // Screen is 480 pixels wide
@@ -80,22 +76,7 @@ public static class MainMenuBuilder
         ppc.cropFrame = PixelPerfectCamera.CropFrame.None; // Fill the whole phone screen
         camGo.AddComponent<AudioListener>(); // Lets the player hear sounds
 
-        // Background: the start-screen landforms, scrolling slowly.
-        var bgSprites = StartFrames("Background"); // Layers L0 to L7
-        var background = new GameObject("Background").transform; // Parent for all layers
-        for (int i = 0; i < Layers.Length; i++) // Make each layer
-        {
-            var sprite = bgSprites.FirstOrDefault(s => s.name.StartsWith(Layers[i].prefix)); // Find this layer's PNG
-            if (sprite == null) { Debug.LogError($"No sprite for layer {Layers[i].prefix} in {StartSprites}Background"); continue; } // Skip a missing layer and say so
-            var layer = new GameObject(sprite.name).AddComponent<ParallaxLayer>(); // Object that scrolls the layer
-            layer.transform.SetParent(background, false); // Keep it under Background
-            layer.speedPixelsPerSecond = Layers[i].speed; // How fast this layer scrolls
-            layer.widthPixels = 960f; // Layer art is two screens wide
-            layer.pixelsPerUnit = PPU; // Same pixel size as the sprites
-            Renderer("Art", sprite, i * 10, layer.transform); // The layer picture; farther layers draw first
-        }
-        var fill = new GameObject("Below-ground fill").AddComponent<ScreenFill>(); // Fills space under the ground on tall screens
-        fill.topY = -135f / PPU; // Starts at the bottom edge of the art
+        CampBackground(); // The base camp in golden afternoon light (D-054)
 
         // Birds that sometimes fly across the sky.
         var birdFrames = StartFrames("Birds"); // Wing frames
@@ -106,15 +87,7 @@ public static class MainMenuBuilder
         bird.SetActive(false); // Keep the template hidden
         new GameObject("Birds").AddComponent<BirdFlock>().birdTemplate = bird; // Sends flocks of birds now and then
 
-        // Title at the top, with the same shine and bob as the start screen.
-        var titleSprites = StartFrames("Title"); // Title frames: plain, then the shine
-        var title = Renderer("Title", titleSprites.FirstOrDefault(), 90, null); // The LAND GRAND title
-        title.transform.position = Px(240f, 38f); // Near the top, in the middle
-        var shine = title.gameObject.AddComponent<SpriteFlipbook>(); // Plays the shine now and then
-        shine.frames = titleSprites; // All title frames
-        shine.sequence = Enumerable.Repeat(0, 20).Concat(Enumerable.Range(1, Mathf.Max(0, titleSprites.Length - 1))).ToArray(); // Wait 2 seconds, then sweep the shine
-        shine.framesPerSecond = 10f; // Frame speed of the shine
-        title.gameObject.AddComponent<PixelBob>(); // Moves the title up and down by one pixel
+        // No title here: the Start Screen shows the LAND GRAND title, so the menu stays clean (D-054).
 
         // Music: the calm menu loop (a quieter relative of Quest) and the wind-and-birds ambience.
         var music = new GameObject("Music").AddComponent<StartScreenMusic>(); // Music player
@@ -144,12 +117,38 @@ public static class MainMenuBuilder
         var group = canvasGo.AddComponent<CanvasGroup>(); // Lets the controller turn off every button at once
         var root = canvasGo.transform; // Parent for everything below
 
-        // The four main buttons (LG-16), large for small hands (LG-18).
-        var mainButtons = Rect("Main buttons", root, CanvasCenter, CanvasCenter); // Group that holds the four buttons
-        var play = MakeButton("Play", mainButtons, "play", new Vector2(240f, 106f), CanvasCenter); // Play button
-        var settings = MakeButton("Settings", mainButtons, "settings", new Vector2(240f, 138f), CanvasCenter); // Settings button
-        var tutorial = MakeButton("Tutorial", mainButtons, "tutorial", new Vector2(240f, 170f), CanvasCenter); // Tutorial button
-        var exit = MakeButton("Exit", mainButtons, "exit", new Vector2(240f, 202f), CanvasCenter); // Exit button
+        // The base camp hub (D-054): the player badge top-left, Settings, Tutorial and Exit as named icon buttons top-right,
+        // and one big PLAY at the bottom. All four LG-16 actions stay, large for small hands (LG-18).
+        // They sit in one group that hides while a panel is open; the group is made before the dim layer, so panels cover it.
+        var mainButtons = Rect("Main buttons", root, CanvasCenter, CanvasCenter); // Group that holds the badge and the buttons
+
+        // Player badge (D-052, D-054): portrait, name, stars and found items. The whole card opens the Profile.
+        var badgeC = new Vector2(81f, 28f); // Middle of the badge, x 6 to 156, y 6 to 50
+        var badge = Panel("Player badge", mainButtons, badgeC, new Vector2(150f, 44f)); // Cream card
+        var profile = badge.gameObject.AddComponent<Button>(); // The whole card is one button
+        profile.transition = Selectable.Transition.None; // The card keeps its colour; a tint would turn it grey while the menu turns taps off during its entrance
+        profile.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between buttons
+        Picture("Portrait", badge, S("Buttons/btn_profile"), new Vector2(28f, 28f), badgeC); // Round explorer portrait, x 12 to 44
+        var profileName = ReadingLabel("Name", badge, "Explorer", new Vector2(100f, 18f), badgeC, new Vector2(100f, 30f), Ink, TextAlignmentOptions.MidlineLeft); // The name, x 50 to 150; shows "Explorer" in the Scene view, and the saved name once the game runs
+        profileName.textWrappingMode = TextWrappingModes.NoWrap; // One line only
+        profileName.overflowMode = TextOverflowModes.Ellipsis; // A long name ends in "..." inside the card; the box is 30 tall because a line taller than its box is cut away completely
+        Picture("Star", badge, PixelSceneKit.Sprite("Assets/Art/Lesson/Sprites/", "icon_star", "Tools/Art/make_lesson_art.py"), new Vector2(56f, 39f), badgeC); // Star icon
+        var profileStars = ReadingLabel("Stars", badge, "0", new Vector2(80f, 39f), badgeC, new Vector2(32f, 22f), Ink, TextAlignmentOptions.MidlineLeft); // Stars earned, x 64 to 96, in the same font as the name so the card looks even
+        Picture("Gem", badge, PixelSceneKit.Sprite("Assets/Art/Level/Sprites/", "icon_gem", "Tools/Art/make_level_art.py"), new Vector2(102f, 39f), badgeC); // Rock-and-mineral icon
+        var profileFound = ReadingLabel("Found", badge, "0/0", new Vector2(132f, 39f), badgeC, new Vector2(44f, 22f), Ink, TextAlignmentOptions.MidlineLeft); // Item kinds found out of all, x 110 to 154, same font
+
+        // Icon buttons top-right, each with its name under it, 62 apart so "Settings" and "Tutorial" never touch.
+        var settings = IconButton("Settings", mainButtons, "settings_icon", 330f); // Gear: opens Settings
+        var tutorial = IconButton("Tutorial", mainButtons, "tutorial_icon", 392f); // Open book: opens Tutorial
+        var exit = IconButton("Exit", mainButtons, "exit_icon", 454f); // Door: asks "Exit game?"
+
+        // Big PLAY at the bottom, over the grass. It sits in a holder that bobs by one pixel, so it gently calls the player.
+        var playC = new Vector2(240f, 236f); // Middle of PLAY, x 172 to 308, y 218 to 254
+        var playHolder = Rect("Play holder", mainButtons, playC, CanvasCenter); // Bobs; PLAY itself slides in on entry
+        var bob = playHolder.gameObject.AddComponent<PixelBob>(); // Up and down by one pixel
+        bob.pixelsPerUnit = 1f; // UI units are pixels
+        bob.periodSeconds = 1.6f; // A little quicker than the old title bob
+        var play = MakeButton("Play", playHolder, "play_big", playC, playC); // Big green PLAY with a play triangle
 
         // Dark layer behind open panels. It also blocks taps on what is behind it.
         var dim = Rect("Dim", root, CanvasCenter, CanvasCenter); // Full-screen dark layer
@@ -159,7 +158,7 @@ public static class MainMenuBuilder
         dim.offsetMax = Vector2.zero; // No gap at the top-right
         dim.gameObject.AddComponent<Image>().color = new Color32(31, 26, 36, 140); // See-through dark outline colour
 
-        // Settings panel: music and sound-effects volume.
+        // Settings panel: music and sound-effects volume. The name is changed in the Profile (D-052).
         var setC = new Vector2(240f, 164f); // Middle of the Settings panel
         var setPanel = Panel("Settings panel", root, setC, new Vector2(330f, 188f)); // Panel background
         Picture("Heading", setPanel, S("Text/heading_settings"), new Vector2(240f, 88f), setC); // "SETTINGS"
@@ -167,15 +166,12 @@ public static class MainMenuBuilder
         var musicSlider = MakeSlider("Music slider", setPanel, new Vector2(240f, 132f), setC); // Music volume slider
         Picture("Sound label", setPanel, S("Text/label_sfx"), new Vector2(240f, 158f), setC); // "SOUND EFFECTS"
         var sfxSlider = MakeSlider("Sound slider", setPanel, new Vector2(240f, 174f), setC); // Sound-effects volume slider
-        Label("Name label", setPanel, font, "NAME", new Vector2(190f, 200f), setC, new Vector2(60f, 16f), Ink, TextAlignmentOptions.MidlineRight); // "NAME" next to the box
-        var nameBox = InputBox("Name box", setPanel, font, "Your name", new Vector2(292f, 200f), setC, new Vector2(120f, 20f)); // Where the name is shown and changed
-        var nameMessage = ReadingLabel("Name message", setPanel, "", new Vector2(240f, 218f), setC, new Vector2(300f, 22f), Warning, TextAlignmentOptions.Midline); // Why a name was refused, in the reading font
-        var setBack = MakeButton("Back", setPanel, "back", new Vector2(240f, 242f), setC); // Closes Settings
+        var setBack = MakeButton("Back", setPanel, "back_icon", new Vector2(97f, 88f), setC); // Back arrow icon, top-left corner: closes Settings without saving
+        var setSave = MakeButton("Save", setPanel, "save", new Vector2(369f, 240f), setC); // Save button, bottom-right corner: keeps the changes and closes Settings
         var settingsPanel = setPanel.gameObject.AddComponent<SettingsPanel>(); // Connects the sliders to the saved volumes
         settingsPanel.musicSlider = musicSlider; // Music slider
         settingsPanel.sfxSlider = sfxSlider; // Sound slider
-        settingsPanel.nameInput = nameBox; // Name box
-        settingsPanel.nameMessage = nameMessage; // Name message
+        settingsPanel.saveButton = setSave; // Save button
 
         // Name panel: what Play shows the first time, before the Landform Map.
         var nameC = new Vector2(240f, 140f); // Middle of the name panel
@@ -192,19 +188,36 @@ public static class MainMenuBuilder
 
         // Tutorial panel: four draft picture pages (waiting on open questions Q-02 and Q-06).
         var tutC = new Vector2(240f, 164f); // Middle of the Tutorial panel
-        var tutPanel = Panel("Tutorial panel", root, tutC, new Vector2(330f, 188f)); // Panel background
-        Picture("Heading", tutPanel, S("Text/heading_tutorial"), new Vector2(240f, 84f), tutC); // "TUTORIAL"
-        var pagePicture = Picture("Page picture", tutPanel, S("Tutorial/page_1_picture"), new Vector2(240f, 138f), tutC); // Page picture
-        var pageText = Picture("Page text", tutPanel, S("Tutorial/page_1_text"), new Vector2(240f, 196f), tutC); // Page words
-        Picture("Draft note", tutPanel, S("Text/text_draft"), new Vector2(240f, 218f), tutC); // "DRAFT: GAME RULES ARE NOT FINAL YET"
-        var prev = MakeButton("Prev", tutPanel, "prev", new Vector2(178f, 240f), tutC); // Previous page
-        var tutBack = MakeButton("Back", tutPanel, "back", new Vector2(240f, 240f), tutC); // Closes Tutorial
-        var next = MakeButton("Next", tutPanel, "next", new Vector2(302f, 240f), tutC); // Next page
+        // Layout (decision D-051): it covers the logo, so nothing peeks out above it. Rows from the top:
+        // Back icon, heading and page number (y 26); page title (y 54); picture (y 68 to 148); sentences (y 156 to 228);
+        // Prev arrow, draft note and Next arrow (y 246).
+        tutC = new Vector2(240f, 135f); // Middle of the Tutorial panel
+        var tutPanel = Panel("Tutorial panel", root, tutC, new Vector2(464f, 254f)); // Panel background, x 8 to 472, y 8 to 262
+        var tutClay = new Color32(154, 85, 50, 255); // Clay brown for the page title and number
+        var tutRed = new Color32(168, 63, 36, 255); // Scarf red so the draft note stands out
+        var tutBack = MakeButton("Back", tutPanel, "back_icon", new Vector2(30f, 26f), tutC); // Back arrow icon, top-left corner, closes Tutorial
+        Label("Heading", tutPanel, font, "TUTORIAL", new Vector2(240f, 26f), tutC, new Vector2(200f, 22f), Ink, TextAlignmentOptions.Midline); // Heading, top centre, pixel font
+        var pageCounter = ReadingLabel("Page number", tutPanel, "", new Vector2(410f, 26f), tutC, new Vector2(100f, 22f), tutClay, TextAlignmentOptions.MidlineRight); // "1/4", top right, ending at x 460
+        var pageTitle = ReadingLabel("Page title", tutPanel, "", new Vector2(240f, 54f), tutC, new Vector2(440f, 22f), tutClay, TextAlignmentOptions.Midline); // "Move and jump", centred over the picture
+        var pagePicture = Picture("Page picture", tutPanel, S("Tutorial/page_1_picture"), new Vector2(240f, 108f), tutC); // Page picture, 200x80, y 68 to 148
+        var pageText = ReadingLabel("Page text", tutPanel, "", new Vector2(240f, 192f), tutC, new Vector2(440f, 72f), Ink, TextAlignmentOptions.Top); // Up to three 24-pixel lines, y 156 to 228
+        var prev = MakeButton("Prev", tutPanel, "prev_icon", new Vector2(30f, 246f), tutC); // Left arrow icon, bottom-left corner
+        ReadingLabel("Draft note", tutPanel, "Draft: game rules are not final yet", new Vector2(240f, 246f), tutC, new Vector2(360f, 22f), tutRed, TextAlignmentOptions.Midline); // Draft note, bottom centre between the arrows
+        var next = MakeButton("Next", tutPanel, "next_icon", new Vector2(450f, 246f), tutC); // Right arrow icon, bottom-right corner
         var tutorialPanel = tutPanel.gameObject.AddComponent<TutorialPanel>(); // Flips the pages
         tutorialPanel.picture = pagePicture; // Where pictures show
-        tutorialPanel.text = pageText; // Where words show
+        tutorialPanel.counter = pageCounter; // Where the page number shows
+        tutorialPanel.title = pageTitle; // Where titles show
+        tutorialPanel.text = pageText; // Where sentences show
         tutorialPanel.pictures = Enumerable.Range(1, 4).Select(i => S($"Tutorial/page_{i}_picture")).ToArray(); // Pictures for pages 1 to 4
-        tutorialPanel.texts = Enumerable.Range(1, 4).Select(i => S($"Tutorial/page_{i}_text")).ToArray(); // Words for pages 1 to 4
+        tutorialPanel.titles = new[] { "Move and jump", "Collect", "Earn stars", "Watch out" }; // Titles for pages 1 to 4
+        tutorialPanel.texts = new[] // Sentences for pages 1 to 4 (draft wording, as before)
+        {
+            "Tap the arrows to walk left or right.\nTap the jump button to jump.\nTap again in the air to double jump.", // Page 1
+            "Walk into a rock or mineral to pick it up.\nRead its name and what it is.", // Page 2
+            "Reach the end to finish the level.\nSee what you found and your stars.", // Page 3
+            "Jump over pits and traps.\nFinish before the timer runs out.", // Page 4
+        }; // End of the sentences
         tutorialPanel.prevButton = prev; // Prev button
         tutorialPanel.nextButton = next; // Next button
 
@@ -228,6 +241,10 @@ public static class MainMenuBuilder
         controller.settingsButton = settings; // Settings
         controller.tutorialButton = tutorial; // Tutorial
         controller.exitButton = exit; // Exit
+        controller.profileButton = profile; // Player badge, opens the Profile
+        controller.profileName = profileName; // Name on the badge
+        controller.profileStars = profileStars; // Stars on the badge
+        controller.profileFound = profileFound; // Found items on the badge
         controller.mainButtons = mainButtons.gameObject; // Group of the four buttons
         controller.dim = dim.gameObject; // Dark layer
         controller.settingsPanel = setPanel.gameObject; // Settings panel
@@ -256,6 +273,67 @@ public static class MainMenuBuilder
         EditorSceneManager.SaveScene(scene, ScenePath); // Save the new scene
         AddSceneToBuildSecond(ScenePath); // Put it right after the start screen in the build list
         Debug.Log($"Main Menu built: {ScenePath}. Open StartScreen and press Play, then tap to reach the menu."); // Tell the user it worked
+    }
+
+    /// <summary>
+    /// The base camp behind the Main Menu and the Profile (D-054): a still golden sky with a low sun, slowly drifting clouds,
+    /// snowy peaks, a pine band and the clearing with the tent and the map board. The campfire flickers, sparks rise
+    /// and the explorer breathes. Drawn by Tools/Art/make_menu_camp.py; it no longer reuses the start screen's landforms.
+    /// </summary>
+    internal static void CampBackground() // Makes the camp layers and its small animations
+    {
+        var camp = new GameObject("Base camp").transform; // Parent for everything in the camp
+        Still("Sky", "C0_sky", 0, camp); // Sky and sun
+        var clouds = new GameObject("Clouds").AddComponent<ParallaxLayer>(); // Drifts the clouds sideways
+        clouds.transform.SetParent(camp, false); // Keep it in the camp
+        clouds.speedPixelsPerSecond = 1.5f; // Slow drift
+        clouds.followsWalk = false; // Clouds keep drifting on their own
+        clouds.widthPixels = 960f; // The cloud strip is two screens wide and loops
+        clouds.pixelsPerUnit = PPU; // Same pixel size as the sprites
+        Renderer("Art", S("Camp/C1_clouds"), 10, clouds.transform); // The cloud picture
+        Still("Peaks", "C2_peaks", 20, camp); // Snowy peaks
+        Still("Forest", "C3_forest", 30, camp); // Pine band
+        Still("Camp", "C4_camp", 40, camp); // Clearing, tent, map board, log and fire pit
+        Animated("Campfire", "fire_", 4, 8f, new Vector2(172f, 188f), 50, camp); // Flames on the fire pit (logs at y 197)
+        Animated("Sparks", "embers_", 6, 8f, new Vector2(172f, 162f), 51, camp); // Sparks rising above the flames
+        Animated("Explorer", "explorer_stand_", 2, 1.5f, new Vector2(118f, 180f), 52, camp); // The start-screen explorer standing on the grass a little away from the fire (feet at y 202), facing it, breathing slowly
+        Animated("Flag", "flag_", 3, 4f, new Vector2(405f, 146f), 45, camp); // Pennant waving on the tent pole
+        Animated("Summit flag", "flag_", 3, 3f, new Vector2(166f, 98f), 21, camp); // A flag on the top of the left peak, below the icon labels: where the adventure leads
+        Animated("Lantern", "lantern_", 2, 3f, new Vector2(450f, 178f), 46, camp); // A lantern hanging by the tent, flickering
+        Animated("Glint", "glint_", 6, 5f, new Vector2(353f, 184f), 46, camp); // The quartz in the rock crate twinkles now and then
+        Flier("Butterfly", "Camp/butterfly_", "Assets/Art/MainMenu/Sprites/", new Vector2(262f, 208f), new Vector2(26f, 6f), 9f, 53, camp); // A butterfly over the grass
+        Flier("Butterfly 2", "Camp/butterfly_", "Assets/Art/MainMenu/Sprites/", new Vector2(70f, 222f), new Vector2(16f, 5f), 7f, 53, camp); // Another, near the map board
+        Flier("Eagle", "Mountains/eagle_", "Assets/Art/LandformMap/Sprites/", new Vector2(300f, 68f), new Vector2(54f, 10f), 14f, 25, camp); // An eagle circling the big peak
+        var fill = new GameObject("Below-ground fill").AddComponent<ScreenFill>(); // Fills space under the ground on tall screens
+        fill.topY = -135f / PPU; // Starts at the bottom edge of the art
+    }
+
+    static void Still(string name, string sprite, int order, Transform parent) // One still 480x270 camp layer, centred on the screen
+    {
+        Renderer(name, S("Camp/" + sprite), order, parent).transform.position = Px(240f, 135f); // Its middle is the middle of the screen
+    }
+
+    static void Flier(string name, string prefix, string folder, Vector2 center, Vector2 radius, float lap, int order, Transform parent) // A two-frame flier that circles an oval
+    {
+        var frames = new[] { PixelSceneKit.Sprite(folder, prefix + "0", "Tools/Art/make_menu_camp.py"), PixelSceneKit.Sprite(folder, prefix + "1", "Tools/Art/make_menu_camp.py") }; // Wings up, wings down
+        var sr = Renderer(name, frames[0], order, parent); // The sprite
+        var book = sr.gameObject.AddComponent<SpriteFlipbook>(); // Flaps the wings
+        book.frames = frames; // Both frames
+        book.framesPerSecond = 4f; // Flap speed
+        var flight = sr.gameObject.AddComponent<CircleFlight>(); // Moves it round an oval, on whole pixels
+        flight.centerPixels = center; // Middle of the oval, in screen pixels
+        flight.radiusPixels = radius; // Half width and half height
+        flight.secondsPerLap = lap; // Time for one lap
+    }
+
+    static void Animated(string name, string prefix, int count, float fps, Vector2 at, int order, Transform parent) // A small looping camp animation
+    {
+        var frames = Enumerable.Range(0, count).Select(i => S("Camp/" + prefix + i)).ToArray(); // Its frames, in order
+        var sr = Renderer(name, frames[0], order, parent); // The sprite
+        sr.transform.position = Px(at.x, at.y); // Its place on the screen
+        var book = sr.gameObject.AddComponent<SpriteFlipbook>(); // Plays the frames
+        book.frames = frames; // All frames
+        book.framesPerSecond = fps; // How fast
     }
 
     // Screen pixel (480x270, y down from the top) to world position.
@@ -306,6 +384,16 @@ public static class MainMenuBuilder
         button.spriteState = new SpriteState { pressedSprite = S("Buttons/btn_" + spriteName + "_pressed") }; // Pushed-in picture
         button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between buttons
         return button;
+    }
+
+    /// <summary>A 34x30 icon button in the top-right row with its name under it in the reading font (D-054). The name is a child, so it moves with the button.</summary>
+    static Button IconButton(string name, Transform parent, string spriteName, float x) // Makes one named icon button
+    {
+        var c = new Vector2(x, 22f); // Middle of the icon, y 7 to 37
+        var button = MakeButton(name, parent, spriteName, c, CanvasCenter); // The icon button
+        var label = ReadingLabel("Label", button.transform, name, new Vector2(x, 47f), c, new Vector2(64f, 22f), Ink, TextAlignmentOptions.Midline); // Its name under it
+        label.textWrappingMode = TextWrappingModes.NoWrap; // One line
+        return button; // The controller connects it
     }
 
     /// <summary>A panel background stretched from the 24x24 panel sprite (9-slice).</summary>
@@ -437,7 +525,7 @@ public static class MainMenuBuilder
     }
 
     /// <summary>A one-line typing box. The phone's keyboard opens when it is tapped.</summary>
-    static TMP_InputField InputBox(string name, Transform parent, TMP_FontAsset font, string hint, Vector2 center, Vector2 parentCenter, Vector2 size) // Makes a typing box
+    internal static TMP_InputField InputBox(string name, Transform parent, TMP_FontAsset font, string hint, Vector2 center, Vector2 parentCenter, Vector2 size) // Makes a typing box
     {
         var rt = Rect(name, parent, center, parentCenter); // Place it
         rt.sizeDelta = size; // Box size in pixels

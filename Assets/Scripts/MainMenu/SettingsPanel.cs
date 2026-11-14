@@ -1,57 +1,56 @@
-using LandGrand.Rules; // Gives access to NameRule
-using TMPro; // Gives access to TMP_InputField and TMP_Text
+using System; // Gives access to Action
 using UnityEngine; // Gives access to MonoBehaviour
-using UnityEngine.UI; // Gives access to Slider
+using UnityEngine.UI; // Gives access to Slider and Button
 
 namespace LandGrand.MainMenu // Main Menu scripts live here
 {
     /// <summary>
-    /// The Settings panel: one slider for music volume, one for sound-effects volume, and the player's name.
-    /// Moving a slider changes the volume at once; closing the panel saves both values.
-    /// A good new name is saved when typing ends or the panel closes.
+    /// The Settings panel: one slider for music volume and one for sound-effects volume.
+    /// Moving a slider changes the volume at once, so the player can hear it. Save keeps the volumes and closes
+    /// the panel; Back (the arrow icon, or Android's Back button) closes it and puts the old volumes back.
+    /// The name is changed in the Profile (D-052).
     /// </summary>
-    public class SettingsPanel : MonoBehaviour // Panel with volume sliders and the name box
+    public class SettingsPanel : MonoBehaviour // Panel with volume sliders and Save
     {
         public Slider musicSlider; // Slider that sets the music volume
         public Slider sfxSlider; // Slider that sets the sound-effects volume
-        public TMP_InputField nameInput; // Box that shows and changes the player's name
-        public TMP_Text nameMessage; // Shows why a new name was refused
+        public Button saveButton; // Keeps the volumes and closes the panel
 
-        void Awake() // Runs once, the first time the panel opens: connects the sliders
+        /// <summary>Raised after Save has kept the changes; the Main Menu closes the panel.</summary>
+        public event Action Saved; // The Main Menu listens to this
+
+        float oldMusic; // Music volume when the panel opened, put back if the player leaves without saving
+        float oldSfx; // Sound volume when the panel opened, put back if the player leaves without saving
+        bool saved; // True once Save was tapped since the panel opened
+
+        void Awake() // Runs once, the first time the panel opens: connects the sliders and Save
         {
-            musicSlider.onValueChanged.AddListener(v => GameSettings.MusicVolume = v); // Moving the music slider changes the music volume
-            sfxSlider.onValueChanged.AddListener(v => GameSettings.SfxVolume = v); // Moving the sound slider changes the sound-effects volume
-            nameInput.characterLimit = NameRule.MaxLength; // The keyboard stops at 12 characters
-            nameInput.onEndEdit.AddListener(_ => ApplyName(true)); // When typing ends, check and save the name
-            nameInput.onValueChanged.AddListener(_ => nameMessage.text = ""); // Typing again clears the old message
+            musicSlider.onValueChanged.AddListener(v => GameSettings.MusicVolume = v); // Moving the music slider changes the music volume now, so the player hears it
+            sfxSlider.onValueChanged.AddListener(v => GameSettings.SfxVolume = v); // Moving the sound slider changes the sound-effects volume now
+            saveButton.onClick.AddListener(Save); // Save keeps the volumes
         }
 
         void OnEnable() // Runs each time the panel opens
         {
-            musicSlider.SetValueWithoutNotify(GameSettings.MusicVolume); // Show the saved music volume when the panel opens
-            sfxSlider.SetValueWithoutNotify(GameSettings.SfxVolume); // Show the saved sound volume when the panel opens
-            nameInput.SetTextWithoutNotify(GameProgress.Current.Name); // Show the saved name (empty before the first Play)
-            nameMessage.text = ""; // No message yet
+            oldMusic = GameSettings.MusicVolume; // Remember the music volume, in case the player leaves without saving
+            oldSfx = GameSettings.SfxVolume; // Remember the sound volume too
+            saved = false; // Nothing saved yet this time
+            musicSlider.SetValueWithoutNotify(oldMusic); // Show the saved music volume when the panel opens
+            sfxSlider.SetValueWithoutNotify(oldSfx); // Show the saved sound volume when the panel opens
         }
 
         void OnDisable() // Runs each time the panel closes
         {
-            ApplyName(false); // Keep a good name that was typed but not confirmed yet
-            GameSettings.Save(); // Write both volumes to the device when the panel closes
+            if (saved) return; // Save already kept everything
+            GameSettings.MusicVolume = oldMusic; // Leaving without saving: put the old music volume back
+            GameSettings.SfxVolume = oldSfx; // And the old sound volume
         }
 
-        void ApplyName(bool showMessage) // Checks the typed name and saves it when it is good
+        void Save() // What the Save button does
         {
-            if (nameInput.text == GameProgress.Current.Name) return; // Nothing changed
-            if (!NameRule.TryClean(nameInput.text, out var name, out var problem)) // If the new name is not good
-            {
-                if (showMessage) nameMessage.text = problem; // Tell the player what to fix
-                return; // Keep the old name
-            }
-            GameProgress.Current.Name = name; // Keep the new name in the player's progress
-            GameProgress.Save(); // Write it to the device now
-            nameInput.SetTextWithoutNotify(name); // Show the cleaned name
-            nameMessage.text = ""; // Clear any old message
+            GameSettings.Save(); // Write both volumes to the device
+            saved = true; // Do not put the old values back when the panel closes
+            Saved?.Invoke(); // Tell the Main Menu to close the panel
         }
     }
 }

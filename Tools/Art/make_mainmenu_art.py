@@ -229,6 +229,70 @@ def mono(rows, color):
 STAR = ["....#....", "...###...", "#########", ".#######.", "..#####..", ".###.###.", ".##...##.", "#.......#"]  # Star pattern
 ARROW_RIGHT = ["#...", "##..", "###.", "####", "###.", "##..", "#..."]  # Right arrow pattern
 ARROW_UP = ["...#...", "..###..", ".#####.", "#######", "..###..", "..###.."]  # Up arrow pattern
+BACK_ARROW = ["...#.....", "..##.....", ".########", "#########", ".########", "..##.....", "...#....."]  # Arrow with a tail, for Back (same as the map's Back icon)
+PENCIL = ["....##", "...###", "..###.", ".###..", "###...", "##....", "#....."]  # Pencil, tip at the bottom left, for Edit name
+PAGE_ARROW = ["#....", "##...", "###..", "####.", "#####", "####.", "###..", "##...", "#...."]  # Solid triangle, for Next (flipped for Prev)
+
+
+def icon_button(rows, pressed):
+    """A 24x20 brown button with a white arrow and no words, matching the map's Back icon."""
+    w, h = 24, 20  # Button size in pixels
+    img = new_image(w, h)  # Empty button image
+    rounded_box(img, 0, 0, w, h)  # Dark outline
+    fill_rect(img, 1, 1, w - 2, h - 2, PLATEAU_SH)  # Main face colour
+    if pressed:  # Pressed: the button looks pushed in
+        fill_rect(img, 1, 1, w - 2, 2, BACKPACK_SH)  # Dark band on top, like an inset
+    else:  # Normal: the button looks raised
+        fill_rect(img, 1, 1, w - 2, 2, PLATEAU)  # Light band on top
+        fill_rect(img, 1, h - 3, w - 2, 2, BACKPACK_SH)  # Dark band on the bottom
+    arrow = mono(rows, WHITE)  # White arrow picture
+    x = (w - arrow.width) // 2  # Centre the arrow across
+    y = (h - arrow.height) // 2 + (1 if pressed else 0)  # Centre it up and down; drop 1 pixel when pressed
+    paste(img, mono(rows, DARK), x, y + 1)  # Dark shadow one pixel lower
+    paste(img, arrow, x, y)  # The arrow on top
+    return img
+
+
+def portrait(pressed, size=32):
+    """A round explorer portrait for the Profile button (D-052): the start-screen explorer's head at 2x inside a brown ring."""
+    src = Image.open(os.path.join(ROOT, "Assets", "Art", "StartScreen", "Sprites", "Explorer", "explorer_00.png")).convert("RGBA")  # The explorer, standing
+    head = src.crop((11, 2, 25, 16)).resize((28, 28), Image.NEAREST)  # Helmet, face and scarf, doubled so the face reads at a glance
+    img = new_image(size, size)  # Empty portrait
+    c = (size - 1) / 2  # Middle of the circle
+    ring = BACKPACK_SH if pressed else PLATEAU_SH  # Darker ring while pressed
+    for y in range(size):  # Each row
+        for x in range(size):  # Each pixel in the row
+            d = ((x - c) ** 2 + (y - c) ** 2) ** 0.5  # Distance from the middle
+            if d <= c - 3:  # Inside: light sky behind the head
+                img.putpixel((x, y), SKY_LIGHT + (255,))  # Sky colour
+            elif d <= c - 1:  # Two-pixel brown ring
+                img.putpixel((x, y), ring + (255,))  # Ring colour
+            elif d <= c + 0.5:  # One-pixel dark outline
+                img.putpixel((x, y), OUTLINE + (255,))  # Outline colour
+    off = (size - 28) // 2 + (1 if pressed else 0)  # Centre the head; drop 1 pixel when pressed
+    for y in range(28):  # Each head row
+        for x in range(28):  # Each head pixel
+            px = head.getpixel((x, y))  # Head colour here
+            tx, ty = x + (size - 28) // 2, y + off + 3  # Where it goes; 3 pixels lower so the shoulders meet the ring
+            if px[3] == 0 or ty >= size:  # See-through or below the picture
+                continue  # Skip it
+            if ((tx - c) ** 2 + (ty - c) ** 2) ** 0.5 <= c - 3:  # Only inside the sky circle
+                img.putpixel((tx, ty), px)  # Paint the head pixel
+    return img
+
+
+def save_portrait():
+    """Saves the explorer portrait button for the Main Menu and the Profile (D-052)."""
+    save(portrait(False), "Buttons", "btn_profile.png")  # Normal picture
+    save(portrait(True), "Buttons", "btn_profile_pressed.png")  # Pressed picture
+
+
+def save_icon_buttons():
+    """Saves the Back, Prev, Next and Edit (pencil) icon buttons used on the Tutorial and Settings panels."""
+    flipped = [r[::-1] for r in PAGE_ARROW]  # Left-pointing triangle for Prev
+    for name, rows in [("back_icon", BACK_ARROW), ("prev_icon", flipped), ("next_icon", PAGE_ARROW), ("edit_icon", PENCIL)]:  # Name and arrow of each icon button
+        save(icon_button(rows, False), "Buttons", "btn_%s.png" % name)  # Normal picture
+        save(icon_button(rows, True), "Buttons", "btn_%s_pressed.png" % name)  # Pressed picture
 
 
 def picture_base():
@@ -355,9 +419,12 @@ def main():
 
     # Small panel buttons, 56x20, with 7-pixel-tall labels.
     for name, label, colors in [("back", "BACK", brown), ("prev", "PREV", brown), ("next", "NEXT", brown),  # Name, label and colours of each small button
-                                ("yes", "YES", red), ("no", "NO", green), ("ok", "OK", green)]:  # (continued; OK confirms the typed name)
+                                ("yes", "YES", red), ("no", "NO", green), ("ok", "OK", green), ("save", "SAVE", green)]:  # (continued; OK confirms the typed name, SAVE keeps the settings)
         save(button(56, 20, label, *colors, pressed=False, scale=1), "Buttons", "btn_%s.png" % name)  # Normal picture
         save(button(56, 20, label, *colors, pressed=True, scale=1), "Buttons", "btn_%s_pressed.png" % name)  # Pressed picture
+
+    save_icon_buttons()  # Back, Prev, Next and pencil icon buttons
+    save_portrait()  # Round explorer portrait that opens the Profile (D-052)
 
     # Panel and slider parts.
     save(panel(), "Panels", "panel.png")  # Panel background

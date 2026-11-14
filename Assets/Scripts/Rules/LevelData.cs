@@ -20,14 +20,18 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public string Description { get; } // Short text shown in the pop-up
         public string Picture { get; } // Name of its picture file, without ".png"
         public bool IsDraft { get; } // True until a teacher reviews the text (D-043, Q-04)
+        public bool IsRock { get; } // True for a rock, false for a mineral; the item card shows "Rock" or "Mineral"
+        public Episode HomeLandform { get; } // The landform whose lesson first teaches it; its shelf in the Collection (D-052)
 
-        public ItemKind(string id, string name, string description, string picture, bool isDraft) // Makes a kind
+        public ItemKind(string id, string name, string description, string picture, bool isDraft, bool isRock, Episode homeLandform) // Makes a kind
         {
             Id = id; // Remember the id
             Name = name; // Remember the name
             Description = description; // Remember the description
             Picture = picture; // Remember the picture name
             IsDraft = isDraft; // Remember the review state
+            IsRock = isRock; // Remember whether it is a rock or a mineral
+            HomeLandform = homeLandform; // Remember its home landform
         }
     }
 
@@ -133,10 +137,10 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     public static class ItemCatalog // Shared item kinds
     {
         // Draft texts for Grade 5 (D-043). They need a teacher's review before final use (Q-04).
-        public static readonly ItemKind Granite = new ItemKind("granite", "Granite", "A hard, speckled rock. It forms when melted rock cools slowly deep underground.", "granite", true); // A rock
-        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true); // A mineral
-        public static readonly ItemKind Feldspar = new ItemKind("feldspar", "Feldspar", "A common mineral that is often pink or white. It is a main part of granite.", "feldspar", true); // A mineral
-        public static readonly ItemKind Mica = new ItemKind("mica", "Mica", "A shiny mineral that peels into thin, flat sheets. It is found in granite.", "mica", true); // A mineral
+        public static readonly ItemKind Granite = new ItemKind("granite", "Granite", "A hard, speckled rock. It forms when melted rock cools slowly deep underground.", "granite", true, true, Episode.Mountains); // A rock, first taught in the Mountains lesson
+        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
+        public static readonly ItemKind Feldspar = new ItemKind("feldspar", "Feldspar", "A common mineral that is often pink or white. It is a main part of granite.", "feldspar", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
+        public static readonly ItemKind Mica = new ItemKind("mica", "Mica", "A shiny mineral that peels into thin, flat sheets. It is found in granite.", "mica", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
 
         /// <summary>All kinds, in the order the lessons introduce them.</summary>
         public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica }; // The full list

@@ -65,8 +65,8 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         var panel = M.Panel("Lesson Panel", root, pc, new Vector2(464f, 220f)); // Big cream panel from x 8 to 472, y 42 to 262
 
         // Top row: the heading on the left and the draft note on the right.
-        controller.heading = Spaced(M.Label("Heading", panel, font, "Level 1: Mountains", new Vector2(120f, 56f), pc, new Vector2(200f, 22f), Clay, TextAlignmentOptions.MidlineLeft)); // Heading, from x 20
-        controller.draftNote = Spaced(M.Label("Draft Note", panel, font, "", new Vector2(350f, 56f), pc, new Vector2(220f, 22f), DraftRed, TextAlignmentOptions.MidlineRight)); // Draft note, ending at x 460
+        controller.heading = M.ReadingLabel("Heading", panel, "Level 1: Mountains", new Vector2(120f, 56f), pc, new Vector2(200f, 22f), Clay, TextAlignmentOptions.MidlineLeft); // Heading in the reading font (D-051), from x 20
+        controller.draftNote = M.ReadingLabel("Draft Note", panel, "", new Vector2(350f, 56f), pc, new Vector2(220f, 22f), DraftRed, TextAlignmentOptions.MidlineRight); // Draft note in the reading font, ending at x 460
 
         // Middle: the landform picture on the left, the four lesson sentences beside it, one per line.
         controller.picture = M.Picture("Picture", panel, S("lesson_mountains"), new Vector2(80f, 108f), pc); // 120x82 picture, x 20 to 140, y 67 to 149

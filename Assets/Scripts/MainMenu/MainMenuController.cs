@@ -2,12 +2,15 @@ using System.Collections; // Gives access to IEnumerator for timed steps
 using LandGrand.StartScreen; // Gives access to the shared music player and background scrolling
 using UnityEngine; // Gives access to MonoBehaviour, AudioSource and Application
 using UnityEngine.InputSystem; // Gives access to the keyboard, where Android's Back button shows up as Escape
+using LandGrand.Rules; // Gives access to Collection
+using TMPro; // Gives access to TMP_Text
 using UnityEngine.UI; // Gives access to Button
 
 namespace LandGrand.MainMenu
 {
     /// <summary>
-    /// Runs the Main Menu (requirement LG-16): Play, Settings, Tutorial and Exit.
+    /// Runs the Main Menu (requirement LG-16): Play, Settings, Tutorial and Exit, around the base camp (D-054),
+    /// with the player badge in the top-left corner that opens the Profile (D-052).
     /// Only one panel is open at a time. Android's Back button closes the open panel,
     /// or asks "Exit game?" when no panel is open.
     /// </summary>
@@ -19,6 +22,10 @@ namespace LandGrand.MainMenu
         public Button tutorialButton; // Opens the Tutorial panel
         public Button exitButton; // Asks "Exit game?"
         public GameObject mainButtons; // Group that holds the four main buttons
+        public Button profileButton; // Player badge in the top-left corner: opens the Profile (D-052, D-054)
+        public TMP_Text profileName; // The explorer's name on the badge
+        public TMP_Text profileStars; // Stars earned, on the badge
+        public TMP_Text profileFound; // Rock and mineral kinds found out of all, on the badge
 
         [Header("Panels")]
         public GameObject dim; // Dark see-through layer behind an open panel
@@ -36,6 +43,7 @@ namespace LandGrand.MainMenu
         [Header("Play")]
         [Tooltip("Scene that Play opens. Until it is in the build list, Play shows the Coming Soon panel.")]
         public string playScene = "LandformMap"; // Name of the Landform Map scene (requirement LG-17)
+        public string profileScene = "Profile"; // Name of the Profile scene (D-052)
 
         [Header("Sound")]
         public StartScreenMusic music; // Plays the Quest music and the ambience
@@ -68,6 +76,12 @@ namespace LandGrand.MainMenu
             exitYesButton.onClick.AddListener(Quit); // Yes quits the game
             exitNoButton.onClick.AddListener(Close); // No closes the question
             namePanel.Accepted += OpenPlayScene; // A saved name carries on to the Landform Map
+            settingsPanel.GetComponent<SettingsPanel>().Saved += Close; // Save closes the Settings panel
+            profileButton.onClick.AddListener(OpenProfile); // The portrait opens the Profile
+            var explorer = GameProgress.Current.Name; // The saved name, empty before the first Play
+            profileName.text = string.IsNullOrEmpty(explorer) ? "Explorer" : explorer; // The name, or "Explorer" before one is set
+            profileStars.text = GameProgress.Current.TotalStars.ToString(); // Best stars over every level
+            profileFound.text = Collection.FoundCount(GameProgress.Current) + "/" + Collection.TotalCount; // Kinds found out of all kinds
 
             var everyButton = ui.GetComponentsInChildren<Button>(true); // All menu buttons, also those in closed panels
             foreach (var button in everyButton) button.onClick.AddListener(PlayClick); // Every button makes the click sound
@@ -140,6 +154,13 @@ namespace LandGrand.MainMenu
         }
 
         void Close() => Open(null); // Closing means "open no panel"
+
+        void OpenProfile() // What the explorer portrait does
+        {
+            if (!Application.CanStreamedLevelBeLoaded(profileScene)) { Open(comingSoonPanel); return; } // Not in the build yet: say it is coming soon
+            BeginLeaving(); // Stop taps and fade the music
+            ScreenFader.LoadScene(profileScene, musicFadeOutSeconds); // Darken, open the Profile, then fade it in
+        }
 
         void Play() // What the Play button does
         {

@@ -34,6 +34,8 @@ internal static class PixelSceneKit // Helpers for the scene builders
         cam.transform.position = new Vector3(0f, 0f, -10f); // Stand back from the sprites so it can see them
         cam.clearFlags = CameraClearFlags.SolidColor; // Fill empty space with one colour
         cam.backgroundColor = Ink; // Dark outline colour around the art on wide screens
+        cam.allowMSAA = false; // No anti-aliasing: it blurs pixel edges
+        cam.allowHDR = false; // No HDR: pixel art needs exact palette colours
         var ppc = camGo.AddComponent<PixelPerfectCamera>(); // Keeps pixels square and sharp
         ppc.assetsPPU = (int)PPU; // Sprites use 32 pixels per unit
         ppc.refResolutionX = 480; // Screen is 480 pixels wide
