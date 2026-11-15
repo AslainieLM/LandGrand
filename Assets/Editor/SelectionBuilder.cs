@@ -131,12 +131,17 @@ public static class SelectionBuilder // Makes the difficulty and level selection
         Save(scene, LevelPath, DifficultyPath); // Save and add to the build list after the difficulty screen
     }
 
-    /// <summary>Camera, the full-screen Mountains picture with slow snow, cloud and eagle, the music and the UI canvas.</summary>
+    /// <summary>Camera, the full-screen picture of the picked landform with a slow cloud and eagle (and snow for Mountains), the music and the UI canvas.</summary>
     internal static Transform Backdrop(string canvasName, out LandGrand.StartScreen.StartScreenMusic music, out CanvasGroup group) // Shared start of both scenes (the Lesson Screen uses it too)
     {
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
-        M.Renderer("Mountains", S("bg_mountains"), 0, null).transform.position = M.Px(240f, 135f); // Mountains fill the screen
-        K.MountainsLife(out CloudDrift cloud, out CircleFlight eagle, out SnowFlurry snow); // Slow Mountains animations behind the cards
+        var picture = M.Renderer("Landform", S("bg_mountains"), 0, null); // The landform picture; Mountains until the screen opens
+        picture.transform.position = M.Px(240f, 135f); // It fills the screen
+        K.MountainsLife(out CloudDrift cloud, out CircleFlight eagle, out SnowFlurry snow); // Slow cloud, eagle and snow behind the cards
+        var backdrop = picture.gameObject.AddComponent<LandGrand.LandformBackdrop>(); // Shows the picked landform's picture when the screen opens (D-063)
+        backdrop.picture = picture; // The picture to swap
+        backdrop.pictures = Landforms.Select(n => S("bg_" + n)).ToArray(); // Mountains, Hills, Plains, Plateaus, in Episode order
+        backdrop.snow = snow.gameObject; // Snow falls only over the Mountains picture
         cloud.startX = 20f; cloud.endX = 460f; cloud.y = 40f; cloud.speedPixelsPerSecond = 2.5f; // Cloud drifts slowly across the whole sky
         eagle.centerPixels = new Vector2(240f, 62f); eagle.radiusPixels = new Vector2(100f, 16f); eagle.secondsPerLap = 18f; // Eagle circles slowly above the middle peak
         snow.area = new Rect(0f, 28f, 480f, 180f); snow.count = 50; snow.windPixelsPerSecond = new Vector2(10f, 6f); // Light snow over the whole picture

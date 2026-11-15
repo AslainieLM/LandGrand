@@ -22,8 +22,8 @@ public static partial class LevelBuilder // The theme half of the level builder
         public string GoalSprite; // Sprite of the goal, for example "cave"
         public Vector2 GoalOffset; // Middle of the goal picture: pixels right of the goal line, and pixels up from the ground line
         public System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> Props; // Builds the living props; null when the theme has none
-        public string Backdrop = "Backdrop/Mountains/"; // Folder of the six moving background layers, inside the level sprite folder (D-049, D-063)
-        public string BackdropScript = "Tools/Art/make_mountains_backdrop.py"; // Script that draws those layers
+        public string Backdrop; // Folder of the six moving background layers, inside the level sprite folder; every theme names its own (D-049, D-063)
+        public string BackdropScript; // Script that draws those layers
     }
 
     static readonly Dictionary<LevelTheme, ThemeArt> Themes = new Dictionary<LevelTheme, ThemeArt> // Every theme's art
@@ -33,6 +33,7 @@ public static partial class LevelBuilder // The theme half of the level builder
             GroundTop = "grass_top", Soil = "soil", Ledge = "ledge", BoulderEnding = "", // Green grass over brown soil
             GoalName = "Cave", GoalSprite = "cave", GoalOffset = new Vector2(20f, 28f), // Cave entrance; its 56-pixel height sits on the ground and its opening is at the goal
             Props = null, // No living props
+            Backdrop = "Backdrop/Mountains/", BackdropScript = "Tools/Art/make_mountains_backdrop.py", // The alpine Mountains background (D-049)
         },
         [LevelTheme.Volcanic] = new ThemeArt // Volcano Trail (Easy 2)
         {
@@ -80,7 +81,11 @@ public static partial class LevelBuilder // The theme half of the level builder
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
     {
-        if (Themes.TryGetValue(theme, out var art)) return art; // Found it
+        if (Themes.TryGetValue(theme, out var art)) // Found it
+        {
+            if (string.IsNullOrEmpty(art.Backdrop)) throw new KeyNotFoundException($"Level theme {theme} has no background. Give it its own Backdrop folder in Assets/Editor/LevelThemes.cs (D-063)."); // Every theme, in every landform, gets its own background
+            return art; // Ready to build
+        }
         throw new KeyNotFoundException($"Level theme {theme} has no art yet. Add it to Themes in Assets/Editor/LevelThemes.cs."); // Say what to do
     }
 
