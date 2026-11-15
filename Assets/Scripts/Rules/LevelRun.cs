@@ -56,6 +56,18 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// <summary>Seconds left on the countdown. Starts at the level time limit and never goes below 0.</summary>
         public float RemainingSeconds { get; private set; } // Counts down while playing
 
+        /// <summary>Seconds left when the countdown starts to warn: red numbers that hop each second (D-058).</summary>
+        public const float LowTimeSeconds = 20f; // The last 20 seconds
+
+        /// <summary>Seconds left when a soft tick joins the warning each second (D-058).</summary>
+        public const float TickingSeconds = 10f; // The last 10 seconds
+
+        /// <summary>True in the last 20 seconds of a running countdown.</summary>
+        public bool IsTimeLow => Outcome == RunOutcome.Playing && RemainingSeconds <= LowTimeSeconds; // Warn while still playing
+
+        /// <summary>True in the last 10 seconds of a running countdown.</summary>
+        public bool IsTicking => Outcome == RunOutcome.Playing && RemainingSeconds <= TickingSeconds; // Tick while still playing
+
         /// <summary>True once the countdown reached zero.</summary>
         public bool IsTimeUp => Outcome == RunOutcome.TimeUp; // Time ran out
 

@@ -88,7 +88,11 @@ namespace LandGrand.Play // Level play scripts live here
         public Button timeUpRetryButton; // Time up: start again from the Lesson Screen
         public Button timeUpMenuButton; // Time up: leave to the Main Menu
         public Color timerNormal = new Color32(31, 26, 36, 255); // Countdown colour
-        public Color timerLow = new Color32(168, 63, 36, 255); // Countdown colour in the last 10 seconds
+        public Color timerLow = new Color32(168, 63, 36, 255); // Countdown colour in the last 20 seconds (D-058)
+        public Color timerFlash = new Color32(230, 92, 50, 255); // Brighter red for a moment each second while time is low
+        public float timerHopPixels = 2f; // How far the countdown hops up each second while time is low
+        public float timerHopSeconds = 0.12f; // How long each hop and flash lasts
+        public AudioClip tickSound; // Soft tick each second in the last 10 seconds
 
         [Header("Start banner and vents (D-055)")] // Inspector heading for the level start banner and the steam vents
         public LevelBanner banner; // Slides the level name in before the clock starts
@@ -107,6 +111,9 @@ namespace LandGrand.Play // Level play scripts live here
         Vector2 lastGround; // Where the explorer last stood on the ground
         int lastGroundFacing = 1; // Which way it was walking then
         VentPhase lastVentPhase; // The vents' phase last frame, to hear the start of each puff
+        int lastShownSecond = -1; // The countdown second shown last, to hop once per new second
+        Vector2 timerHome; // Where the countdown panel rests
+        Coroutine timerHop; // The hop running now, if any
 
         protected override void Awake() // Runs once when the level opens: starts the attempt
         {
@@ -139,6 +146,7 @@ namespace LandGrand.Play // Level play scripts live here
             pauseMenuButton.onClick.AddListener(() => Leave(mainMenuScene)); // Back to Main Menu
             timeUpRetryButton.onClick.AddListener(() => Leave(lessonScene)); // Retry starts again from the Lesson Screen
             timeUpMenuButton.onClick.AddListener(() => Leave(mainMenuScene)); // Back to Main Menu
+            timerHome = ((RectTransform)timerLabel.transform.parent).anchoredPosition; // The countdown panel's resting place, for the hop
             ShowTimer(); // Show 2:00
             continueButton.onClick.AddListener(Continue); // Continue goes to the next available level
             replayButton.onClick.AddListener(() => Leave(lessonScene)); // Replay starts again from the lesson
@@ -415,7 +423,28 @@ namespace LandGrand.Play // Level play scripts live here
         {
             int seconds = Mathf.CeilToInt(run.RemainingSeconds); // Whole seconds left, rounded up so 0:00 only shows at the end
             timerLabel.text = (seconds / 60) + ":" + (seconds % 60).ToString("00"); // For example 1:05
-            timerLabel.color = seconds <= 10 ? timerLow : timerNormal; // Warn in the last 10 seconds
+            if (seconds != lastShownSecond) // A new second began
+            {
+                if (lastShownSecond >= 0 && run.IsTimeLow) // In the last 20 seconds (D-058)
+                {
+                    if (timerHop != null) StopCoroutine(timerHop); // Finish any earlier hop at once
+                    timerHop = StartCoroutine(TimerHop()); // Hop and flash
+                    if (run.IsTicking) PlaySfx(tickSound); // A soft tick in the last 10 seconds
+                }
+                lastShownSecond = seconds; // Remember it
+            }
+            if (timerHop == null) timerLabel.color = run.IsTimeLow || run.IsTimeUp ? timerLow : timerNormal; // Red in the last 20 seconds, and at 0:00
+        }
+
+        System.Collections.IEnumerator TimerHop() // The countdown jumps up a little and flashes bright red, then settles
+        {
+            var panel = (RectTransform)timerLabel.transform.parent; // The small cream countdown panel
+            panel.anchoredPosition = timerHome + new Vector2(0f, timerHopPixels); // Up by whole pixels, so it stays sharp
+            timerLabel.color = timerFlash; // Bright red
+            for (float t = 0f; t < timerHopSeconds; t += Time.unscaledDeltaTime) yield return null; // A short moment
+            panel.anchoredPosition = timerHome; // Back down
+            timerLabel.color = run.IsTimeLow ? timerLow : timerNormal; // Steady red again
+            timerHop = null; // Done
         }
 
         void ShowTimeUp() // Time ran out: stop everything and offer Retry or Back to Main Menu

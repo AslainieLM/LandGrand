@@ -10,6 +10,7 @@ It writes four files to Assets/Audio/:
   sfx_hit.wav          A short falling thud when the explorer touches a trap or falls into the pit.
   sfx_checkpoint.wav   A short two-note ding when a checkpoint flag is reached.
   sfx_steam.wav        A soft hiss when a steam vent puffs (Mountains Easy 2, D-055).
+  sfx_tick.wav         A soft tick each second in the last 10 seconds of the countdown (D-058).
 Both loops join without a gap: the end is folded back onto the start.
 """
 import math  # math gives sin, exp and pi for making the sounds
@@ -188,6 +189,7 @@ def main():
     make_sfx("sfx_hit.wav", [(0.0, 220.0)], 7.0, 0.45, glide=0.55)  # A falling thud for a trap or pit
     make_sfx("sfx_checkpoint.wav", [(0.0, 659.0), (0.14, 880.0)], 5.0, 0.6)  # A two-note ding for the flag
     make_steam()  # The steam vent puff (D-055)
+    make_sfx("sfx_tick.wav", [(0.0, 1500.0)], 45.0, 0.09)  # A soft, short tick for the last 10 seconds of the countdown (D-058)
 
 
 if __name__ == "__main__":

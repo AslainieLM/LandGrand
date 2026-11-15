@@ -186,6 +186,8 @@ public static class LevelBuilder // Makes the level scenes
         controller.hitSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_hit.wav"); // Trap or pit
         controller.checkpointSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_checkpoint.wav"); // Flag reached
         if (controller.hitSound == null || controller.checkpointSound == null) Debug.LogError("Missing sfx_hit.wav or sfx_checkpoint.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        controller.tickSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_tick.wav"); // Countdown tick in the last 10 seconds (D-058)
+        if (controller.tickSound == null) Debug.LogError("Missing sfx_tick.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
         if (layout.Vents.Count > 0) // Only levels with vents need the hiss
         {
             controller.steamSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_steam.wav"); // The vent puff

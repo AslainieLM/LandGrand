@@ -226,6 +226,23 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
+        public void Timer_WarnsInTheLast20Seconds_AndTicksInTheLast10() // The countdown effect (D-058)
+        {
+            var run = new LevelRun(Easy(1)); // A fresh attempt with 120 s
+            Assert.IsFalse(run.IsTimeLow); // Plenty of time
+            run.Tick(99.5f); // 20.5 s left
+            Assert.IsFalse(run.IsTimeLow); // Not yet
+            run.Tick(0.5f); // 20 s left
+            Assert.IsTrue(run.IsTimeLow); // Red and hopping from here
+            Assert.IsFalse(run.IsTicking); // No tick sound yet
+            run.Tick(10f); // 10 s left
+            Assert.IsTrue(run.IsTicking); // Ticks from here
+            run.Tick(20f); // Time is up
+            Assert.IsFalse(run.IsTimeLow); // No warning once the time is up
+            Assert.IsFalse(run.IsTicking); // And no ticking
+        }
+
+        [Test] // Unity runs this method as a Test
         public void StartBanner_OnlyAtTheStartOfAnAttempt() // A later call cannot stop the clock
         {
             var run = new LevelRun(Easy(1)); // A fresh attempt
