@@ -31,7 +31,9 @@ namespace LandGrand.Profile // Profile scripts live here
         public class ShelfView // One shelf
         {
             public TMP_Text comingSoon; // "Coming soon", shown when the landform has no item kinds yet
-            public SlotView[] slots; // Up to six slots, filled from the left
+            public SlotView[] slots; // The slots of one page, filled from the left
+            public Button nextPage; // Arrow to the next page, shown when the shelf has more kinds than slots (D-055)
+            public Button prevPage; // Arrow back to the first pages, shown on the last page in the same place
         }
 
         /// <summary>A picture with the name the item catalog uses for it.</summary>
@@ -104,28 +106,55 @@ namespace LandGrand.Profile // Profile scripts live here
 
         static string Total(string word, string value) => "<color=#9A5532>" + word + "</color> " + value; // A clay word, one space, then its number in ink
 
-        void ShowShelves() // Fills every shelf from the Collection
+        int[] pages; // The page each shelf shows, counting from 0
+
+        void ShowShelves() // Fills every shelf from the Collection and connects the page arrows
+        {
+            pages = new int[shelves.Length]; // Every shelf starts on its first page
+            for (int s = 0; s < shelves.Length; s++) // Each shelf on screen
+            {
+                int shelf = s; // A copy for the arrow buttons
+                if (shelves[s].nextPage != null) { shelves[s].nextPage.onClick.RemoveAllListeners(); shelves[s].nextPage.onClick.AddListener(() => TurnPage(shelf, +1)); } // Next page, connected once
+                if (shelves[s].prevPage != null) { shelves[s].prevPage.onClick.RemoveAllListeners(); shelves[s].prevPage.onClick.AddListener(() => TurnPage(shelf, -1)); } // Previous page, connected once
+                ShowShelf(s); // Draw it
+            }
+        }
+
+        void TurnPage(int s, int step) // Shows another page of one shelf
+        {
+            if (Leaving) return; // Ignore taps while leaving
+            pages[s] += step; // The new page; ShowShelf keeps it inside the shelf
+            ShowShelf(s); // Draw it again
+        }
+
+        void ShowShelf(int s) // Fills one shelf with the kinds of its current page
         {
             var model = Collection.Shelves(GameProgress.Current); // One shelf per landform, in episode order
-            for (int s = 0; s < shelves.Length && s < model.Count; s++) // Each shelf on screen
+            if (s >= model.Count) return; // No landform for this shelf
+            var view = shelves[s]; // The shelf on screen
+            var data = model[s]; // Its data
+            int perPage = view.slots.Length; // Slots on one page
+            int count = data.PageCount(perPage); // Pages on this shelf
+            pages[s] = Mathf.Clamp(pages[s], 0, count - 1); // Stay inside the shelf
+            var onPage = data.SlotsOnPage(pages[s], perPage); // This page's kinds
+            view.comingSoon.gameObject.SetActive(data.IsComingSoon); // "Coming soon" only for landforms without kinds
+            bool last = pages[s] == count - 1; // On the last page the arrow points back
+            if (view.nextPage != null) view.nextPage.gameObject.SetActive(count > 1 && !last); // More kinds to the right
+            if (view.prevPage != null) view.prevPage.gameObject.SetActive(count > 1 && last); // Back to the start
+            if ((view.nextPage == null || view.prevPage == null) && count > 1) Debug.LogWarning($"{data.Landform} has {data.Slots.Count} item kinds but its shelf has no page arrows; rebuild the Profile scene."); // Never hide kinds silently
+            for (int i = 0; i < view.slots.Length; i++) // Each slot on the shelf
             {
-                var view = shelves[s]; // The shelf on screen
-                var data = model[s]; // Its data
-                view.comingSoon.gameObject.SetActive(data.IsComingSoon); // "Coming soon" only for landforms without kinds
-                if (data.Slots.Count > view.slots.Length) Debug.LogWarning($"{data.Landform} has {data.Slots.Count} item kinds but its shelf has {view.slots.Length} slots; add slots in ProfileBuilder."); // Never drop kinds silently
-                for (int i = 0; i < view.slots.Length; i++) // Each slot on the shelf
-                {
-                    var slot = view.slots[i]; // The slot on screen
-                    bool used = i < data.Slots.Count; // Is there a kind for this slot?
-                    slot.root.SetActive(used); // Hide spare slots
-                    if (!used) continue; // Nothing more for a spare slot
-                    var entry = data.Slots[i]; // The kind and whether it is found
-                    slot.picture.sprite = PictureOf(entry.Kind); // Its picture
-                    slot.picture.color = entry.IsFound ? Color.white : hiddenColor; // Colour when found, a dark shape when not
-                    slot.label.text = entry.IsFound ? entry.Kind.Name : "?"; // The name stays a surprise until it is found
-                    slot.button.interactable = entry.IsFound; // Only found kinds react to a tap
-                    if (entry.IsFound) { var kind = entry.Kind; slot.button.onClick.AddListener(() => OpenCard(kind)); } // Tapping it opens its card
-                }
+                var slot = view.slots[i]; // The slot on screen
+                bool used = i < onPage.Count; // Is there a kind for this slot?
+                slot.root.SetActive(used); // Hide spare slots
+                slot.button.onClick.RemoveAllListeners(); // Forget the kind this slot showed before
+                if (!used) continue; // Nothing more for a spare slot
+                var entry = onPage[i]; // The kind and whether it is found
+                slot.picture.sprite = PictureOf(entry.Kind); // Its picture
+                slot.picture.color = entry.IsFound ? Color.white : hiddenColor; // Colour when found, a dark shape when not
+                slot.label.text = entry.IsFound ? entry.Kind.Name : "?"; // The name stays a surprise until it is found
+                slot.button.interactable = entry.IsFound; // Only found kinds react to a tap
+                if (entry.IsFound) { var kind = entry.Kind; slot.button.onClick.AddListener(() => OpenCard(kind)); } // Tapping it opens its card
             }
         }
 

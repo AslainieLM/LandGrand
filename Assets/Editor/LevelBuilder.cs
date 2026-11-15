@@ -2,7 +2,8 @@ using System.Collections.Generic; // Gives access to List
 using System.IO; // Gives access to folders and files
 using System.Linq; // Gives access to list helpers such as Select
 using LandGrand.Play; // Gives access to the level play scripts
-using LandGrand.Rules; // Gives access to LevelCatalog, Episode and Difficulty
+using LandGrand.Rules; // Gives access to LevelCatalog, LevelData and LevelLayout
+using LandGrand.StartScreen; // Gives access to SpriteFlipbook for the looping props
 using UnityEditor; // Gives access to editor tools such as menu items
 using UnityEditor.SceneManagement; // Gives access to making and saving scenes
 using UnityEngine; // Gives access to GameObject, Sprite, Rect and other basics
@@ -11,12 +12,14 @@ using K = PixelSceneKit; // Short name for the shared scene parts
 using M = global::MainMenuBuilder; // Short name for the Main Menu builder, whose UI helpers we reuse
 
 /// <summary>
-/// Builds the Mountains Easy 1 level of ticket 07 as Assets/Scenes/MountainsEasy1.unity and adds it to the build list after the Lesson Screen.
-/// Run it from the menu: LandGrand > Build Mountains Easy 1 Level. Draw the art first with: python Tools/Art/make_level_art.py
+/// Builds every level in LevelCatalog as its own scene (Assets/Scenes/MountainsEasy1.unity, MountainsEasy2.unity, ...)
+/// and adds them to the build list after the Lesson Screen, in play order (D-055).
+/// Run it from the menu: LandGrand > Build Mountains Levels. Draw the art first with: python Tools/Art/make_level_art.py
+/// Everything that differs between levels comes from the level data (LevelData and its LevelLayout); this builder holds no level numbers.
 /// Level positions are level pixels: x goes right from the left edge, y goes up from the ground line (the top of the grass).
 /// Screen (UI) positions are pixels on the 480x270 screen, measured from the top-left corner.
 /// </summary>
-public static class LevelBuilder // Makes the first level scene
+public static class LevelBuilder // Makes the level scenes
 {
     const string SpriteFolder = "Assets/Art/Level/Sprites/"; // Level PNGs
     const string ArtScript = "Tools/Art/make_level_art.py"; // Script that draws them
@@ -25,18 +28,10 @@ public static class LevelBuilder // Makes the first level scene
     const string ItemSprites = "Assets/Art/Items/Sprites/"; // Rock and mineral pictures
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, so the draft note stands out
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for headings
-    const string LessonPath = "Assets/Scenes/Lesson.unity"; // The level goes after this scene
-    const string LevelPath = "Assets/Scenes/MountainsEasy1.unity"; // Where the level is saved
-    const float Width = 4800f; // Level width: ten screens, about 65 s of walking (decision D-046)
-
-    // Boulders: left edge, picture. They block from every side; the explorer jumps onto or over them.
-    static readonly (float x, string sprite)[] Boulders = { (300f, "boulder_small"), (900f, "boulder_big"), (1300f, "boulder_small"), (2150f, "boulder_big"), (2700f, "boulder_small"), (3250f, "boulder_big"), (3850f, "boulder_big"), (4150f, "boulder_small"), (4350f, "boulder_big") }; // Nine boulders along the trail
-
-    // Ledges: left edge, top height, width. They are solid 10-pixel slabs: the explorer cannot walk or jump through them, but can jump up beside them and stand on top.
-    static readonly (float x, float top, float w)[] Ledges = { (520f, 40f, 80f), (1050f, 28f, 80f), (1500f, 28f, 64f), (2300f, 28f, 64f), (2920f, 28f, 80f), (3560f, 28f, 48f), (3620f, 56f, 96f), (3950f, 28f, 80f), (4480f, 28f, 48f) }; // Low ledges, plus a step and a high ledge
+    const string LessonPath = "Assets/Scenes/Lesson.unity"; // The levels go after this scene
 
     // Mountains-only background layers (decision D-049, drawn by Tools/Art/make_mountains_backdrop.py): name, share of the camera's movement, own drift in pixels per second.
-    // They replace the start-screen layers, which mixed every landform.
+    // Every Mountains level shares them; the level theme changes the ground, props and goal in front (D-055).
     const string BackdropFolder = "Backdrop/Mountains/"; // Inside the level sprite folder
     const string BackdropScript = "Tools/Art/make_mountains_backdrop.py"; // Script that draws the layers
     static readonly (string name, float follow, float drift)[] Layers = // Far layers move least
@@ -44,8 +39,8 @@ public static class LevelBuilder // Makes the first level scene
         ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far snowy range, middle rocky range, pine forest, alpine meadow
     };
 
-    [MenuItem("LandGrand/Build Mountains Easy 1 Level")] // Adds the command to Unity's LandGrand menu
-    public static void Build() // Builds and saves the level scene
+    [MenuItem("LandGrand/Build Mountains Levels")] // Adds the command to Unity's LandGrand menu
+    public static void BuildAll() // Builds and saves one scene per level
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return; // Stop if the user cancels saving the open scene
         if (!Directory.Exists("Assets/TextMesh Pro")) // TextMeshPro needs its starter files once per project
@@ -53,9 +48,9 @@ public static class LevelBuilder // Makes the first level scene
             Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        if (!File.Exists(SpriteFolder + "progress_track.png") || !File.Exists(SpriteFolder + BackdropFolder + "L0.png") || !File.Exists(SelectionSprites + "Trail/star_full.png")) // The art must be drawn first
+        if (!File.Exists(SpriteFolder + "banner_plate.png") || !File.Exists(SpriteFolder + "arch.png") || !File.Exists(SpriteFolder + BackdropFolder + "L0.png") || !File.Exists(SelectionSprites + "Trail/star_full.png") || !File.Exists(ItemSprites + "garnet.png")) // The art must be drawn first
         {
-            Debug.LogError($"Missing art. Run: python {ArtScript}, python {BackdropScript} and python Tools/Art/make_selection_art.py"); // Tell the user what to do
+            Debug.LogError($"Missing art. Run: python {ArtScript}, python {BackdropScript}, python Tools/Art/make_lesson_art.py and python Tools/Art/make_selection_art.py"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
         M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the level parts; this refreshes the assets, so the font is loaded after it
@@ -64,6 +59,21 @@ public static class LevelBuilder // Makes the first level scene
         if (font == null) return; // EnsureFont already said what is wrong
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
 
+        string after = LessonPath; // The first level goes right after the Lesson Screen in the build list
+        foreach (var level in LevelCatalog.All) // Every level with data, in play order
+        {
+            string path = "Assets/Scenes/" + level.SceneName + ".unity"; // For example Assets/Scenes/MountainsEasy2.unity
+            BuildLevel(level, path, font); // Make and save its scene
+            K.AddSceneAfter(path, after); // In the build list, in play order
+            after = path; // The next level goes after this one
+        }
+        Debug.Log($"Built {LevelCatalog.All.Count} levels. Open StartScreen, press Play, and go Mountains > Easy > a level > Start. Arrows or A/D walk; Space jumps."); // Tell the user it worked
+    }
+
+    static void BuildLevel(LevelData level, string path, TMPro.TMP_FontAsset font) // Builds one level scene from its data
+    {
+        var layout = level.Layout; // Width, theme, boulders, ledges and vents
+        var theme = layout.Theme; // Meadow, Volcanic or FoldedRock
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Start from an empty scene
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
         var background = new GameObject("Background").transform; // Holds the moving mountain layers
@@ -82,17 +92,16 @@ public static class LevelBuilder // Makes the first level scene
         }
 
         var geometry = new GameObject("Level").AddComponent<LevelGeometry>(); // The level's shapes
-        geometry.width = Width; // Three screens wide
-        var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // The level data: pickups, checkpoint and hazards
-        var solids = new List<Rect>(); // Ground pieces and boulders
+        geometry.width = layout.Width; // From the level data
+        var solids = new List<Rect>(); // Ground pieces, boulders and ledges
         var pits = level.Hazards.Where(h => h.Type == HazardType.Pit).OrderBy(h => h.Place.X).ToList(); // Gaps in the ground, left to right
         float groundFrom = 0f; // Where the next piece of ground starts
-        foreach (var pit in pits.Select(h => (x: h.Place.X, w: h.Width)).Append((x: Width, w: 0f))) // Ground up to each pit, then up to the level end
+        foreach (var pit in pits.Select(h => (x: h.Place.X, w: h.Width)).Append((x: layout.Width, w: 0f))) // Ground up to each pit, then up to the level end
         {
             var piece = new Rect(groundFrom, -64f, pit.x - groundFrom, 64f); // One piece of ground
             solids.Add(piece); // The explorer can stand on it
-            Tiled("Grass", "grass_top", new Rect(piece.x, -8f, piece.width, 8f), 5, geometry.transform); // Grass along its top
-            Tiled("Soil", "soil", new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Soil below the grass
+            Tiled("Ground Top", Themed("grass_top", "volcanic_top", "fold_top", theme), new Rect(piece.x, -8f, piece.width, 8f), 5, geometry.transform); // The ground's top edge
+            Tiled("Soil", Themed("soil", "volcanic_soil", "fold_soil", theme), new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
             if (pit.w > 0f) Tiled("Pit", "pit_fill", new Rect(pit.x, -64f, pit.w, 64f), 3, geometry.transform); // Dark inside of the pit
             groundFrom = pit.x + pit.w; // The next piece starts after the pit
         }
@@ -103,28 +112,24 @@ public static class LevelBuilder // Makes the first level scene
             spikeAreas.Add(new Rect(h.Place.X + 3f, 0f, h.Width - 6f, 8f)); // The part that hurts, a little smaller than the picture
         }
 
-        foreach (var (x, name) in Boulders) // Each boulder
+        foreach (var b in layout.Boulders) // Each boulder
         {
-            var sprite = S(name); // Its picture
+            string name = b.Size == BoulderSize.Small ? "boulder_small" : "boulder_big"; // The meadow picture's name
+            var sprite = S(Themed(name, name + "_volcanic", name + "_fold", theme)); // Its picture for this theme
             float w = sprite.rect.width, h = sprite.rect.height; // Its size in pixels
             var r = M.Renderer(name, sprite, 6, geometry.transform); // Draws the boulder
-            r.transform.position = LevelGeometry.ToWorld(x + w / 2f, h / 2f); // Sitting on the ground
-            solids.Add(new Rect(x + 1f, 0f, w - 2f, h - 1f)); // Its solid shape, inside the dark outline
+            r.transform.position = LevelGeometry.ToWorld(b.X + w / 2f, h / 2f); // Sitting on the ground
+            solids.Add(new Rect(b.X + 1f, 0f, w - 2f, h - 1f)); // Its solid shape, inside the dark outline
         }
-        foreach (var (x, top, w) in Ledges) // Each ledge
+        foreach (var l in layout.Ledges) // Each ledge
         {
-            var r = new Rect(x, top - 10f, w, 10f); // Its shape: a 10-pixel stone slab
-            Tiled("Ledge", "ledge", r, 6, geometry.transform); // Draws the ledge
+            var r = new Rect(l.X, l.Top - 10f, l.Width, 10f); // Its shape: a 10-pixel stone slab
+            Tiled("Ledge", Themed("ledge", "ledge_volcanic", "ledge_fold", theme), r, 6, geometry.transform); // Draws the ledge
             solids.Add(r); // Solid like a boulder: it blocks the sides and the head, and holds the explorer from above, so nobody walks through it
         }
         geometry.solids = solids.ToArray(); // Ground, boulders and ledges
 
-        float goalX = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1).Goal.X; // The goal from the level data
-        var cave = M.Renderer("Cave", S("cave"), 4, geometry.transform); // Cave entrance at the end
-        cave.transform.position = LevelGeometry.ToWorld(goalX + 20f, 28f); // Its 56-pixel height sits on the ground; its opening is at the goal
-        var goalFlag = M.Renderer("Goal Flag", S("flag"), 6, geometry.transform); // Flag beside the cave
-        goalFlag.transform.position = LevelGeometry.ToWorld(goalX - 28f, 14f); // Just before the opening; its 28-pixel height sits on the ground
-
+        BuildGoal(level, theme, geometry.transform); // The cave, arch or stone pile, with its flag
         var checkpoint = M.Renderer("Checkpoint Flag", S("checkpoint_off"), 6, geometry.transform); // The mid-level flag, not reached yet
         checkpoint.transform.position = LevelGeometry.ToWorld(level.Checkpoint.X, 14f); // Its 28-pixel height sits on the ground
 
@@ -139,6 +144,9 @@ public static class LevelBuilder // Makes the first level scene
         explorer.fallFrame = Spr("Explorer/explorer_07"); // Feet together for coming down
         explorer.flipFrames = Enumerable.Range(0, 4).Select(i => S($"Flip/flip_{i:00}")).ToArray(); // Somersault for the double jump
         explorer.dustFrames = Enumerable.Range(0, 3).Select(i => Spr($"Dust/dust_{i:00}")).ToArray(); // Dust puff for the double jump
+
+        BuildVents(layout, geometry.transform); // Steam vents with their puffs (Easy 2)
+        BuildProps(level, layout, pits, geometry.transform, explorer); // Decoration only: lava cracks, wisps, snow, the eagle
 
         var spots = new List<PickupSpot>(); // The collectibles placed in the level
         for (int i = 0; i < level.Pickups.Count; i++) // One object per pickup, in the order of LevelData
@@ -168,13 +176,21 @@ public static class LevelBuilder // Makes the first level scene
         explorer.input = input; // The explorer reads these controls
 
         var controller = new GameObject("Level Controller").AddComponent<LevelController>(); // The level brain
+        controller.episode = level.Episode; // Which level this scene plays: the controller reads its data from the catalog
+        controller.difficulty = level.Difficulty; // Its difficulty
+        controller.number = level.Number; // Its number
         controller.explorer = explorer; // The explorer
         controller.touchControls = controls.gameObject; // Hidden after the goal
-        BuildResult(controller, root, font); // The Result Screen panel
+        BuildResult(level, controller, root, font); // The Result Screen panel
         controller.pickups = spots.ToArray(); // The collectibles
         controller.hitSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_hit.wav"); // Trap or pit
         controller.checkpointSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_checkpoint.wav"); // Flag reached
         if (controller.hitSound == null || controller.checkpointSound == null) Debug.LogError("Missing sfx_hit.wav or sfx_checkpoint.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        if (layout.Vents.Count > 0) // Only levels with vents need the hiss
+        {
+            controller.steamSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_steam.wav"); // The vent puff
+            if (controller.steamSound == null) Debug.LogError("Missing sfx_steam.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        }
         controller.spikeAreas = spikeAreas.ToArray(); // The spike traps
         controller.checkpointFlag = checkpoint; // The flag picture
         controller.checkpointOnSprite = S("checkpoint_on"); // The raised flag
@@ -183,25 +199,144 @@ public static class LevelBuilder // Makes the first level scene
         controller.hazardFlash = flash.gameObject.AddComponent<Image>(); // The flash picture
         controller.hazardFlash.color = new Color(0.9f, 0.1f, 0.1f, 0f); // See-through until needed
         controller.hazardFlash.raycastTarget = false; // Never blocks taps
-        BuildCollecting(controller, root, font); // The counter at the top left and the first-find pop-up
-        BuildTimerAndMenus(controller, root, font); // The countdown, the pause button, the pause menu and the Time up panel
+        BuildCollecting(level, controller, root, font); // The counter at the top left and the first-find pop-up
+        BuildTimerAndMenus(level, controller, root, font); // The countdown, the pause button, the pause menu and the Time up panel
+        controller.banner = BuildBanner(root, font); // The level start banner, over the play area (D-055)
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
 
         K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
-        Directory.CreateDirectory(Path.GetDirectoryName(LevelPath)); // Make the Scenes folder if it is missing
-        EditorSceneManager.SaveScene(scene, LevelPath); // Save the scene
-        K.AddSceneAfter(LevelPath, LessonPath); // Right after the Lesson Screen in the build list
-        Debug.Log($"Level built: {LevelPath}. Open StartScreen, press Play, and go Mountains > Easy > 1 > Start. Arrows or A/D walk; Space jumps."); // Tell the user it worked
+        Directory.CreateDirectory(Path.GetDirectoryName(path)); // Make the Scenes folder if it is missing
+        EditorSceneManager.SaveScene(scene, path); // Save the scene
     }
 
-    static void BuildCollecting(LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
+    /// <summary>Picks the sprite name for a level theme: the meadow name, or the Volcanic or Folded rock version.</summary>
+    static string Themed(string meadow, string volcanic, string folded, LevelTheme theme) => theme == LevelTheme.Volcanic ? volcanic : theme == LevelTheme.FoldedRock ? folded : meadow; // One name per theme
+
+    static void BuildGoal(LevelData level, LevelTheme theme, Transform parent) // The end of the level: a cave, a lava-rock arch or a summit stone pile, with the goal flag
+    {
+        float goalX = level.Goal.X; // The goal from the level data
+        if (theme == LevelTheme.Volcanic) // Volcano Trail
+        {
+            var arch = M.Renderer("Arch", S("arch"), 4, parent); // Lava-rock arch the explorer walks under
+            arch.transform.position = LevelGeometry.ToWorld(goalX + 12f, 28f); // Its 56-pixel height sits on the ground; its open middle starts at the goal
+        }
+        else if (theme == LevelTheme.FoldedRock) // Folded Peaks
+        {
+            var cairn = M.Renderer("Cairn", S("cairn"), 4, parent); // Summit stone pile
+            cairn.transform.position = LevelGeometry.ToWorld(goalX + 24f, 22f); // Its 44-pixel height sits on the ground, just past the goal
+        }
+        else // The meadow trail
+        {
+            var cave = M.Renderer("Cave", S("cave"), 4, parent); // Cave entrance at the end
+            cave.transform.position = LevelGeometry.ToWorld(goalX + 20f, 28f); // Its 56-pixel height sits on the ground; its opening is at the goal
+        }
+        var goalFlag = M.Renderer("Goal Flag", S("flag"), 6, parent); // Flag before the goal
+        goalFlag.transform.position = LevelGeometry.ToWorld(goalX - 28f, 14f); // Just before the goal; its 28-pixel height sits on the ground
+    }
+
+    static void BuildVents(LevelLayout layout, Transform parent) // Each steam vent: its rim in the ground, a warning wisp and a puff above it (D-055)
+    {
+        if (layout.Vents.Count == 0) return; // Most levels have none
+        var warnFrames = Enumerable.Range(0, 2).Select(i => S($"Props/steam_warn_{i:00}")).ToArray(); // The small warning wisp
+        var puffFrames = Enumerable.Range(0, 4).Select(i => S($"Props/steam_{i:00}")).ToArray(); // The tall puff
+        for (int i = 0; i < layout.Vents.Count; i++) // Each vent
+        {
+            var vent = layout.Vents[i]; // Its data
+            float mid = vent.CenterX; // Its middle across
+            var view = new GameObject("Steam Vent " + (i + 1)).AddComponent<SteamVentView>(); // Draws its cycle
+            view.transform.SetParent(parent, false); // Keep it under the level
+            var rim = M.Renderer("Vent", S("vent"), 7, view.transform); // The vent in the ground, in front of the ground top
+            rim.transform.position = LevelGeometry.ToWorld(mid, -4f); // Its 8-pixel height ends at the ground line
+            view.warn = M.Renderer("Warning", null, 19, view.transform); // The wisp, just behind the explorer
+            view.warn.transform.position = LevelGeometry.ToWorld(mid, 8f); // Its 16-pixel height starts at the ground line
+            view.steam = M.Renderer("Steam", null, 19, view.transform); // The puff, just behind the explorer
+            view.steam.transform.position = LevelGeometry.ToWorld(mid, 32f); // Its 64-pixel height starts at the ground line
+            view.warnFrames = warnFrames; // Wisp pictures
+            view.puffFrames = puffFrames; // Puff pictures
+        }
+    }
+
+    static void BuildProps(LevelData level, LevelLayout layout, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Living props: decoration only, no effect on play (D-055)
+    {
+        bool OverPit(float x, float halfWidth) => pits.Any(p => x + halfWidth > p.Place.X && x - halfWidth < p.Place.X + p.Width); // Keeps props off the gaps
+        if (layout.Theme == LevelTheme.Volcanic) // Volcano Trail: glowing cracks in the rock and faint fumaroles behind the trail
+        {
+            var crackFrames = Enumerable.Range(0, 4).Select(i => S($"Props/lava_crack_{i:00}")).ToArray(); // Glow cycle
+            var wispFrames = Enumerable.Range(0, 4).Select(i => S($"Props/wisp_{i:00}")).ToArray(); // Faint wisp cycle
+            int n = 0; // Counts the props, so neighbours glow out of step
+            for (float x = 180f; x < layout.Width - 120f; x += 340f) // A crack about every 340 pixels
+            {
+                if (OverPit(x, 12f)) continue; // Never over a pit
+                var crack = M.Renderer("Lava Crack", crackFrames[0], 6, parent); // In front of the rock
+                crack.transform.position = LevelGeometry.ToWorld(x, -22f - (n % 3) * 9f); // At different depths in the rock face
+                Loop(crack.gameObject, crackFrames, 3f + (n % 3) * 0.7f); // Slow glow, each a little different
+                n++; // Next prop
+            }
+            for (float x = 420f; x < layout.Width - 200f; x += 760f) // A wisp about every 760 pixels
+            {
+                if (OverPit(x, 8f) || layout.Vents.Any(v => Mathf.Abs(v.CenterX - x) < 60f)) continue; // Not over a pit, and well away from the real vents
+                var wisp = M.Renderer("Fumarole Wisp", wispFrames[0], 4, parent); // Behind boulders and the explorer
+                wisp.transform.position = LevelGeometry.ToWorld(x, 12f); // Its 24-pixel height starts at the ground line
+                Loop(wisp.gameObject, wispFrames, 5f + (n % 2)); // Gentle rising
+                n++; // Next prop
+            }
+        }
+        else if (layout.Theme == LevelTheme.FoldedRock) // Folded Peaks: snow near the summit and an eagle that flies off
+        {
+            var snow = new GameObject("Summit Snow").AddComponent<SummitSnow>(); // Drifting flakes
+            snow.transform.SetParent(parent, false); // Keep it under the level
+            snow.flakeSprites = new[] { S("Props/snow_00"), S("Props/snow_01") }; // Small and big flakes
+            snow.fromX = layout.Width - 1500f; // The last stretch before the summit
+            snow.toX = layout.Width; // Up to the end
+            var bigBoulders = layout.Boulders.Where(b => b.Size == BoulderSize.Big && b.X < level.Goal.X).OrderByDescending(b => b.X).ToList(); // Big boulders before the summit, nearest the summit first
+            if (bigBoulders.Count > 0) // A boulder to sit on
+            {
+                var perch = bigBoulders[0]; // The last big boulder before the summit
+                var eagle = new GameObject("Eagle").AddComponent<EagleFlyOff>(); // The startled eagle
+                eagle.transform.SetParent(parent, false); // Keep it under the level
+                eagle.body = M.Renderer("Art", S("Props/eagle_00"), 8, eagle.transform); // Its picture, in front of the boulder
+                eagle.transform.position = LevelGeometry.ToWorld(perch.X + 24f, 36f + 8f); // Standing on top of the 36-pixel boulder
+                eagle.perched = S("Props/eagle_00"); // Sitting
+                eagle.flapFrames = Enumerable.Range(1, 3).Select(i => S($"Props/eagle_{i:00}")).ToArray(); // Flying
+                eagle.explorer = explorer; // Who startles it
+            }
+        }
+    }
+
+    static void Loop(GameObject go, Sprite[] frames, float framesPerSecond) // Makes a picture play its frames for ever
+    {
+        var flip = go.AddComponent<SpriteFlipbook>(); // Plays the frames
+        flip.frames = frames; // The pictures
+        flip.framesPerSecond = framesPerSecond; // Its speed
+        flip.loop = true; // Never stops
+    }
+
+    static LevelBanner BuildBanner(Transform root, TMPro.TMP_FontAsset font) // The level start banner: a plate with the level name, hidden above the screen until it slides in (D-055)
+    {
+        var c = K.CanvasCenter; // Middle of the screen
+        var holder = M.Rect("Level Banner", root, c, c); // Holder; the banner script shows and hides it
+        var at = new Vector2(240f, 96f); // Where the plate rests: centred, under the top strip of the HUD
+        var plate = M.Picture("Plate", holder, S("banner_plate"), at, c); // The 208x32 cream plate
+        plate.raycastTarget = false; // Never blocks taps
+        var name = M.Label("Name", plate.transform, font, "", at, at, new Vector2(196f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // The level name in the pixel font at 22 px (D-050)
+        var banner = holder.gameObject.AddComponent<LevelBanner>(); // Slides it in and out
+        banner.plate = plate.rectTransform; // The plate to move
+        banner.label = name; // The name label
+        banner.shownY = plate.rectTransform.anchoredPosition.y; // Its resting height
+        banner.hiddenY = banner.shownY + 160f; // Above the top of the screen
+        plate.rectTransform.anchoredPosition = new Vector2(plate.rectTransform.anchoredPosition.x, banner.hiddenY); // Start hidden, so it never flashes
+        holder.gameObject.SetActive(false); // Hidden until the level starts
+        return banner; // The controller plays it
+    }
+
+    static void BuildCollecting(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
     {
         var c = K.CanvasCenter; // Middle of the screen
         var counterAt = new Vector2(74f, 30f); // Middle of the top-left panel: 6 pixels from the left and top edges (decisions D-049, D-050)
         var counter = M.Panel("Counter", root, counterAt, new Vector2(136f, 46f)); // Cream panel at the top left, x 6 to 142, with two 22-pixel lines: the level name, then the count
-        controller.levelNameLabel = M.Label("Level Name", counter, font, "Mountains Easy 1", new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is; the controller writes it from the scene's level
+        controller.levelNameLabel = M.Label("Level Name", counter, font, level.Episode + " " + level.Difficulty + " " + level.Number, new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is, for example "Mountains Easy 2"
         M.Picture("Gem", counter, S("icon_gem"), new Vector2(20f, 41f), counterAt); // Collectible icon, under the name
-        controller.counterLabel = M.Label("Count", counter, font, "0/" + LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1).Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
+        controller.counterLabel = M.Label("Count", counter, font, "0/" + level.Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
 
         counter.SetAsFirstSibling(); // Draw the counter behind the Result Screen and the pop-up
         var find = M.Rect("Find Item", root, c, c); // Holder of the whole pop-up, hidden at the start
@@ -231,13 +366,14 @@ public static class LevelBuilder // Makes the first level scene
         controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Pickup chimes
     }
 
-    static void BuildTimerAndMenus(LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the countdown, the pause button and the two hidden menus
+    static void BuildTimerAndMenus(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the countdown, the pause button and the two hidden menus
     {
         var c = K.CanvasCenter; // Middle of the screen
         var timer = M.Panel("Timer", root, new Vector2(240f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top centre
-        controller.timerLabel = M.Label("Time", timer, font, "2:00", new Vector2(240f, 18f), new Vector2(240f, 18f), new Vector2(52f, 16f), K.Ink, TMPro.TextAlignmentOptions.Midline); // The countdown
+        int limit = level.TimeLimitSeconds; // The countdown's start
+        controller.timerLabel = M.Label("Time", timer, font, (limit / 60) + ":" + (limit % 60).ToString("00"), new Vector2(240f, 18f), new Vector2(240f, 18f), new Vector2(52f, 16f), K.Ink, TMPro.TextAlignmentOptions.Midline); // The countdown
         controller.pauseButton = SpriteButton("Pause", root, "btn_pause", new Vector2(462f, 19f), c); // Pause button, top right, 6 pixels from the right and top edges
-        BuildProgress(controller, root); // The trail bar under the countdown
+        BuildProgress(level, controller, root); // The trail bar under the countdown
         timer.SetAsFirstSibling(); // Draw the countdown behind the pop-up and the result panel
         controller.pauseButton.transform.SetAsFirstSibling(); // Same for the pause button
 
@@ -251,10 +387,9 @@ public static class LevelBuilder // Makes the first level scene
         controller.timeUpMenuButton = SpriteButton("Main Menu", timeUpBox, "btn_menu", new Vector2(240f, 158f), c); // Leave to the Main Menu
     }
 
-    static void BuildProgress(LevelController controller, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
+    static void BuildProgress(LevelData level, LevelController controller, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // Where the checkpoint and the goal are
         var bar = M.Rect("Trail Progress", root, c, c); // Holder of the bar's parts, filling the screen's middle
         M.Picture("Track", bar, S("progress_track"), new Vector2(240f, 39f), c); // Empty bar from x 168 to 311, rows 36 to 41, just under the countdown
         float left = 169f, width = 142f; // The groove inside the frame: its left edge and width in screen pixels
@@ -265,7 +400,7 @@ public static class LevelBuilder // Makes the first level scene
         float checkpointX = left + Mathf.Round(level.Checkpoint.X / level.Goal.X * width); // Checkpoint place on the bar
         controller.progressCheckpoint = M.Picture("Checkpoint", bar, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag; its pole (3 pixels left of the picture's middle) stands at the checkpoint place
         controller.progressCheckpointOn = S("progress_checkpoint_on"); // Green flag once reached
-        M.Picture("Goal", bar, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the cave
+        M.Picture("Goal", bar, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the goal
         controller.progressMarker = M.Picture("Explorer", bar, S("progress_marker"), new Vector2(left, 39f), c).rectTransform; // The explorer marker, in front of the flags
         controller.progressFill = fill.rectTransform; // The controller widens it
         controller.progressLeft = left - c.x; // Groove start as a UI offset
@@ -298,10 +433,9 @@ public static class LevelBuilder // Makes the first level scene
         return button; // The controller connects it
     }
 
-    static void BuildResult(LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the hidden Result Screen panel
+    static void BuildResult(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the hidden Result Screen panel
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var level = LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 1); // The level data, for the item row
         var panel = M.Panel("Result", root, c, new Vector2(456f, 250f)); // Big cream panel, x 12 to 468, y 10 to 260, laid out for 22-pixel text (decision D-050)
         M.Picture("Heading", panel, S("text_cleared"), new Vector2(240f, 30f), c); // "LEVEL CLEARED!"
         controller.resultStars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 58f), c)).ToArray(); // Three stars at 2x size

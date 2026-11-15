@@ -65,7 +65,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         var panel = M.Panel("Lesson Panel", root, pc, new Vector2(464f, 220f)); // Big cream panel from x 8 to 472, y 42 to 262
 
         // Top row: the heading on the left and the draft note on the right.
-        controller.heading = M.ReadingLabel("Heading", panel, "Level 1: Mountains", new Vector2(120f, 56f), pc, new Vector2(200f, 22f), Clay, TextAlignmentOptions.MidlineLeft); // Heading in the reading font (D-051), from x 20
+        controller.heading = M.ReadingLabel("Heading", panel, "Level 1: Mountains", new Vector2(140f, 56f), pc, new Vector2(240f, 22f), Clay, TextAlignmentOptions.MidlineLeft); // Heading in the reading font (D-051), x 20 to 260, room for "Level 2: Volcanic Mountains" (about 200 pixels)
         controller.draftNote = M.ReadingLabel("Draft Note", panel, "", new Vector2(350f, 56f), pc, new Vector2(220f, 22f), DraftRed, TextAlignmentOptions.MidlineRight); // Draft note in the reading font, ending at x 460
 
         // Middle: the landform picture on the left, the four lesson sentences beside it, one per line.
@@ -114,7 +114,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         startButton.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between buttons
         controller.startButton = startButton; // The controller connects it
 
-        var pictures = new List<LessonController.NamedSprite> { new LessonController.NamedSprite { name = "lesson_mountains", sprite = S("lesson_mountains") } }; // The Mountains lesson picture
+        var pictures = LevelCatalog.All.Select(l => l.Lesson.Picture).Distinct().Select(p => new LessonController.NamedSprite { name = p, sprite = S(p) }).ToList(); // Every level's lesson picture (D-055)
         pictures.AddRange(ItemCatalog.All.Select(k => new LessonController.NamedSprite { name = k.Picture, sprite = I(k.Picture) })); // Every item picture
         controller.pictures = pictures.ToArray(); // The controller looks pictures up by name
 

@@ -25,7 +25,7 @@ public static class ProfileBuilder // Makes the Profile scene
     const string LessonScript = "Tools/Art/make_lesson_art.py"; // Draws the Lesson art and the item pictures
     const string MainMenuPath = "Assets/Scenes/MainMenu.unity"; // The Profile goes after this scene
     const string ProfilePath = "Assets/Scenes/Profile.unity"; // Where the Profile is saved
-    const int SlotsPerShelf = 6; // Room for six item kinds on each shelf
+    const int SlotsPerShelf = 5; // Five item kinds per page; a page arrow on the right shows the rest (D-055)
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for small headings
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, for the draft note
     static readonly Color32 Muted = new Color32(110, 100, 90, 255); // Soft grey-brown for "Coming soon" and the card tag
@@ -105,7 +105,7 @@ public static class ProfileBuilder // Makes the Profile scene
         return label; // The controller fills it
     }
 
-    /// <summary>The Collection: four shelves, one per landform, each with up to six slots (D-052).</summary>
+    /// <summary>The Collection: four shelves, one per landform, each with five slots per page and a page arrow (D-052, D-055).</summary>
     static void BuildShelves(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the shelves
     {
         var shelves = new ProfileController.ShelfView[ShelfNames.Length]; // Filled below
@@ -122,7 +122,7 @@ public static class ProfileBuilder // Makes the Profile scene
             };
             for (int i = 0; i < SlotsPerShelf; i++) // Each slot
             {
-                var sc = new Vector2(146f + i * 62f, c.y - 7f); // Middle of the frame: 62 apart (x 131 to 471 for six), 3 pixels below the shelf top
+                var sc = new Vector2(146f + i * 62f, c.y - 7f); // Middle of the frame: 62 apart (x 131 to 409 for five), 3 pixels below the shelf top
                 var frame = M.Picture("Slot " + (i + 1), shelf, LessonSprite("item_slot"), sc, c); // Tan frame, also the tap area
                 frame.raycastTarget = true; // The frame catches taps
                 var button = frame.gameObject.AddComponent<Button>(); // Makes it tappable
@@ -134,6 +134,8 @@ public static class ProfileBuilder // Makes the Profile scene
                 label.textWrappingMode = TextWrappingModes.NoWrap; // A name stays on one line
                 view.slots[i] = new ProfileController.SlotView { root = frame.gameObject, button = button, picture = picture, label = label }; // Everything the controller needs
             }
+            view.nextPage = M.MakeButton("Next page", shelf, "next_icon", new Vector2(450f, c.y), c); // Arrow to the next page, x 438 to 462, right of the five slots
+            view.prevPage = M.MakeButton("Previous page", shelf, "prev_icon", new Vector2(450f, c.y), c); // Arrow back, in the same place; the controller shows one of the two
             shelves[s] = view; // Keep it
         }
         controller.shelves = shelves; // The four shelves

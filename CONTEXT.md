@@ -18,3 +18,10 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Home landform**: the one landform an item kind belongs to: the landform whose lesson first teaches it. An item kind found in other landforms still has only one home landform.
 - **Shelf**: one row of the Collection for one landform (Mountains, Hills, Plains, Plateaus). It holds the item kinds whose home landform it is.
 - **Item card**: the pop-up opened by tapping a found item kind in the Collection: picture, name, rock or mineral, and description.
+- **Review pickup**: a pickup of an item kind that an earlier level already taught, placed to link the new lesson back to an old one. It gives only a chime, never the first-find pop-up, unless the explorer skipped finding that kind earlier.
+
+## Levels
+
+- **Lesson topic**: the one idea a level teaches about its landform, such as "volcanic mountains". Each level of a landform has a different lesson topic.
+- **Level theme**: how one level looks inside its landform: its ground, props and goal. All levels of a landform share the landform's backdrop; the level theme is what tells them apart.
+- **Level layout**: where the ground, gaps, ledges, boulders, hazards, pickups, checkpoint and goal of one level are. It is level data, not part of the builder.

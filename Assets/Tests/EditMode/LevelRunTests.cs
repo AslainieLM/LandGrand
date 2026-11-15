@@ -405,11 +405,36 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void EasySpikes_StillSendTheExplorerToTheCheckpoint() // Only pits changed
+        public void EasySpikes_ReturnToTheSafeSpotBeforeThem() // Spikes now follow the pit rule on Easy (D-056)
         {
             var run = new LevelRun(Level); // Easy level
             run.ReachCheckpoint(); // Pass the flag
-            Assert.AreEqual(Level.Checkpoint.X, run.HitHazard().X); // Spikes use the checkpoint rule (D-040)
+            Assert.IsTrue(run.TrapReturnsNearby); // The rule applies on Easy
+            var back = run.TouchTrap(new Spot(3460f, 0f)); // The explorer was last on safe ground here
+            Assert.AreEqual(3460f, back.X); // Back there, not at the flag
+            Assert.AreEqual(1, run.Respawns); // Counted
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void NormalSpikes_StillSendTheExplorerToTheCheckpoint() // Normal and Hard keep the checkpoint rule (D-040)
+        {
+            var run = new LevelRun(new LevelData(Episode.Mountains, Difficulty.Normal, 1, Level.Lesson, new Pickup[0], new Spot(32f, 0f), new Spot(640f, 0f), new Hazard[0], new Spot(1380f, 0f))); // A Normal level
+            Assert.IsFalse(run.TrapReturnsNearby); // The rule does not apply
+            Assert.AreEqual(32f, run.TouchTrap(new Spot(300f, 0f)).X); // Before the flag: back at the start
+            run.ReachCheckpoint(); // Pass the flag
+            Assert.AreEqual(640f, run.TouchTrap(new Spot(900f, 0f)).X); // Then back at the checkpoint
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void EasySpikes_KeepItemsAndTime() // No health bar: only the place changes (D-040)
+        {
+            var run = new LevelRun(Level); // Easy level
+            run.Tick(5f); // Some time passed
+            float left = run.RemainingSeconds; // Time before the trap
+            run.TouchTrap(new Spot(500f, 0f)); // Touch a trap
+            Assert.AreEqual(left, run.RemainingSeconds); // Same time
+            Assert.AreEqual(0, run.Collected); // Items untouched
+            Assert.AreEqual(RunOutcome.Playing, run.Outcome); // Still playing
         }
 
         [Test] // Unity runs this method as a Test

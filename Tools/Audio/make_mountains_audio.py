@@ -9,6 +9,7 @@ It writes four files to Assets/Audio/:
   amb_breeze_easy.ogg  A light breeze for Easy levels: soft filtered noise with slow gusts, 24 s.
   sfx_hit.wav          A short falling thud when the explorer touches a trap or falls into the pit.
   sfx_checkpoint.wav   A short two-note ding when a checkpoint flag is reached.
+  sfx_steam.wav        A soft hiss when a steam vent puffs (Mountains Easy 2, D-055).
 Both loops join without a gap: the end is folded back onto the start.
 """
 import math  # math gives sin, exp and pi for making the sounds
@@ -159,13 +160,34 @@ def make_sfx(name, notes, decay, seconds, glide=0.0):
     print("Effect written to", os.path.join(AUDIO, name))  # Tell the person where the file went
 
 
+def make_steam():
+    """Makes sfx_steam.wav: a soft hiss for a steam vent puff (Mountains Easy 2, D-055). Filtered noise that swells fast and fades."""
+    seconds = 0.7  # Length of the puff
+    n = int(seconds * RATE)  # Samples
+    rng = random.Random(41)  # Fixed seed: the same sound every run
+    low = high = 0.0  # Filter memory: a soft whoosh and the bright hiss
+    data = []  # The sound
+    for i in range(n):  # Each sample
+        t = i / RATE  # Seconds
+        white = rng.uniform(-1.0, 1.0)  # Raw noise
+        low += 0.08 * (white - low)  # Soft part of the whoosh
+        high += 0.45 * (white - high)  # Bright part of the hiss
+        env = min(1.0, t / 0.05) * math.exp(-t * 4.5)  # Swells in 50 ms, then fades
+        data.append((low * 2.5 + (high - low) * 0.5) * env)  # Mix the two parts
+    peak = max(abs(v) for v in data)  # Loudest sample
+    data = [v * 0.55 / peak for v in data]  # Normalise, softer than the other effects
+    mm.write_wav(os.path.join(AUDIO, "sfx_steam.wav"), data, data)  # Save as a WAV file
+    print("Effect written to", os.path.join(AUDIO, "sfx_steam.wav"))  # Tell the person where the file went
+
+
 def main():
-    """Makes all four files."""
+    """Makes all five files."""
     os.makedirs(TEMP, exist_ok=True)  # Make the temporary folder if it is missing
     make_music()  # The Mountains music
     make_breeze()  # The Easy breeze
     make_sfx("sfx_hit.wav", [(0.0, 220.0)], 7.0, 0.45, glide=0.55)  # A falling thud for a trap or pit
     make_sfx("sfx_checkpoint.wav", [(0.0, 659.0), (0.14, 880.0)], 5.0, 0.6)  # A two-note ding for the flag
+    make_steam()  # The steam vent puff (D-055)
 
 
 if __name__ == "__main__":

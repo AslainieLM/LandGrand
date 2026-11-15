@@ -47,8 +47,11 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// <summary>True while the pause menu is open (ticket 10).</summary>
         public bool IsMenuOpen { get; private set; } // Set by Pause, cleared by Resume
 
-        /// <summary>True while the game waits: the first-find pop-up or the pause menu is open. The clock stops too.</summary>
-        public bool IsPaused => PendingFind != null || IsMenuOpen; // Either one stops the game
+        /// <summary>True while the level start banner shows (D-055): the clock has not started and the explorer waits.</summary>
+        public bool InIntro { get; private set; } // Set by BeginIntro, cleared by EndIntro
+
+        /// <summary>True while the game waits: the start banner, the first-find pop-up or the pause menu. The clock stops too.</summary>
+        public bool IsPaused => InIntro || PendingFind != null || IsMenuOpen; // Any one stops the game
 
         /// <summary>Seconds left on the countdown. Starts at the level time limit and never goes below 0.</summary>
         public float RemainingSeconds { get; private set; } // Counts down while playing
@@ -121,6 +124,19 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             return PitReturnsNearby ? lastSafe : RespawnPoint; // Easy: a short way back. Otherwise: the checkpoint or the start
         }
 
+        /// <summary>True when touching a trap only returns the explorer a short way back, like a pit (D-056). Easy levels only.</summary>
+        public bool TrapReturnsNearby => Level.Difficulty == Difficulty.Easy; // Same kinder rule as the Easy pits
+
+        /// <summary>
+        /// The explorer touched a spike trap. On Easy it goes back to the last safe spot before the trap (lastSafe), like a fall into a pit (D-056);
+        /// on other difficulties it goes to the last checkpoint or the start. Items, the outcome and the timer are not touched.
+        /// </summary>
+        public Spot TouchTrap(Spot lastSafe) // Counts the trap and gives the place to return to
+        {
+            if (Outcome == RunOutcome.Playing) Respawns++; // Only while playing
+            return TrapReturnsNearby ? lastSafe : RespawnPoint; // Easy: a short way back. Otherwise: the checkpoint or the start
+        }
+
         /// <summary>
         /// The explorer touched a trap. Returns where to put it back: the last checkpoint reached, or the start.
         /// Collected items, the outcome and the timer are not touched (D-040: no health bar).
@@ -151,6 +167,26 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 
         /// <summary>Closes the pause menu.</summary>
         public void Resume() => IsMenuOpen = false; // The game goes on
+
+        /// <summary>The level start banner begins (D-055). Only at the very start of an attempt, before any time has passed.</summary>
+        public void BeginIntro() // Holds the clock while the level name shows
+        {
+            if (Outcome != RunOutcome.Playing || RemainingSeconds < Level.TimeLimitSeconds) return; // Only a fresh attempt has an intro
+            InIntro = true; // The game waits for the banner
+        }
+
+        /// <summary>The level start banner has gone: the clock starts and the explorer may move.</summary>
+        public void EndIntro() => InIntro = false; // The attempt really starts
+
+        /// <summary>
+        /// True when this vent launches the explorer now: the feet stand on it during a puff, while playing and not paused (D-055).
+        /// It changes nothing in the attempt: time, items, the respawn point and the stars stay as they are.
+        /// </summary>
+        public bool VentLaunches(SteamVent vent, float feetX, bool grounded, float seconds) // Asks whether a puff throws the explorer up
+        {
+            if (vent == null || Outcome != RunOutcome.Playing || IsPaused || !grounded) return false; // No vent, over, waiting, or in the air
+            return vent.Covers(feetX) && SteamVent.PhaseAt(seconds) == VentPhase.Puff; // Standing on it while it puffs
+        }
 
         /// <summary>The player pressed OK on the pop-up.</summary>
         public void DismissFind() => PendingFind = null; // The game goes on

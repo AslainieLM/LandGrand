@@ -6,6 +6,7 @@ It writes PNGs to Assets/Art/Level/Sprites/.
 All colours come from Assets/Art/Palettes/landgrand.gpl.
 """
 import os  # os is used to make folders and join paths
+import math  # math gives sine waves and square roots for the new themes
 from PIL import Image  # Image is used to read and turn the explorer pictures
 import make_mainmenu_art as mm  # Main Menu palette, button and drawing helpers
 import make_landform_map_art as lm  # Map colours and the noise helper
@@ -277,6 +278,377 @@ def progress_flag(color, shade):
     return outline(img)  # Dark edge
 
 
+# ---- Volcano Trail and Folded Peaks art (new level themes) ----
+BASALT = (74, 74, 84)  # Dark basalt grey
+BASALT_SH = (52, 52, 62)  # Basalt in shade
+BASALT_LT = (112, 112, 124)  # Basalt in sun
+LAVA_ROCK = (44, 42, 52)  # Very dark rock for the volcanic soil
+LAVA_ROCK_SH = (32, 30, 40)  # Even darker specks
+LAVA_SWIRL = (58, 43, 50)  # Faint cooled-lava swirl
+LAVA_ORANGE = (255, 140, 40)  # Hot orange glow
+FOLD_GREY = (128, 131, 140)  # Folded rock grey band
+FOLD_GREY_SH = (98, 101, 112)  # Grey band in shade
+FOLD_TAN = (190, 164, 118)  # Folded rock tan band
+FOLD_TAN_SH = (150, 125, 88)  # Tan band in shade
+FOLD_BLUE = (104, 122, 150)  # Folded rock blue-grey band
+FOLD_BLUE_SH = (80, 96, 124)  # Blue-grey band in shade
+FROST = (232, 238, 245)  # Snow and frost white
+STEAM_SH = (200, 208, 220)  # Pale grey shade of the steam
+
+
+def wave(x, amp=2, period=16):
+    """A whole-number wave height for column x. It repeats every `period` pixels so tiles join with no seam."""
+    return int(round(amp * math.sin(2 * math.pi * x / period)))  # Up and down by amp
+
+
+def draw_grid(img, rows, ox, oy, colors):
+    """Paints a small picture drawn with letters. A dot or a letter not in colors stays empty."""
+    for y, row in enumerate(rows):  # Each row, top to bottom
+        for x, ch in enumerate(row):  # Each letter in the row
+            if ch in colors:  # Skip empty pixels
+                put(img, ox + x, oy + y, colors[ch])  # Paint it
+
+
+def volcanic_top():
+    """A 16x8 tile for volcanic ground: dark basalt with a few warm ember specks. Unity repeats it across."""
+    img = mm.new_image(16, 8)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 8, LAVA_ROCK)  # Dark rock below
+    mm.fill_rect(img, 0, 0, 16, 4, BASALT)  # Basalt cap
+    mm.fill_rect(img, 0, 0, 16, 1, BASALT_LT)  # Sunny top line
+    mm.fill_rect(img, 0, 4, 16, 1, BASALT_SH)  # Shadow under the cap
+    for x in (1, 6, 11, 14):  # Rough bumps hanging under the cap
+        put(img, x, 5, BASALT_SH)  # One bump pixel
+    for (x, y) in ((4, 1), (11, 2), (13, 6)):  # Ember specks
+        put(img, x, y, mm.SCARF)  # Warm red speck
+    put(img, 8, 6, LAVA_ROCK_SH)  # A dark stone
+    return img
+
+
+def volcanic_soil():
+    """A 16x16 very dark rock tile with faint cooled-lava swirls. It tiles left-right and top-bottom."""
+    img = mm.new_image(16, 16)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 16, LAVA_ROCK)  # Dark rock
+    for y in range(16):  # Each row
+        for x in range(16):  # Each pixel
+            if lm.noise(x, y) < 9:  # A few darker specks
+                put(img, x, y, LAVA_ROCK_SH)  # Dark speck
+    for y0 in (4, 12):  # Two swirl lines per tile
+        for x in range(16):  # Along the tile
+            put(img, x, (y0 + wave(x, 2)) % 16, LAVA_SWIRL)  # Faint wavy line that wraps round
+    return img
+
+
+def ledge_volcanic():
+    """A 16x10 dark grey rock slab tile that Unity repeats across."""
+    img = mm.new_image(16, 10)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 10, BASALT)  # Rock
+    mm.fill_rect(img, 0, 0, 16, 2, BASALT_LT)  # Light top where the explorer stands
+    mm.fill_rect(img, 0, 8, 16, 2, BASALT_SH)  # Dark underside
+    for (x, y, c) in ((4, 4, BASALT_SH), (11, 5, BASALT_SH), (8, 6, BASALT_LT), (14, 3, LAVA_ROCK)):  # Rock texture pixels
+        put(img, x, y, c)  # One texture pixel
+    mm.fill_rect(img, 0, 9, 16, 1, mm.OUTLINE)  # Dark bottom edge
+    return img
+
+
+def boulder_colored(w, h, mid, shade, light, speck, band=None):
+    """Same shape as boulder(w, h) with your own colours. band is an optional (colour, shade) pair for layered rock."""
+    img = mm.new_image(w, h)  # Empty picture
+    cx, cy, rx, ry = (w - 1) / 2, h * 0.62, w / 2 - 1, h * 0.62 - 1  # An oval cut flat at the bottom
+    for y in range(h - 1):  # Each row except the outline row at the bottom
+        for x in range(1, w - 1):  # Each pixel inside the side outlines
+            if y < cy and ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 > 1.0:  # Outside the rounded top
+                continue  # Leave it see-through
+            shaded = (x - cx) * 0.8 + (y - cy) > 2  # Lower right is in shade
+            color = shade if shaded else mid  # Rock colour
+            if band and y % 6 == 3:  # A thin layer line across the rock
+                color = band[1] if shaded else band[0]  # Layer colour
+            if (x - cx) * 0.8 + (y - cy) < -rx * 0.9:  # Sunny edge on the top left
+                color = light  # Light rock
+            if lm.noise(x, y) < 4:  # A few dark cracks or pores
+                color = speck  # Dark speck
+            put(img, x, y, color)  # Paint the pixel
+    return outline(img)  # Dark edge around the boulder
+
+
+def volcanic_boulder(w, h):
+    """A dark porous volcanic boulder."""
+    return boulder_colored(w, h, BASALT, BASALT_SH, BASALT_LT, mm.OUTLINE)  # Dark rock, black pores
+
+
+def arch():
+    """A 64x56 lava-rock arch the explorer walks under: two dark pillars, a curved top and a glowing crack.
+    The gap in the middle is 24 pixels wide and 36 pixels tall."""
+    w, h = 64, 56  # Picture size
+    img = mm.new_image(w, h)  # Empty picture
+    for y in range(1, h):  # Each row of the arch
+        if y < 29:  # Curved top part
+            half = 32 * math.sqrt(max(0.0, 1 - ((y - 29) / 28.0) ** 2))  # Outer curve width in this row
+        else:  # Straight pillars
+            half = 32  # Full width
+        if y >= 20:  # Straight gap sides
+            gap = 13.0  # Gap is 26 wide before the outline takes 1 pixel each side
+        elif y >= 14:  # Curved ceiling of the gap
+            gap = 13 * math.sqrt(max(0.0, 1 - ((y - 20) / 6.0) ** 2))  # Inner curve width in this row
+        else:  # Solid rock above the gap
+            gap = -1  # No gap here
+        for x in range(int(32 - half + 0.5), int(32 + half - 0.5)):  # Pixels of the arch in this row
+            if abs(x + 0.5 - 32) < gap:  # Inside the open gap
+                continue  # Leave it see-through
+            shade = (32 - x) * 0.6 + (y - 28) * 0.4 > 6  # Left and lower parts are in shade
+            color = BASALT_SH if shade else BASALT  # Rock colour
+            if (x - 32) * 0.6 - (y - 28) * 0.4 > 22:  # Sunny upper right
+                color = BASALT_LT  # Light rock
+            if lm.noise(x, y) < 6:  # Texture specks
+                color = LAVA_ROCK  # Dark speck
+            put(img, x, y, color)  # Paint the pixel
+    for (x, y) in ((38, 4), (38, 5), (39, 6), (39, 7), (40, 8), (40, 9), (41, 10), (41, 11), (40, 12)):  # Glowing crack in the top
+        put(img, x, y, LAVA_ORANGE)  # Orange glow
+        put(img, x + 1, y, mm.SCARF_SH)  # Dim edge on the right
+    for (x, y) in ((6, 38), (6, 39), (7, 40), (7, 41), (8, 42), (8, 43), (7, 44)):  # Small glowing crack low in the left pillar
+        put(img, x, y, LAVA_ORANGE)  # Orange glow
+    put(img, 39, 7, mm.HELMET)  # Hot yellow spot
+    put(img, 7, 41, mm.HELMET)  # Hot yellow spot
+    return outline(img)  # Dark edge around the arch
+
+
+def vent():
+    """A 24x8 steam vent set into the ground: a dark rock rim, a black hole and an orange glow inside.
+    The top row lines up with the top of the ground."""
+    img = mm.new_image(24, 8)  # Empty picture
+    mm.fill_rect(img, 0, 0, 24, 8, BASALT)  # Rim rock
+    mm.fill_rect(img, 0, 0, 24, 1, BASALT_LT)  # Sunny top line like the ground
+    mm.fill_rect(img, 0, 6, 24, 2, BASALT_SH)  # Dark bottom
+    for (x, y) in ((2, 3), (4, 2), (19, 3), (21, 2), (20, 5)):  # Rim texture
+        put(img, x, y, BASALT_SH)  # Dark pixel
+    mm.fill_rect(img, 6, 0, 12, 6, mm.OUTLINE)  # Black hole
+    mm.fill_rect(img, 7, 4, 10, 2, mm.SCARF_SH)  # Dim glow at the bottom of the hole
+    mm.fill_rect(img, 8, 5, 8, 1, LAVA_ORANGE)  # Bright orange glow
+    mm.fill_rect(img, 10, 5, 4, 1, mm.HELMET)  # Hot yellow middle
+    put(img, 6, 0, BASALT_SH)  # Round the top left of the hole
+    put(img, 17, 0, BASALT_SH)  # Round the top right of the hole
+    return img
+
+
+def steam_warn(frame):
+    """A 24x16 thin white wisp rising from the vent. Frame 1 is a little taller. It warns before the puff."""
+    img = mm.new_image(24, 16)  # Empty picture
+    top = 8 if frame == 0 else 3  # How high the wisp climbs
+    for y in range(15, top - 1, -1):  # From the vent up
+        t = (15 - y) / float(15 - top)  # 0 at the vent, 1 at the tip
+        x = 12 + int(round(1.5 * math.sin((15 - y) * 0.7 + frame * 1.5)))  # Wavy path
+        alpha = int(235 - 150 * t)  # Fades out going up
+        put(img, x, y, mm.WHITE, alpha)  # Thin white line
+        if t < 0.5:  # Thicker near the vent
+            put(img, x + 1, y, STEAM_SH, alpha)  # Pale shade pixel beside it
+    return img
+
+
+def steam_puff(frame):
+    """A 24x64 steam column. It grows with the frame, billows and thins out at the top. Bottom centre sits on the vent."""
+    img = mm.new_image(24, 64)  # Empty picture
+    height = (24, 40, 52, 60)[frame]  # How tall the puff is in this frame
+    widest = (5, 7, 9, 10)[frame]  # How wide the puff gets
+    for y in range(63, 63 - height, -1):  # From the vent up
+        t = (63 - y) / float(height)  # 0 at the vent, 1 at the top
+        half = 2.5 + (widest - 2.5) * math.sin(min(1.0, t * 1.3) * math.pi / 2)  # Wider going up
+        half += 1.6 * math.sin(y * 0.45 + frame * 1.3) * min(1.0, t * 3)  # Billowing sides
+        for x in range(int(12 - half), int(12 + half)):  # Pixels of the column in this row
+            if t > 0.7 and lm.noise(x + frame * 5, y) > 100 - (t - 0.7) * 260:  # Ragged, thin top
+                continue  # Leave a hole
+            alpha = 240 if t < 0.7 else int(240 - (t - 0.7) * 400)  # Fades near the top
+            left = x < 12 - half + 3  # Left edge is in shade, light is from the right
+            put(img, x, y, STEAM_SH if left else mm.WHITE, max(40, alpha))  # Pale grey or white
+        if t > 0.1 and int(12 + half) - int(12 - half) > 3:  # Pale edge on the right so the puff reads on the sky
+            put(img, int(12 + half) - 1, y, STEAM_SH, 230 if t < 0.7 else 120)  # Edge pixel
+    return img
+
+
+def wisp(frame):
+    """An 8x24 small faint wisp of background steam. It is smaller and fainter than the launch steam."""
+    img = mm.new_image(8, 24)  # Empty picture
+    for y in range(23, 3, -1):  # From the bottom up
+        t = (23 - y) / 19.0  # 0 at the bottom, 1 at the tip
+        x = 4 + int(round(1.6 * math.sin((23 - y) * 0.5 + frame * math.pi / 2)))  # Wavy path that moves each frame
+        alpha = int(110 * (1 - t))  # Very faint, fades going up
+        put(img, x, y, mm.WHITE, alpha)  # Faint white pixel
+        put(img, x + 1, y, mm.WHITE, alpha // 2)  # Fainter neighbour
+    return img
+
+
+def lava_crack(frame):
+    """A 16x6 jagged glowing crack on a see-through background. Frames glow dim, medium, bright, medium."""
+    img = mm.new_image(16, 6)  # Empty picture
+    level = (0, 1, 2, 1)[frame]  # How hot the crack is
+    path = [3, 3, 2, 2, 3, 4, 4, 3, 2, 1, 1, 2, 3, 3, 4, 4]  # Row of the crack in each column
+    core = (mm.SCARF_SH, mm.SCARF, mm.HELMET)[level]  # Middle colour of the crack
+    glow = ((90, 36, 30), mm.SCARF_SH, LAVA_ORANGE)[level]  # Colour just above and below the crack
+    for x, y in enumerate(path):  # Each column of the crack
+        for dy in (-1, 1):  # Pixels above and below
+            if (x + dy) % 3 != 0 or level == 2:  # Break the glow up a little so it looks rough
+                put(img, x, y + dy, glow, 200)  # Soft glow pixel
+    for x, y in enumerate(path):  # Draw the core on top
+        put(img, x, y, core)  # Bright middle
+    put(img, 9, 0, core)  # A short branch going up
+    put(img, 3, 4, core)  # A short branch going down
+    return img
+
+
+def fold_top():
+    """A 16x8 tile for folded-rock ground: grey stone with thin patches of snow. Unity repeats it across."""
+    img = mm.new_image(16, 8)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 8, FOLD_GREY_SH)  # Rock below
+    mm.fill_rect(img, 0, 0, 16, 4, FOLD_GREY)  # Stone cap
+    mm.fill_rect(img, 0, 4, 16, 1, FOLD_BLUE_SH)  # Shadow under the cap
+    for x in (3, 9, 14):  # Rough bumps hanging under the cap
+        put(img, x, 5, FOLD_BLUE_SH)  # One bump pixel
+    for (x0, x1) in ((1, 5), (9, 12)):  # Patches of snow
+        mm.fill_rect(img, x0, 0, x1 - x0 + 1, 1, FROST)  # Thin snow line
+        mm.fill_rect(img, x0 + 1, 1, max(1, x1 - x0 - 1), 1, STEAM_SH)  # Frost under the snow
+    put(img, 6, 6, FOLD_TAN_SH)  # A tan fleck in the rock
+    put(img, 12, 7, FOLD_BLUE_SH)  # A dark fleck
+    return img
+
+
+def folded_band(v):
+    """Which rock layer (light colour, shade colour, is it the first row) a row position v (0 to 15) belongs to."""
+    if v < 6:  # Grey band
+        return FOLD_GREY, FOLD_GREY_SH, v == 0  # Grey layer
+    if v < 10:  # Tan band
+        return FOLD_TAN, FOLD_TAN_SH, v == 6  # Tan layer
+    return FOLD_BLUE, FOLD_BLUE_SH, v == 10  # Blue-grey layer
+
+
+def fold_soil():
+    """A 16x16 grey rock tile with grey, tan and blue-grey bands that wave up and down. It tiles in both directions."""
+    img = mm.new_image(16, 16)  # Empty tile
+    for y in range(16):  # Each row
+        for x in range(16):  # Each pixel
+            v = (y - wave(x, 2)) % 16  # Position inside the layers, bent by the wave
+            light, shade, first = folded_band(v)  # The layer here
+            put(img, x, y, shade if first else light)  # Darker line where a layer begins
+            if lm.noise(x, y) < 5:  # A few specks
+                put(img, x, y, shade)  # Dark speck
+    return img
+
+
+def ledge_fold():
+    """A 16x10 layered grey slab tile that Unity repeats across, with thin bands."""
+    img = mm.new_image(16, 10)  # Empty tile
+    mm.fill_rect(img, 0, 0, 16, 10, FOLD_GREY)  # Rock
+    mm.fill_rect(img, 0, 0, 16, 2, (176, 180, 190))  # Light top where the explorer stands
+    mm.fill_rect(img, 0, 4, 16, 1, FOLD_TAN)  # Tan band
+    mm.fill_rect(img, 0, 6, 16, 2, FOLD_BLUE)  # Blue-grey band
+    mm.fill_rect(img, 0, 8, 16, 2, FOLD_GREY_SH)  # Dark underside
+    for x in (3, 10):  # Snow flecks on the top
+        put(img, x, 0, FROST)  # One fleck
+    mm.fill_rect(img, 0, 9, 16, 1, mm.OUTLINE)  # Dark bottom edge
+    return img
+
+
+def fold_boulder(w, h):
+    """A grey layered boulder with thin tan layer lines."""
+    return boulder_colored(w, h, FOLD_GREY, FOLD_GREY_SH, (186, 190, 198), FOLD_BLUE_SH, (FOLD_TAN, FOLD_TAN_SH))  # Grey rock with tan layers
+
+
+def cairn():
+    """A 40x44 summit stone pile: flat stones stacked up, a little snow on top."""
+    img = mm.new_image(40, 44)  # Empty picture
+    stones = [(1, 35, 38, 8, FOLD_GREY, FOLD_GREY_SH), (5, 27, 30, 8, FOLD_TAN, FOLD_TAN_SH), (9, 19, 23, 8, FOLD_BLUE, FOLD_BLUE_SH),
+              (11, 12, 18, 7, FOLD_GREY, FOLD_GREY_SH), (14, 5, 12, 7, FOLD_TAN, FOLD_TAN_SH)]  # x, y, width, height, colour, shade of each stone
+    for (x0, y0, sw, sh, c, cs) in stones:  # Each stone, bottom to top
+        for y in range(y0, y0 + sh):  # Each row of the stone
+            for x in range(x0, x0 + sw):  # Each pixel of the row
+                if (x in (x0, x0 + sw - 1)) and (y in (y0, y0 + sh - 1)):  # Cut the corners to round the stone
+                    continue  # Leave it see-through
+                color = cs if y >= y0 + sh - 2 else c  # Shaded underside
+                if y == y0 and x > x0 + sw // 2:  # Sunny top right edge
+                    color = (210, 212, 220)  # Light edge
+                put(img, x, y, color)  # Paint the pixel
+    for (x0, y0, sw, _sh, _c, _cs) in stones[2:]:  # Snow on the upper stones
+        mm.fill_rect(img, x0 + 2, y0, sw - 5, 1, FROST)  # Thin snow on the top edge
+    mm.fill_rect(img, 16, 3, 8, 2, FROST)  # Snow cap on the top stone
+    mm.fill_rect(img, 18, 2, 4, 1, FROST)  # Round the snow cap
+    return outline(img)  # Dark edge around the pile
+
+
+def snow_flake(size):
+    """A 2x2 or 4x4 white snowflake dot."""
+    img = mm.new_image(size, size)  # Empty picture
+    if size == 2:  # Tiny dot
+        mm.fill_rect(img, 0, 0, 2, 2, mm.WHITE)  # White block
+    else:  # Slightly bigger round flake
+        draw_grid(img, [".##.", "####", "####", ".##."], 0, 0, {"#": mm.WHITE})  # Round white flake
+        put(img, 3, 2, STEAM_SH)  # Pale shade on the lower right
+        put(img, 2, 3, STEAM_SH)  # Pale shade on the lower right
+    return img
+
+
+EAGLE_COLORS = {"o": mm.OUTLINE, "b": lm.BACKPACK, "g": (214, 160, 60), "d": mm.BACKPACK_SH, "w": (240, 228, 196), "y": mm.HELMET}  # Eagle letter colours
+
+
+def eagle(frame):
+    """A 32x16 golden-brown eagle facing right. Frame 0 sits with folded wings; frames 1 to 3 flap in flight."""
+    img = mm.new_image(32, 16)  # Empty picture
+    if frame == 0:  # Perched on its feet at the bottom centre
+        rows = ["....ooooo...",
+                "...owwwwwo..",
+                "..owwwowwoyy",
+                "..owwwwwwyyo",
+                "..ooggggooo.",
+                ".obbgggggbo.",
+                "obbbgggggbbo",
+                "obbggggggbbo",
+                "obbbggggbbbo",
+                "obbbbggbbbbo",
+                "odbbbbbbbbdo",
+                ".odbbbbbbdo.",
+                "..oddbbddo..",
+                "...ooooooo..",
+                "...oy..yo...",
+                "...yy..yy..."]  # 12 wide, 16 tall: head, chest, folded wings, tail and feet
+        draw_grid(img, rows, 10, 0, EAGLE_COLORS)  # Centre it
+        return img
+    tip = {1: 1, 2: 7, 3: 14}[frame]  # Where the wing tips are
+    for side in (-1, 1):  # Left and right wing
+        for d in range(1, 15):  # Out from the body
+            t = d / 14.0  # 0 at the shoulder, 1 at the tip
+            yc = 8 + (tip - 8) * (t ** 1.2)  # Wing centre line
+            thick = int(round(4 - 2.5 * t))  # Wing is thinner at the tip
+            x = 16 + side * d  # Column of the wing
+            for k in range(thick):  # Pixels of the wing across its thickness
+                y = int(round(yc)) + k - thick // 2  # Row of this pixel
+                color = (214, 160, 60) if k < thick - 1 else lm.BACKPACK  # Gold with a darker back edge
+                if d > 10:  # Dark feather tips
+                    color = mm.BACKPACK_SH  # Dark tip
+                put(img, x, y, color)  # Paint the pixel
+    draw_grid(img, ["..bbbb..", ".bggggb.", "bbggggbw", ".bggggww", "..bbbbwy"], 12, 6, EAGLE_COLORS)  # Body, tail on the left and head on the right
+    put(img, 21, 8, mm.OUTLINE)  # Eye
+    return outline(img)  # Dark edge around the whole bird
+
+
+def banner_plate():
+    """A 208x32 level-start title plate: a cream panel with a brown wood border and small rivets. The middle is plain."""
+    w, h = 208, 32  # Picture size
+    img = mm.new_image(w, h)  # Empty picture
+    mm.fill_rect(img, 0, 0, w, h, mm.OUTLINE)  # Dark outline
+    mm.fill_rect(img, 1, 1, w - 2, h - 2, mm.PLATEAU)  # Wood border
+    mm.fill_rect(img, 1, h - 4, w - 2, 3, mm.PLATEAU_SH)  # Shaded lower border
+    mm.fill_rect(img, 1, 1, 1, h - 2, mm.PLATEAU_SH)  # Shaded left border
+    mm.fill_rect(img, 1, 1, w - 2, 1, mm.HELMET_SH)  # Sunny top line
+    for x in range(4, w - 4, 7):  # Faint wood grain on the top and bottom border
+        put(img, x, 2, mm.PLATEAU_SH)  # Grain mark on top
+        put(img, x + 3, h - 3, mm.BACKPACK_SH)  # Grain mark at the bottom
+    mm.fill_rect(img, 4, 4, w - 8, h - 8, mm.VEST_SH)  # Inner dark edge of the paper
+    mm.fill_rect(img, 5, 5, w - 10, h - 10, mm.HEADLAMP)  # Cream paper
+    mm.fill_rect(img, 5, h - 6, w - 10, 1, mm.VEST)  # Soft shadow along the paper bottom
+    for (x, y) in ((2, 2), (w - 4, 2), (2, h - 4), (w - 4, h - 4)):  # Four rivets in the corners
+        mm.fill_rect(img, x, y, 2, 2, mm.MASK)  # Metal rivet
+        put(img, x, y + 1, mm.MASK_SH)  # Shade on the rivet
+    for (x, y) in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):  # Cut the outer corners
+        img.putpixel((x, y), (0, 0, 0, 0))  # Make the corner see-through
+    return img
+
+
 def save(img, name):
     """Saves an image under Assets/Art/Level/Sprites/."""
     os.makedirs(os.path.dirname(os.path.join(OUT, name)), exist_ok=True)  # Make the folder if it is missing
@@ -329,6 +701,29 @@ def main():
     save(mm.button(80, 26, "OK", *green, pressed=False, scale=2), "btn_ok.png")  # OK button of the first-find pop-up
     save(mm.button(80, 26, "OK", *green, pressed=True, scale=2), "btn_ok_pressed.png")  # OK button, pressed
     save(mm.text_image("LEVEL CLEARED!", mm.DARK, 2), "text_cleared.png")  # Result heading
+    save(volcanic_top(), "volcanic_top.png")  # Volcano Trail ground top
+    save(volcanic_soil(), "volcanic_soil.png")  # Volcano Trail soil
+    save(ledge_volcanic(), "ledge_volcanic.png")  # Volcano Trail ledge
+    save(volcanic_boulder(32, 24), "boulder_small_volcanic.png")  # Small volcanic boulder
+    save(volcanic_boulder(48, 36), "boulder_big_volcanic.png")  # Big volcanic boulder
+    save(arch(), "arch.png")  # Lava-rock arch (the goal)
+    save(vent(), "vent.png")  # Steam vent in the ground
+    for i in range(2):  # Two warning frames
+        save(steam_warn(i), "Props/steam_warn_%02d.png" % i)  # Thin wisp before a puff
+    for i in range(4):  # Four frames each
+        save(steam_puff(i), "Props/steam_%02d.png" % i)  # Big steam puff
+        save(wisp(i), "Props/wisp_%02d.png" % i)  # Faint background wisp
+        save(lava_crack(i), "Props/lava_crack_%02d.png" % i)  # Glowing lava crack
+        save(eagle(i), "Props/eagle_%02d.png" % i)  # Eagle: perched, then flying
+    save(fold_top(), "fold_top.png")  # Folded Peaks ground top
+    save(fold_soil(), "fold_soil.png")  # Folded Peaks soil
+    save(ledge_fold(), "ledge_fold.png")  # Folded Peaks ledge
+    save(fold_boulder(32, 24), "boulder_small_fold.png")  # Small layered boulder
+    save(fold_boulder(48, 36), "boulder_big_fold.png")  # Big layered boulder
+    save(cairn(), "cairn.png")  # Summit stone pile
+    save(snow_flake(2), "Props/snow_00.png")  # Small snowflake
+    save(snow_flake(4), "Props/snow_01.png")  # Bigger snowflake
+    save(banner_plate(), "banner_plate.png")  # Level-start title plate
     print("Level art written to", OUT)  # Tell the person running it where the files went
 
 

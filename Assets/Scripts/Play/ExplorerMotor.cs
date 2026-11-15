@@ -72,6 +72,17 @@ namespace LandGrand.Play // Level play scripts live here
             Apply(); // Show it there
         }
 
+        /// <summary>Throws the explorer straight up, for a steam vent puff (D-055). The double jump is ready again in the air.</summary>
+        public void Launch(float speed) // Called by the level controller when a vent puffs under the feet
+        {
+            velocity.y = speed; // Fly up
+            grounded = false; // Off the ground now
+            jumpedFromGround = true; // No ground jump in the air
+            airJumpUsed = false; // The double jump may still be used after the launch
+            jumpBufferLeft = 0f; // Forget any waiting jump press
+            flipClock = -1f; // No somersault from the launch itself
+        }
+
         void Update() // Runs every frame: reads the controls, moves and animates
         {
             if (Frozen) { velocity = Vector2.zero; Animate(); return; } // Stand still while frozen

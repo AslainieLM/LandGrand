@@ -11,6 +11,8 @@ namespace LandGrand.Play // Level play scripts live here
     /// then saves the clear and shows a basic result with the stars and Continue.
     /// Ticket 08 adds collecting: touching a pickup counts it, the first find of a kind opens a pop-up that pauses the game,
     /// and later finds only chime and sparkle. Hazards, the timer and the pause menu come in tickets 09 and 10; the full Result Screen in ticket 11.
+    /// D-055 adds the level start banner (the clock waits for it) and steam vents that launch the explorer.
+    /// One script runs every level; the builder sets which level a scene plays.
     /// </summary>
     public class LevelController : PixelScreen // The level brain
     {
@@ -88,6 +90,11 @@ namespace LandGrand.Play // Level play scripts live here
         public Color timerNormal = new Color32(31, 26, 36, 255); // Countdown colour
         public Color timerLow = new Color32(168, 63, 36, 255); // Countdown colour in the last 10 seconds
 
+        [Header("Start banner and vents (D-055)")] // Inspector heading for the level start banner and the steam vents
+        public LevelBanner banner; // Slides the level name in before the clock starts
+        public AudioClip steamSound; // Played when the vents puff near the explorer
+        public float steamHearingPixels = 260f; // How near (in pixels) a puffing vent must be to be heard
+
         [Header("Scenes")] // Inspector heading for the scene names
         public string levelSelectionScene = "LevelSelection"; // Where Continue and Back go
         public string lessonScene = "Lesson"; // Where Retry and Replay go (D-040)
@@ -99,13 +106,14 @@ namespace LandGrand.Play // Level play scripts live here
         bool respawning; // True while the explorer is being sent back, so a hazard counts once
         Vector2 lastGround; // Where the explorer last stood on the ground
         int lastGroundFacing = 1; // Which way it was walking then
+        VentPhase lastVentPhase; // The vents' phase last frame, to hear the start of each puff
 
         protected override void Awake() // Runs once when the level opens: starts the attempt
         {
             base.Awake(); // Click sound and hidden guide
             if (pickups == null || findPanel == null || findOk == null || counterLabel == null || hazardFlash == null || checkpointFlag == null || timerLabel == null || pausePanel == null || timeUpPanel == null || resultItems == null || mapButton == null) // The scene was built before tickets 08 to 11
             {
-                Debug.LogError("This level scene is out of date. Run LandGrand > Build Mountains Easy 1 Level, then press Play again."); // Say what to do
+                Debug.LogError("This level scene is out of date. Run LandGrand > Build Mountains Levels, then press Play again."); // Say what to do
                 enabled = false; // Stop Update so the console shows one clear message, not an error every frame
                 return; // Do not start the attempt
             }
@@ -135,6 +143,37 @@ namespace LandGrand.Play // Level play scripts live here
             continueButton.onClick.AddListener(Continue); // Continue goes to the next available level
             replayButton.onClick.AddListener(() => Leave(lessonScene)); // Replay starts again from the lesson
             mapButton.onClick.AddListener(() => Leave(mapScene)); // Back to the Landform Map
+            StartBanner(); // The level name slides in; the clock waits for it (D-055)
+        }
+
+        void StartBanner() // Holds the attempt while the level start banner shows
+        {
+            if (banner == null) return; // A scene without a banner starts at once
+            run.BeginIntro(); // The clock waits
+            explorer.Frozen = true; // The explorer waits too
+            banner.Play(run.Level.BannerName, EndBanner); // Show the name; EndBanner runs when it has gone
+        }
+
+        void EndBanner() // The banner has gone: the attempt really starts
+        {
+            run.EndIntro(); // The clock starts
+            if (run.Outcome == RunOutcome.Playing && !run.IsPaused) explorer.Frozen = false; // The explorer may move
+        }
+
+        void CheckVents() // Launches the explorer from a puffing vent, and plays the hiss for puffs nearby (D-055)
+        {
+            var vents = run.Level.Layout.Vents; // The level's steam vents
+            if (vents.Count == 0) return; // Most levels have none
+            float t = Time.timeSinceLevelLoad; // The vents' shared clock, as SteamVentView uses
+            var phase = SteamVent.PhaseAt(t); // Resting, warning or puffing
+            bool puffStarted = phase == VentPhase.Puff && lastVentPhase != VentPhase.Puff; // A new puff began this frame
+            lastVentPhase = phase; // Remember for next frame
+            var p = explorer.Position; // Feet of the explorer
+            foreach (var vent in vents) // Each vent
+            {
+                if (puffStarted && Mathf.Abs(vent.CenterX - p.x) < steamHearingPixels) PlaySfx(steamSound); // Hear the puff when near it
+                if (run.VentLaunches(vent, p.x, explorer.Grounded, t)) explorer.Launch(SteamVent.LaunchSpeed); // The rules say the puff throws the explorer up
+            }
         }
 
         protected override void Update() // Runs every frame: checks the goal and the Back button
@@ -152,6 +191,7 @@ namespace LandGrand.Play // Level play scripts live here
             if (respawning) return; // Wait while the explorer is being sent back
             CheckCheckpointAndHazards(); // The flag, the spikes and the pit
             if (respawning) return; // A hazard just sent the explorer back
+            CheckVents(); // A puffing vent under the feet throws the explorer up
             CheckPickups(); // Collect anything the explorer touches
             if (run.IsPaused) return; // A first find opened the pop-up: the goal waits
             if (explorer.Position.x >= run.Level.Goal.X - goalReach) Clear(); // Reached the cave entrance
@@ -171,22 +211,29 @@ namespace LandGrand.Play // Level play scripts live here
             var body = new Rect(p.x - explorer.size.x / 2f, p.y, explorer.size.x, explorer.size.y); // The explorer body box
             bool onSpikes = false; // Did the body touch a spike trap?
             foreach (var area in spikeAreas) if (body.Overlaps(area)) onSpikes = true; // Check each trap
-            if (onSpikes) StartCoroutine(Respawn(false)); // A trap: back to the last checkpoint
+            if (onSpikes) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
             else if (p.y < pitDeathY) StartCoroutine(Respawn(true)); // The pit
         }
 
-        void RememberSafeSpot() // Remembers where the explorer last stood on the ground, and which way it was walking
+        void RememberSafeSpot() // Remembers where the explorer last stood on safe ground, and which way it was walking
         {
-            if (!explorer.Grounded) return; // Only spots with ground under the feet
+            if (!explorer.Grounded || TouchesSpikes(explorer.Position)) return; // Only spots with ground under the feet and no spikes
             lastGround = explorer.Position; // The spot
             lastGroundFacing = explorer.Facing; // The walking direction
         }
 
-        Spot SafeSpotNearThePit() // A short way back from where the explorer last stood, on the same ground (Easy rule)
+        bool TouchesSpikes(Vector2 feet) // True when a body standing at these feet would touch a spike trap
         {
-            var spot = lastGround; // Start at the last ground spot
-            var back = new Vector2(lastGround.x - lastGroundFacing * safeBackPixels, lastGround.y); // A short step back, away from the pit
-            if (explorer.geometry.HasGroundAt(back.x, back.y)) spot = back; // Use the step back only when it has ground under it
+            var body = new Rect(feet.x - explorer.size.x / 2f, feet.y, explorer.size.x, explorer.size.y); // The explorer body box there
+            foreach (var area in spikeAreas) if (body.Overlaps(area)) return true; // Any trap counts
+            return false; // Clear of every trap
+        }
+
+        Spot SafeSpotNearby() // A short way back from where the explorer last stood, on the same ground and clear of spikes (Easy rule for pits and traps)
+        {
+            var spot = lastGround; // Start at the last safe ground spot
+            var back = new Vector2(lastGround.x - lastGroundFacing * safeBackPixels, lastGround.y); // A short step back, away from the danger
+            if (explorer.geometry.HasGroundAt(back.x, back.y) && !TouchesSpikes(back)) spot = back; // Use the step back only when it has ground and no spikes
             return new Spot(spot.x, spot.y); // The rules take a Spot
         }
 
@@ -194,8 +241,8 @@ namespace LandGrand.Play // Level play scripts live here
         {
             respawning = true; // Count this hazard once
             PlaySfx(hitSound); // A short falling thud
-            bool nearby = fellInPit && run.PitReturnsNearby; // Easy pits only return a short way back
-            var back = fellInPit ? run.FallIntoPit(SafeSpotNearThePit()) : run.HitHazard(); // The rules say where to go; items and time are untouched
+            bool nearby = fellInPit ? run.PitReturnsNearby : run.TrapReturnsNearby; // Easy pits and traps only return a short way back (D-048, D-056)
+            var back = fellInPit ? run.FallIntoPit(SafeSpotNearby()) : run.TouchTrap(SafeSpotNearby()); // The rules say where to go; items and time are untouched
             explorer.Frozen = true; // The explorer stops for a moment
             ShowGuide(nearby ? "Oops! Try again from here" : run.CheckpointReached ? "Oops! Back to the checkpoint" : "Oops! Back to the start"); // Say what happened
             for (float t = 0f; t < respawnSeconds; t += Time.unscaledDeltaTime) // Red flash while waiting; real time, so a later pause menu cannot stall it
@@ -331,7 +378,7 @@ namespace LandGrand.Play // Level play scripts live here
             int next = GameProgress.Current.NextLevelAfter(episode, difficulty, number); // 0 when there is no next level
             if (next <= 0) { Leave(levelSelectionScene); return; } // Last level of the difficulty: back to the trail
             GameSession.Level = next; // The Lesson Screen reads the level number from here
-            Leave(lessonScene); // Next level starts from its lesson (Easy 2 shows Coming soon until it is built)
+            Leave(lessonScene); // Next level starts from its lesson
         }
 
         protected override void Back() // Android Back or Escape
