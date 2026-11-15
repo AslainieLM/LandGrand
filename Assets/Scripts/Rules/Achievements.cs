@@ -43,7 +43,10 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             new Achievement("summit_climber", "Summit Climber", "Clear Mountains Easy 3.", BadgeTier.Silver, p => p.IsCleared(Episode.Mountains, Difficulty.Easy, 3)), // Folded Peaks
             new Achievement("perfect_trail", "Perfect Trail", "Get 3 stars on every Mountains Easy level.", BadgeTier.Gold, p => Enumerable.Range(1, PlayerProgress.LevelCount(Difficulty.Easy)).All(n => p.BestStars(Episode.Mountains, Difficulty.Easy, n) >= 3)), // Every Easy level perfect
             new Achievement("mountain_collector", "Mountain Collector", "Find every Mountains rock and mineral.", BadgeTier.Gold, p => ItemCatalog.All.Where(k => k.HomeLandform == Episode.Mountains).All(k => p.HasFoundKind(k.Id))), // The whole Mountains shelf
-        };
+            new Achievement("philippine_peaks", "Philippine Peaks", "Clear Mountains Normal 1 to 4.", BadgeTier.Silver, p => Enumerable.Range(1, 4).All(n => p.IsCleared(Episode.Mountains, Difficulty.Normal, n))), // Four Philippine peaks
+            new Achievement("top_of_the_world", "Top of the World", "Clear Mount Everest (Mountains Normal 5).", BadgeTier.Gold, p => p.IsCleared(Episode.Mountains, Difficulty.Normal, 5)), // Everest cleared
+            new Achievement("rock_scholar", "Rock Scholar", "Find 15 different rocks and minerals.", BadgeTier.Silver, p => Collection.FoundCount(p) >= 15), // Fifteen known kinds
+        }; // Ends the badge catalog
 
         /// <summary>The achievement with this id, or null when there is none.</summary>
         public static Achievement Find(string id) => All.FirstOrDefault(a => a.Id == id); // Looks the id up

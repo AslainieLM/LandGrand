@@ -14,7 +14,7 @@ namespace LandGrand.Play // Level play scripts live here
         public Rect[] spikeAreas; // Danger areas of the spike traps, in level pixels
         public float pitDeathY = -40f; // Falling below this height means the explorer fell into the pit
         public float checkpointReach = 8f; // How close (in pixels) the explorer must get to the checkpoint flag
-        public SpriteRenderer checkpointFlag; // The flag picture
+        public SpriteRenderer[] checkpointFlags; // One flag per checkpoint
         public Sprite checkpointOnSprite; // The raised green flag shown once it is reached
         public Image hazardFlash; // Red flash over the screen when the explorer is sent back
         public float respawnSeconds = 0.35f; // How long the explorer waits, frozen, before coming back
@@ -29,7 +29,7 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>True while the explorer is being sent back, so a hazard counts once and the menus wait.</summary>
         internal bool Respawning { get; private set; } // Set by Respawn
 
-        internal bool IsBuilt => spikeAreas != null && checkpointFlag != null && hazardFlash != null; // False for a scene built before this part existed
+        internal bool IsBuilt => spikeAreas != null && checkpointFlags != null && hazardFlash != null; // False for a scene built before this part existed
 
         internal void Begin(LevelController owner) // Connects the hazards to their level
         {
@@ -43,14 +43,16 @@ namespace LandGrand.Play // Level play scripts live here
             var explorer = level.explorer; // The explorer
             RememberSafeSpot(); // Keep track of the last ground spot for the Easy rule
             var p = explorer.Position; // Feet of the explorer
-            if (!run.CheckpointReached && p.x >= run.Level.Checkpoint.X - checkpointReach && run.ReachCheckpoint()) // First touch of the flag
-            {
-                checkpointFlag.sprite = checkpointOnSprite; // Show the raised green flag
-                if (level.progressBar != null) level.progressBar.MarkCheckpoint(); // The flag on the bar turns green too
-                level.Say("Checkpoint reached!"); // Tell the player
-                level.PlaySfx(checkpointSound); // A short ding
-            }
-            if (TouchesSpikes(p)) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
+            for (int i = 0; i < run.Level.Checkpoints.Count; i++) // Checks flags in trail order
+            { // Opens the flag check
+                if (p.x < run.Level.Checkpoints[i].X - checkpointReach || !run.ReachCheckpoint(i)) continue; // Only newly reached flags count
+                if (i < checkpointFlags.Length) checkpointFlags[i].sprite = checkpointOnSprite; // Raises this flag; an older scene may have fewer flags
+                if (level.progressBar != null) level.progressBar.MarkCheckpoint(i); // Raises its trail marker
+                explorer.RespawnPoint = new Vector2(run.RespawnPoint.X, run.RespawnPoint.Y); // Updates the motor backup too
+                level.Say("Checkpoint reached!"); // Announces each flag
+                level.PlaySfx(checkpointSound); // Plays the ding
+            } // Ends the flag check
+            if (TouchesSpikes(p) || TouchesRock(p)) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
             else if (p.y < pitDeathY) StartCoroutine(Respawn(true)); // The pit
         }
 
@@ -68,6 +70,14 @@ namespace LandGrand.Play // Level play scripts live here
             foreach (var area in spikeAreas) if (body.Overlaps(area)) return true; // Any trap counts
             return false; // Clear of every trap
         }
+
+        bool TouchesRock(Vector2 feet) // Checks rock hit boxes at the displayed time
+        { // Starts the hit check
+            var body = level.ExplorerBodyAt(feet); // Current explorer body
+            foreach (var rock in level.Run.Level.Layout.Rockfalls) // Checks the placed rocks
+                if (rock.Hits(body.x, body.y, body.width, body.height, LevelClock.Now)) return true; // A falling or landed rock touched the body
+            return false; // No rock touched the body
+        } // Ends the hit check
 
         Spot SafeSpotNearby() // A short way back from where the explorer last stood, on the same ground and clear of spikes (Easy rule)
         {

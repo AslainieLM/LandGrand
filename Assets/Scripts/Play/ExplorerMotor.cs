@@ -49,6 +49,8 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>1 when the explorer faces right, -1 when it faces left.</summary>
         public int Facing => facing; // Tells which way the explorer was walking
 
+        public float ExternalPushX { get; set; } // Wind speed added to walking
+        public DynamicSolid StandingOn { get; private set; } // Moving or breakable support
         Vector2 position; // Feet position in level pixels
         Vector2 velocity; // Speed in pixels per second
         bool grounded; // Standing on something
@@ -63,6 +65,7 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>Puts the explorer at a place, standing still.</summary>
         public void PlaceAt(Vector2 feet) // Moves the explorer at once
         {
+            StandingOn = null; // A return leaves the old support
             position = feet; // New place
             velocity = Vector2.zero; // No speed
             grounded = false; // Gravity will settle it on the ground
@@ -75,6 +78,7 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>Throws the explorer straight up, for a steam vent puff (D-055). The double jump is ready again in the air.</summary>
         public void Launch(float speed) // Called by the level controller when a vent puffs under the feet
         {
+            StandingOn = null; // A launch leaves the support
             velocity.y = speed; // Fly up
             grounded = false; // Off the ground now
             jumpedFromGround = true; // No ground jump in the air
@@ -88,8 +92,15 @@ namespace LandGrand.Play // Level play scripts live here
             if (Frozen) { velocity = Vector2.zero; Animate(); return; } // Stand still while frozen
             float dt = Mathf.Min(Time.deltaTime, 1f / 30f); // Never step more than a 30th of a second, so nothing passes through ground
 
+            if (grounded && StandingOn != null) // Carries only an explorer still on the previous top
+            { // Starts the carry check
+                var before = StandingOn.PreviousBounds; // Platform position before this frame
+                bool supported = StandingOn.IsSolid && position.x + size.x / 2f > before.xMin && position.x - size.x / 2f < before.xMax && Mathf.Abs(position.y - before.yMax) < 0.02f; // Old feet still match its top
+                if (supported) MoveX(StandingOn.Movement.x); // Stops carrying against other solids
+                else grounded = false; // A vanished or departed slab no longer holds the feet
+            } // Ends the carry check
             int dir = input.Direction; // Walk left, right or not at all
-            velocity.x = dir * walkSpeed; // Walking starts and stops at once, which feels responsive
+            velocity.x = dir * walkSpeed + ExternalPushX; // Walking starts and stops at once, which feels responsive
             if (dir != 0) facing = dir; // Face the way of walking
 
             bool pressed = input.JumpPressed; // Jump pressed this frame
@@ -125,7 +136,7 @@ namespace LandGrand.Play // Level play scripts live here
             if (dx == 0f) return; // Not moving across
             float next = position.x + dx; // Where the move would end
             var box = new Rect(next - size.x / 2f, position.y + 0.01f, size.x, size.y - 0.02f); // Body at the new place, a hair shorter so floors do not block
-            foreach (var s in geometry.solids) // Check each solid
+            foreach (var s in geometry.solids) // Check each solid; slabs act like ledges and never block the sides
             {
                 if (!box.Overlaps(s)) continue; // Not touching this one
                 next = dx > 0f ? s.xMin - size.x / 2f : s.xMax + size.x / 2f; // Stop against its side
@@ -142,11 +153,11 @@ namespace LandGrand.Play // Level play scripts live here
             if (dy <= 0f) // Falling or standing
             {
                 foreach (var s in geometry.solids) Land(s, ref next, ref landed, left, right); // Solid tops
-                foreach (var l in geometry.ledges) Land(l, ref next, ref landed, left, right); // Ledge tops (only from above)
+                foreach (var l in geometry.LedgeShapes) Land(l, ref next, ref landed, left, right); // Ledge and slab tops (only from above)
             }
             else // Going up
             {
-                foreach (var s in geometry.solids) // Only solids stop a jump; ledges let the explorer through
+                foreach (var s in geometry.solids) // Only solids stop a jump; ledges and slabs let the explorer through
                 {
                     if (right <= s.xMin || left >= s.xMax) continue; // Not above or below this one
                     float head = position.y + size.y; // Top of the head now
@@ -154,6 +165,7 @@ namespace LandGrand.Play // Level play scripts live here
                 }
             }
             position.y = next; // Final height
+            StandingOn = landed ? geometry.SupportAt(new Vector2(position.x, next), size.x) : null; // Remembers the slab for carrying or breaking
             grounded = landed; // Standing only if something is under the feet
             if (landed) // On the ground
             {

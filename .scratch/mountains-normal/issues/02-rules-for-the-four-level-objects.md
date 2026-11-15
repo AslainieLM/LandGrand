@@ -18,14 +18,16 @@ All times use the level clock that the steam vents already use (`Time.timeSinceL
 
 **Blocked by:** 01
 
-**Status:** to do
+**Status:** done
 
-- [ ] Tests for each type at the cycle edges: 0, just before and after each threshold, and wrap-around with an offset
-- [ ] Moving platform test: position at 0, at X1, and coming back
-- [ ] Wind test: the push is never more than 40 and is 0 outside the zone
-- [ ] Rock hit test: no hit during the warning, a hit while falling through the body, no hit after `Gone`
-- [ ] No Unity types; basic-English comments on every line
+- [x] Tests for each type at the cycle edges: 0, just before and after each threshold, and wrap-around with an offset
+- [x] Moving platform test: position at 0, at X1, and coming back
+- [x] Wind test: the push is never more than 40 and is 0 outside the zone
+- [x] Rock hit test: no hit during the warning, a hit while falling through the body, no hit after `Gone`
+- [x] No Unity types; basic-English comments on every line
 
 **Builder to run:** none (rules only).
 
 Spec: `../spec.md` ("Level objects: exact rules").
+
+Verified: Unity EditMode 192 passed, 0 failed.

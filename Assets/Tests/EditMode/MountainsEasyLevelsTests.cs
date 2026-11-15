@@ -11,8 +11,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Catalog_HasTheThreeMountainsEasyLevels_InPlayOrder() // 1, 2, 3
         {
-            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, LevelCatalog.All.Select(l => l.Number).ToArray()); // In order
-            Assert.IsTrue(LevelCatalog.All.All(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy)); // All Mountains Easy
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy).Select(l => l.Number).ToArray()); // In order
+            Assert.IsTrue(LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy).All(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy)); // All Mountains Easy
             Assert.AreEqual("MountainsEasy2", Easy(2).SceneName); // Start opens this scene
             Assert.AreEqual("MountainsEasy3", Easy(3).SceneName); // And this one
         }
@@ -20,12 +20,12 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void EveryLevel_FollowsTheEasyRules() // 5 pickups, 120 s, a checkpoint between start and goal (D-039)
         {
-            foreach (var level in LevelCatalog.All) // Every level
+            foreach (var level in LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy)) // Every level
             {
                 Assert.AreEqual(5, level.Pickups.Count, level.SceneName); // Five collectibles
                 Assert.AreEqual(120, level.TimeLimitSeconds, level.SceneName); // Two minutes
-                Assert.That(level.Checkpoint.X, Is.GreaterThan(level.Start.X), level.SceneName); // Checkpoint after the start
-                Assert.That(level.Goal.X, Is.GreaterThan(level.Checkpoint.X), level.SceneName); // Goal after the checkpoint
+                Assert.That(level.Checkpoints[0].X, Is.GreaterThan(level.Start.X), level.SceneName); // Checkpoint after the start
+                Assert.That(level.Goal.X, Is.GreaterThan(level.Checkpoints[0].X), level.SceneName); // Goal after the checkpoint
                 Assert.That(level.Goal.X, Is.LessThan(level.Layout.Width - 40f), level.SceneName); // Room for the goal picture before the end
                 Assert.IsFalse(string.IsNullOrEmpty(level.BannerName), level.SceneName); // A name for the start banner
                 Assert.That(level.Review.Count, Is.InRange(2, 3), level.SceneName); // Two or three review sentences
@@ -38,7 +38,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void EveryLevel_KeepsItsPartsInsideTheLevel_AndOffThePits() // Nothing floats past the end or over a gap
         {
-            foreach (var level in LevelCatalog.All) // Every level
+            foreach (var level in LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy)) // Every level
             {
                 var pits = level.Hazards.Where(h => h.Type == HazardType.Pit).ToArray(); // The gaps in the ground
                 bool OverPit(float from, float to) => pits.Any(p => to > p.Place.X && from < p.Place.X + p.Width); // Does this stretch touch a gap?
@@ -47,7 +47,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
                 foreach (var b in level.Layout.Boulders) Assert.IsFalse(OverPit(b.X, b.X + b.Width), level.SceneName + " boulder at " + b.X); // Boulders sit on ground
                 foreach (var v in level.Layout.Vents) Assert.IsFalse(OverPit(v.X, v.X + v.Width), level.SceneName + " vent at " + v.X); // Vents sit in ground
                 Assert.IsFalse(OverPit(level.Start.X - 8f, level.Start.X + 8f), level.SceneName); // The start has ground
-                Assert.IsFalse(OverPit(level.Checkpoint.X - 8f, level.Checkpoint.X + 8f), level.SceneName); // The checkpoint has ground
+                Assert.IsFalse(OverPit(level.Checkpoints[0].X - 8f, level.Checkpoints[0].X + 8f), level.SceneName); // The checkpoint has ground
                 Assert.IsFalse(OverPit(level.Goal.X - 40f, level.Goal.X + 40f), level.SceneName); // The goal has ground
             }
         }
@@ -115,17 +115,17 @@ namespace LandGrand.Rules.Tests // Test code lives here
             foreach (var k in rocks) { Assert.IsTrue(k.IsRock, k.Id); Assert.AreEqual(Episode.Mountains, k.HomeLandform, k.Id); } // Rocks of the Mountains shelf
             Assert.IsFalse(ItemCatalog.Garnet.IsRock); // Garnet is a mineral
             Assert.AreEqual(Episode.Mountains, ItemCatalog.Garnet.HomeLandform); // On the Mountains shelf too
-            Assert.IsNull(ItemCatalog.Find("basalt")); // Basalt is kept for Plateaus
+            Assert.AreEqual(Episode.Mountains, ItemCatalog.Find("basalt").HomeLandform); // Normal now teaches basalt
         }
 
         [Test] // Unity runs this method as a Test
         public void ClearingAllThreeEasyLevels_UnlocksNormal() // LG-31
         {
             var p = new PlayerProgress(); // A fresh profile
-            foreach (var level in LevelCatalog.All) { var run = new LevelRun(level); run.ReachGoal(); run.RecordResult(p); } // Clear each level with no items
+            foreach (var level in LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy)) { var run = new LevelRun(level); run.ReachGoal(); run.RecordResult(p); } // Clear each level with no items
             Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Mountains, Difficulty.Normal)); // Normal opens
             Assert.AreEqual(0, p.NextLevelAfter(Episode.Mountains, Difficulty.Easy, 3)); // Continue after Easy 3 goes back to the trail
-            Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Normal, 1)); // Normal 1 shows "Coming soon"
+            Assert.IsNotNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Normal, 1)); // Normal is now playable
         }
 
         [Test] // Unity runs this method as a Test

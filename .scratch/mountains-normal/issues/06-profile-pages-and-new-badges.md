@@ -19,14 +19,16 @@
 
 **Blocked by:** 03
 
-**Status:** to do
+**Status:** done
 
-- [ ] Paging tests: 20 kinds give 2 pages; 12 kinds give 1 page with the arrows hidden
-- [ ] Badge rule tests for the three new badges
-- [ ] Existing badge tests pass
-- [ ] The Profile builds; check the 4×3 grid and the page arrows in a screenshot, or ask the user to
-- [ ] Basic-English comments
+- [x] Paging tests: 20 kinds give 2 pages; 12 kinds give 1 page with the arrows hidden
+- [x] Badge rule tests for the three new badges
+- [x] Existing badge tests pass
+- [x] The Profile builds; check the 4×3 grid and the page arrows in a screenshot, or ask the user to
+- [x] Basic-English comments
 
 **Builder to run:** `python Tools/Art/make_profile_art.py`, then **LandGrand > Build Profile Scene**.
 
 Spec: `../spec.md` ("New decisions" 5 and 6).
+
+Verified: 198 EditMode tests passed. Profile built and all three rendered views inspected in validation/. Badge names fit on one line; both Collection pages and arrows fit.

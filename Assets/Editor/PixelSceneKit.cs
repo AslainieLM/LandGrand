@@ -59,18 +59,27 @@ internal static class PixelSceneKit // Helpers for the scene builders
         return music; // The controller fades it out when leaving
     }
 
-    /// <summary>Music for the Mountains levels: its own tune, quieter than the menu, and the light breeze of Easy (D-042, ticket 12).</summary>
-    internal static StartScreenMusic LevelMusic() // Music for the level scene
+    /// <summary>Music for the Mountains levels: its own tune, quieter than the menu, and the wind for the difficulty (D-042, D-062).</summary>
+    internal static StartScreenMusic LevelMusic(LandGrand.Rules.Difficulty difficulty) // Music for the level scene
     {
         var music = new GameObject("Music").AddComponent<StartScreenMusic>(); // Music player
         music.music = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "bgm_mountains.ogg"); // The Mountains tune
-        music.ambience = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + "amb_breeze_easy.ogg"); // Light breeze for Easy
+        var (ambience, script) = LevelAmbience[difficulty]; // The wind file for this difficulty and the script that makes it
+        music.ambience = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + ambience); // Difficulty chooses the wind
         music.musicVolume = 0.28f; // Quieter than the menu (0.40), so the breeze and the chimes come through
         music.ambienceVolume = 0.30f; // Same as the menu ambience
         if (music.music == null) Debug.LogError($"Missing {AudioFolder}bgm_mountains.ogg. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
-        if (music.ambience == null) Debug.LogError($"Missing {AudioFolder}amb_breeze_easy.ogg. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        if (music.ambience == null) Debug.LogError($"Missing {AudioFolder}{ambience}. Run: python Tools/Audio/{script}"); // Say what to do
         return music; // The controller fades it out when leaving
     }
+
+    /// <summary>The level wind for each difficulty (D-042, D-062), with the script that makes the file.</summary>
+    static readonly System.Collections.Generic.Dictionary<LandGrand.Rules.Difficulty, (string file, string script)> LevelAmbience = new System.Collections.Generic.Dictionary<LandGrand.Rules.Difficulty, (string, string)> // One entry per difficulty
+    {
+        { LandGrand.Rules.Difficulty.Easy, ("amb_breeze_easy.ogg", "make_mountains_audio.py") }, // Light breeze
+        { LandGrand.Rules.Difficulty.Normal, ("amb_wind_normal.ogg", "make_normal_audio.py") }, // Stronger wind
+        { LandGrand.Rules.Difficulty.Hard, ("amb_breeze_easy.ogg", "make_mountains_audio.py") }, // TODO: Hard wind; the Easy breeze for now
+    };
 
     /// <summary>The event system that sends taps to the buttons.</summary>
     internal static void Events() // Makes the UI input objects

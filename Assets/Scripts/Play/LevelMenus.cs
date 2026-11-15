@@ -13,14 +13,14 @@ namespace LandGrand.Play // Level play scripts live here
         public GameObject pausePanel; // Pause menu with its dark backdrop
         public Button resumeButton; // Pause menu: back to the game
         public Button pauseRetryButton; // Pause menu: start again from the Lesson Screen
-        public Button pauseMenuButton; // Pause menu: leave to the Main Menu
+        public Button pauseLevelsButton; // Pause menu: leave to the level selection (D-064)
         public GameObject timeUpPanel; // Time's up panel with its dark backdrop
         public Button timeUpRetryButton; // Time's up: start again from the Lesson Screen
-        public Button timeUpMenuButton; // Time's up: leave to the Main Menu
+        public Button timeUpLevelsButton; // Time's up: leave to the level selection (D-064)
 
         LevelController level; // The level these menus belong to
 
-        internal bool IsBuilt => pauseButton != null && pausePanel != null && timeUpPanel != null; // False for a scene built before this part existed
+        internal bool IsBuilt => pauseButton != null && pausePanel != null && timeUpPanel != null && pauseLevelsButton != null && timeUpLevelsButton != null; // False for a scene built before this part existed, or before the Levels button (D-064)
 
         internal void Begin(LevelController owner) // Connects the buttons and hides the menus
         {
@@ -30,9 +30,9 @@ namespace LandGrand.Play // Level play scripts live here
             pauseButton.onClick.AddListener(OpenPause); // The pause button opens the menu
             resumeButton.onClick.AddListener(ClosePause); // Resume closes it
             pauseRetryButton.onClick.AddListener(() => level.GoTo(level.lessonScene)); // Retry starts again from the Lesson Screen
-            pauseMenuButton.onClick.AddListener(() => level.GoTo(level.mainMenuScene)); // Back to the Main Menu
+            pauseLevelsButton.onClick.AddListener(() => level.GoTo(level.levelSelectionScene)); // Back to the level selection, to pick another level
             timeUpRetryButton.onClick.AddListener(() => level.GoTo(level.lessonScene)); // Retry starts again from the Lesson Screen
-            timeUpMenuButton.onClick.AddListener(() => level.GoTo(level.mainMenuScene)); // Back to the Main Menu
+            timeUpLevelsButton.onClick.AddListener(() => level.GoTo(level.levelSelectionScene)); // Back to the level selection, to pick another level
         }
 
         internal void OpenPause() // Opens the pause menu

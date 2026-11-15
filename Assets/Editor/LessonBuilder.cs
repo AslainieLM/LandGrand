@@ -83,6 +83,9 @@ public static class LessonBuilder // Makes the Lesson Screen scene
             var box = M.Picture("Item " + (i + 1), panel, S("item_slot"), c, pc); // 30x30 tan box
             var picture = M.Picture("Picture", box.transform, I("granite"), c, c); // Item picture inside the box
             var label = M.ReadingLabel("Name", box.transform, "", c + new Vector2(0f, 28f), c, new Vector2(58f, 22f), K.Ink, TextAlignmentOptions.Midline); // Item name under the box, in the reading font so G and Q read clearly (D-051)
+            label.textWrappingMode = TextWrappingModes.NoWrap; // Keeps each kind on one line
+            label.enableAutoSizing = true; // Fits long Normal names within their own boxes
+            label.fontSizeMin = 8f; label.fontSizeMax = M.ReadingFontSize; // Preserves the reading font and prevents overlap
             slots.Add(new LessonController.ItemSlot { root = box.gameObject, picture = picture, label = label }); // Everything the controller needs
         }
         controller.items = slots.ToArray(); // The four boxes

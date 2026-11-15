@@ -31,11 +31,11 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for headings
     const string LessonPath = "Assets/Scenes/Lesson.unity"; // The levels go after this scene
 
-    // Mountains-only background layers (decision D-049, drawn by Tools/Art/make_mountains_backdrop.py): name, share of the camera's movement, own drift in pixels per second.
-    // Every Mountains level shares them; the level theme changes the ground, props and goal in front (D-055).
+    // Mountains background layers (decision D-049): name, share of the camera's movement, own drift in pixels per second.
+    // Each level theme picks its folder of layer pictures in LevelThemes.cs (D-063); the Easy themes share Backdrop/Mountains/.
     const string BackdropFolder = "Backdrop/Mountains/"; // Inside the level sprite folder
     const string BackdropScript = "Tools/Art/make_mountains_backdrop.py"; // Script that draws the layers
-    static readonly (string name, float follow, float drift)[] Layers = // Far layers move least
+    static readonly (string name, float follow, float drift)[] Layers = // Far layers move least; every theme's set uses the same six names
     {
         ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far snowy range, middle rocky range, pine forest, alpine meadow
     };
@@ -83,7 +83,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         background.localPosition = new Vector3(0f, 0f, 10f); // In front of the camera's near edge
         for (int i = 0; i < Layers.Length; i++) // Each mountain layer, far to near
         {
-            var layerSprite = K.Sprite(SpriteFolder + BackdropFolder, Layers[i].name, BackdropScript); // The Mountains layer art
+            var layerSprite = K.Sprite(SpriteFolder + art.Backdrop, Layers[i].name, art.BackdropScript); // This theme's layer art (D-063)
             var layer = new GameObject(Layers[i].name).AddComponent<BackdropLayer>(); // Slides the layer with the camera
             layer.transform.SetParent(background, false); // Keep it under Background
             layer.follow = Layers[i].follow; // How much it copies the camera
@@ -132,8 +132,12 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         geometry.solids = solids.ToArray(); // Ground, boulders and ledges
 
         BuildGoal(level, art, geometry.transform); // The cave, arch or stone pile, with its flag
-        var checkpoint = M.Renderer("Checkpoint Flag", S("checkpoint_off"), 6, geometry.transform); // The mid-level flag, not reached yet
-        checkpoint.transform.position = LevelGeometry.ToWorld(level.Checkpoint.X, 14f); // Its 28-pixel height sits on the ground
+        var checkpoints = new SpriteRenderer[level.Checkpoints.Count]; // One flag per safe point
+        for (int i = 0; i < checkpoints.Length; i++) // Builds flags in trail order
+        { // Opens the flag build
+            checkpoints[i] = M.Renderer("Checkpoint Flag " + (i + 1), S("checkpoint_off"), 6, geometry.transform); // Unreached flag
+            checkpoints[i].transform.position = LevelGeometry.ToWorld(level.Checkpoints[i].X, level.Checkpoints[i].Y + 14f); // Rests on its safe point
+        } // Ends the flag build
 
         var explorer = new GameObject("Explorer").AddComponent<ExplorerMotor>(); // The explorer
         var body = M.Renderer("Body", Spr("Explorer/explorer_08"), 20, explorer.transform); // The explorer picture, in front of the level
@@ -166,7 +170,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         follow.target = explorer; // Follow the explorer
         follow.geometry = geometry; // Stop at the level's ends
 
-        var music = K.LevelMusic(); // The Mountains music and the Easy breeze (ticket 12)
+        var music = K.LevelMusic(level.Difficulty); // The Mountains music and the wind for this difficulty
         K.Events(); // Sends taps to the buttons
         var root = K.Canvas("Level UI", ppc, out var group); // UI with the same whole-number zoom as the art
 
@@ -190,6 +194,8 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         var menus = controller.menus = parts.AddComponent<LevelMenus>(); // Pause and Time's up
         var bar = controller.progressBar = parts.AddComponent<TrailProgressBar>(); // The trail bar
         controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
+        controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
+        BuildObjects(level, geometry, explorer, controller); // Builds the placed Normal objects
         BuildResult(level, controller.result, root, font); // The Result Screen panel
         collector.pickups = spots.ToArray(); // The collectibles
         controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Chimes for items, stars and badges
@@ -204,7 +210,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
             if (controller.steamSound == null) Debug.LogError("Missing sfx_steam.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
         }
         hazards.spikeAreas = spikeAreas.ToArray(); // The spike traps
-        hazards.checkpointFlag = checkpoint; // The flag picture
+        hazards.checkpointFlags = checkpoints; // One flag picture per checkpoint
         hazards.checkpointOnSprite = S("checkpoint_on"); // The raised flag
         var flash = M.Rect("Hazard Flash", root, K.CanvasCenter, K.CanvasCenter); // Full-screen red flash when the explorer is sent back
         flash.sizeDelta = new Vector2(480f, 270f); // Covers the screen
@@ -272,9 +278,9 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
     static void BuildCollecting(LevelData level, PickupCollector collector, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var counterAt = new Vector2(74f, 30f); // Middle of the top-left panel: 6 pixels from the left and top edges (decisions D-049, D-050)
-        var counter = M.Panel("Counter", root, counterAt, new Vector2(136f, 46f)); // Cream panel at the top left, x 6 to 142, with two 22-pixel lines: the level name, then the count
-        collector.levelNameLabel = M.Label("Level Name", counter, font, level.Episode + " " + level.Difficulty + " " + level.Number, new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is, for example "Mountains Easy 2"
+        var counterAt = new Vector2(84f, 30f); // Middle of the top-left panel: 6 pixels from the left and top edges (decisions D-049, D-050)
+        var counter = M.Panel("Counter", root, counterAt, new Vector2(156f, 46f)); // Cream panel at the top left, x 6 to 162 (6 pixels before the trail bar), wide enough for "Mountains Normal 3"; two 22-pixel lines: the level name, then the count
+        collector.levelNameLabel = M.Label("Level Name", counter, font, level.Episode + " " + level.Difficulty + " " + level.Number, new Vector2(14f + 70f, 19f), counterAt, new Vector2(140f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is, for example "Mountains Easy 2"
         M.Picture("Gem", counter, S("icon_gem"), new Vector2(20f, 41f), counterAt); // Collectible icon, under the name
         collector.counterLabel = M.Label("Count", counter, font, "0/" + level.Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
 
@@ -321,18 +327,18 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         menus.pausePanel = MenuPanel("Pause Menu", root, font, "Paused", 110f, out var pauseBox); // Dark backdrop and panel, 240 wide
         menus.resumeButton = LabelledIcon("Resume", pauseBox, "btn_resume_icon", 172f); // Green play icon: back to the game
         menus.pauseRetryButton = LabelledIcon("Retry", pauseBox, "btn_retry_icon", 240f); // Circle arrow: start again from the lesson
-        menus.pauseMenuButton = LabelledIcon("Main Menu", pauseBox, "btn_home_icon", 308f); // House: leave to the Main Menu
+        menus.pauseLevelsButton = LabelledIcon("Levels", pauseBox, "btn_levels_icon", 308f); // Grid of squares: leave to the level selection (D-064)
 
         menus.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel, same size
         menus.timeUpRetryButton = LabelledIcon("Retry", timeUpBox, "btn_retry_icon", 204f); // Circle arrow: start again from the lesson
-        menus.timeUpMenuButton = LabelledIcon("Main Menu", timeUpBox, "btn_home_icon", 276f); // House: leave to the Main Menu
+        menus.timeUpLevelsButton = LabelledIcon("Levels", timeUpBox, "btn_levels_icon", 276f); // Grid of squares: leave to the level selection (D-064)
     }
 
     static Button LabelledIcon(string name, Transform panel, string spriteName, float x) // A 34x30 icon button with its name under it in the reading font (D-051, D-057)
     {
         var at = new Vector2(x, 136f); // Middle of the icon on the screen
         var button = SpriteButton(name, panel, spriteName, at, K.CanvasCenter); // The icon; its picture swaps to the pressed one
-        var label = M.ReadingLabel("Label", button.transform, name, new Vector2(x, 164f), at, new Vector2(80f, 22f), K.Ink, TMPro.TextAlignmentOptions.Midline); // Its name, 4 pixels under the icon; 80 wide for "Main Menu"
+        var label = M.ReadingLabel("Label", button.transform, name, new Vector2(x, 164f), at, new Vector2(80f, 22f), K.Ink, TMPro.TextAlignmentOptions.Midline); // Its name, 4 pixels under the icon; 80 wide for the longest name
         label.textWrappingMode = TMPro.TextWrappingModes.NoWrap; // One line
         label.raycastTarget = false; // Taps on the name do not block anything
         return button; // The controller connects it
@@ -348,8 +354,12 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         fill.rectTransform.pivot = new Vector2(0f, 0.5f); // It grows to the right from its left edge
         fill.rectTransform.anchoredPosition = new Vector2(left - c.x, c.y - 39f); // Left edge at the groove's start, rows 37 to 40
         fill.rectTransform.sizeDelta = new Vector2(0f, 4f); // Nothing walked yet; the controller sets the width
-        float checkpointX = left + Mathf.Round(level.Checkpoint.X / level.Goal.X * width); // Checkpoint place on the bar
-        bar.checkpoint = M.Picture("Checkpoint", holder, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag; its pole (3 pixels left of the picture's middle) stands at the checkpoint place
+        bar.checkpoints = new UnityEngine.UI.Image[level.Checkpoints.Count]; // One trail flag per safe point
+        for (int i = 0; i < level.Checkpoints.Count; i++) // Places the flags in trail order
+        { // Opens the trail flag build
+            float checkpointX = left + Mathf.Round(level.Checkpoints[i].X / level.Goal.X * width); // Position along the groove
+            bar.checkpoints[i] = M.Picture("Checkpoint " + (i + 1), holder, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag with its pole at the safe point
+        } // Ends the trail flag build
         bar.checkpointOn = S("progress_checkpoint_on"); // Green flag once reached
         M.Picture("Goal", holder, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the goal
         bar.marker = M.Picture("Explorer", holder, S("progress_marker"), new Vector2(left, 39f), c).rectTransform; // The explorer marker, in front of the flags

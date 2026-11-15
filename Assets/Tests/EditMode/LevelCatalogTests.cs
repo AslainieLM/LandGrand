@@ -22,7 +22,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void LevelsWithoutData_AreNotFound() // Later levels are not written yet
         {
-            Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Normal, 1)); // Mountains Normal comes later
+            Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Hard, 1)); // Mountains Hard comes later
             Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 4)); // Easy has only three levels
             Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Easy, 1)); // Hills comes later
         }
@@ -85,8 +85,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
         public void MountainsEasy1_HasACheckpointHazardsAndAGoalInOrder() // Start, checkpoint and goal from left to right
         {
             var level = MountainsEasy1; // The level under test
-            Assert.That(level.Checkpoint.X, Is.GreaterThan(level.Start.X)); // Checkpoint after the start
-            Assert.That(level.Goal.X, Is.GreaterThan(level.Checkpoint.X)); // Goal after the checkpoint
+            Assert.That(level.Checkpoints[0].X, Is.GreaterThan(level.Start.X)); // Checkpoint after the start
+            Assert.That(level.Goal.X, Is.GreaterThan(level.Checkpoints[0].X)); // Goal after the checkpoint
             Assert.AreEqual(1, level.Hazards.Count(h => h.Type == HazardType.Pit)); // One pit
             Assert.AreEqual(1, level.Hazards.Count(h => h.Type == HazardType.Spikes)); // One spike trap
         }

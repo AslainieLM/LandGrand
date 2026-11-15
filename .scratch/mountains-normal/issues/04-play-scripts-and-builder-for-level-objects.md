@@ -29,14 +29,18 @@
 
 **Blocked by:** 02, 03
 
-**Status:** to do
+**Status:** implemented and smoke-tested; full user play checks pending
 
 - [ ] Easy 1–3 rebuild and play exactly as before (vents, banner, spikes, pits, the Easy return rule)
 - [ ] Each Normal level builds; the explorer can ride a platform, crosses a crumbling bridge by walking, is sent back to the right checkpoint by a rock, and is pushed back by gusts
-- [ ] Rules tests still pass; add tests for any new rules code
-- [ ] No per-level code anywhere: the builder reads everything from the layout data
-- [ ] Basic-English comments
+- [x] Rules tests still pass; add tests for any new rules code
+- [x] No per-level code anywhere: the builder reads everything from the layout data
+- [x] Basic-English comments
 
 **Builder to run:** `python Tools/Art/make_normal_art.py`, `python Tools/Audio/make_normal_audio.py`, then **LandGrand > Build Mountains Levels**.
 
 Spec: `../spec.md` ("Level objects: exact rules").
+
+Unity compile succeeded; 194 EditMode tests passed. User approved deferring scene builds until ticket 05 supplies the themes.
+
+Final verification: all eight level scenes built; 198 EditMode tests passed. Nine focused Play Mode checks passed, including platform carrying, both checkpoints, ledge disappearance/return, Normal pit/rock respawns, and wind push. The two broad play-through checkboxes remain unchecked because full Easy regression and walking every Normal bridge were not completed.

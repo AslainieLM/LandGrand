@@ -27,10 +27,10 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void MountainsShelf_HoldsTheTenMountainsKinds_InLevelOrder() // Easy 1, then Easy 2, then Easy 3 (D-055)
+        public void MountainsShelf_HoldsTwentyMountainsKinds_InLevelOrder() // Easy 1, then Easy 2, then Easy 3 (D-055)
         {
             var mountains = Collection.Shelves(new PlayerProgress())[0]; // The first shelf
-            CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite", "obsidian", "pumice", "slate", "marble", "garnet" }, mountains.Slots.Select(s => s.Kind.Id).ToArray()); // Ten kinds in order
+            CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite", "obsidian", "pumice", "slate", "marble", "garnet", "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, mountains.Slots.Select(s => s.Kind.Id).ToArray()); // Ten kinds in order
             Assert.IsFalse(mountains.IsComingSoon); // It has kinds, so it is not "Coming soon"
         }
 
@@ -50,7 +50,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(10, Collection.TotalCount); // Ten Mountains kinds exist so far (D-055)
+            Assert.AreEqual(20, Collection.TotalCount); // Easy and Normal teach twenty kinds
         }
 
         [Test] // Unity runs this method as a Test
@@ -60,7 +60,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             p.RecordFoundKind("quartz"); // Found quartz
             p.RecordFoundKind("mica"); // Found mica
             var slots = Collection.Shelves(p)[0].Slots; // The Mountains slots
-            CollectionAssert.AreEqual(new[] { false, true, false, true, false, false, false, false, false, false }, slots.Select(s => s.IsFound).ToArray()); // Only quartz and mica are found
+            CollectionAssert.AreEqual(new[] { "quartz", "mica" }, slots.Where(s => s.IsFound).Select(s => s.Kind.Id).ToArray()); // Only quartz and mica are found
             Assert.AreEqual(2, Collection.FoundCount(p)); // Two found
         }
 

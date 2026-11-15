@@ -15,18 +15,20 @@
 
 **Blocked by:** 01, 02
 
-**Status:** to do
+**Status:** done
 
-- [ ] Catalog tests:
+- [x] Catalog tests:
   - 5 Normal levels with 7 pickups each and 2 checkpoints
   - every pickup, hazard and object inside the width
   - no checkpoint inside a pit
   - every lesson sentence ≤ 44 characters
   - every kind used exists in `ItemCatalog`
-- [ ] Mountains has 20 kinds; Mountain Collector now needs all 20 (that is expected)
-- [ ] Easy data unchanged
-- [ ] Basic-English comments
+- [x] Mountains has 20 kinds; Mountain Collector now needs all 20 (that is expected)
+- [x] Easy data unchanged
+- [x] Basic-English comments
 
 **Builder to run:** **LandGrand > Build Lesson Scene**. The level scenes build in ticket 04.
 
 Spec: `../spec.md` ("Level data", "Content").
+
+Verified: Unity EditMode 194 passed, 0 failed. Lesson and selection catalog wiring inspected; LessonBuilder.Build runs in final validation.

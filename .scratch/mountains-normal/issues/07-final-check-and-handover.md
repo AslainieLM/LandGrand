@@ -22,7 +22,7 @@
 
 **Blocked by:** 01–06
 
-**Status:** to do
+**Status:** done; user play checklist remains open
 
 **Play checklist for the user** (copy it into the handover):
 - [ ] Each Normal level shows its banner (Mount Pulag to Mount Everest), its lesson and its theme
@@ -35,3 +35,5 @@
 - [ ] The Profile shows 2 pages of Mountains kinds and 11 badges
 
 **Builder to run:** all of the above.
+
+Handover: ../HANDOVER.md. All code, builders, glossary, automated tests, and Profile render checks complete. Asset generators intentionally not rerun, following the user’s explicit preservation rule. Selection was already data-driven and did not change. Full play-through and audio listening remain the user checks below.

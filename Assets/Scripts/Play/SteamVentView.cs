@@ -17,7 +17,7 @@ namespace LandGrand.Play // Level play scripts live here
 
         void Update() // Runs every frame: picks the picture for the current phase
         {
-            float t = Time.timeSinceLevelLoad; // Same clock the controller uses, so the picture and the launch agree
+            float t = LevelClock.Now; // Same paused-aware clock the controller uses, so the picture and the launch agree
             var phase = SteamVent.PhaseAt(t); // Resting, warning or puffing
             bool hasWarn = phase == VentPhase.Warning && warnFrames != null && warnFrames.Length > 0; // Warning, and wisp pictures to show
             warn.sprite = hasWarn ? warnFrames[(int)(t * warnFramesPerSecond) % warnFrames.Length] : null; // The flickering wisp, only as a warning

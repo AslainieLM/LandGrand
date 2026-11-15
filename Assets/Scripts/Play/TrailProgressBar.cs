@@ -11,7 +11,7 @@ namespace LandGrand.Play // Level play scripts live here
     {
         public RectTransform fill; // Green part of the bar; its width shows how far the explorer has walked
         public RectTransform marker; // The explorer marker riding on the bar
-        public Image checkpoint; // The small checkpoint flag on the bar
+        public UnityEngine.UI.Image[] checkpoints; // One small flag for each checkpoint
         public Sprite checkpointOn; // Its green picture once the checkpoint is reached
         public float left; // Left edge of the bar's groove, as a UI offset from the screen's middle
         public float width = 142f; // Width of the groove in pixels
@@ -35,9 +35,9 @@ namespace LandGrand.Play // Level play scripts live here
             marker.anchoredPosition = at; // Move it
         }
 
-        internal void MarkCheckpoint() // The checkpoint was reached: its flag on the bar turns green
+        internal void MarkCheckpoint(int index) // The checkpoint was reached: its flag on the bar turns green
         {
-            if (checkpoint != null) checkpoint.sprite = checkpointOn; // The green flag
+            if (checkpoints != null && index >= 0 && index < checkpoints.Length) checkpoints[index].sprite = checkpointOn; // The green flag
         }
     }
 }

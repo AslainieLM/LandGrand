@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock } // Grass and a cave; dark lava rock and an arch; grey folded rock and a stone pile
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak } // Grass and a cave; dark lava rock and an arch; grey folded rock and a stone pile
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list
@@ -43,8 +43,17 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public IReadOnlyList<Ledge> Ledges { get; } // Stone slabs to stand on
         public IReadOnlyList<SteamVent> Vents { get; } // Steam vents that launch the explorer (D-055)
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null) // Makes a layout
+        public IReadOnlyList<CrumbleLedge> CrumbleLedges { get; } // Ledges that break
+        public IReadOnlyList<Rockfall> Rockfalls { get; } // Falling rocks
+        public IReadOnlyList<MovingPlatform> MovingPlatforms { get; } // Platforms that carry the explorer
+        public IReadOnlyList<WindZone> WindZones { get; } // Areas with gusts
+
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null) // Makes a layout
         {
+            CrumbleLedges = (crumbleLedges ?? new CrumbleLedge[0]).ToArray(); // Copy the breakable ledges
+            Rockfalls = (rockfalls ?? new Rockfall[0]).ToArray(); // Copy the rocks
+            MovingPlatforms = (movingPlatforms ?? new MovingPlatform[0]).ToArray(); // Copy the platforms
+            WindZones = (windZones ?? new WindZone[0]).ToArray(); // Copy the gust areas
             Width = width; // Remember the width
             Theme = theme; // Remember the theme
             Boulders = boulders.ToArray(); // Keep our own copy, so nobody can change the layout later

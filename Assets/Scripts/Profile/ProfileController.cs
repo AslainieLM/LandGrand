@@ -63,6 +63,9 @@ namespace LandGrand.Profile // Profile scripts live here
 
         [Header("Collection")] // Inspector heading for the item grid
         public TabView[] landformTabs; // Mountains, Hills, Plains, Plateaus, in episode order
+        public UnityEngine.UI.Button previousPage, nextPage; // Collection page arrows
+        public TMP_Text pageNumber; // Current page and total
+        int page; // Zero-based page inside this landform
         public SlotView[] slots; // The item grid, filled from the top-left
         public TMP_Text comingSoon; // Shown when an open landform has no item kinds yet
         public NamedSprite[] pictures; // Every item picture, looked up by name
@@ -103,6 +106,8 @@ namespace LandGrand.Profile // Profile scripts live here
             collectionTab.button.onClick.AddListener(() => ShowSection(false)); // Collection tab
             achievementsTab.button.onClick.AddListener(() => ShowSection(true)); // Achievements tab
             for (int i = 0; i < landformTabs.Length; i++) { var e = (Episode)i; landformTabs[i].button.onClick.AddListener(() => ChooseLandform(e)); } // One listener per landform tab
+            previousPage.onClick.AddListener(() => ChangePage(-1)); // Previous twelve kinds
+            nextPage.onClick.AddListener(() => ChangePage(1)); // Next twelve kinds
             card.SetActive(false); // No card at the start
             namePanel.gameObject.SetActive(false); // No name panel at the start
             ShowStrip(); // Name and totals
@@ -142,23 +147,44 @@ namespace LandGrand.Profile // Profile scripts live here
             var progress = GameProgress.Current; // Saved progress
             if (!progress.IsEpisodeUnlocked(e)) { ShowGuide("Finish " + (e - 1) + " first"); return; } // Locked like on the map (D-041); stay on the shown landform
             landform = e; // Remember it
+            page = 0; // A landform choice starts on page one
             for (int i = 0; i < landformTabs.Length; i++) // Each landform tab
             {
                 var tab = landformTabs[i]; // The tab
                 bool open = progress.IsEpisodeUnlocked((Episode)i); // Is that landform open on the map?
                 tab.image.sprite = !open ? tab.locked : i == (int)e ? tab.on : tab.off; // Locked, chosen, or not chosen
             }
-            var shelf = Collection.Shelves(progress)[(int)e]; // That landform's item kinds, found or not
+            ShowCollectionPage(); // Fills the selected page
+        } // Ends the tab change
+
+        void ChangePage(int step) // Moves within the chosen landform
+        { // Opens the page change
+            if (Leaving) return; // Ignores taps while leaving
+            int count = Collection.Shelves(GameProgress.Current)[(int)landform].PageCount(slots.Length); // Available pages
+            page = Mathf.Clamp(page + step, 0, count - 1); // Stays within the shelf
+            ShowCollectionPage(); // Redraws the page
+        } // Ends the page change
+
+        void ShowCollectionPage() // Fills twelve kinds and updates the arrows
+        { // Opens the page display
+            var shelf = Collection.Shelves(GameProgress.Current)[(int)landform]; // Chosen shelf
+            int count = shelf.PageCount(slots.Length); // Number of pages
+            var entries = shelf.SlotsOnPage(page, slots.Length); // Only this page's kinds
+            previousPage.gameObject.SetActive(count > 1); // Hides paging for a short shelf
+            nextPage.gameObject.SetActive(count > 1); // Hides paging for a short shelf
+            pageNumber.gameObject.SetActive(count > 1); // Hides the single-page count
+            previousPage.interactable = page > 0; // Stops at the first page
+            nextPage.interactable = page + 1 < count; // Stops at the last page
+            pageNumber.text = (page + 1) + "/" + count; // Shows one-based page numbers
             comingSoon.gameObject.SetActive(shelf.IsComingSoon); // "Coming soon" when it has none yet
-            if (shelf.Slots.Count > slots.Length) Debug.LogWarning($"{e} has {shelf.Slots.Count} item kinds but the grid has {slots.Length} cells; add cells in ProfileBuilder."); // Never hide kinds silently
             for (int i = 0; i < slots.Length; i++) // Each cell of the grid
             {
                 var slot = slots[i]; // The cell
-                bool used = i < shelf.Slots.Count; // Is there a kind for it?
+                bool used = i < entries.Count; // Is there a kind for it?
                 slot.root.SetActive(used); // Hide spare cells
                 slot.button.onClick.RemoveAllListeners(); // Forget what the cell showed before
                 if (!used) continue; // Nothing more for a spare cell
-                var entry = shelf.Slots[i]; // The kind and whether it is found
+                var entry = entries[i]; // The kind and whether it is found
                 slot.picture.sprite = PictureOf(entry.Kind); // Its picture
                 slot.picture.color = entry.IsFound ? Color.white : hiddenColor; // Colour when found, a dark shape when not
                 slot.label.text = entry.IsFound ? entry.Kind.Name : "?"; // The name stays a surprise until it is found

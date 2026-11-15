@@ -20,13 +20,15 @@
 
 **Blocked by:** 03, 04
 
-**Status:** to do
+**Status:** done
 
-- [ ] The four themes build; the Easy themes are unchanged
-- [ ] A missing theme entry still gives the clear error from `ArtFor`
-- [ ] Normal scenes play the stronger wind; Easy scenes keep the breeze
-- [ ] Basic-English comments
+- [x] The four themes build; the Easy themes are unchanged
+- [x] A missing theme entry still gives the clear error from `ArtFor`
+- [x] Normal scenes play the stronger wind; Easy scenes keep the breeze
+- [x] Basic-English comments
 
 **Builder to run:** **LandGrand > Build Mountains Levels**.
 
 Spec: `../spec.md` ("Assets").
+
+Unity: 194 tests passed; all eight scenes built. Hut offset (0,24) aligns its central door with the goal; other offsets unchanged. In-Editor listening and play checks remain in ticket 07.

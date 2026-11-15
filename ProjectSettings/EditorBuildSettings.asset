@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 87960109b494a474ea7bbedc037a57a0
   - enabled: 1
+    path: Assets/Scenes/Profile.unity
+    guid: f9416a31c8ee4b343b042eb15271988b
+  - enabled: 1
     path: Assets/Scenes/LandformMap.unity
     guid: 822b7116cf8bb494a969487552e626f2
   - enabled: 1
@@ -20,9 +23,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelSelection.unity
     guid: c6253e709eab1d94895aa4ad261859e5
-  - enabled: 1
-    path: Assets/Scenes/Profile.unity
-    guid: f9416a31c8ee4b343b042eb15271988b
   - enabled: 1
     path: Assets/Scenes/Lesson.unity
     guid: c8c967a1c2890894789ce8ed19ce042c
@@ -35,6 +35,21 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MountainsEasy3.unity
     guid: 1b9a98ba4147fdb4e8395579eaabc839
+  - enabled: 1
+    path: Assets/Scenes/MountainsNormal1.unity
+    guid: 5fa7d3db53f5b884ca6e3dddc2b70dda
+  - enabled: 1
+    path: Assets/Scenes/MountainsNormal2.unity
+    guid: 3bf1ab7b635ea294683841ab4340682c
+  - enabled: 1
+    path: Assets/Scenes/MountainsNormal3.unity
+    guid: fe961211775af66409ec2ec5d7edfcc0
+  - enabled: 1
+    path: Assets/Scenes/MountainsNormal4.unity
+    guid: 77aed7eb3279dbc4e8632bcd68ee689a
+  - enabled: 1
+    path: Assets/Scenes/MountainsNormal5.unity
+    guid: d06a36fde57fef6469b574e05f84c49e
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02

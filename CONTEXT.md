@@ -28,3 +28,9 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Lesson topic**: the one idea a level teaches about its landform, such as "volcanic mountains". Each level of a landform has a different lesson topic.
 - **Level theme**: how one level looks inside its landform: its ground, props and goal. All levels of a landform share the landform's backdrop; the level theme is what tells them apart.
 - **Level layout**: where the ground, gaps, ledges, boulders, hazards, pickups, checkpoint and goal of one level are. It is level data, not part of the builder.
+
+- **Crumbling ledge**: a slab that cracks after the explorer stands on it, disappears briefly, then returns. Several slabs can form a bridge over a pit.
+- **Falling rock**: a repeating trap with a shadow and pebble warning before a rock falls onto the trail.
+- **Moving platform**: a slab that travels back and forth and carries an explorer standing on it.
+- **Wind gust**: a brief leftward push within a marked stretch of trail, preceded by visible wind streaks.
+- **Normal checkpoints**: the two safe flags in each Normal level. Hazards return the explorer to the furthest flag reached, or the start before either flag.

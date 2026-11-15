@@ -11,7 +11,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Catalog_HasTheEightStarterBadges_InOrder() // The draft set (D-060)
         {
-            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
+            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
             foreach (var a in AchievementCatalog.All) // Every badge
             {
                 Assert.IsFalse(string.IsNullOrEmpty(a.Name), a.Id); // A name
@@ -24,7 +24,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Tiers_GoBronzeSilverGold() // Three of each colour, two gold
         {
-            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
+            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
         }
 
         [Test] // Unity runs this method as a Test
@@ -32,7 +32,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             var p = new PlayerProgress(); // A brand new profile
             Assert.AreEqual(0, AchievementCatalog.EarnedCount(p)); // None
-            Assert.AreEqual(8, AchievementCatalog.All.Count); // Out of eight
+            Assert.AreEqual(11, AchievementCatalog.All.Count); // Out of eight
         }
 
         [Test] // Unity runs this method as a Test

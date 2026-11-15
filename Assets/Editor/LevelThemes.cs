@@ -22,6 +22,8 @@ public static partial class LevelBuilder // The theme half of the level builder
         public string GoalSprite; // Sprite of the goal, for example "cave"
         public Vector2 GoalOffset; // Middle of the goal picture: pixels right of the goal line, and pixels up from the ground line
         public System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> Props; // Builds the living props; null when the theme has none
+        public string Backdrop = "Backdrop/Mountains/"; // Folder of the six moving background layers, inside the level sprite folder (D-049, D-063)
+        public string BackdropScript = "Tools/Art/make_mountains_backdrop.py"; // Script that draws those layers
     }
 
     static readonly Dictionary<LevelTheme, ThemeArt> Themes = new Dictionary<LevelTheme, ThemeArt> // Every theme's art
@@ -37,13 +39,43 @@ public static partial class LevelBuilder // The theme half of the level builder
             GroundTop = "volcanic_top", Soil = "volcanic_soil", Ledge = "ledge_volcanic", BoulderEnding = "_volcanic", // Dark lava rock
             GoalName = "Arch", GoalSprite = "arch", GoalOffset = new Vector2(12f, 28f), // Lava-rock arch; its 56-pixel height sits on the ground and its open middle starts at the goal
             Props = VolcanicProps, // Lava cracks and fumarole wisps
+            Backdrop = "Backdrop/Volcanic/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
         },
         [LevelTheme.FoldedRock] = new ThemeArt // Folded Peaks (Easy 3)
         {
             GroundTop = "fold_top", Soil = "fold_soil", Ledge = "ledge_fold", BoulderEnding = "_fold", // Grey folded rock
             GoalName = "Cairn", GoalSprite = "cairn", GoalOffset = new Vector2(24f, 22f), // Summit stone pile; its 44-pixel height sits on the ground, just past the goal
             Props = FoldedProps, // Summit snow and the eagle
+            Backdrop = "Backdrop/FoldedRock/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
         },
+        [LevelTheme.PineForest] = new ThemeArt // Normal trail art
+        { // Opens the theme
+            GroundTop = "pine_top", Soil = "pine_soil", Ledge = "ledge_pine", BoulderEnding = "_pine", // Theme ground and stone
+            GoalName = "Ranger Hut", GoalSprite = "hut", GoalOffset = new Vector2(0f, 24f), // Grounded goal picture
+            Props = PineProps, // Theme decoration
+            Backdrop = "Backdrop/PineForest/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
+        }, // Ends the theme
+        [LevelTheme.AshGorge] = new ThemeArt // Normal trail art
+        { // Opens the theme
+            GroundTop = "ash_top", Soil = "ash_soil", Ledge = "ledge_ash", BoulderEnding = "_ash", // Theme ground and stone
+            GoalName = "Stone Bridge", GoalSprite = "bridge", GoalOffset = new Vector2(36f, 22f), // Grounded goal picture
+            Props = null, // Theme decoration
+            Backdrop = "Backdrop/AshGorge/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
+        }, // Ends the theme
+        [LevelTheme.MossyForest] = new ThemeArt // Normal trail art
+        { // Opens the theme
+            GroundTop = "moss_top", Soil = "moss_soil", Ledge = "ledge_moss", BoulderEnding = "_moss", // Theme ground and stone
+            GoalName = "Trail Sign", GoalSprite = "trail_sign", GoalOffset = new Vector2(16f, 20f), // Grounded goal picture
+            Props = MossProps, // Theme decoration
+            Backdrop = "Backdrop/MossyForest/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
+        }, // Ends the theme
+        [LevelTheme.SnowPeak] = new ThemeArt // Normal trail art
+        { // Opens the theme
+            GroundTop = "snow_top", Soil = "snow_soil", Ledge = "ledge_snow", BoulderEnding = "_snow", // Theme ground and stone
+            GoalName = "Summit Flags", GoalSprite = "summit_flags", GoalOffset = new Vector2(28f, 28f), // Grounded goal picture
+            Props = SnowProps, // Theme decoration
+            Backdrop = "Backdrop/SnowPeak/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
+        }, // Ends the theme
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -109,6 +141,41 @@ public static partial class LevelBuilder // The theme half of the level builder
         eagle.flapFrames = Enumerable.Range(1, 3).Select(i => S($"Props/eagle_{i:00}")).ToArray(); // Flying
         eagle.explorer = explorer; // Who startles it
     }
+
+    static void PineProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Trees and very light frost
+    { // Starts the pine decoration
+        for (float x = 180f; x < level.Layout.Width - 120f; x += 260f) // Spaces the trees along the trail
+        { // Opens the tree placement
+            if (OverPit(pits, x, 12f) || level.Layout.Ledges.Any(l => x + 12f > l.X && x - 12f < l.X + l.Width) || level.Layout.CrumbleLedges.Any(l => x + 12f > l.X && x - 12f < l.X + CrumbleLedge.Width)) continue; // Keeps trees off pits and ledges
+            var tree = M.Renderer("Pine Tree", S("Props/pine_tree"), 3, parent); // Behind the playable stone
+            tree.transform.position = LevelGeometry.ToWorld(x, 24f); // Roots on ground
+        } // Ends tree placement
+        FullTrailSnow(level, parent, 36); // Sparse frost across the whole trail
+    } // Ends the pine decoration
+    static void MossProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Ferns and vent sulfur
+    { // Starts the moss decoration
+        for (float x = 90f; x < level.Layout.Width - 80f; x += 180f) // Spaces the ferns
+        { // Opens fern placement
+            if (OverPit(pits, x, 8f)) continue; // Keeps ferns on ground
+            var fern = M.Renderer("Fern", S("Props/fern"), 7, parent); // In front of the ground
+            fern.transform.position = LevelGeometry.ToWorld(x, 6f); // Roots on ground
+        } // Ends fern placement
+        foreach (var vent in level.Layout.Vents) // Decorates every vent in this theme
+            foreach (float side in new[] { -1f, 1f }) // Both sides of the rim
+            { // Opens sulfur placement
+                var crust = M.Renderer("Sulfur Crust", S("Props/sulfur_crust"), 7, parent); // Yellow crust near the vent
+                crust.transform.position = LevelGeometry.ToWorld(vent.CenterX + side * 24f, 3f); // Rests beside the rim
+            } // Ends sulfur placement
+    } // Ends the moss decoration
+    static void SnowProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) => FullTrailSnow(level, parent, 192); // Snow across the whole peak
+    static void FullTrailSnow(LevelData level, Transform parent, int count) // Reuses the existing snow view
+    { // Starts the snow setup
+        var snow = new GameObject("Trail Snow").AddComponent<SummitSnow>(); // Owns the drifting flakes
+        snow.transform.SetParent(parent, false); // Keeps it with the level
+        snow.flakeSprites = new[] { S("Props/snow_00"), S("Props/snow_01") }; // Existing snow pictures
+        snow.fromX = 0f; snow.toX = level.Layout.Width; // Covers the whole trail
+        snow.count = count; // Uses sparse frost or fuller snow
+    } // Ends the snow setup
 
     static bool OverPit(List<Hazard> pits, float x, float halfWidth) => pits.Any(p => x + halfWidth > p.Place.X && x - halfWidth < p.Place.X + p.Width); // True when a prop this wide at x would hang over a gap
 }

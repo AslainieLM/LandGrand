@@ -30,10 +30,11 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public RunOutcome Outcome { get; private set; } = RunOutcome.Playing; // Every attempt starts by playing
 
         /// <summary>Where the explorer appears: the checkpoint once it was reached, otherwise the level start.</summary>
-        public Spot RespawnPoint => CheckpointReached ? Level.Checkpoint : Level.Start; // The last checkpoint reached (D-040)
+        public Spot RespawnPoint => CheckpointReached ? Level.Checkpoints[FurthestCheckpoint] : Level.Start; // The last checkpoint reached (D-040)
 
         /// <summary>True once the explorer touched the checkpoint flag.</summary>
-        public bool CheckpointReached { get; private set; } // Shown as a raised flag
+        public bool CheckpointReached => FurthestCheckpoint >= 0; // True after the first flag
+        public int FurthestCheckpoint { get; private set; } = -1; // No flag at the start
 
         /// <summary>How many times a hazard sent the explorer back in this attempt.</summary>
         public int Respawns { get; private set; } // For the result later
@@ -116,10 +117,10 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         }
 
         /// <summary>The explorer touched the checkpoint flag. True only the first time, and only while playing.</summary>
-        public bool ReachCheckpoint() // Marks the flag as reached
+        public bool ReachCheckpoint(int index = 0) // Marks the flag as reached
         {
-            if (Outcome != RunOutcome.Playing || CheckpointReached) return false; // Over, or already reached
-            CheckpointReached = true; // The respawn point moves to the flag
+            if (Outcome != RunOutcome.Playing || index <= FurthestCheckpoint || index >= Level.Checkpoints.Count) return false; // Ignore old or missing flags
+            FurthestCheckpoint = index; // Move the return point forward
             return true; // This touch counted
         }
 

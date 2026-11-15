@@ -15,6 +15,7 @@ import make_menu_camp as camp  # The Main Menu's 34x30 icon button, reused for t
 # Pause and Time's up icons (D-057), drawn at 2x like the Main Menu's Settings, Tutorial and Exit icons.
 RESUME = camp.PLAY  # Resume: the same play triangle as the Main Menu's PLAY button
 RETRY = ["...###.#.", ".##...##.", "#....###.", "#........", "#.......#", "#.......#", ".#.....#.", "..#####.."]  # Retry: a circle arrow going round
+LEVELS = ["##.##.##", "##.##.##", "........", "##.##.##", "##.##.##", "........", "##.##.##", "##.##.##"]  # Level selection: a grid of level squares (D-064)
 HOME = ["....#....", "...###...", "..#####..", ".#######.", "#########", ".#######.", ".###.###.", ".###.###.", ".###.###."]  # Main Menu: a house
 
 # Result Screen icons (D-059), drawn at 2x inside the word buttons, like the triangle on the Main Menu's PLAY button.
@@ -717,6 +718,7 @@ def main():
         save(camp.icon_button(RESUME, green[1], green[0], green[2], pressed), "btn_resume_icon%s.png" % tag)  # Resume: green play icon (D-057)
         save(camp.icon_button(RETRY, brown[1], brown[0], brown[2], pressed), "btn_retry_icon%s.png" % tag)  # Retry: brown circle arrow icon
         save(camp.icon_button(HOME, brown[1], brown[0], brown[2], pressed), "btn_home_icon%s.png" % tag)  # Main Menu: brown house icon
+        save(camp.icon_button(LEVELS, brown[1], brown[0], brown[2], pressed), "btn_levels_icon%s.png" % tag)  # Level selection: brown grid icon (D-064)
     save(gem_icon(), "icon_gem.png")  # Counter icon
     save(progress_track(), "progress_track.png")  # Empty trail bar
     save(progress_fill(), "progress_fill.png")  # Walked part of the bar

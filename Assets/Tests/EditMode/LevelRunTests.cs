@@ -175,7 +175,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.IsFalse(run.CheckpointReached); // Not reached yet
             Assert.IsTrue(run.ReachCheckpoint()); // The first touch counts
             Assert.IsTrue(run.CheckpointReached); // Now shown as reached
-            Assert.AreEqual(Level.Checkpoint.X, run.RespawnPoint.X); // The explorer comes back here now
+            Assert.AreEqual(Level.Checkpoints[0].X, run.RespawnPoint.X); // The explorer comes back here now
             Assert.IsFalse(run.ReachCheckpoint()); // Touching it again changes nothing
         }
 
@@ -185,7 +185,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var run = new LevelRun(Level); // Start an attempt
             run.ReachCheckpoint(); // Pass the flag
             var back = run.HitHazard(); // Then fall in the pit
-            Assert.AreEqual(Level.Checkpoint.X, back.X); // Back at the flag
+            Assert.AreEqual(Level.Checkpoints[0].X, back.X); // Back at the flag
         }
 
         [Test] // Unity runs this method as a Test
@@ -383,7 +383,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
 
         static LevelData NormalLevel => new LevelData(Episode.Mountains, Difficulty.Normal, 1, // A Normal level made for this test
             new Lesson("Mountains", new[] { "A sentence." }, "lesson_mountains", true), // A tiny lesson
-            new Pickup[0], new Spot(32f, 0f), new Spot(640f, 0f), new Hazard[0], new Spot(1380f, 0f)); // No items, no hazards
+            new Pickup[0], new Spot(32f, 0f), new[] { new Spot(640f, 0f) }, new Hazard[0], new Spot(1380f, 0f)); // No items, no hazards
 
         [Test] // Unity runs this method as a Test
         public void EasyFallIntoThePit_ReturnsToTheSafeSpotNearTheEdge() // The new Easy rule
@@ -418,7 +418,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void NormalSpikes_StillSendTheExplorerToTheCheckpoint() // Normal and Hard keep the checkpoint rule (D-040)
         {
-            var run = new LevelRun(new LevelData(Episode.Mountains, Difficulty.Normal, 1, Level.Lesson, new Pickup[0], new Spot(32f, 0f), new Spot(640f, 0f), new Hazard[0], new Spot(1380f, 0f))); // A Normal level
+            var run = new LevelRun(new LevelData(Episode.Mountains, Difficulty.Normal, 1, Level.Lesson, new Pickup[0], new Spot(32f, 0f), new[] { new Spot(640f, 0f) }, new Hazard[0], new Spot(1380f, 0f))); // A Normal level
             Assert.IsFalse(run.TrapReturnsNearby); // The rule does not apply
             Assert.AreEqual(32f, run.TouchTrap(new Spot(300f, 0f)).X); // Before the flag: back at the start
             run.ReachCheckpoint(); // Pass the flag

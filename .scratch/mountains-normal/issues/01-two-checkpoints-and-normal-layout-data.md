@@ -18,14 +18,16 @@
 
 **Blocked by:** none
 
-**Status:** to do
+**Status:** done
 
-- [ ] Easy 1–3 data and behaviour unchanged; all existing tests pass after updating them to the list form
-- [ ] New tests: the respawn point moves to checkpoint 2 only after checkpoint 2 is reached; it never moves back; a level with two checkpoints reports both
-- [ ] New tests: the layout lists default to empty; a layout keeps what it was given
-- [ ] No Unity types in `Assets/Scripts/Rules`
-- [ ] Every new line has a basic-English comment (D-033)
+- [x] Easy 1–3 data and behaviour unchanged; all existing tests pass after updating them to the list form
+- [x] New tests: the respawn point moves to checkpoint 2 only after checkpoint 2 is reached; it never moves back; a level with two checkpoints reports both
+- [x] New tests: the layout lists default to empty; a layout keeps what it was given
+- [x] No Unity types in `Assets/Scripts/Rules`
+- [x] Every new line has a basic-English comment (D-033)
 
 **Builder to run:** none (rules only). The play scripts that read the old `Checkpoint` must still compile. `HazardWatcher` and `TrailProgressBar` use the first checkpoint for now; ticket 04 shows both.
 
 Spec: `../spec.md` ("New decisions" 1, "Level data").
+
+Verified: Unity EditMode 155 passed, 0 failed (2026-11-15). No builder required.
