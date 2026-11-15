@@ -65,24 +65,6 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void MountainsShelf_SplitsIntoTwoPagesOfFive() // The Profile shows five slots and a page arrow (D-055)
-        {
-            var mountains = Collection.Shelves(new PlayerProgress())[0]; // Ten kinds
-            Assert.AreEqual(2, mountains.PageCount(5)); // Two pages
-            CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite" }, mountains.SlotsOnPage(0, 5).Select(s => s.Kind.Id).ToArray()); // First page
-            CollectionAssert.AreEqual(new[] { "obsidian", "pumice", "slate", "marble", "garnet" }, mountains.SlotsOnPage(1, 5).Select(s => s.Kind.Id).ToArray()); // Second page
-            Assert.AreEqual(5, mountains.SlotsOnPage(9, 5).Count); // A page past the end shows the last page
-        }
-
-        [Test] // Unity runs this method as a Test
-        public void ComingSoonShelf_HasOneEmptyPage() // Nothing to page through
-        {
-            var hills = Collection.Shelves(new PlayerProgress())[1]; // No kinds yet
-            Assert.AreEqual(1, hills.PageCount(5)); // One page
-            Assert.AreEqual(0, hills.SlotsOnPage(0, 5).Count); // With nothing on it
-        }
-
-        [Test] // Unity runs this method as a Test
         public void UnknownFoundKinds_AreNotCounted() // An old or unknown id in the save does not break the count
         {
             var p = new PlayerProgress(); // A brand new profile

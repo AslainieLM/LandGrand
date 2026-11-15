@@ -26,6 +26,7 @@ public static class LevelBuilder // Makes the level scenes
     const string StartSprites = "Assets/Art/StartScreen/Sprites/"; // The explorer and dust come from the start screen
     const string SelectionSprites = "Assets/Art/Selection/Sprites/"; // The result stars come from the selection art
     const string ItemSprites = "Assets/Art/Items/Sprites/"; // Rock and mineral pictures
+    const string BadgeSprites = "Assets/Art/MainMenu/Sprites/Profile/"; // Badges and the "New badge!" ribbon (D-060)
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, so the draft note stands out
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for headings
     const string LessonPath = "Assets/Scenes/Lesson.unity"; // The levels go after this scene
@@ -55,6 +56,7 @@ public static class LevelBuilder // Makes the level scenes
         }
         M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the level parts; this refreshes the assets, so the font is loaded after it
         M.ConfigurePixelSprites(ItemSprites, _ => false); // Crisp pixel art for the item pictures, also before the font
+        M.ConfigurePixelSprites(BadgeSprites, _ => false); // Crisp badges for the "New badge!" notice (D-060)
         var font = M.EnsureFont(); // The pixel font at 2x (decision D-050), loaded after every refresh so the reference stays valid
         if (font == null) return; // EnsureFont already said what is wrong
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
@@ -455,6 +457,7 @@ public static class LevelBuilder // Makes the level scenes
         controller.resultStars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 58f), c)).ToArray(); // Three stars at 2x size
         controller.starFull = Sel("Trail/star_full"); // Earned star
         controller.starEmpty = Sel("Trail/star_empty"); // Star not earned
+        BuildBadgeNotice(controller, panel); // "New badge!" to the right of the stars (D-060)
 
         int n = level.Pickups.Count; // How many items the level holds
         var items = new Image[n]; // One picture per item
@@ -482,10 +485,31 @@ public static class LevelBuilder // Makes the level scenes
         controller.reviewLabel.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentences wrap onto lines
         controller.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 218f), c, new Vector2(300f, 22f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking, under the review
 
-        controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(100f, 243f), c); // Start again from the lesson
-        controller.continueButton = SpriteButton("Continue", panel, "btn_continue", new Vector2(240f, 243f), c); // Next level
-        controller.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(382f, 243f), c); // Back to the Landform Map
+        // Buttons left to right (D-059): Back to Map, Replay, Next. Each has its icon before the word.
+        controller.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(22f + S("btn_map").rect.width / 2f, 243f), c); // Map pin: back to the Landform Map, left edge at x 22
+        controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(238f, 243f), c); // Circle arrow: start again from the lesson, in the middle
+        controller.continueButton = SpriteButton("Next", panel, "btn_next_level", new Vector2(240f, 243f), c); // Next Level or Next Episode; the controller picks the picture
+        var next = (RectTransform)controller.continueButton.transform; // Its box
+        next.pivot = new Vector2(1f, 0.5f); // Measured from its right edge, so either picture ends at the same place
+        next.anchoredPosition = new Vector2(458f - c.x, next.anchoredPosition.y); // Right edge at x 458, 10 pixels inside the panel's right side
+        controller.nextLevelSprite = S("btn_next_level"); // "Next Level"
+        controller.nextLevelPressed = S("btn_next_level_pressed"); // Its pushed-in picture
+        controller.nextEpisodeSprite = S("btn_next_episode"); // "Next Episode"
+        controller.nextEpisodePressed = S("btn_next_episode_pressed"); // Its pushed-in picture
         controller.resultPanel = panel.gameObject; // The controller shows it at the goal
+    }
+
+    static void BuildBadgeNotice(LevelController controller, Transform panel) // The hidden "New badge!" notice: ribbon, medal and name, right of the stars (D-060)
+    {
+        var c = K.CanvasCenter; // Middle of the screen
+        var notice = M.Rect("New Badge", panel, c, c); // Holder the controller shows
+        M.Picture("Ribbon", notice, B("badge_new_ribbon"), new Vector2(396f, 48f), c); // Red "NEW BADGE!" ribbon, x 348 to 444, y 38 to 58
+        controller.badgeNoticePicture = M.Picture("Badge", notice, B("badge_first_steps"), new Vector2(326f, 60f), c); // The medal, x 310 to 342, right of the third star
+        controller.badgeNoticeName = M.ReadingLabel("Name", notice, "", new Vector2(396f, 70f), c, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // Its name under the ribbon, in the reading font
+        controller.badgeNoticeName.textWrappingMode = TMPro.TextWrappingModes.NoWrap; // One line
+        controller.badgePictures = AchievementCatalog.All.Select(a => B("badge_" + a.Id)).ToArray(); // Every earned badge picture
+        controller.badgeNotice = notice.gameObject; // The controller shows it
+        notice.gameObject.SetActive(false); // Hidden until a badge is earned
     }
 
     static Image StarPicture(string name, Transform parent, Vector2 center, Vector2 parentCenter) // A result star shown at 2x size, which keeps the pixels sharp
@@ -519,5 +543,6 @@ public static class LevelBuilder // Makes the level scenes
     static Sprite LessonSprite(string path) => K.Sprite("Assets/Art/Lesson/Sprites/", path, "Tools/Art/make_lesson_art.py"); // Loads one Lesson Screen sprite
     static Sprite S(string path) => K.Sprite(SpriteFolder, path, ArtScript); // Loads one level sprite
     static Sprite Spr(string path) => K.Sprite(StartSprites, path, "the start-screen art (already in the project)"); // Loads one start-screen sprite
+    static Sprite B(string path) => K.Sprite(BadgeSprites, path, "Tools/Art/make_profile_art.py"); // Loads one badge sprite (D-060)
     static Sprite Sel(string path) => K.Sprite(SelectionSprites, path, "Tools/Art/make_selection_art.py"); // Loads one selection sprite
 }

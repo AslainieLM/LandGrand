@@ -21,18 +21,6 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public bool IsComingSoon => Slots.Count == 0; // No item kinds yet: the shelf says "Coming soon"
 
         public Shelf(Episode landform, IReadOnlyList<ShelfSlot> slots) { Landform = landform; Slots = slots; } // Makes a shelf
-
-        /// <summary>How many pages the shelf needs when the screen shows perPage slots at a time. Never less than 1.</summary>
-        public int PageCount(int perPage) => perPage <= 0 ? 1 : Math.Max(1, (Slots.Count + perPage - 1) / perPage); // Rounded up
-
-        /// <summary>The slots shown on one page, counting pages from 0. A page past the end shows the last page.</summary>
-        public IReadOnlyList<ShelfSlot> SlotsOnPage(int page, int perPage) // Cuts the shelf into pages
-        {
-            if (perPage <= 0) return Slots; // No paging asked for
-            int last = PageCount(perPage) - 1; // The last page number
-            int p = page < 0 ? 0 : page > last ? last : page; // Keep the page inside the shelf
-            return Slots.Skip(p * perPage).Take(perPage).ToArray(); // That page's slots, in order
-        }
     }
 
     /// <summary>

@@ -12,6 +12,20 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     /// <summary>The three difficulties of each landform.</summary>
     public enum Difficulty { Easy, Normal, Hard } // Difficulty list
 
+    /// <summary>What the Result Screen's Next button leads to (D-059).</summary>
+    public enum NextStep { None, NextLevel, NextEpisode } // Nothing open, another level, or the next landform
+
+    /// <summary>Where Next goes: the step, and the landform, difficulty and level it leads to.</summary>
+    public readonly struct NextTarget // One answer from NextAfter
+    {
+        public readonly NextStep Step; // Level, episode or nothing
+        public readonly Episode Episode; // The landform to go to
+        public readonly Difficulty Difficulty; // The difficulty to go to
+        public readonly int Level; // The level to go to, starting at 1
+
+        public NextTarget(NextStep step, Episode episode, Difficulty difficulty, int level) { Step = step; Episode = episode; Difficulty = difficulty; Level = level; } // Makes an answer
+    }
+
     /// <summary>
     /// Everything the game remembers about the player: name, cleared levels with best stars,
     /// and every item kind ever found. It also decides what is unlocked.
@@ -49,6 +63,25 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 
         /// <summary>The number of the next level after this one when it is available (for Continue), or 0 when there is none.</summary>
         public int NextLevelAfter(Episode e, Difficulty d, int level) => IsLevelAvailable(e, d, level + 1) ? level + 1 : 0; // 0 for the last level or when this one is not cleared
+
+        /// <summary>
+        /// Where the Result Screen's Next button goes after this level (D-059, LG-32): the next available level in order,
+        /// which after the last level of a difficulty is level 1 of the next unlocked difficulty; after the whole landform
+        /// (Hard 7 and everything before it cleared) the next episode; otherwise nothing.
+        /// Q-03 may later let a landform finish earlier; then only this method changes.
+        /// </summary>
+        public NextTarget NextAfter(Episode e, Difficulty d, int level) // Works out the Next button
+        {
+            if (IsLevelAvailable(e, d, level + 1)) return new NextTarget(NextStep.NextLevel, e, d, level + 1); // The next level of this difficulty
+            if (level >= LevelCount(d) && d != Difficulty.Hard) // The last level of Easy or Normal
+            {
+                var harder = d == Difficulty.Easy ? Difficulty.Normal : Difficulty.Hard; // The next difficulty
+                if (IsLevelAvailable(e, harder, 1)) return new NextTarget(NextStep.NextLevel, e, harder, 1); // Its first level, once unlocked
+            }
+            bool landformDone = AllCleared(e, Difficulty.Easy) && AllCleared(e, Difficulty.Normal) && AllCleared(e, Difficulty.Hard); // Every level of the landform
+            if (landformDone && e != Episode.Plateaus) return new NextTarget(NextStep.NextEpisode, e + 1, Difficulty.Easy, 1); // The next landform in order (D-039)
+            return new NextTarget(NextStep.None, e, d, level); // Nothing open follows
+        }
 
         /// <summary>True when the level was cleared at least once.</summary>
         public bool IsCleared(Episode e, Difficulty d, int level) => bestStars.ContainsKey((e, d, level)); // Only cleared levels are stored

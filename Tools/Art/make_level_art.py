@@ -17,6 +17,26 @@ RESUME = camp.PLAY  # Resume: the same play triangle as the Main Menu's PLAY but
 RETRY = ["...###.#.", ".##...##.", "#....###.", "#........", "#.......#", "#.......#", ".#.....#.", "..#####.."]  # Retry: a circle arrow going round
 HOME = ["....#....", "...###...", "..#####..", ".#######.", "#########", ".#######.", ".###.###.", ".###.###.", ".###.###."]  # Main Menu: a house
 
+# Result Screen icons (D-059), drawn at 2x inside the word buttons, like the triangle on the Main Menu's PLAY button.
+MAP = ["..###..", ".#####.", "##...##", "##...##", ".#####.", "..###..", "..###..", "...#..."]  # Back to Map: a map pin
+NEXT = ["#...#", "##..#", "###.#", "#####", "###.#", "##..#", "#...#"]  # Next: a play triangle with a bar, for "go on"
+
+
+def icon_word_button(label, rows, colors, pressed):
+    """A 26-pixel-tall word button with a white 2x icon before the word (D-059). colors are (top, face, bottom)."""
+    icon = camp.big(rows, mm.WHITE)  # White icon at 2x
+    gap, pad = 4, 6  # Space between icon and word, and at each end; tight so all three buttons fit the Result panel
+    w = pad + icon.width + gap + mm.text_width(label, 2) + pad  # Width that fits icon and word
+    w += w % 2  # Keep the width even, so the button sits on whole pixels when centred
+    img = mm.button(w, 26, "", *colors, pressed=pressed, scale=2)  # The empty button face
+    drop = 1 if pressed else 0  # Everything drops 1 pixel when pressed
+    x = (w - (icon.width + gap + mm.text_width(label, 2))) // 2  # Centre icon and word together
+    y = (26 - icon.height) // 2 + drop  # Centre the icon down
+    mm.paste(img, camp.big(rows, mm.DARK), x, y + 1)  # Icon shadow
+    mm.paste(img, icon, x, y)  # Icon
+    mm.draw_text(img, x + icon.width + gap, (26 - 14) // 2 + drop, label, mm.WHITE, 2, shadow=mm.DARK)  # The word, as on the other buttons
+    return img
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))  # The Unity project folder
 OUT = os.path.join(ROOT, "Assets", "Art", "Level", "Sprites")  # Where the PNGs go
 
@@ -678,8 +698,6 @@ def main():
     for i, frame in enumerate(somersault()):  # The somersault frames for the double jump
         save(frame, "Flip/flip_%02d.png" % i)  # flip_00 to flip_03
     green = (mm.HILLS, mm.HILLS_SH, mm.LEAF)  # Same colours as the Play button
-    save(mm.button(120, 26, "CONTINUE", *green, pressed=False, scale=2), "btn_continue.png")  # Continue button
-    save(mm.button(120, 26, "CONTINUE", *green, pressed=True, scale=2), "btn_continue_pressed.png")  # Continue button, pressed
     save(checkpoint_flag(False), "checkpoint_off.png")  # Checkpoint not reached
     save(checkpoint_flag(True), "checkpoint_on.png")  # Checkpoint reached
     save(spikes(), "spikes.png")  # Spike trap tile
@@ -689,8 +707,10 @@ def main():
     save(mark_icon(False), "icon_cross.png")  # Goal not met
     for pressed in (False, True):  # Normal and pressed pictures
         tag = "_pressed" if pressed else ""  # File name ending
-        save(mm.button(110, 26, "REPLAY", *brown, pressed=pressed, scale=2), "btn_replay%s.png" % tag)  # Replay from the lesson
-        save(mm.button(130, 26, "BACK TO MAP", *brown, pressed=pressed, scale=2), "btn_map%s.png" % tag)  # Back to the Landform Map
+        save(icon_word_button("BACK TO MAP", MAP, brown, pressed), "btn_map%s.png" % tag)  # Back to the Landform Map, with a map icon (D-059)
+        save(icon_word_button("REPLAY", RETRY, brown, pressed), "btn_replay%s.png" % tag)  # Replay from the lesson, with the circle arrow
+        save(icon_word_button("NEXT LEVEL", NEXT, green, pressed), "btn_next_level%s.png" % tag)  # Next level, green like Continue was
+        save(icon_word_button("NEXT EPISODE", NEXT, green, pressed), "btn_next_episode%s.png" % tag)  # Next landform, after the whole landform
     for pressed in (False, True):  # Normal and pressed pictures
         tag = "_pressed" if pressed else ""  # File name ending
         save(pause_icon(pressed), "btn_pause%s.png" % tag)  # Pause button

@@ -20,6 +20,9 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Item card**: the pop-up opened by tapping a found item kind in the Collection: picture, name, rock or mineral, and description.
 - **Review pickup**: a pickup of an item kind that an earlier level already taught, placed to link the new lesson back to an old one. It gives only a chime, never the first-find pop-up, unless the explorer skipped finding that kind earlier.
 
+- **Achievement**: a reward for reaching a goal in the game, such as clearing a first level or finding every Mountains rock and mineral. It is shown as a badge. An achievement is earned from progress the game already keeps (stars, cleared levels, found item kinds); it is never earned on its own and never lost.
+- **Badge**: the round medal that shows one achievement: bronze, silver or gold. A locked badge is dark with a padlock but still shows its name and how to earn it.
+
 ## Levels
 
 - **Lesson topic**: the one idea a level teaches about its landform, such as "volcanic mountains". Each level of a landform has a different lesson topic.

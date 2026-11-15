@@ -1,7 +1,7 @@
 using System; // Gives access to Serializable
 using System.Linq; // Gives access to FirstOrDefault
 using LandGrand.MainMenu; // Gives access to the name panel, shared with the Main Menu
-using LandGrand.Rules; // Gives access to Collection, ItemKind and LevelData
+using LandGrand.Rules; // Gives access to Collection, AchievementCatalog, ItemKind and LevelData
 using TMPro; // Gives access to TMP_Text
 using UnityEngine; // Gives access to GameObject, Sprite and Color
 using UnityEngine.UI; // Gives access to Button and Image
@@ -9,38 +9,40 @@ using UnityEngine.UI; // Gives access to Button and Image
 namespace LandGrand.Profile // Profile scripts live here
 {
     /// <summary>
-    /// Runs the Profile screen (decision D-052): the explorer strip (name, pencil, totals) and the Collection,
-    /// one shelf per landform. Found rocks and minerals show in colour with their name and open an item card;
-    /// the others show as a dark shape with "?". Back closes the card or the name panel first, then returns to the Main Menu.
+    /// Runs the Profile screen (D-052, D-060): the explorer strip (name, pencil, totals), then two section tabs.
+    /// Collection has one tab per landform and shows that landform's rocks and minerals in a grid; landforms not yet open
+    /// on the map have a grey tab with a padlock. Achievements shows the badges; locked ones are dark but keep their name.
+    /// Tapping a found item or any badge opens a card. Back closes the card or the name panel first, then returns to the Main Menu.
     /// It only shows saved progress; the only thing it changes is the name, through the shared name panel.
     /// </summary>
     public class ProfileController : PixelScreen // The Profile brain
     {
-        /// <summary>One slot on a shelf: a frame with a picture and a name under it.</summary>
+        /// <summary>One cell of a grid: a frame with a picture and a name under it.</summary>
         [Serializable] // Lets Unity save this in the scene
         public class SlotView // One slot
         {
-            public GameObject root; // The whole slot; hidden when the shelf has fewer kinds
-            public Button button; // Opens the item card when the kind is found
-            public Image picture; // The rock or mineral picture, or its dark shape
+            public GameObject root; // The whole slot; hidden when there is nothing to show in it
+            public Button button; // Opens a card
+            public Image picture; // The picture, or its dark shape
             public TMP_Text label; // The name, or "?"
         }
 
-        /// <summary>One shelf: its slots and a "Coming soon" line.</summary>
+        /// <summary>A tab with its three pictures: chosen, not chosen, and locked.</summary>
         [Serializable] // Lets Unity save this in the scene
-        public class ShelfView // One shelf
+        public class TabView // One tab
         {
-            public TMP_Text comingSoon; // "Coming soon", shown when the landform has no item kinds yet
-            public SlotView[] slots; // The slots of one page, filled from the left
-            public Button nextPage; // Arrow to the next page, shown when the shelf has more kinds than slots (D-055)
-            public Button prevPage; // Arrow back to the first pages, shown on the last page in the same place
+            public Button button; // Taps
+            public Image image; // Its picture
+            public Sprite on; // Chosen
+            public Sprite off; // Not chosen
+            public Sprite locked; // Grey with a padlock (landform tabs only)
         }
 
-        /// <summary>A picture with the name the item catalog uses for it.</summary>
+        /// <summary>A picture with the name the catalogs use for it.</summary>
         [Serializable] // Lets Unity save this in the scene
         public class NamedSprite // One picture
         {
-            public string name; // File name without ".png", for example "granite"
+            public string name; // File name without ".png", for example "granite" or "badge_first_steps"
             public Sprite sprite; // The picture
         }
 
@@ -52,18 +54,31 @@ namespace LandGrand.Profile // Profile scripts live here
         public TMP_Text foundLabel; // Item kinds found, for example "2/4"
         public TMP_Text levelsLabel; // Levels cleared, for example "1"
 
-        [Header("Collection")] // Inspector heading for the shelves
-        public ShelfView[] shelves; // Four shelves, in episode order
+        [Header("Sections (D-060)")] // Inspector heading for the two big tabs
+        public TabView collectionTab; // "Collection"
+        public TabView achievementsTab; // "Achievements"
+        public GameObject collectionPage; // Landform tabs and the item grid
+        public GameObject achievementsPage; // The badge grid
+        public TMP_Text badgeCount; // "Badges 3/8"
+
+        [Header("Collection")] // Inspector heading for the item grid
+        public TabView[] landformTabs; // Mountains, Hills, Plains, Plateaus, in episode order
+        public SlotView[] slots; // The item grid, filled from the top-left
+        public TMP_Text comingSoon; // Shown when an open landform has no item kinds yet
         public NamedSprite[] pictures; // Every item picture, looked up by name
         public Color hiddenColor = new Color(0f, 0f, 0f, 0.8f); // Black times any colour is black, so the picture becomes one flat dark shape with no shading that hints at the item
 
-        [Header("Item card")] // Inspector heading for the card
+        [Header("Achievements")] // Inspector heading for the badges
+        public SlotView[] badges; // One cell per badge, in AchievementCatalog order
+        public NamedSprite[] badgePictures; // Every badge picture, earned and locked, by name
+
+        [Header("Card")] // Inspector heading for the card
         public GameObject card; // The whole card with its dark backdrop
-        public Image cardPicture; // Item picture
-        public TMP_Text cardName; // Item name
-        public TMP_Text cardTag; // "Rock" or "Mineral"
-        public TMP_Text cardDescription; // Short description
-        public TMP_Text cardDraftNote; // "Draft — needs teacher review" until a teacher checks it (Q-04)
+        public Image cardPicture; // Item or badge picture
+        public TMP_Text cardName; // Name
+        public TMP_Text cardTag; // "Rock", "Mineral", or the badge colour and state
+        public TMP_Text cardDescription; // Description, or how to earn the badge
+        public TMP_Text cardDraftNote; // "Draft — needs teacher review" until it is checked (Q-04)
         public Button cardOk; // Closes the card
         public Button cardOutside; // The dark backdrop: a tap outside the card closes it too
 
@@ -75,6 +90,7 @@ namespace LandGrand.Profile // Profile scripts live here
         public string mainMenuScene = "MainMenu"; // Where Back goes
 
         const float PencilGap = 14f; // Pixels from the end of the name to the middle of the pencil
+        Episode landform = Episode.Mountains; // Which landform's items are shown
 
         protected override void Awake() // Runs once when the Profile opens: fills it from the saved progress and connects the buttons
         {
@@ -84,10 +100,14 @@ namespace LandGrand.Profile // Profile scripts live here
             namePanel.Accepted += NameSaved; // A good new name updates the strip
             cardOk.onClick.AddListener(CloseCard); // OK closes the card
             cardOutside.onClick.AddListener(CloseCard); // A tap outside the card closes it too
+            collectionTab.button.onClick.AddListener(() => ShowSection(false)); // Collection tab
+            achievementsTab.button.onClick.AddListener(() => ShowSection(true)); // Achievements tab
+            for (int i = 0; i < landformTabs.Length; i++) { var e = (Episode)i; landformTabs[i].button.onClick.AddListener(() => ChooseLandform(e)); } // One listener per landform tab
             card.SetActive(false); // No card at the start
             namePanel.gameObject.SetActive(false); // No name panel at the start
             ShowStrip(); // Name and totals
-            ShowShelves(); // The Collection, drawn once each time the Profile opens, so new finds show at once
+            ShowBadges(); // The badge grid and its count
+            ShowSection(false); // Open on the Collection, Mountains first
         }
 
         void ShowStrip() // Fills in the name and the three totals
@@ -106,68 +126,98 @@ namespace LandGrand.Profile // Profile scripts live here
 
         static string Total(string word, string value) => "<color=#9A5532>" + word + "</color> " + value; // A clay word, one space, then its number in ink
 
-        int[] pages; // The page each shelf shows, counting from 0
-
-        void ShowShelves() // Fills every shelf from the Collection and connects the page arrows
-        {
-            pages = new int[shelves.Length]; // Every shelf starts on its first page
-            for (int s = 0; s < shelves.Length; s++) // Each shelf on screen
-            {
-                int shelf = s; // A copy for the arrow buttons
-                if (shelves[s].nextPage != null) { shelves[s].nextPage.onClick.RemoveAllListeners(); shelves[s].nextPage.onClick.AddListener(() => TurnPage(shelf, +1)); } // Next page, connected once
-                if (shelves[s].prevPage != null) { shelves[s].prevPage.onClick.RemoveAllListeners(); shelves[s].prevPage.onClick.AddListener(() => TurnPage(shelf, -1)); } // Previous page, connected once
-                ShowShelf(s); // Draw it
-            }
-        }
-
-        void TurnPage(int s, int step) // Shows another page of one shelf
+        void ShowSection(bool achievements) // Opens the Collection or the Achievements section
         {
             if (Leaving) return; // Ignore taps while leaving
-            pages[s] += step; // The new page; ShowShelf keeps it inside the shelf
-            ShowShelf(s); // Draw it again
+            collectionPage.SetActive(!achievements); // One page at a time
+            achievementsPage.SetActive(achievements); // The other page
+            collectionTab.image.sprite = achievements ? collectionTab.off : collectionTab.on; // The chosen tab looks joined to the page
+            achievementsTab.image.sprite = achievements ? achievementsTab.on : achievementsTab.off; // The other tab looks behind
+            if (!achievements) ChooseLandform(landform); // Draw the chosen landform's items
         }
 
-        void ShowShelf(int s) // Fills one shelf with the kinds of its current page
+        void ChooseLandform(Episode e) // Shows one landform's rocks and minerals, or says to finish the earlier landform first
         {
-            var model = Collection.Shelves(GameProgress.Current); // One shelf per landform, in episode order
-            if (s >= model.Count) return; // No landform for this shelf
-            var view = shelves[s]; // The shelf on screen
-            var data = model[s]; // Its data
-            int perPage = view.slots.Length; // Slots on one page
-            int count = data.PageCount(perPage); // Pages on this shelf
-            pages[s] = Mathf.Clamp(pages[s], 0, count - 1); // Stay inside the shelf
-            var onPage = data.SlotsOnPage(pages[s], perPage); // This page's kinds
-            view.comingSoon.gameObject.SetActive(data.IsComingSoon); // "Coming soon" only for landforms without kinds
-            bool last = pages[s] == count - 1; // On the last page the arrow points back
-            if (view.nextPage != null) view.nextPage.gameObject.SetActive(count > 1 && !last); // More kinds to the right
-            if (view.prevPage != null) view.prevPage.gameObject.SetActive(count > 1 && last); // Back to the start
-            if ((view.nextPage == null || view.prevPage == null) && count > 1) Debug.LogWarning($"{data.Landform} has {data.Slots.Count} item kinds but its shelf has no page arrows; rebuild the Profile scene."); // Never hide kinds silently
-            for (int i = 0; i < view.slots.Length; i++) // Each slot on the shelf
+            if (Leaving) return; // Ignore taps while leaving
+            var progress = GameProgress.Current; // Saved progress
+            if (!progress.IsEpisodeUnlocked(e)) { ShowGuide("Finish " + (e - 1) + " first"); return; } // Locked like on the map (D-041); stay on the shown landform
+            landform = e; // Remember it
+            for (int i = 0; i < landformTabs.Length; i++) // Each landform tab
             {
-                var slot = view.slots[i]; // The slot on screen
-                bool used = i < onPage.Count; // Is there a kind for this slot?
-                slot.root.SetActive(used); // Hide spare slots
-                slot.button.onClick.RemoveAllListeners(); // Forget the kind this slot showed before
-                if (!used) continue; // Nothing more for a spare slot
-                var entry = onPage[i]; // The kind and whether it is found
+                var tab = landformTabs[i]; // The tab
+                bool open = progress.IsEpisodeUnlocked((Episode)i); // Is that landform open on the map?
+                tab.image.sprite = !open ? tab.locked : i == (int)e ? tab.on : tab.off; // Locked, chosen, or not chosen
+            }
+            var shelf = Collection.Shelves(progress)[(int)e]; // That landform's item kinds, found or not
+            comingSoon.gameObject.SetActive(shelf.IsComingSoon); // "Coming soon" when it has none yet
+            if (shelf.Slots.Count > slots.Length) Debug.LogWarning($"{e} has {shelf.Slots.Count} item kinds but the grid has {slots.Length} cells; add cells in ProfileBuilder."); // Never hide kinds silently
+            for (int i = 0; i < slots.Length; i++) // Each cell of the grid
+            {
+                var slot = slots[i]; // The cell
+                bool used = i < shelf.Slots.Count; // Is there a kind for it?
+                slot.root.SetActive(used); // Hide spare cells
+                slot.button.onClick.RemoveAllListeners(); // Forget what the cell showed before
+                if (!used) continue; // Nothing more for a spare cell
+                var entry = shelf.Slots[i]; // The kind and whether it is found
                 slot.picture.sprite = PictureOf(entry.Kind); // Its picture
                 slot.picture.color = entry.IsFound ? Color.white : hiddenColor; // Colour when found, a dark shape when not
                 slot.label.text = entry.IsFound ? entry.Kind.Name : "?"; // The name stays a surprise until it is found
                 slot.button.interactable = entry.IsFound; // Only found kinds react to a tap
-                if (entry.IsFound) { var kind = entry.Kind; slot.button.onClick.AddListener(() => OpenCard(kind)); } // Tapping it opens its card
+                if (entry.IsFound) { var kind = entry.Kind; slot.button.onClick.AddListener(() => OpenItemCard(kind)); } // Tapping it opens its card
             }
         }
 
-        Sprite PictureOf(ItemKind kind) => pictures.FirstOrDefault(p => p.name == kind.Picture)?.sprite; // Looks the picture up by name
+        void ShowBadges() // Fills the badge grid and the count
+        {
+            var progress = GameProgress.Current; // Saved progress
+            var all = AchievementCatalog.All; // Every badge, in order
+            badgeCount.text = Total("Badges", AchievementCatalog.EarnedCount(progress) + "/" + all.Count); // For example "Badges 3/8"
+            for (int i = 0; i < badges.Length; i++) // Each badge cell
+            {
+                var cell = badges[i]; // The cell
+                bool used = i < all.Count; // Is there a badge for it?
+                cell.root.SetActive(used); // Hide spare cells
+                cell.button.onClick.RemoveAllListeners(); // Forget any earlier listener
+                if (!used) continue; // Nothing more for a spare cell
+                var badge = all[i]; // The badge
+                bool earned = badge.IsEarned(progress); // Earned or locked
+                cell.picture.sprite = BadgeOf(badge, earned); // Medal, or its dark locked shape
+                cell.label.text = badge.Name; // The name shows even while locked, so the player has a goal
+                cell.label.color = earned ? Ink : LockedInk; // Locked names are softer
+                cell.button.interactable = true; // Every badge opens its card, to show how to earn it
+                cell.button.onClick.AddListener(() => OpenBadgeCard(badge)); // Tapping it opens its card
+            }
+        }
 
-        void OpenCard(ItemKind kind) // Shows the item card for a found kind
+        static readonly Color Ink = new Color32(31, 26, 36, 255); // The game's ink colour
+        static readonly Color LockedInk = new Color32(110, 100, 90, 255); // Soft grey-brown, as for "Coming soon"
+
+        Sprite PictureOf(ItemKind kind) => pictures.FirstOrDefault(p => p.name == kind.Picture)?.sprite; // Looks an item picture up by name
+
+        Sprite BadgeOf(Achievement badge, bool earned) => badgePictures.FirstOrDefault(p => p.name == "badge_" + badge.Id + (earned ? "" : "_locked"))?.sprite; // Looks a badge picture up by name
+
+        void OpenItemCard(ItemKind kind) // Shows the card for a found rock or mineral
         {
             if (Leaving) return; // Ignore taps while leaving
-            cardPicture.sprite = PictureOf(kind); // Its picture
-            cardName.text = kind.Name; // Its name
-            cardTag.text = kind.IsRock ? "Rock" : "Mineral"; // Rock or mineral
-            cardDescription.text = kind.Description; // The same text as the pop-up in the level
-            cardDraftNote.text = kind.IsDraft ? LevelData.DraftNote : ""; // Draft marking until a teacher checks it (D-043, Q-04)
+            ShowCard(PictureOf(kind), kind.Name, kind.IsRock ? "Rock" : "Mineral", kind.Description, kind.IsDraft); // The same text as the pop-up in the level
+        }
+
+        void OpenBadgeCard(Achievement badge) // Shows the card for a badge: its colour, whether it is earned, and how to earn it
+        {
+            if (Leaving) return; // Ignore taps while leaving
+            bool earned = badge.IsEarned(GameProgress.Current); // Earned or locked
+            string state = badge.Tier + " badge" + (earned ? " — earned!" : " — locked"); // For example "Gold badge — locked"
+            ShowCard(BadgeOf(badge, earned), badge.Name, state, badge.HowToEarn, badge.IsDraft); // Name, state and hint
+        }
+
+        void ShowCard(Sprite picture, string title, string tag, string text, bool draft) // Fills the card and shows it
+        {
+            cardPicture.sprite = picture; // The picture
+            cardPicture.SetNativeSize(); // 24x24 for items, 32x32 for badges
+            cardName.text = title; // The name
+            cardTag.text = tag; // Rock, Mineral, or the badge state
+            cardDescription.text = text; // Description or how to earn it
+            cardDraftNote.text = draft ? LevelData.DraftNote : ""; // Draft marking until it is checked (D-043, Q-04)
             card.SetActive(true); // Show the card
         }
 

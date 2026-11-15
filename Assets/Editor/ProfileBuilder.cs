@@ -25,7 +25,7 @@ public static class ProfileBuilder // Makes the Profile scene
     const string LessonScript = "Tools/Art/make_lesson_art.py"; // Draws the Lesson art and the item pictures
     const string MainMenuPath = "Assets/Scenes/MainMenu.unity"; // The Profile goes after this scene
     const string ProfilePath = "Assets/Scenes/Profile.unity"; // Where the Profile is saved
-    const int SlotsPerShelf = 5; // Five item kinds per page; a page arrow on the right shows the rest (D-055)
+    const int GridColumns = 6; // Items per row in the Collection grid (D-060)
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for small headings
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, for the draft note
     static readonly Color32 Muted = new Color32(110, 100, 90, 255); // Soft grey-brown for "Coming soon" and the card tag
@@ -42,9 +42,9 @@ public static class ProfileBuilder // Makes the Profile scene
             Debug.LogError("TextMeshPro is not set up yet. Choose Window > TextMeshPro > Import TMP Essential Resources, then run this builder again."); // Tell the user what to do
             return; // Stop before building a broken scene
         }
-        if (!File.Exists(MenuSprites + "Buttons/btn_profile.png") || !File.Exists(LessonSprites + "item_slot.png") || !File.Exists(ItemFolder + "granite.png")) // The art must be drawn first
+        if (!File.Exists(MenuSprites + "Buttons/btn_profile.png") || !File.Exists(LessonSprites + "item_slot.png") || !File.Exists(ItemFolder + "granite.png") || !File.Exists(MenuSprites + "Profile/badge_first_steps.png")) // The art must be drawn first
         {
-            Debug.LogError($"Missing art. Run: python Tools/Art/make_mainmenu_art.py and python {LessonScript}"); // Tell the user what to do
+            Debug.LogError($"Missing art. Run: python Tools/Art/make_mainmenu_art.py, python Tools/Art/make_profile_art.py and python {LessonScript}"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
         M.ConfigurePixelSprites(MenuSprites, _ => false); // Crisp pixel art for the camp, the portrait and the icons; this refreshes the assets, so the fonts are loaded after it
@@ -63,7 +63,7 @@ public static class ProfileBuilder // Makes the Profile scene
         var controller = new GameObject("Profile").AddComponent<ProfileController>(); // The screen brain
 
         BuildStrip(controller, root, font); // Portrait, name, pencil and totals
-        BuildShelves(controller, root, font); // The Collection
+        BuildSections(controller, root, font); // Collection and Achievements tabs and pages (D-060)
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
         BuildCard(controller, root); // Item card, on top of the shelves
         BuildNamePanel(controller, root, font); // Name panel, on top of everything else
@@ -105,41 +105,82 @@ public static class ProfileBuilder // Makes the Profile scene
         return label; // The controller fills it
     }
 
-    /// <summary>The Collection: four shelves, one per landform, each with five slots per page and a page arrow (D-052, D-055).</summary>
-    static void BuildShelves(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the shelves
+    /// <summary>
+    /// The two sections under the strip (D-060): Collection and Achievements tabs at y 58 to 80, and one cream page panel at y 80 to 264.
+    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: a grid of 4 by 2 badges with names.
+    /// </summary>
+    static void BuildSections(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the tabs, both pages and their grids
     {
-        var shelves = new ProfileController.ShelfView[ShelfNames.Length]; // Filled below
-        for (int s = 0; s < ShelfNames.Length; s++) // One shelf per landform
+        var page = new Vector2(240f, 172f); // Middle of the page panel
+        var panel = M.Panel("Page", root, page, new Vector2(464f, 184f)); // Cream page, x 8 to 472, y 80 to 264
+        panel.GetComponent<Image>().raycastTarget = false; // Taps pass through to the cells
+        controller.collectionTab = Tab("Collection tab", root, "tab_collection", 8f, 69f); // Left tab, joined to the page when chosen
+        float nextX = 8f + P("tab_collection_on").rect.width + 4f; // The second tab starts 4 pixels after the first
+        controller.achievementsTab = Tab("Achievements tab", root, "tab_achievements", nextX, 69f); // Second tab
+        controller.badgeCount = M.ReadingLabel("Badge count", root, "Badges 0/8", new Vector2(412f, 69f), K.CanvasCenter, new Vector2(112f, 22f), K.Ink, TextAlignmentOptions.MidlineRight); // "Badges 3/8", right end of the tab row, x 356 to 468
+        controller.badgeCount.richText = true; // The word is clay with a colour tag
+
+        // Collection page: landform tabs and the item grid.
+        var collection = M.Rect("Collection", root, page, page); // Holder the controller shows and hides
+        var lands = new ProfileController.TabView[ShelfNames.Length]; // One tab per landform
+        for (int i = 0; i < lands.Length; i++) // Each landform, in episode order
         {
-            var c = new Vector2(240f, 83f + s * 51f); // Middle of this shelf: y 58 to 108, 109 to 159, 160 to 210, 211 to 261
-            var shelf = M.Panel("Shelf " + ShelfNames[s], root, c, new Vector2(464f, 50f)); // Cream shelf, x 8 to 472, 50 tall so the frame and the name both have room
-            shelf.GetComponent<Image>().raycastTarget = false; // Taps pass through to the slots
-            M.Label("Landform", shelf, font, ShelfNames[s], new Vector2(70f, c.y), c, new Vector2(104f, 22f), Clay, TextAlignmentOptions.MidlineLeft); // Landform name, x 18 to 122
-            var view = new ProfileController.ShelfView // The parts the controller fills
-            {
-                comingSoon = M.ReadingLabel("Coming soon", shelf, "Coming soon", new Vector2(230f, c.y), c, new Vector2(200f, 22f), Muted, TextAlignmentOptions.MidlineLeft), // Shown when the landform has no kinds yet, from x 130
-                slots = new ProfileController.SlotView[SlotsPerShelf], // Filled below
-            };
-            for (int i = 0; i < SlotsPerShelf; i++) // Each slot
-            {
-                var sc = new Vector2(146f + i * 62f, c.y - 7f); // Middle of the frame: 62 apart (x 131 to 409 for five), 3 pixels below the shelf top
-                var frame = M.Picture("Slot " + (i + 1), shelf, LessonSprite("item_slot"), sc, c); // Tan frame, also the tap area
-                frame.raycastTarget = true; // The frame catches taps
-                var button = frame.gameObject.AddComponent<Button>(); // Makes it tappable
-                button.transition = Selectable.Transition.None; // The card opening is the feedback
-                button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between slots
-                var picture = M.Picture("Picture", frame.transform, null, sc, sc); // The item picture or its dark shape
-                picture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
-                var label = M.ReadingLabel("Name", frame.transform, "?", sc + new Vector2(0f, 23f), sc, new Vector2(60f, 22f), K.Ink, TextAlignmentOptions.Midline); // Name or "?", 8 pixels under the frame and clear of the shelf bottom; 60 wide for "Feldspar" (60 pixels)
-                label.textWrappingMode = TextWrappingModes.NoWrap; // A name stays on one line
-                view.slots[i] = new ProfileController.SlotView { root = frame.gameObject, button = button, picture = picture, label = label }; // Everything the controller needs
-            }
-            view.nextPage = M.MakeButton("Next page", shelf, "next_icon", new Vector2(450f, c.y), c); // Arrow to the next page, x 438 to 462, right of the five slots
-            view.prevPage = M.MakeButton("Previous page", shelf, "prev_icon", new Vector2(450f, c.y), c); // Arrow back, in the same place; the controller shows one of the two
-            shelves[s] = view; // Keep it
+            string id = ShelfNames[i].ToLowerInvariant(); // "mountains", "hills", and so on
+            lands[i] = Tab("Landform " + ShelfNames[i], collection, "land_" + id, 18f + i * 112f, 98f); // 108 wide, 4 apart, x 18 to 462
+            lands[i].locked = P("land_" + id + "_locked"); // Grey with a padlock
         }
-        controller.shelves = shelves; // The four shelves
+        controller.landformTabs = lands; // The controller switches them
+        var slots = new ProfileController.SlotView[GridColumns * 2]; // Two rows of items
+        for (int i = 0; i < slots.Length; i++) // Each cell
+            slots[i] = Cell("Item " + (i + 1), collection, LessonSprite("item_slot"), new Vector2(60f + (i % GridColumns) * 72f, 132f + (i / GridColumns) * 68f), 24f, 70f); // Frames 72 apart; rows at y 132 and 200
+        controller.slots = slots; // The item grid
+        controller.comingSoon = M.ReadingLabel("Coming soon", collection, "Coming soon", new Vector2(240f, 170f), page, new Vector2(200f, 22f), Muted, TextAlignmentOptions.Midline); // For an open landform without kinds
         controller.pictures = ItemCatalog.All.Select(k => new ProfileController.NamedSprite { name = k.Picture, sprite = Item(k.Picture) }).ToArray(); // Every item picture, by name
+        controller.collectionPage = collection.gameObject; // The controller shows it
+
+        // Achievements page: the badge grid.
+        var achievements = M.Rect("Achievements", root, page, page); // Holder the controller shows and hides
+        var badges = new ProfileController.SlotView[AchievementCatalog.All.Count]; // One cell per badge
+        for (int i = 0; i < badges.Length; i++) // Each badge
+            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(72f + (i % 4) * 112f, 112f + (i / 4) * 78f), 32f, 104f); // Medals 112 apart; rows at y 112 and 190
+        foreach (var b in badges) // Badge names may need two lines
+        {
+            b.label.textWrappingMode = TextWrappingModes.Normal; // Wrap a long name such as "Mountain Collector"
+            b.label.rectTransform.sizeDelta = new Vector2(104f, 44f); // Room for two 24-pixel lines
+            b.label.rectTransform.anchoredPosition += new Vector2(0f, -11f); // Keep the top of the name just under the medal
+            b.label.alignment = TextAlignmentOptions.Top; // Lines start at the top
+        }
+        controller.badges = badges; // The badge grid
+        controller.badgePictures = AchievementCatalog.All.SelectMany(a => new[] { "badge_" + a.Id, "badge_" + a.Id + "_locked" }).Select(n => new ProfileController.NamedSprite { name = n, sprite = P(n) }).ToArray(); // Earned and locked pictures, by name
+        controller.achievementsPage = achievements.gameObject; // The controller shows it
+    }
+
+    /// <summary>A tab button whose left edge is at x and middle at y; its pictures are Profile/name_on and Profile/name_off.</summary>
+    static ProfileController.TabView Tab(string label, Transform parent, string name, float left, float y) // Makes one tab
+    {
+        var on = P(name + "_on"); // Chosen picture
+        var image = M.Picture(label, parent, on, new Vector2(left + on.rect.width / 2f, y), K.CanvasCenter); // Placed by its left edge
+        image.raycastTarget = true; // Tabs catch taps
+        var button = image.gameObject.AddComponent<Button>(); // Makes it tappable
+        button.transition = Selectable.Transition.None; // Its picture change is the feedback
+        button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between tabs
+        return new ProfileController.TabView { button = button, image = image, on = on, off = P(name + "_off") }; // Everything the controller needs
+    }
+
+    /// <summary>One grid cell: a frame (or none) with a picture of the given size and a name under it.</summary>
+    static ProfileController.SlotView Cell(string label, Transform parent, Sprite frame, Vector2 at, float pictureSize, float nameWidth) // Makes one cell
+    {
+        var holder = M.Picture(label, parent, frame, at, K.CanvasCenter); // Tan frame, or an empty tap area for badges
+        if (frame == null) { holder.color = new Color(1f, 1f, 1f, 0f); holder.rectTransform.sizeDelta = new Vector2(pictureSize + 8f, pictureSize + 8f); } // Badges: a see-through tap area around the medal
+        holder.raycastTarget = true; // The cell catches taps
+        var button = holder.gameObject.AddComponent<Button>(); // Makes it tappable
+        button.transition = Selectable.Transition.None; // The card opening is the feedback
+        button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between cells
+        var picture = M.Picture("Picture", holder.transform, null, at, at); // The picture or its dark shape
+        picture.rectTransform.sizeDelta = new Vector2(pictureSize, pictureSize); // 24 for items, 32 for badges
+        var name = M.ReadingLabel("Name", holder.transform, "?", at + new Vector2(0f, pictureSize / 2f + 11f), at, new Vector2(nameWidth, 22f), K.Ink, TextAlignmentOptions.Midline); // Name under the picture
+        name.textWrappingMode = TextWrappingModes.NoWrap; // Items keep their name on one line
+        return new ProfileController.SlotView { root = holder.gameObject, button = button, picture = picture, label = name }; // Everything the controller needs
     }
 
     /// <summary>The item card: the in-level pop-up layout plus a Rock or Mineral tag and the draft note (D-052, Q-04).</summary>
@@ -195,6 +236,7 @@ public static class ProfileBuilder // Makes the Profile scene
     }
 
     static Sprite S(string path) => K.Sprite(MenuSprites, path, "Tools/Art/make_mainmenu_art.py"); // Loads one Main Menu sprite
+    static Sprite P(string path) => K.Sprite(MenuSprites + "Profile/", path, "Tools/Art/make_profile_art.py"); // Loads one Profile tab or badge sprite (D-060)
     static Sprite Item(string path) => K.Sprite(ItemFolder, path, LessonScript); // Loads one item picture
     static Sprite LessonSprite(string path) => K.Sprite(LessonSprites, path, LessonScript); // Loads one Lesson Screen sprite
 }

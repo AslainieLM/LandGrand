@@ -129,6 +129,46 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
+        public void Next_IsTheNextLevel_InsideADifficulty() // Easy 1 cleared: Next Level is Easy 2 (D-059)
+        {
+            var p = new PlayerProgress(); // A fresh profile
+            p.RecordClear(Episode.Mountains, Difficulty.Easy, 1, 2); // Clear Easy 1
+            var next = p.NextAfter(Episode.Mountains, Difficulty.Easy, 1); // What comes next
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Another level
+            Assert.AreEqual(Difficulty.Easy, next.Difficulty); // Same difficulty
+            Assert.AreEqual(2, next.Level); // Level 2
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void Next_AfterTheLastEasyLevel_IsNormalLevel1() // LG-32: the next available level in order
+        {
+            var p = new PlayerProgress(); // A fresh profile
+            for (int n = 1; n <= 3; n++) p.RecordClear(Episode.Mountains, Difficulty.Easy, n, 1); // Clear all of Easy
+            var next = p.NextAfter(Episode.Mountains, Difficulty.Easy, 3); // What comes next
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Still a level, not an episode
+            Assert.AreEqual(Difficulty.Normal, next.Difficulty); // The next difficulty
+            Assert.AreEqual(1, next.Level); // Its first level
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void Next_AfterTheWholeLandform_IsTheNextEpisode() // Hard 7 cleared: Next Episode (D-059)
+        {
+            var p = new PlayerProgress(); // A fresh profile
+            foreach (var d in new[] { Difficulty.Easy, Difficulty.Normal, Difficulty.Hard }) // Every difficulty
+                for (int n = 1; n <= PlayerProgress.LevelCount(d); n++) p.RecordClear(Episode.Mountains, d, n, 1); // Clear every level
+            var next = p.NextAfter(Episode.Mountains, Difficulty.Hard, 7); // What comes next
+            Assert.AreEqual(NextStep.NextEpisode, next.Step); // The next landform
+            Assert.AreEqual(Episode.Hills, next.Episode); // Hills follows Mountains (D-039)
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void Next_IsNone_WhenNothingOpenFollows() // An uncleared level, or the very last landform
+        {
+            var p = new PlayerProgress(); // A fresh profile, nothing cleared
+            Assert.AreEqual(NextStep.None, p.NextAfter(Episode.Mountains, Difficulty.Easy, 1).Step); // Easy 1 not cleared: Easy 2 is locked
+        }
+
+        [Test] // Unity runs this method as a Test
         public void ReviewPickup_OfAKnownKind_OnlyChimes() // Quartz in Easy 2 after Easy 1
         {
             var p = new PlayerProgress(); // A fresh profile

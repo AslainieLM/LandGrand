@@ -65,6 +65,15 @@ namespace LandGrand.Play // Level play scripts live here
         public Sprite starFull; // Earned star
         public Sprite starEmpty; // Star not earned
         public Button continueButton; // Goes to the next available level
+        public Sprite nextLevelSprite; // "Next Level" picture for the Next button (D-059)
+        public GameObject badgeNotice; // "New badge!" ribbon with the badge and its name, shown after the stars (D-060)
+        public Image badgeNoticePicture; // The new badge
+        public TMP_Text badgeNoticeName; // Its name
+        public Sprite[] badgePictures; // Earned badge pictures, named "badge_" plus the achievement id
+        public float badgeShowSeconds = 1.6f; // How long each new badge stays when several were earned
+        public Sprite nextLevelPressed; // Its pushed-in picture
+        public Sprite nextEpisodeSprite; // "Next Episode" picture, after the whole landform
+        public Sprite nextEpisodePressed; // Its pushed-in picture
         public Button replayButton; // Starts the level again from its lesson
         public Button mapButton; // Goes back to the Landform Map
         public Image[] resultItems; // One picture per pickup of the level: taken items in colour, missed ones as grey outlines
@@ -114,6 +123,7 @@ namespace LandGrand.Play // Level play scripts live here
         int lastShownSecond = -1; // The countdown second shown last, to hop once per new second
         Vector2 timerHome; // Where the countdown panel rests
         Coroutine timerHop; // The hop running now, if any
+        System.Collections.Generic.HashSet<string> badgesBefore; // Badges the explorer had when the level began (D-060)
 
         protected override void Awake() // Runs once when the level opens: starts the attempt
         {
@@ -127,6 +137,8 @@ namespace LandGrand.Play // Level play scripts live here
             Application.targetFrameRate = 60; // Smooth movement; Android would otherwise stay at 30 frames per second
             var level = LevelCatalog.Find(episode, difficulty, number); // This scene's level data
             run = new LevelRun(level); // A fresh attempt
+            badgesBefore = AchievementCatalog.EarnedIds(GameProgress.Current); // Remember the badges so the Result Screen can show the new ones
+            if (badgeNotice != null) badgeNotice.SetActive(false); // No badge notice until the result
             explorer.RespawnPoint = new Vector2(run.RespawnPoint.X, run.RespawnPoint.Y); // The attempt decides where the explorer comes back
             explorer.PlaceAt(explorer.RespawnPoint); // Put the explorer at the start
             lastGround = explorer.RespawnPoint; // Until the explorer stands somewhere else, this is the safe spot
@@ -341,8 +353,9 @@ namespace LandGrand.Play // Level play scripts live here
             touchControls.SetActive(false); // Hide the controls
             pauseButton.gameObject.SetActive(false); // No pause button on the result
             FillResult(); // Items, goals and review for this attempt
+            ShowNextButton(); // "Next Level" or "Next Episode", after the clear was saved
             resultPanel.SetActive(true); // Show the result
-            StartCoroutine(PopStars()); // Stars pop in one by one with a chime
+            StartCoroutine(PopStars()); // Stars pop in one by one with a chime, then any new badges
         }
 
         void FillResult() // Shows what happened in the run on the Result Screen
@@ -379,14 +392,47 @@ namespace LandGrand.Play // Level play scripts live here
                 }
             }
             chimeSource.pitch = 1f; // Back to normal pitch
+            yield return ShowNewBadges(); // Then the badges this level earned, if any (D-060)
         }
 
-        void Continue() // Goes to the next available level, or back to the trail when there is none
+        System.Collections.IEnumerator ShowNewBadges() // Shows "New badge!" with each badge earned in this level, one after another
         {
-            int next = GameProgress.Current.NextLevelAfter(episode, difficulty, number); // 0 when there is no next level
-            if (next <= 0) { Leave(levelSelectionScene); return; } // Last level of the difficulty: back to the trail
-            GameSession.Level = next; // The Lesson Screen reads the level number from here
-            Leave(lessonScene); // Next level starts from its lesson
+            if (badgeNotice == null) yield break; // A scene built before D-060 has no notice
+            var fresh = AchievementCatalog.NewlyEarned(badgesBefore, GameProgress.Current); // Badges earned since the level began
+            if (fresh.Count == 0) yield break; // Nothing new
+            badgeNotice.SetActive(true); // Show the ribbon
+            for (int i = 0; ; i = (i + 1) % fresh.Count) // Each new badge in turn, round and round while the result shows
+            {
+                var badge = fresh[i]; // This badge
+                badgeNoticePicture.sprite = System.Array.Find(badgePictures, s => s != null && s.name == "badge_" + badge.Id); // Its medal
+                badgeNoticeName.text = badge.Name; // Its name
+                if (chimes != null && chimes.Length > 0) chimeSource.PlayOneShot(chimes[chimes.Length - 1], GameSettings.SfxVolume); // A chime for each badge
+                if (fresh.Count == 1) yield break; // One badge stays put
+                yield return new WaitForSecondsRealtime(badgeShowSeconds); // Then the next one
+            }
+        }
+
+        void Continue() // The Next button: the next level, the next landform, or back to the trail when nothing open follows (D-059, LG-32)
+        {
+            var next = GameProgress.Current.NextAfter(episode, difficulty, number); // The rules decide
+            if (next.Step == NextStep.NextEpisode) { GameSession.Episode = next.Episode; Leave(mapScene); return; } // A new landform: back to the map, where it is now open
+            if (next.Step == NextStep.None) { Leave(levelSelectionScene); return; } // Nothing open: back to the trail
+            GameSession.Episode = next.Episode; // The Lesson Screen reads the landform from here
+            GameSession.Difficulty = next.Difficulty; // And the difficulty, which changes after the last level of a difficulty
+            GameSession.Level = next.Level; // And the level number
+            Leave(lessonScene); // The next level starts from its lesson
+        }
+
+        void ShowNextButton() // Shows "Next Level" or "Next Episode" on the Next button (D-059)
+        {
+            if (nextLevelSprite == null || nextEpisodeSprite == null) return; // A scene built before D-059 keeps its old picture
+            bool episode = GameProgress.Current.NextAfter(this.episode, difficulty, number).Step == NextStep.NextEpisode; // Is a new landform next?
+            var image = (Image)continueButton.targetGraphic; // The button picture
+            image.sprite = episode ? nextEpisodeSprite : nextLevelSprite; // The right words
+            var state = continueButton.spriteState; // Its pressed picture
+            state.pressedSprite = episode ? nextEpisodePressed : nextLevelPressed; // Matches the words
+            continueButton.spriteState = state; // Use it
+            image.SetNativeSize(); // Its own width; the right edge stays put
         }
 
         protected override void Back() // Android Back or Escape
