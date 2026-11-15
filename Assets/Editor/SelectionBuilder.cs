@@ -42,6 +42,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             Debug.LogError($"Missing art. Run: python Tools/Art/make_landform_map_art.py and python {ArtScript}"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
+        M.ConfigurePixelSprites(DescriptionArt.Folder, _ => false); // Loads the crisp book button before building
         var font = M.EnsureFont(); // The pixel font at 2x (decision D-050)
         if (font == null) return; // EnsureFont already said what is wrong
         M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art; nothing here needs to be readable
@@ -91,6 +92,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
         controller.title = title; // Title picture
         controller.titles = Landforms.Select(n => S($"Titles/title_{n}")).ToArray(); // One title per landform
         controller.backButton = K.BackIcon(root); // Back icon, top-left corner (made last, so it is on top)
+        controller.bookButton = DescriptionArt.Button("Book", root, "btn_book_icon", new Vector2(462f, 16f)); // Mirrors the Back icon
         Save(scene, DifficultyPath, MapPath); // Save and add to the build list after the map
     }
 

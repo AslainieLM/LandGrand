@@ -34,10 +34,9 @@ namespace LandGrand.Rules.Tests // Tests plain rules
             } // Ends the trail checks
         } // Ends the check
         [Test] // Runs this check
-        public void MountainsHasTwentyKindsInLessonOrder() // Checks the added collection entries
+        public void NormalIntroducesTenKindsInLessonOrder() // Checks the Normal collection entries
         { // Starts the check
-            Assert.AreEqual(20, ItemCatalog.All.Count); // Twenty taught kinds
-            CollectionAssert.AreEqual(new[] { "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, ItemCatalog.All.Skip(10).Select(k => k.Id)); // Exact introduction order
+            CollectionAssert.AreEqual(new[] { "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, ItemCatalog.All.Skip(10).Take(10).Select(k => k.Id)); // Exact introduction order
             Assert.IsTrue(ItemCatalog.All.All(k => k.HomeLandform == Episode.Mountains && k.IsDraft)); // Shared draft shelf
         } // Ends the check
     } // Ends the group

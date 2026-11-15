@@ -42,8 +42,15 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// <summary>How many levels a difficulty has: Easy 3, Normal 5, Hard 7.</summary>
         public static int LevelCount(Difficulty d) => d == Difficulty.Easy ? 3 : d == Difficulty.Normal ? 5 : 7; // Counts from the game design
 
-        /// <summary>True when the landform can be played. Only Mountains for now (Q-03 is still open for the others).</summary>
-        public bool IsEpisodeUnlocked(Episode e) => e == Episode.Mountains; // Mountains is open from the start
+        /// <summary>True when all 15 levels of this landform are cleared.</summary>
+        public bool IsEpisodeComplete(Episode e) => AllCleared(e, Difficulty.Easy) && AllCleared(e, Difficulty.Normal) && AllCleared(e, Difficulty.Hard); // Needs all three difficulties
+
+        /// <summary>True when this landform can be opened from the map.</summary>
+        public bool IsEpisodeUnlocked(Episode e) => e == Episode.Mountains || (e > Episode.Mountains && e <= Episode.Plateaus && IsEpisodeComplete(e - 1)); // Mountains starts open; the others need the earlier landform
+
+        public bool ShouldAnimateUnlock(Episode e, bool seen) => e != Episode.Mountains && !seen && IsEpisodeUnlocked(e); // Shows each newly opened landform once
+
+        public static Episode? NextEpisodeFor(Episode e) => e >= Episode.Mountains && e < Episode.Plateaus ? e + 1 : (Episode?)null; // Returns the next landform if there is one
 
         /// <summary>True when the difficulty is open: Normal after all Easy levels, Hard after all Normal levels.</summary>
         public bool IsDifficultyUnlocked(Episode e, Difficulty d) // Checks the unlock chain
@@ -68,7 +75,6 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         /// Where the Result Screen's Next button goes after this level (D-059, LG-32): the next available level in order,
         /// which after the last level of a difficulty is level 1 of the next unlocked difficulty; after the whole landform
         /// (Hard 7 and everything before it cleared) the next episode; otherwise nothing.
-        /// Q-03 may later let a landform finish earlier; then only this method changes.
         /// </summary>
         public NextTarget NextAfter(Episode e, Difficulty d, int level) // Works out the Next button
         {
@@ -78,8 +84,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                 var harder = d == Difficulty.Easy ? Difficulty.Normal : Difficulty.Hard; // The next difficulty
                 if (IsLevelAvailable(e, harder, 1)) return new NextTarget(NextStep.NextLevel, e, harder, 1); // Its first level, once unlocked
             }
-            bool landformDone = AllCleared(e, Difficulty.Easy) && AllCleared(e, Difficulty.Normal) && AllCleared(e, Difficulty.Hard); // Every level of the landform
-            if (landformDone && e != Episode.Plateaus) return new NextTarget(NextStep.NextEpisode, e + 1, Difficulty.Easy, 1); // The next landform in order (D-039)
+            if (d == Difficulty.Hard && level == LevelCount(d) && IsEpisodeComplete(e) && NextEpisodeFor(e) is Episode next) return new NextTarget(NextStep.NextEpisode, next, Difficulty.Easy, 1); // The next landform in order (D-039)
             return new NextTarget(NextStep.None, e, d, level); // Nothing open follows
         }
 
@@ -106,7 +111,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public int DifficultyStars(Episode e, Difficulty d) => bestStars.Where(k => k.Key.Item1 == e && k.Key.Item2 == d).Sum(k => k.Value); // Only this card's levels
 
         /// <summary>Best stars earned so far in one landform, added over all its levels.</summary>
-        public int EpisodeStars(Episode e) => bestStars.Where(k => k.Key.Item1 == e).Sum(k => k.Value); // Only this landform's levels
+        public int EpisodeStars(Episode e) => StarsFor(e); // Keeps the existing map rule
+        public int StarsFor(Episode e) => bestStars.Where(k => k.Key.Item1 == e).Sum(k => k.Value); // Only this landform's levels
+        public static int MaxStarsFor(Episode e) => Enum.IsDefined(typeof(Episode), e) ? MaxEpisodeStars : 0; // All four landforms have 15 planned levels
 
         /// <summary>Best stars earned so far over every level, for the Profile (D-052).</summary>
         public int TotalStars => bestStars.Values.Sum(); // Only best stars are kept, so a replay never lowers it

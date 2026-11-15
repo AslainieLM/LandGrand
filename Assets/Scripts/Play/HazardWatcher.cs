@@ -22,6 +22,7 @@ namespace LandGrand.Play // Level play scripts live here
         public AudioClip hitSound; // Played when a trap or the pit sends the explorer back
         public AudioClip checkpointSound; // Played when the checkpoint flag is reached
 
+        RollingBoulderWatcher rollingBoulders; // Optional part for boulder traps
         LevelController level; // The level these hazards belong to
         Vector2 lastGround; // Where the explorer last stood on safe ground
         int lastGroundFacing = 1; // Which way it was walking then
@@ -34,6 +35,7 @@ namespace LandGrand.Play // Level play scripts live here
         internal void Begin(LevelController owner) // Connects the hazards to their level
         {
             level = owner; // Remember the level
+            rollingBoulders = GetComponent<RollingBoulderWatcher>(); // The level only has this part if boulders can roll
             lastGround = level.explorer.RespawnPoint; // Until the explorer stands somewhere else, the start is the safe spot
         }
 
@@ -52,7 +54,7 @@ namespace LandGrand.Play // Level play scripts live here
                 level.Say("Checkpoint reached!"); // Announces each flag
                 level.PlaySfx(checkpointSound); // Plays the ding
             } // Ends the flag check
-            if (TouchesSpikes(p) || TouchesRock(p)) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
+            if (TouchesSpikes(p) || TouchesRock(p) || (rollingBoulders != null && rollingBoulders.Hits(level.ExplorerBodyAt(p)))) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
             else if (p.y < pitDeathY) StartCoroutine(Respawn(true)); // The pit
         }
 

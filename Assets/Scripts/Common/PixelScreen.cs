@@ -81,17 +81,17 @@ namespace LandGrand // Game code lives here
         }
 
         /// <summary>Shows a guide message for a short time. A new message restarts the timer.</summary>
-        protected void ShowGuide(string text) // Shows a short message
+        protected void ShowGuide(string text, float? seconds = null) // Shows a short message for the requested time
         {
             guideText.text = text; // The words to show
             guidePanel.SetActive(true); // Show the panel
             if (guideRoutine != null) StopCoroutine(guideRoutine); // A new message restarts the timer
-            guideRoutine = StartCoroutine(HideGuideLater()); // Hide it after a while
+            guideRoutine = StartCoroutine(HideGuideLater(seconds ?? guideSeconds)); // Hide it after a while
         }
 
-        IEnumerator HideGuideLater() // Waits, then hides the guide
+        IEnumerator HideGuideLater(float seconds) // Waits, then hides the guide
         {
-            yield return new WaitForSecondsRealtime(guideSeconds); // Let the player read it
+            yield return new WaitForSecondsRealtime(seconds); // Let the player read it
             guidePanel.SetActive(false); // Hide the panel
             guideRoutine = null; // No timer is running now
         }

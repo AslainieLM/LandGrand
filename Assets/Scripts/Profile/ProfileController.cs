@@ -59,7 +59,7 @@ namespace LandGrand.Profile // Profile scripts live here
         public TabView achievementsTab; // "Achievements"
         public GameObject collectionPage; // Landform tabs and the item grid
         public GameObject achievementsPage; // The badge grid
-        public TMP_Text badgeCount; // "Badges 3/8"
+        public TMP_Text badgeCount; // "Badges 3/15"
 
         [Header("Collection")] // Inspector heading for the item grid
         public TabView[] landformTabs; // Mountains, Hills, Plains, Plateaus, in episode order
@@ -197,7 +197,7 @@ namespace LandGrand.Profile // Profile scripts live here
         {
             var progress = GameProgress.Current; // Saved progress
             var all = AchievementCatalog.All; // Every badge, in order
-            badgeCount.text = Total("Badges", AchievementCatalog.EarnedCount(progress) + "/" + all.Count); // For example "Badges 3/8"
+            badgeCount.text = Total("Badges", AchievementCatalog.EarnedCount(progress) + "/" + all.Count); // For example "Badges 3/15"
             for (int i = 0; i < badges.Length; i++) // Each badge cell
             {
                 var cell = badges[i]; // The cell

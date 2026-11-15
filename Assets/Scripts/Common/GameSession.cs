@@ -16,5 +16,7 @@ namespace LandGrand // Game code lives here
 
         /// <summary>The level stone tapped, starting at 1.</summary>
         public static int Level { get; set; } = 1; // Level 1 until the player picks one
+
+        public static bool DescriptionFromBook { get; set; } // Lets the review go back to the difficulty cards
     }
 }

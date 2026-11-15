@@ -7,7 +7,8 @@ namespace LandGrand.Rules.Tests // Tests profile rules
         [Test] // Runs this check
         public void TwentyKindsUseTwoPagesAndClampPageNumbers() // Keeps every kind reachable
         { // Starts the check
-            var shelf = Collection.Shelves(new PlayerProgress())[0]; // Mountains shelf
+            var mountains = Collection.Shelves(new PlayerProgress())[0]; // Full Mountains shelf
+            var shelf = new Shelf(Episode.Mountains, mountains.Slots.Take(20).ToArray()); // Keeps the original twenty-kind case
             Assert.AreEqual(2, shelf.PageCount(12)); // Two pages
             Assert.AreEqual(12, shelf.SlotsOnPage(0, 12).Count); // Full first page
             Assert.AreEqual(8, shelf.SlotsOnPage(1, 12).Count); // Remaining kinds

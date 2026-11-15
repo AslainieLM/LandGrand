@@ -107,7 +107,7 @@ public static class ProfileBuilder // Makes the Profile scene
 
     /// <summary>
     /// The two sections under the strip (D-060): Collection and Achievements tabs at y 58 to 80, and one cream page panel at y 80 to 264.
-    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: a grid of 4 by 2 badges with names.
+    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: a grid of 5 by 3 badges with names.
     /// </summary>
     static void BuildSections(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the tabs, both pages and their grids
     {
@@ -117,7 +117,7 @@ public static class ProfileBuilder // Makes the Profile scene
         controller.collectionTab = Tab("Collection tab", root, "tab_collection", 8f, 69f); // Left tab, joined to the page when chosen
         float nextX = 8f + P("tab_collection_on").rect.width + 4f; // The second tab starts 4 pixels after the first
         controller.achievementsTab = Tab("Achievements tab", root, "tab_achievements", nextX, 69f); // Second tab
-        controller.badgeCount = M.ReadingLabel("Badge count", root, "Badges 0/11", new Vector2(412f, 69f), K.CanvasCenter, new Vector2(112f, 22f), K.Ink, TextAlignmentOptions.MidlineRight); // For example "Badges 3/11", right end of the tab row, x 356 to 468
+        controller.badgeCount = M.ReadingLabel("Badge count", root, "Badges 0/15", new Vector2(412f, 69f), K.CanvasCenter, new Vector2(112f, 22f), K.Ink, TextAlignmentOptions.MidlineRight); // For example "Badges 3/15", right end of the tab row, x 356 to 468
         controller.badgeCount.richText = true; // The word is clay with a colour tag
 
         // Collection page: landform tabs and the item grid.
@@ -141,7 +141,7 @@ public static class ProfileBuilder // Makes the Profile scene
         controller.slots = slots; // The item grid
         controller.previousPage = M.MakeButton("Previous page", collection, "prev_icon", new Vector2(204f, 246f), K.CanvasCenter); // Restored arrow icon
         controller.nextPage = M.MakeButton("Next page", collection, "next_icon", new Vector2(276f, 246f), K.CanvasCenter); // Restored arrow icon
-        controller.pageNumber = M.ReadingLabel("Page number", collection, "1/2", new Vector2(240f, 246f), K.CanvasCenter, new Vector2(44f, 22f), K.Ink, TextAlignmentOptions.Midline); // Page count between arrows
+        controller.pageNumber = M.ReadingLabel("Page number", collection, "1/3", new Vector2(240f, 246f), K.CanvasCenter, new Vector2(44f, 22f), K.Ink, TextAlignmentOptions.Midline); // Page count between arrows
         controller.comingSoon = M.ReadingLabel("Coming soon", collection, "Coming soon", new Vector2(240f, 170f), page, new Vector2(200f, 22f), Muted, TextAlignmentOptions.Midline); // For an open landform without kinds
         controller.pictures = ItemCatalog.All.Select(k => new ProfileController.NamedSprite { name = k.Picture, sprite = Item(k.Picture) }).ToArray(); // Every item picture, by name
         controller.collectionPage = collection.gameObject; // The controller shows it
@@ -150,13 +150,14 @@ public static class ProfileBuilder // Makes the Profile scene
         var achievements = M.Rect("Achievements", root, page, page); // Holder the controller shows and hides
         var badges = new ProfileController.SlotView[AchievementCatalog.All.Count]; // One cell per badge
         for (int i = 0; i < badges.Length; i++) // Each badge
-            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(72f + (i % 4) * 112f, 104f + (i / 4) * 58f), 32f, 104f); // Four medals per row, 112 apart; rows at y 104, 162 and 220
+            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(56f + (i % 5) * 92f, 104f + (i / 5) * 58f), 26f, 88f); // Five medals per row; rows at y 104, 162 and 220
         foreach (var b in badges) // Keeps names within each medal column
         { // Opens the name layout
-            b.label.textWrappingMode = TextWrappingModes.NoWrap; // One readable line per badge
-            b.label.enableAutoSizing = true; // Fits long names inside their own column
-            b.label.fontSizeMin = 10f; b.label.fontSizeMax = M.ReadingFontSize; // Keeps the reading font with a safe size range
-            b.label.rectTransform.sizeDelta = new Vector2(104f, 22f); // Name stays inside its row
+            b.label.textWrappingMode = TextWrappingModes.Normal; // Lets a long badge name use two lines
+            b.label.alignment = TextAlignmentOptions.Top; // Puts the name just under the medal
+            b.label.lineSpacing = -64f; // Brings wrapped lines closer at the same font size
+            b.label.rectTransform.anchoredPosition = new Vector2(0f, -25f); // Name starts just below the small medal
+            b.label.rectTransform.sizeDelta = new Vector2(88f, 32f); // Fits the name between this medal and the next row
         } // Ends the name layout
         controller.badges = badges; // The badge grid
         controller.badgePictures = AchievementCatalog.All.SelectMany(a => new[] { "badge_" + a.Id, "badge_" + a.Id + "_locked" }).Select(n => new ProfileController.NamedSprite { name = n, sprite = P(n) }).ToArray(); // Earned and locked pictures, by name

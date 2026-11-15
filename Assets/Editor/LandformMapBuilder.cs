@@ -44,6 +44,7 @@ public static class LandformMapBuilder // Makes the Landform Map scene
             Debug.LogError($"Missing {SpriteFolder}map.png. Run: python Tools/Art/make_landform_map_art.py"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
+        M.ConfigurePixelSprites(DescriptionArt.Folder, _ => false); // Crisp unlock art
         var font = M.EnsureFont(); // The pixel font as a TextMeshPro font
         if (font == null) return; // EnsureFont already said what is wrong
         M.ConfigurePixelSprites(SpriteFolder, path => path.Contains("/Locked/")); // Crisp pixel art; the grey copies stay readable because they are the tap areas
@@ -83,13 +84,21 @@ public static class LandformMapBuilder // Makes the Landform Map scene
             M.Picture("Star", plaque, S("star"), r.label + new Vector2(-14f, 7f), r.label); // Star icon, left of the middle
             regions[i].stars = M.Label("Stars", plaque, font, "0/45", r.label + new Vector2(18f, 7f), r.label, new Vector2(40f, 14f), K.Ink, TextAlignmentOptions.MidlineLeft); // Star progress, starting 4 pixels right of the star
             regions[i].padlock = M.Picture("Padlock " + r.name, root, S("padlock"), r.padlock, K.CanvasCenter).gameObject; // Padlock while locked
+            if (r.episode != Episode.Mountains) regions[i].unlock = DescriptionArt.Unlock(root, r.padlock, K.CanvasCenter); // Gives newly opened regions their own sparkles
         }
-        regions[0].life = life.gameObject; // Only Mountains has animations so far
+        regions[0].life = life.gameObject; // Keeps the existing Mountains animations
+        var hillsCloud = M.Renderer("Hills Cloud", S("Mountains/cloud"), 10, null).gameObject.AddComponent<CloudDrift>(); // Reuses a drifting cloud when Hills opens
+        hillsCloud.startX = 292f; // Starts in the Hills sky
+        hillsCloud.endX = 460f; // Stays in the Hills part of the map
+        hillsCloud.y = 38f; // Floats over the Hills
+        hillsCloud.gameObject.SetActive(false); // Locked Hills stays still
+        regions[(int)Episode.Hills].life = hillsCloud.gameObject; // Starts the cloud with the open region
 
         // Controller: connects everything. The guide panel and Back icon are made here, last, so they draw on top.
         var controller = new GameObject("Landform Map").AddComponent<LandformMapController>(); // The map brain
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
         controller.regions = regions; // The four regions
+        controller.unlockSound = DescriptionArt.Sound("sfx_unlock"); // The map unlock sound
         controller.backButton = K.BackIcon(root); // Back icon, top-left corner
 
         Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)); // Make the Scenes folder if it is missing

@@ -11,7 +11,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void FreshProfile_OnlyMountainsIsUnlocked() // A new player starts at Mountains
+        public void FreshProfile_OnlyMountainsStartsUnlocked() // A new player starts at Mountains
         {
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(p.IsEpisodeUnlocked(Episode.Mountains)); // Mountains is open

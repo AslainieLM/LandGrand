@@ -9,9 +9,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         static bool Earned(string id, PlayerProgress p) => AchievementCatalog.Find(id).IsEarned(p); // Short way to ask about one badge
 
         [Test] // Unity runs this method as a Test
-        public void Catalog_HasTheEightStarterBadges_InOrder() // The draft set (D-060)
+        public void Catalog_HasFifteenBadges_InOrder() // The completed Mountains set
         {
-            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
+            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
             foreach (var a in AchievementCatalog.All) // Every badge
             {
                 Assert.IsFalse(string.IsNullOrEmpty(a.Name), a.Id); // A name
@@ -22,9 +22,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void Tiers_GoBronzeSilverGold() // Three of each colour, two gold
+        public void Tiers_MatchTheBadgeOrder() // Keeps each badge tier
         {
-            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
+            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
         }
 
         [Test] // Unity runs this method as a Test
@@ -32,7 +32,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             var p = new PlayerProgress(); // A brand new profile
             Assert.AreEqual(0, AchievementCatalog.EarnedCount(p)); // None
-            Assert.AreEqual(11, AchievementCatalog.All.Count); // Out of eight
+            Assert.AreEqual(15, AchievementCatalog.All.Count); // Out of fifteen
         }
 
         [Test] // Unity runs this method as a Test
@@ -87,7 +87,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void MountainCollector_NeedsEveryMountainsKind() // All ten (D-055)
+        public void MountainCollector_NeedsEveryMountainsKind() // All 34 Mountains kinds
         {
             var p = new PlayerProgress(); // A brand new profile
             var kinds = ItemCatalog.All.Where(k => k.HomeLandform == Episode.Mountains).ToList(); // The Mountains shelf

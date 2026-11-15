@@ -126,7 +126,13 @@ namespace LandGrand.Play // Level play scripts live here
         void Next() // The Next button: the next level, the next landform, or back to the trail when nothing open follows (D-059, LG-32)
         {
             var next = GameProgress.Current.NextAfter(level.episode, level.difficulty, level.number); // The rules decide
-            if (next.Step == NextStep.NextEpisode) { GameSession.Episode = next.Episode; level.GoTo(level.mapScene); return; } // A new landform: back to the map, where it is now open
+            if (next.Step == NextStep.NextEpisode) // Reviews the landform that the explorer just finished
+            { // Starts the summary route
+                GameSession.Episode = level.episode; // The summary uses the finished landform
+                GameSession.DescriptionFromBook = false; // Back goes to the map after a clear
+                level.GoTo("LandformDescription"); // Opens the new review screen
+                return; // The description handles the next landform
+            } // Ends the summary route
             if (next.Step == NextStep.None) { level.GoTo(level.levelSelectionScene); return; } // Nothing open: back to the trail
             GameSession.Episode = next.Episode; // The Lesson Screen reads the landform from here
             GameSession.Difficulty = next.Difficulty; // And the difficulty, which changes after the last level of a difficulty

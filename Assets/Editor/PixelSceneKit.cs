@@ -78,7 +78,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
     {
         { LandGrand.Rules.Difficulty.Easy, ("amb_breeze_easy.ogg", "make_mountains_audio.py") }, // Light breeze
         { LandGrand.Rules.Difficulty.Normal, ("amb_wind_normal.ogg", "make_normal_audio.py") }, // Stronger wind
-        { LandGrand.Rules.Difficulty.Hard, ("amb_breeze_easy.ogg", "make_mountains_audio.py") }, // TODO: Hard wind; the Easy breeze for now
+        { LandGrand.Rules.Difficulty.Hard, ("amb_wind_hard.ogg", "make_hard_audio.py") }, // Near-storm wind
     };
 
     /// <summary>The event system that sends taps to the buttons.</summary>

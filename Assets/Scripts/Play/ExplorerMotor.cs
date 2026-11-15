@@ -1,3 +1,4 @@
+using LandGrand.Rules; // Uses the ice speed rule
 using LandGrand.StartScreen; // Gives access to SpriteFlipbook for the dust puff
 using UnityEngine; // Gives access to MonoBehaviour, Rect, Sprite and Time
 
@@ -50,6 +51,9 @@ namespace LandGrand.Play // Level play scripts live here
         public int Facing => facing; // Tells which way the explorer was walking
 
         public float ExternalPushX { get; set; } // Wind speed added to walking
+        internal bool OnIce { get; set; } // The ice watcher checks the ground below the feet
+        internal bool SlidingOnIce { get; private set; } // Lets the ice watcher play one sound at the start
+        float walkVelocity; // Walking speed before the wind is added
         public DynamicSolid StandingOn { get; private set; } // Moving or breakable support
         Vector2 position; // Feet position in level pixels
         Vector2 velocity; // Speed in pixels per second
@@ -68,6 +72,8 @@ namespace LandGrand.Play // Level play scripts live here
             StandingOn = null; // A return leaves the old support
             position = feet; // New place
             velocity = Vector2.zero; // No speed
+            walkVelocity = 0f; // Starts again without a slide
+            SlidingOnIce = false; // Ends the old slide
             grounded = false; // Gravity will settle it on the ground
             airJumpUsed = false; // Both jumps ready again
             jumpedFromGround = false; // Both jumps ready again
@@ -89,7 +95,7 @@ namespace LandGrand.Play // Level play scripts live here
 
         void Update() // Runs every frame: reads the controls, moves and animates
         {
-            if (Frozen) { velocity = Vector2.zero; Animate(); return; } // Stand still while frozen
+            if (Frozen) { velocity = Vector2.zero; Animate(); return; } // Hold position while frozen and keep the ice speed for Resume
             float dt = Mathf.Min(Time.deltaTime, 1f / 30f); // Never step more than a 30th of a second, so nothing passes through ground
 
             if (grounded && StandingOn != null) // Carries only an explorer still on the previous top
@@ -100,7 +106,10 @@ namespace LandGrand.Play // Level play scripts live here
                 else grounded = false; // A vanished or departed slab no longer holds the feet
             } // Ends the carry check
             int dir = input.Direction; // Walk left, right or not at all
-            velocity.x = dir * walkSpeed + ExternalPushX; // Walking starts and stops at once, which feels responsive
+            SlidingOnIce = OnIce && IceSlide.IsSliding(walkVelocity, dir); // A release or turn begins a slide
+            float target = dir * walkSpeed; // Speed the held arrow asks for
+            walkVelocity = OnIce ? IceSlide.Next(walkVelocity, target, dt) : target; // Only ice changes speed gradually
+            velocity.x = walkVelocity + ExternalPushX; // Wind still adds to walking
             if (dir != 0) facing = dir; // Face the way of walking
 
             bool pressed = input.JumpPressed; // Jump pressed this frame
@@ -125,7 +134,9 @@ namespace LandGrand.Play // Level play scripts live here
             velocity.y = Mathf.Max(velocity.y - gravity * dt, -maxFallSpeed); // Gravity pulls down, up to the fastest fall
             MoveX(velocity.x * dt); // Move across, stopping at solids
             MoveY(velocity.y * dt); // Move up or down, landing on solids and ledges
-            position.x = Mathf.Clamp(position.x, size.x / 2f, geometry.width - size.x / 2f); // Stay inside the level
+            float inside = Mathf.Clamp(position.x, size.x / 2f, geometry.width - size.x / 2f); // Find the point inside the level
+            if (inside != position.x) walkVelocity = 0f; // The level wall stops a slide
+            position.x = inside; // Stay inside the level
             if (position.y < fallOutY) PlaceAt(RespawnPoint); // Fell out of the level: back to the respawn point
             Apply(); // Show the new place
             Animate(); // Pick the picture
@@ -141,6 +152,7 @@ namespace LandGrand.Play // Level play scripts live here
                 if (!box.Overlaps(s)) continue; // Not touching this one
                 next = dx > 0f ? s.xMin - size.x / 2f : s.xMax + size.x / 2f; // Stop against its side
                 box.x = next - size.x / 2f; // Move the box back too
+                walkVelocity = 0f; // The solid wall stops walking or sliding
             }
             position.x = next; // Final place across
         }

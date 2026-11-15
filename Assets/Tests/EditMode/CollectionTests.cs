@@ -27,10 +27,10 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void MountainsShelf_HoldsTwentyMountainsKinds_InLevelOrder() // Easy 1, then Easy 2, then Easy 3 (D-055)
+        public void MountainsShelf_KeepsEasyAndNormalKindsInOrder() // New kinds come after these lessons
         {
             var mountains = Collection.Shelves(new PlayerProgress())[0]; // The first shelf
-            CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite", "obsidian", "pumice", "slate", "marble", "garnet", "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, mountains.Slots.Select(s => s.Kind.Id).ToArray()); // Ten kinds in order
+            CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite", "obsidian", "pumice", "slate", "marble", "garnet", "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, mountains.Slots.Take(20).Select(s => s.Kind.Id).ToArray()); // Easy and Normal kinds in order
             Assert.IsFalse(mountains.IsComingSoon); // It has kinds, so it is not "Coming soon"
         }
 
@@ -50,7 +50,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(20, Collection.TotalCount); // Easy and Normal teach twenty kinds
+            Assert.AreEqual(34, Collection.TotalCount); // All Mountains lessons teach 34 kinds
         }
 
         [Test] // Unity runs this method as a Test

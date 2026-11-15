@@ -22,7 +22,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void LevelsWithoutData_AreNotFound() // Later levels are not written yet
         {
-            Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Hard, 1)); // Mountains Hard comes later
+            Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Hard, 8)); // Hard has only seven levels
             Assert.IsNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Easy, 4)); // Easy has only three levels
             Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Easy, 1)); // Hills comes later
         }

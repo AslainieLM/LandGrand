@@ -77,6 +77,55 @@ public static partial class LevelBuilder // The theme half of the level builder
             Props = SnowProps, // Theme decoration
             Backdrop = "Backdrop/SnowPeak/", BackdropScript = "Tools/Art/make_normal_backdrops.py", // Its own background, drawn for its mountain (D-063)
         }, // Ends the theme
+        [LevelTheme.LavaSlope] = new ThemeArt // Watch Station trail art
+        { // Opens the theme
+            GroundTop = "lava_top", Soil = "lava_soil", Ledge = "ledge_lava", BoulderEnding = "_lava", // Ground and stone pictures
+            GoalName = "Watch Station", GoalSprite = "watch_station", GoalOffset = new Vector2(24f, 24f), // Goal rests on the ground
+            Props = LavaSlopeProps, // Decorations for this theme
+            Backdrop = "Backdrop/LavaSlope/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.StormRidge] = new ThemeArt // Lookout Tower trail art
+        { // Opens the theme
+            GroundTop = "storm_top", Soil = "storm_soil", Ledge = "ledge_storm", BoulderEnding = "_storm", // Ground and stone pictures
+            GoalName = "Lookout Tower", GoalSprite = "lookout_tower", GoalOffset = new Vector2(20f, 32f), // Goal rests on the ground
+            Props = StormRidgeProps, // Decorations for this theme
+            Backdrop = "Backdrop/StormRidge/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.EagleForest] = new ThemeArt // Eagle Nest trail art
+        { // Opens the theme
+            GroundTop = "eagle_top", Soil = "eagle_soil", Ledge = "ledge_eagle", BoulderEnding = "_eagle", // Ground and stone pictures
+            GoalName = "Eagle Nest", GoalSprite = "eagle_nest", GoalOffset = new Vector2(28f, 28f), // Goal rests on the ground
+            Props = EagleForestProps, // Decorations for this theme
+            Backdrop = "Backdrop/EagleForest/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.BonsaiForest] = new ThemeArt // Sanctuary Sign trail art
+        { // Opens the theme
+            GroundTop = "bonsai_top", Soil = "bonsai_soil", Ledge = "ledge_bonsai", BoulderEnding = "_bonsai", // Ground and stone pictures
+            GoalName = "Sanctuary Sign", GoalSprite = "sanctuary_sign", GoalOffset = new Vector2(20f, 20f), // Goal rests on the ground
+            Props = BonsaiForestProps, // Decorations for this theme
+            Backdrop = "Backdrop/BonsaiForest/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.GlacierHorn] = new ThemeArt // Alpine Hut trail art
+        { // Opens the theme
+            GroundTop = "glacier_top", Soil = "glacier_soil", Ledge = "ledge_glacier", BoulderEnding = "_glacier", // Ground and stone pictures
+            GoalName = "Alpine Hut", GoalSprite = "alpine_hut", GoalOffset = new Vector2(28f, 24f), // Goal rests on the ground
+            Props = GlacierHornProps, // Decorations for this theme
+            Backdrop = "Backdrop/GlacierHorn/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.EquatorSummit] = new ThemeArt // Summit Board trail art
+        { // Opens the theme
+            GroundTop = "equator_top", Soil = "equator_soil", Ledge = "ledge_equator", BoulderEnding = "_equator", // Ground and stone pictures
+            GoalName = "Summit Board", GoalSprite = "summit_board", GoalOffset = new Vector2(24f, 20f), // Goal rests on the ground
+            Props = EquatorSummitProps, // Decorations for this theme
+            Backdrop = "Backdrop/EquatorSummit/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
+        [LevelTheme.SeaPeak] = new ThemeArt // Telescope Dome trail art
+        { // Opens the theme
+            GroundTop = "sea_top", Soil = "sea_soil", Ledge = "ledge_sea", BoulderEnding = "_sea", // Ground and stone pictures
+            GoalName = "Telescope Dome", GoalSprite = "telescope_dome", GoalOffset = new Vector2(28f, 24f), // Goal rests on the ground
+            Props = SeaPeakProps, // Decorations for this theme
+            Backdrop = "Backdrop/SeaPeak/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
+        }, // Ends the theme
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -173,14 +222,91 @@ public static partial class LevelBuilder // The theme half of the level builder
             } // Ends sulfur placement
     } // Ends the moss decoration
     static void SnowProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) => FullTrailSnow(level, parent, 192); // Snow across the whole peak
-    static void FullTrailSnow(LevelData level, Transform parent, int count) // Reuses the existing snow view
+    static void FullTrailSnow(LevelData level, Transform parent, int count, bool useLevelClock = false) // Reuses the existing snow view
     { // Starts the snow setup
         var snow = new GameObject("Trail Snow").AddComponent<SummitSnow>(); // Owns the drifting flakes
         snow.transform.SetParent(parent, false); // Keeps it with the level
         snow.flakeSprites = new[] { S("Props/snow_00"), S("Props/snow_01") }; // Existing snow pictures
         snow.fromX = 0f; snow.toX = level.Layout.Width; // Covers the whole trail
         snow.count = count; // Uses sparse frost or fuller snow
+        snow.useLevelClock = useLevelClock; // New Hard snow waits when play pauses
     } // Ends the snow setup
+
+    static void LavaSlopeProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "burnt_tree", 210f, 390f); // Scorched trees off the trail objects
+    } // Ends the prop setup
+
+    static void StormRidgeProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "bent_tree", 220f, 350f); // Trees lean into the rain
+        var rain = new GameObject("Ridge Rain").AddComponent<RidgeRain>(); // A light foreground shower
+        rain.frames = Enumerable.Range(0, 2).Select(i => HardSprite($"Props/rain_{i:00}")).ToArray(); // Both rain pictures
+        rain.cameraTransform = Camera.main.transform; // The streaks follow the camera
+        rain.streaks = Enumerable.Range(0, 18).Select(i => M.Renderer("Rain Streak", rain.frames[0], 22, rain.transform)).ToArray(); // Draws rain in front
+        foreach (var streak in rain.streaks) streak.color = new Color(1f, 1f, 1f, 0.42f); // The explorer shows through the rain
+    } // Ends the prop setup
+
+    static void EagleForestProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "tall_tree", 240f, 360f); // Tall forest canopy
+        GroundProps(level, parent, "orchid", 135f, 245f); // Flowers at the forest floor
+        var eagle = new GameObject("Forest Eagle").AddComponent<ForestEagle>(); // A passing bird above the trail
+        eagle.cameraTransform = Camera.main.transform; // Crosses the view from time to time
+        eagle.frames = Enumerable.Range(1, 3).Select(i => S($"Props/eagle_{i:00}")).ToArray(); // Reuses the flying frames
+        eagle.art = M.Renderer("Art", null, 8, eagle.transform); // The eagle stays behind the explorer
+        eagle.art.flipX = true; // Faces left as it flies
+    } // Ends the prop setup
+
+    static void BonsaiForestProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "bonsai_tree", 210f, 310f); // Small old trees
+        GroundProps(level, parent, "pitcher_plant", 135f, 220f); // Pitcher plants on the forest floor
+    } // Ends the prop setup
+
+    static void GlacierHornProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "edelweiss", 200f, 235f); // Small mountain flowers
+        FullTrailSnow(level, parent, 192, useLevelClock: true); // Reuses the peak snow and pauses it with the level
+    } // Ends the prop setup
+
+    static void EquatorSummitProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "groundsel", 230f, 370f); // Tall groundsels along the climb
+    } // Ends the prop setup
+
+    static void SeaPeakProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds the theme's decoration
+    { // Starts the prop setup
+        GroundProps(level, parent, "silversword", 200f, 290f); // Silverswords on the slope
+    } // Ends the prop setup
+
+    static void GroundProps(LevelData level, Transform parent, string name, float start, float spacing) // Places one kind of ground decoration
+    { // Starts the placement
+        var sprite = HardSprite("Props/" + name); // Loads the theme prop
+        float halfWidth = sprite.rect.width / 2f; // Keeps the whole prop out of the path
+        for (float x = start; x < level.Goal.X - 90f; x += spacing) // Spaces props out until the goal
+        { // Tests one place
+            if (!PropFits(level, x, halfWidth)) continue; // Leaves game objects easy to see
+            var prop = M.Renderer(name, sprite, 4, parent); // Draws decoration behind objects
+            prop.transform.position = LevelGeometry.ToWorld(x, sprite.rect.height / 2f); // Sets its base at ground level
+        } // Moves to the next place
+    } // Ends the placement
+
+    static bool PropFits(LevelData level, float x, float halfWidth) // Checks the whole prop against trail objects
+    { // Starts the space check
+        bool Over(float left, float right) => x + halfWidth >= left && x - halfWidth <= right; // Checks a span of trail
+        var layout = level.Layout; // The placed objects
+        return !level.Hazards.Any(h => Over(h.Place.X, h.Place.X + h.Width)) // Keeps pits and spikes clear
+            && !level.Pickups.Any(p => Over(p.Place.X - 8f, p.Place.X + 8f)) // Leaves the full pickup visible
+            && !level.Checkpoints.Any(c => Over(c.X - 12f, c.X + 12f)) // Leaves room for the flag
+            && !layout.RollingBoulders.Any(b => Over(b.End - 8f, b.Spawn + 8f)) // Keeps clear of rolling boulders
+            && !layout.Rockfalls.Any(r => Over(r.X - 8f, r.X + 8f)) // Keeps clear of falling rocks
+            && !layout.Vents.Any(v => Over(v.X, v.X + v.Width)) // Keeps the vents clear
+            && !layout.Boulders.Any(b => Over(b.X, b.X + b.Width)) // Keeps the fixed rocks visible
+            && !layout.CrumbleLedges.Any(l => Over(l.X, l.X + CrumbleLedge.Width)) // Leaves room for a breaking step
+            && !layout.MovingPlatforms.Any(p => Over(p.X0, p.X1 + MovingPlatform.Width)) // Leaves room for a moving crossing
+            && !layout.IceZones.Any(i => Over(i.X, i.X + i.Width)); // Keeps the ice easy to see
+    } // Ends the space check
 
     static bool OverPit(List<Hazard> pits, float x, float halfWidth) => pits.Any(p => x + halfWidth > p.Place.X && x - halfWidth < p.Place.X + p.Width); // True when a prop this wide at x would hang over a gap
 }

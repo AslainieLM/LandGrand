@@ -33,6 +33,7 @@ namespace LandGrand.Selection // Difficulty and level selection scripts live her
         public Sprite cardLocked; // Grey card background
         public Image title; // Landform name at the top
         public Sprite[] titles; // One title per landform, in Episode order
+        public Button bookButton; // Reopens the finished landform review
 
         [Header("Scenes")] // Inspector heading for the scene names
         public string mapScene = "LandformMap"; // Where Back goes
@@ -44,6 +45,11 @@ namespace LandGrand.Selection // Difficulty and level selection scripts live her
             var progress = GameProgress.Current; // The saved player progress, loaded at launch
             var episode = GameSession.Episode; // The landform picked on the map
             ShowTitle(title, titles, (int)episode); // The landform's name at the top
+            if (bookButton != null) // Older saved scenes may still need rebuilding
+            { // Starts the book setup
+                bookButton.gameObject.SetActive(progress.IsEpisodeComplete(episode)); // Shows the book only after all 15 clears
+                bookButton.onClick.AddListener(OpenBook); // The book opens the review
+            } // Ends the book setup
             foreach (var card in cards) // Set up each card
             {
                 bool open = progress.IsDifficultyUnlocked(episode, card.difficulty); // Can this difficulty be played?
@@ -64,6 +70,13 @@ namespace LandGrand.Selection // Difficulty and level selection scripts live her
             GameSession.Difficulty = card.difficulty; // Remember the difficulty for the trail
             Leave(levelScene); // Open the level trail
         }
+
+        void OpenBook() // Opens the review of this finished landform
+        { // Starts the book route
+            if (Leaving || !GameProgress.Current.IsEpisodeComplete(GameSession.Episode)) return; // Only completed landforms can open the book
+            GameSession.DescriptionFromBook = true; // Back will return to these cards
+            OpenOrComingSoon("LandformDescription"); // Opens the review once its scene is built
+        } // Ends the book route
 
         protected override void Back() => Leave(mapScene); // One step back: the Landform Map
     }

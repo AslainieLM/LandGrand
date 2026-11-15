@@ -15,6 +15,8 @@ namespace LandGrand.Play // Level play scripts live here
         public int count = 40; // How many flakes
         public int sortingOrder = 18; // Behind the explorer (20) and in front of the level, so a flake never hides the explorer
 
+        public bool useLevelClock; // Hard snow waits when the game pauses
+        float previousTime; // Last time used for the movement step
         Transform[] flakes; // The flake objects
         Vector2[] places; // Their places in level pixels
         float[] speeds; // How fast each one falls
@@ -23,6 +25,7 @@ namespace LandGrand.Play // Level play scripts live here
         void Start() // Makes the flakes at random places
         {
             if (flakeSprites == null || flakeSprites.Length == 0) { enabled = false; return; } // No flake pictures: no snow
+            previousTime = LevelClock.Now; // Starts the paused snow at the current level time
             var rng = new System.Random(7); // Fixed seed: the same snow every time
             flakes = new Transform[count]; places = new Vector2[count]; speeds = new float[count]; sway = new float[count]; // Room for each flake
             for (int i = 0; i < count; i++) // Each flake
@@ -41,11 +44,13 @@ namespace LandGrand.Play // Level play scripts live here
 
         void Update() // Moves every flake a little
         {
-            float t = Time.time; // For the sway
+            float t = useLevelClock ? LevelClock.Now : Time.time; // Uses the selected clock for sway
+            float dt = useLevelClock ? t - previousTime : Time.deltaTime; // Steps only when that clock moves
+            previousTime = t; // Remembers this clock time
             for (int i = 0; i < flakes.Length; i++) // Each flake
             {
-                places[i].y -= speeds[i] * Time.deltaTime; // Fall
-                places[i].x -= 6f * Time.deltaTime; // The wind blows a little to the left
+                places[i].y -= speeds[i] * dt; // Fall
+                places[i].x -= 6f * dt; // The wind blows a little to the left
                 if (places[i].y < 0f) places[i].y = topY; // Back to the top at the ground
                 if (places[i].x < fromX) places[i].x = toX; // Back to the right end
                 float x = places[i].x + Mathf.Sin(t * 1.3f + sway[i]) * 3f; // A small side-to-side sway

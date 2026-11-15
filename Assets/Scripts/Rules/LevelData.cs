@@ -167,8 +167,23 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Limestone = new ItemKind("limestone", "Limestone", "A pale rock made from shells under the sea. Heat can turn it into marble.", "limestone", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Gneiss = new ItemKind("gneiss", "Gneiss", "A rock with light and dark bands. Deep heat and squeezing make it.", "gneiss", true, true, Episode.Mountains); // Draft Mountains kind
 
+        public static readonly ItemKind Scoria = new ItemKind("scoria", "Scoria", "A red-brown lava rock full of holes. Gas bubbles made the holes.", "scoria", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Hornblende = new ItemKind("hornblende", "Hornblende", "A black mineral shaped like long sticks. It is found in lava rock like andesite.", "hornblende", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Diorite = new ItemKind("diorite", "Diorite", "A rock with black and white spots. Magma cooled slowly underground to make it.", "diorite", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Gold = new ItemKind("gold", "Gold", "A shiny yellow metal found in mountain rocks. It never rusts.", "gold", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Tuff = new ItemKind("tuff", "Tuff", "A light rock made of volcanic ash. The ash was pressed together over time.", "tuff", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Hematite = new ItemKind("hematite", "Hematite", "A heavy mineral with iron in it. It leaves a red streak when rubbed.", "hematite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Serpentinite = new ItemKind("serpentinite", "Serpentinite", "A smooth green rock that looks like snake skin. Few plants grow on its soil.", "serpentinite", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Chromite = new ItemKind("chromite", "Chromite", "A heavy black mineral. It gives us chromium for shiny metal parts.", "chromite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Schist = new ItemKind("schist", "Schist", "A shiny rock that splits into thin layers. Heat and squeezing made it.", "schist", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Calcite = new ItemKind("calcite", "Calcite", "A clear or white mineral. It is the main mineral in limestone and marble.", "calcite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Trachyte = new ItemKind("trachyte", "Trachyte", "A grey lava rock with tiny crystals. Much of Kilimanjaro's top is made of it.", "trachyte", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Tanzanite = new ItemKind("tanzanite", "Tanzanite", "A blue-violet gem. It is found only near Mount Kilimanjaro in Tanzania.", "tanzanite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Gabbro = new ItemKind("gabbro", "Gabbro", "A dark rock with big grains. It forms deep under the sea floor.", "gabbro", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Olivine = new ItemKind("olivine", "Olivine", "A green mineral in lava. It makes the green sand of a Hawaii beach.", "olivine", true, false, Episode.Mountains); // Draft Mountains kind
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss }; // The full list
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine }; // The full list
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -454,6 +469,237 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     movingPlatforms: new MovingPlatform[0], // Moving crossings
                     windZones: new[] { new WindZone(900f, 500f, 0f), new WindZone(2000f, 400f, 1f), new WindZone(3300f, 600f, 2f), new WindZone(5300f, 500f, 0.5f), new WindZone(6200f, 500f, 1.5f) }), // Gust areas
                 "Mount Everest"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 1, // Mount Mayon
+                new Lesson("Volcano Safety", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "Mayon in Albay is our most active volcano.", // Exact draft lesson sentence
+                    "It has an almost perfect cone shape.", // Exact draft lesson sentence
+                    "Experts watch it and set alert levels.", // Exact draft lesson sentence
+                    "Stay out of the danger zone near it.", // Exact draft lesson sentence
+                }, "lesson_mayon", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Scoria, new Spot(1032f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hornblende, new Spot(1528f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Scoria, new Spot(2600f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Andesite, new Spot(3732f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hornblende, new Spot(4232f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Scoria, new Spot(6332f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hornblende, new Spot(6404f, 72f)), // Secret pickup
+                    new Pickup(ItemCatalog.Scoria, new Spot(8732f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hornblende, new Spot(9216f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1500f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(3000f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(4200f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(6600f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(8200f, 0f), 64f), new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2800f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5400f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(8400f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Active volcanoes can erupt again.", "Experts at PHIVOLCS watch them and warn people.", "Follow the alert levels and stay safe." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.LavaSlope, // Checked trail width
+                    new[] { B(400f, BoulderSize.Small), B(1650f, BoulderSize.Big), B(2150f, BoulderSize.Small), B(3250f, BoulderSize.Big), B(5800f, BoulderSize.Small), B(6800f, BoulderSize.Big), B(7350f, BoulderSize.Small), B(7950f, BoulderSize.Big), B(9200f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(1000f, 40f, 64f), new Ledge(3700f, 48f, 64f), new Ledge(6300f, 40f, 64f), new Ledge(6380f, 72f, 48f), new Ledge(8700f, 48f, 64f) }, // Fixed ledges
+                    rockfalls: new[] { new Rockfall(2600f, 0f), new Rockfall(4500f, 1f), new Rockfall(8600f, 0.5f) }, // Falling rocks
+                    rollingBoulders: new[] { new RollingBoulder(900f, 700f, 0f), new RollingBoulder(2000f, 1800f, 1f), new RollingBoulder(3600f, 3380f, 0f), new RollingBoulder(5200f, 4980f, 2f), new RollingBoulder(6200f, 5980f, 0.5f), new RollingBoulder(7800f, 7580f, 1.5f), new RollingBoulder(9000f, 8780f, 0f) }), // Rolling boulders
+                "Mount Mayon"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 2, // Sierra Madre
+                new Lesson("Mountain Ranges", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "A range is a long row of mountains.", // Exact draft lesson sentence
+                    "The Sierra Madre is our longest range.", // Exact draft lesson sentence
+                    "It runs along the east side of Luzon.", // Exact draft lesson sentence
+                    "It helps weaken some strong typhoons.", // Exact draft lesson sentence
+                }, "lesson_sierra_madre", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Diorite, new Spot(1732f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(2932f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Diorite, new Spot(3232f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Granite, new Spot(3974f, 36f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(5086f, 64f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Diorite, new Spot(6832f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(7804f, 72f)), // Secret pickup
+                    new Pickup(ItemCatalog.Diorite, new Spot(8532f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(8966f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1300f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(2900f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(4100f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(5600f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(6800f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(8500f, 0f), 64f), new Hazard(HazardType.Spikes, new Spot(1000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2600f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(3650f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4300f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(6200f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7400f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(8300f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Mountains in a row make a mountain range.", "The Sierra Madre helps slow typhoon winds and rain.", "Its forests need our care too." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.StormRidge, // Checked trail width
+                    new[] { B(450f, BoulderSize.Small), B(1600f, BoulderSize.Big), B(3100f, BoulderSize.Small), B(3950f, BoulderSize.Big), B(5300f, BoulderSize.Small), B(6500f, BoulderSize.Big), B(7000f, BoulderSize.Small), B(8000f, BoulderSize.Big), B(8950f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(1700f, 40f, 64f), new Ledge(3200f, 48f, 64f), new Ledge(7700f, 40f, 64f), new Ledge(7780f, 72f, 48f) }, // Fixed ledges
+                    crumbleLedges: new[] { new CrumbleLedge(2900f, 0f), new CrumbleLedge(2932f, 0f), new CrumbleLedge(2964f, 0f), new CrumbleLedge(6800f, 0f), new CrumbleLedge(6832f, 0f), new CrumbleLedge(6864f, 0f), new CrumbleLedge(5000f, 40f), new CrumbleLedge(5070f, 64f) }, // Breakable slabs
+                    windZones: new[] { new WindZone(700f, 500f, 0f), new WindZone(1900f, 400f, 1f), new WindZone(3300f, 250f, 2f), new WindZone(5800f, 320f, 0.5f), new WindZone(7600f, 600f, 1.5f), new WindZone(8800f, 400f, 0f) }, // Gust areas
+                    rollingBoulders: new[] { new RollingBoulder(2200f, 2000f, 0f), new RollingBoulder(4600f, 4380f, 1f), new RollingBoulder(9300f, 9080f, 2f) }), // Rolling boulders
+                "Sierra Madre"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 3, // Kitanglad Range
+                new Lesson("Mountains Are Homes", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "Kitanglad is a mountain range in Bukidnon.", // Exact draft lesson sentence
+                    "Dulang-dulang is our second highest peak.", // Exact draft lesson sentence
+                    "The Philippine eagle lives in its forest.", // Exact draft lesson sentence
+                    "Mountains are homes for many animals.", // Exact draft lesson sentence
+                }, "lesson_kitanglad", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Tuff, new Spot(1292f, 72f)), // Secret pickup
+                    new Pickup(ItemCatalog.Hematite, new Spot(1900f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(2786f, 64f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hematite, new Spot(3724f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Basalt, new Spot(4100f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(5424f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hematite, new Spot(6500f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(7586f, 64f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Hematite, new Spot(8100f, 32f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1800f, 0f), 200f), new Hazard(HazardType.Pit, new Spot(3300f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(4000f, 0f), 240f), new Hazard(HazardType.Pit, new Spot(5600f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(6400f, 0f), 200f), new Hazard(HazardType.Pit, new Spot(8000f, 0f), 240f), new Hazard(HazardType.Pit, new Spot(8900f, 0f), 56f), new Hazard(HazardType.Spikes, new Spot(1500f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2200f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(3600f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(6000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(8700f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Mountain forests are homes for plants and animals.", "The Philippine eagle nests in tall trees.", "Saving forests saves their homes." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.EagleForest, // Checked trail width
+                    new[] { B(450f, BoulderSize.Small), B(1300f, BoulderSize.Big), B(2550f, BoulderSize.Small), B(3800f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(5800f, BoulderSize.Big), B(6800f, BoulderSize.Small), B(7300f, BoulderSize.Big), B(8500f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(1260f, 72f, 64f), new Ledge(3700f, 40f, 64f), new Ledge(5400f, 48f, 48f) }, // Fixed ledges
+                    crumbleLedges: new[] { new CrumbleLedge(2700f, 40f), new CrumbleLedge(2770f, 64f), new CrumbleLedge(7500f, 40f), new CrumbleLedge(7570f, 64f) }, // Breakable slabs
+                    movingPlatforms: new[] { new MovingPlatform(1000f, 1200f, 40f), new MovingPlatform(1800f, 1952f, 0f), new MovingPlatform(4000f, 4192f, 0f), new MovingPlatform(6400f, 6552f, 0f), new MovingPlatform(8000f, 8192f, 0f) }, // Moving crossings
+                    rollingBoulders: new[] { new RollingBoulder(3000f, 2850f, 0f), new RollingBoulder(5300f, 5080f, 1.5f), new RollingBoulder(9300f, 9100f, 0.5f) }), // Rolling boulders
+                "Kitanglad Range"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 4, // Mount Hamiguitan
+                new Lesson("Caring for Mountains", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "Mount Hamiguitan is in Davao Oriental.", // Exact draft lesson sentence
+                    "Tiny old trees grow on its red soil.", // Exact draft lesson sentence
+                    "It is a World Heritage Site we protect.", // Exact draft lesson sentence
+                    "Roots hold soil and help stop landslides.", // Exact draft lesson sentence
+                }, "lesson_hamiguitan", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Serpentinite, new Spot(1432f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Chromite, new Spot(1932f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Serpentinite, new Spot(2600f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Chromite, new Spot(3586f, 64f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Magnetite, new Spot(4332f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Serpentinite, new Spot(4932f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Chromite, new Spot(6632f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Serpentinite, new Spot(8332f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Chromite, new Spot(8886f, 64f)), // Secret pickup
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1100f, 0f), 48f), new Hazard(HazardType.Pit, new Spot(1900f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(3200f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(4300f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(5600f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(6600f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(8300f, 0f), 64f), new Hazard(HazardType.Spikes, new Spot(800f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(1500f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5800f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(9300f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Protected mountains keep forests safe.", "Tree roots hold soil so rain does not wash it away.", "We can help by not cutting trees." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.BonsaiForest, // Checked trail width
+                    new[] { B(450f, BoulderSize.Small), B(1300f, BoulderSize.Big), B(2200f, BoulderSize.Small), B(3800f, BoulderSize.Big), B(4650f, BoulderSize.Small), B(5400f, BoulderSize.Big), B(7400f, BoulderSize.Small), B(8600f, BoulderSize.Big) }, // Boulders
+                    new[] { new Ledge(1400f, 40f, 64f), new Ledge(4900f, 48f, 64f) }, // Fixed ledges
+                    crumbleLedges: new[] { new CrumbleLedge(1900f, 0f), new CrumbleLedge(1932f, 0f), new CrumbleLedge(1964f, 0f), new CrumbleLedge(4300f, 0f), new CrumbleLedge(4332f, 0f), new CrumbleLedge(4364f, 0f), new CrumbleLedge(6600f, 0f), new CrumbleLedge(6632f, 0f), new CrumbleLedge(6664f, 0f), new CrumbleLedge(3500f, 40f), new CrumbleLedge(3570f, 64f), new CrumbleLedge(8800f, 40f), new CrumbleLedge(8870f, 64f) }, // Breakable slabs
+                    rockfalls: new[] { new Rockfall(2600f, 0f), new Rockfall(5200f, 1.5f), new Rockfall(7600f, 0.5f), new Rockfall(9100f, 1f) }, // Falling rocks
+                    rollingBoulders: new[] { new RollingBoulder(3000f, 2800f, 0.5f), new RollingBoulder(6200f, 5980f, 1f), new RollingBoulder(8100f, 7880f, 2f) }), // Rolling boulders
+                "Mount Hamiguitan"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 5, // Matterhorn
+                new Lesson("Glaciers Shape Mountains", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "The Matterhorn is in the Alps of Europe.", // Exact draft lesson sentence
+                    "A glacier is a huge river of slow ice.", // Exact draft lesson sentence
+                    "Glaciers carved its four steep sides.", // Exact draft lesson sentence
+                    "Ice shapes mountains over many years.", // Exact draft lesson sentence
+                }, "lesson_matterhorn", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Schist, new Spot(2032f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Calcite, new Spot(2632f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Schist, new Spot(3832f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Calcite, new Spot(4116f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gneiss, new Spot(5432f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Schist, new Spot(5504f, 72f)), // Secret pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(7432f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Schist, new Spot(8432f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Calcite, new Spot(8832f, 48f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1300f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(2600f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(3800f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(5000f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(6100f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(7400f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(8800f, 0f), 64f), new Hazard(HazardType.Spikes, new Spot(1600f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2900f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4400f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5900f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(9020f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Glaciers are rivers of ice that move very slowly.", "As they move, they scrape and carve rock.", "Glaciers gave the Matterhorn its sharp shape." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.GlacierHorn, // Checked trail width
+                    new[] { B(450f, BoulderSize.Small), B(1400f, BoulderSize.Big), B(2200f, BoulderSize.Small), B(3500f, BoulderSize.Big), B(4100f, BoulderSize.Small), B(5500f, BoulderSize.Big), B(6300f, BoulderSize.Small), B(7700f, BoulderSize.Big), B(8300f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(2000f, 48f, 64f), new Ledge(5400f, 40f, 64f), new Ledge(5480f, 72f, 48f), new Ledge(8400f, 48f, 64f) }, // Fixed ledges
+                    crumbleLedges: new[] { new CrumbleLedge(3800f, 0f), new CrumbleLedge(3832f, 0f), new CrumbleLedge(3864f, 0f), new CrumbleLedge(7400f, 0f), new CrumbleLedge(7432f, 0f), new CrumbleLedge(7464f, 0f) }, // Breakable slabs
+                    windZones: new[] { new WindZone(1800f, 500f, 0f), new WindZone(4200f, 500f, 1f), new WindZone(6500f, 500f, 2f), new WindZone(9080f, 300f, 0.5f) }, // Gust areas
+                    rollingBoulders: new[] { new RollingBoulder(4700f, 4480f, 0f), new RollingBoulder(7000f, 6780f, 1.5f), new RollingBoulder(9300f, 9100f, 0.5f) }, // Rolling boulders
+                    iceZones: new[] { new IceZone(600f, 600f), new IceZone(1800f, 500f), new IceZone(3000f, 700f), new IceZone(5200f, 600f), new IceZone(6500f, 500f), new IceZone(8000f, 700f) }), // Icy ground
+                "Matterhorn"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 6, // Mount Kilimanjaro
+                new Lesson("Climbing Changes Weather", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "Kilimanjaro is the highest in Africa.", // Exact draft lesson sentence
+                    "It is near the equator, but has snow.", // Exact draft lesson sentence
+                    "The air gets colder as you climb higher.", // Exact draft lesson sentence
+                    "Plants change from forest to bare rock.", // Exact draft lesson sentence
+                }, "lesson_kilimanjaro", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Trachyte, new Spot(1576f, 100f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tanzanite, new Spot(2100f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Trachyte, new Spot(2700f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tanzanite, new Spot(3776f, 100f)), // Secret pickup
+                    new Pickup(ItemCatalog.Obsidian, new Spot(4332f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Trachyte, new Spot(5332f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tanzanite, new Spot(6800f, 32f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Trachyte, new Spot(8632f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tanzanite, new Spot(9028f, 48f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1100f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(2000f, 0f), 200f), new Hazard(HazardType.Pit, new Spot(3100f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(4300f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(5300f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(6700f, 0f), 240f), new Hazard(HazardType.Pit, new Spot(7600f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(9000f, 0f), 56f), new Hazard(HazardType.Spikes, new Spot(800f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2600f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(3300f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4650f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(6550f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7400f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "The higher you climb, the colder it gets.", "Kilimanjaro has farms, forest and snow on one mountain.", "Its snow and ice are shrinking." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.EquatorSummit, // Checked trail width
+                    new[] { B(450f, BoulderSize.Small), B(1300f, BoulderSize.Big), B(2200f, BoulderSize.Small), B(3450f, BoulderSize.Big), B(4550f, BoulderSize.Small), B(5450f, BoulderSize.Big), B(6200f, BoulderSize.Small), B(7000f, BoulderSize.Big), B(8500f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(1540f, 100f, 72f), new Ledge(3740f, 100f, 72f), new Ledge(8600f, 48f, 64f) }, // Fixed ledges
+                    vents: new[] { new SteamVent(1500f), new SteamVent(3700f) }, // Steam vents
+                    crumbleLedges: new[] { new CrumbleLedge(4300f, 0f), new CrumbleLedge(4332f, 0f), new CrumbleLedge(4364f, 0f) }, // Breakable slabs
+                    rockfalls: new[] { new Rockfall(2700f, 0f), new Rockfall(5000f, 1f), new Rockfall(7900f, 0.5f) }, // Falling rocks
+                    movingPlatforms: new[] { new MovingPlatform(2000f, 2152f, 0f), new MovingPlatform(6700f, 6892f, 0f) }, // Moving crossings
+                    rollingBoulders: new[] { new RollingBoulder(4250f, 4060f, 1f), new RollingBoulder(5800f, 5580f, 0f), new RollingBoulder(9300f, 9080f, 2f) }, // Rolling boulders
+                    iceZones: new[] { new IceZone(6000f, 500f), new IceZone(8200f, 700f) }), // Icy ground
+                "Mount Kilimanjaro"), // Start banner
+            new LevelData(Episode.Mountains, Difficulty.Hard, 7, // Mauna Kea
+                new Lesson("Mountains Under the Sea", new[] // Four draft lesson sentences
+                { // Opens the lesson
+                    "Mauna Kea is a volcano in Hawaii.", // Exact draft lesson sentence
+                    "Most of it is hidden under the sea.", // Exact draft lesson sentence
+                    "From its base, it is taller than Everest.", // Exact draft lesson sentence
+                    "Many mountains stand on the sea floor.", // Exact draft lesson sentence
+                }, "lesson_mauna_kea", true), // Lesson picture and draft mark
+                new[] // Nine placed pickups
+                { // Opens the pickup list
+                    new Pickup(ItemCatalog.Gabbro, new Spot(1932f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Olivine, new Spot(2276f, 100f)), // Secret pickup
+                    new Pickup(ItemCatalog.Gabbro, new Spot(3100f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Olivine, new Spot(4516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Basalt, new Spot(5532f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gabbro, new Spot(6732f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Olivine, new Spot(7716f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gabbro, new Spot(8032f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Olivine, new Spot(9032f, 40f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Three safe flags
+                new[] { new Hazard(HazardType.Pit, new Spot(1000f, 0f), 56f), new Hazard(HazardType.Pit, new Spot(1900f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(3000f, 0f), 200f), new Hazard(HazardType.Pit, new Spot(4200f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(5500f, 0f), 96f), new Hazard(HazardType.Pit, new Spot(6400f, 0f), 200f), new Hazard(HazardType.Pit, new Spot(8000f, 0f), 64f), new Hazard(HazardType.Pit, new Spot(8900f, 0f), 56f), new Hazard(HazardType.Spikes, new Spot(700f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(2750f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(4000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(5000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(7000f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(8300f, 0f), 32f), new Hazard(HazardType.Spikes, new Spot(9200f, 0f), 32f) }, // Pits and spikes
+                new Spot(9440f, 0f), // Goal
+                new[] { "Some mountains start at the bottom of the sea.", "From its base, Mauna Kea is over 10,000 m tall.", "Its top is a good place to watch stars." }, // Exact draft review
+                new LevelLayout(9600f, LevelTheme.SeaPeak, // Checked trail width
+                    new[] { B(400f, BoulderSize.Small), B(1250f, BoulderSize.Big), B(2850f, BoulderSize.Small), B(3500f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(6200f, BoulderSize.Big), B(7700f, BoulderSize.Small), B(8750f, BoulderSize.Small) }, // Boulders
+                    new[] { new Ledge(2240f, 100f, 72f), new Ledge(6700f, 48f, 64f), new Ledge(9000f, 40f, 64f) }, // Fixed ledges
+                    vents: new[] { new SteamVent(2200f) }, // Steam vents
+                    crumbleLedges: new[] { new CrumbleLedge(1900f, 0f), new CrumbleLedge(1932f, 0f), new CrumbleLedge(1964f, 0f), new CrumbleLedge(5500f, 0f), new CrumbleLedge(5532f, 0f), new CrumbleLedge(5564f, 0f) }, // Breakable slabs
+                    rockfalls: new[] { new Rockfall(2600f, 0f), new Rockfall(5100f, 1.5f) }, // Falling rocks
+                    movingPlatforms: new[] { new MovingPlatform(3000f, 3152f, 0f), new MovingPlatform(6400f, 6552f, 0f) }, // Moving crossings
+                    windZones: new[] { new WindZone(7400f, 500f, 0f) }, // Gust areas
+                    rollingBoulders: new[] { new RollingBoulder(1600f, 1400f, 0f), new RollingBoulder(3900f, 3680f, 1f), new RollingBoulder(6000f, 5780f, 2f), new RollingBoulder(8600f, 8380f, 0.5f) }, // Rolling boulders
+                    iceZones: new[] { new IceZone(4400f, 300f), new IceZone(7500f, 400f) }), // Icy ground
+                "Mauna Kea"), // Start banner
         }; // Ends the catalog
 
         static Boulder B(float x, BoulderSize size) => new Boulder(x, size); // Short way to write a boulder
@@ -461,6 +707,8 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 
         /// <summary>Every level with data, in play order.</summary>
         public static IReadOnlyList<LevelData> All => Levels; // The builder makes one scene for each
+
+        public static bool HasLevels(Episode e) => Levels.Any(l => l.Episode == e); // Checks whether this landform has playable data
 
         /// <summary>The level's data, or null when that level has no data yet.</summary>
         public static LevelData Find(Episode e, Difficulty d, int number) => Levels.FirstOrDefault(l => l.Episode == e && l.Difficulty == d && l.Number == number); // Looks the level up

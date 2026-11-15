@@ -46,6 +46,10 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             new Achievement("philippine_peaks", "Philippine Peaks", "Clear Mountains Normal 1 to 4.", BadgeTier.Silver, p => Enumerable.Range(1, 4).All(n => p.IsCleared(Episode.Mountains, Difficulty.Normal, n))), // Four Philippine peaks
             new Achievement("top_of_the_world", "Top of the World", "Clear Mount Everest (Mountains Normal 5).", BadgeTier.Gold, p => p.IsCleared(Episode.Mountains, Difficulty.Normal, 5)), // Everest cleared
             new Achievement("rock_scholar", "Rock Scholar", "Find 15 different rocks and minerals.", BadgeTier.Silver, p => Collection.FoundCount(p) >= 15), // Fifteen known kinds
+            new Achievement("brave_hiker", "Brave Hiker", "Clear any Mountains Hard level.", BadgeTier.Silver, p => Enumerable.Range(1, PlayerProgress.LevelCount(Difficulty.Hard)).Any(n => p.IsCleared(Episode.Mountains, Difficulty.Hard, n))), // Any Hard clear in Mountains
+            new Achievement("world_peaks", "World Peaks", "Clear the Matterhorn, Kilimanjaro and Mauna Kea (Hard 5 to 7).", BadgeTier.Silver, p => Enumerable.Range(5, 3).All(n => p.IsCleared(Episode.Mountains, Difficulty.Hard, n))), // All three world peaks
+            new Achievement("hard_star", "Hard Star", "Get 3 stars on all 7 Mountains Hard levels.", BadgeTier.Gold, p => Enumerable.Range(1, PlayerProgress.LevelCount(Difficulty.Hard)).All(n => p.BestStars(Episode.Mountains, Difficulty.Hard, n) == 3)), // Every Hard trail has three stars
+            new Achievement("mountain_master", "Mountain Master", "Clear all 15 Mountains levels.", BadgeTier.Gold, p => p.IsEpisodeComplete(Episode.Mountains)), // Finishes the entire landform
         }; // Ends the badge catalog
 
         /// <summary>The achievement with this id, or null when there is none.</summary>

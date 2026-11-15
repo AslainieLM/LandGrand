@@ -61,7 +61,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         if (font == null) return; // EnsureFont already said what is wrong
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)
 
-        string after = LessonPath; // The first level goes right after the Lesson Screen in the build list
+        string after = EditorBuildSettings.scenes.Any(scene => scene.path == LandformDescriptionBuilder.ScenePath) ? LandformDescriptionBuilder.ScenePath : LessonPath; // Keeps the summary right after the Lesson Screen
         foreach (var level in LevelCatalog.All) // Every level with data, in play order
         {
             string path = "Assets/Scenes/" + level.SceneName + ".unity"; // For example Assets/Scenes/MountainsEasy2.unity
@@ -102,7 +102,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         {
             var piece = new Rect(groundFrom, -64f, pit.x - groundFrom, 64f); // One piece of ground
             solids.Add(piece); // The explorer can stand on it
-            Tiled("Ground Top", art.GroundTop, new Rect(piece.x, -8f, piece.width, 8f), 5, geometry.transform); // The ground's top edge
+            DrawGroundTop(piece, art.GroundTop, layout.IceZones, geometry.transform); // Uses ice in place of the top tile where needed
             Tiled("Soil", art.Soil, new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
             if (pit.w > 0f) Tiled("Pit", "pit_fill", new Rect(pit.x, -64f, pit.w, 64f), 3, geometry.transform); // Dark inside of the pit
             groundFrom = pit.x + pit.w; // The next piece starts after the pit
@@ -195,7 +195,8 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         var bar = controller.progressBar = parts.AddComponent<TrailProgressBar>(); // The trail bar
         controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
         controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
-        BuildObjects(level, geometry, explorer, controller); // Builds the placed Normal objects
+        BuildObjects(level, geometry, explorer, controller); // Builds the reused level objects
+        BuildHardObjects(level, geometry, explorer, controller); // Builds the placed boulders and ice
         BuildResult(level, controller.result, root, font); // The Result Screen panel
         collector.pickups = spots.ToArray(); // The collectibles
         controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Chimes for items, stars and badges
@@ -477,7 +478,12 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
 
     static void Tiled(string name, string sprite, Rect r, int order, Transform parent) // Draws a repeated tile over a level-pixel rectangle
     {
-        var sr = M.Renderer(name, S(sprite), order, parent); // The renderer
+        Tiled(name, S(sprite), r, order, parent); // Loads the tile before drawing it
+    } // Ends the tile lookup
+
+    static void Tiled(string name, Sprite sprite, Rect r, int order, Transform parent) // Draws a loaded tile across the area
+    { // Starts drawing
+        var sr = M.Renderer(name, sprite, order, parent); // The renderer
         sr.drawMode = SpriteDrawMode.Tiled; // Repeat the tile instead of stretching it
         sr.tileMode = SpriteTileMode.Continuous; // Plain repeating
         sr.size = new Vector2(r.width, r.height) / LevelGeometry.PixelsPerUnit; // Area to fill, in units
