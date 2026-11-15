@@ -125,6 +125,22 @@ SYMBOLS = {  # One pattern per badge
         "...#####.....", "..#ooooo#....", ".#ooooooo#...", ".#ooooooo#...", ".#ooooooo#...",
         "..#ooooo#....", "...#####.....", "........##...", ".........##..", "..........##.",
         "...........##"],
+    "brave_hiker": [  # A boulder rolling with speed lines (D-065)
+        "........####..", "......########", ".....#########", "##...####o####", ".....###o#####",
+        "####.##o######", ".....#########", "##...#########", "......########", "........####..",
+        "oooooooooooooo"],
+    "world_peaks": [  # A round globe with a peak on top (D-065)
+        "......#.......", ".....###......", "....##o##.....", "...########...", "..##oo####o#..",
+        ".###ooo###oo#.", ".####oo####o#.", ".######o#####.", "..##########..", "...########...",
+        ".....####....."],
+    "hard_star": [  # A star over a steep peak (D-065)
+        "......#......", ".....###.....", "...#######...", "....#####....", "....##.##....",
+        "......o......", ".....ooo.....", "....ooooo....", "...ooooooo...", "..ooooooooo..",
+        ".ooooooooooo.", "ooooooooooooo"],
+    "mountain_master": [  # A crown over a mountain (D-065)
+        "#..#..#..#..#.", "##.##.##.##.##", "##############", "##############", "..............",
+        "......o.......", ".....ooo......", "....ooooo.....", "...ooooooo....", "..ooooooooo...",
+        ".ooooooooooo..", "ooooooooooooo."],
     "perfect_trail": None,  # Three stars in an arc, built by code below
     "mountain_collector": [  # A backpack
         "....######....", "...########...", "..##########..", ".############.", ".############.",
@@ -162,6 +178,7 @@ BADGES = [  # id, tier
     ("star_explorer", "silver"), ("volcano_visitor", "silver"), ("summit_climber", "silver"),
     ("perfect_trail", "gold"), ("mountain_collector", "gold"),
     ("philippine_peaks", "silver"), ("top_of_the_world", "gold"), ("rock_scholar", "silver"),  # Mountains Normal badges (D-062)
+    ("brave_hiker", "silver"), ("world_peaks", "silver"), ("hard_star", "gold"), ("mountain_master", "gold"),  # Mountains Hard badges (D-065)
 ]
 CX, CY, R = 16.0, 13.5, 13.0  # Medal centre and outer radius
 
