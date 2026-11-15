@@ -34,3 +34,12 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Moving platform**: a slab that travels back and forth and carries an explorer standing on it.
 - **Wind gust**: a brief leftward push within a marked stretch of trail, preceded by visible wind streaks.
 - **Normal checkpoints**: the two safe flags in each Normal level. Hazards return the explorer to the furthest flag reached, or the start before either flag.
+- **Rolling boulder**: a trap that warns before rolling left along the ground. It skips a roll if the explorer is too close to its starting point.
+- **Icy ground**: a stretch of trail where the explorer takes time to speed up and slides before stopping.
+- **Hard checkpoints**: the three safe flags in each Hard level. Hazards return the explorer to the furthest flag reached, or to the start before the first flag.
+
+## Landforms
+
+- **Landform Description Screen**: the screen that reviews a completed landform, shows the explorer's trip totals and names the next landform.
+- **Episode complete**: the explorer has cleared all 15 levels of one landform across Easy, Normal and Hard.
+- **Unlock animation**: the opening padlock, fading grey and sparkles that the map shows the first time a landform opens.
