@@ -1,0 +1,1317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="200" result="Passed" total="200" passed="200" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.4347226">
+  <test-suite type="TestSuite" id="1000" name="LandGrand" fullname="LandGrand" runstate="Runnable" testcasecount="200" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.434723" total="200" passed="200" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1230" name="LandGrand.Rules.Tests.dll" fullname="D:/LandGrand/LandGrand/Library/ScriptAssemblies/LandGrand.Rules.Tests.dll" runstate="Runnable" testcasecount="200" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.416397" total="200" passed="200" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1231" name="LandGrand" fullname="LandGrand" runstate="Runnable" testcasecount="200" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.408858" total="200" passed="200" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1233" name="Rules" fullname="LandGrand.Rules" runstate="Runnable" testcasecount="196" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.396039" total="196" passed="196" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1234" name="Tests" fullname="LandGrand.Rules.Tests" runstate="Runnable" testcasecount="196" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.379286" total="196" passed="196" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1007" name="AchievementTests" fullname="LandGrand.Rules.Tests.AchievementTests" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.083943" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1008" name="Catalog_HasTheEightStarterBadges_InOrder" fullname="LandGrand.Rules.Tests.AchievementTests.Catalog_HasTheEightStarterBadges_InOrder" methodname="Catalog_HasTheEightStarterBadges_InOrder" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="690918113" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.029991" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="FirstSteps_ComesWithTheFirstClear" fullname="LandGrand.Rules.Tests.AchievementTests.FirstSteps_ComesWithTheFirstClear" methodname="FirstSteps_ComesWithTheFirstClear" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="2122166891" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.006297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="FreshProfile_HasNoBadges" fullname="LandGrand.Rules.Tests.AchievementTests.FreshProfile_HasNoBadges" methodname="FreshProfile_HasNoBadges" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="195568545" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.007017" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="MountainCollector_NeedsEveryMountainsKind" fullname="LandGrand.Rules.Tests.AchievementTests.MountainCollector_NeedsEveryMountainsKind" methodname="MountainCollector_NeedsEveryMountainsKind" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="1942007525" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001557" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="NewlyEarned_ListsOnlyBadgesEarnedSinceBefore" fullname="LandGrand.Rules.Tests.AchievementTests.NewlyEarned_ListsOnlyBadgesEarnedSinceBefore" methodname="NewlyEarned_ListsOnlyBadgesEarnedSinceBefore" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="1717530292" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001770" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="PerfectTrail_NeedsThreeStarsOnEveryMountainsEasyLevel" fullname="LandGrand.Rules.Tests.AchievementTests.PerfectTrail_NeedsThreeStarsOnEveryMountainsEasyLevel" methodname="PerfectTrail_NeedsThreeStarsOnEveryMountainsEasyLevel" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="885417173" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000307" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="RockHoundAndCrystalFinder_FollowTheFirstRockAndMineral" fullname="LandGrand.Rules.Tests.AchievementTests.RockHoundAndCrystalFinder_FollowTheFirstRockAndMineral" methodname="RockHoundAndCrystalFinder_FollowTheFirstRockAndMineral" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="1028450167" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000243" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="StarExplorer_NeedsThreeStarsOnOneLevel" fullname="LandGrand.Rules.Tests.AchievementTests.StarExplorer_NeedsThreeStarsOnOneLevel" methodname="StarExplorer_NeedsThreeStarsOnOneLevel" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="90021328" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="Tiers_GoBronzeSilverGold" fullname="LandGrand.Rules.Tests.AchievementTests.Tiers_GoBronzeSilverGold" methodname="Tiers_GoBronzeSilverGold" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="596622690" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="VolcanoVisitorAndSummitClimber_FollowEasy2AndEasy3" fullname="LandGrand.Rules.Tests.AchievementTests.VolcanoVisitorAndSummitClimber_FollowEasy2AndEasy3" methodname="VolcanoVisitorAndSummitClimber_FollowEasy2AndEasy3" classname="LandGrand.Rules.Tests.AchievementTests" runstate="Runnable" seed="1459035218" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1018" name="CollectionTests" fullname="LandGrand.Rules.Tests.CollectionTests" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.011837" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1019" name="EveryItemKind_HasAHomeLandform_AndIsARockOrMineral" fullname="LandGrand.Rules.Tests.CollectionTests.EveryItemKind_HasAHomeLandform_AndIsARockOrMineral" methodname="EveryItemKind_HasAHomeLandform_AndIsARockOrMineral" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="1392903322" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="FoundState_FollowsTheProgress" fullname="LandGrand.Rules.Tests.CollectionTests.FoundState_FollowsTheProgress" methodname="FoundState_FollowsTheProgress" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="570862628" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="FreshProfile_HasNothingFound" fullname="LandGrand.Rules.Tests.CollectionTests.FreshProfile_HasNothingFound" methodname="FreshProfile_HasNothingFound" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="870918931" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001235" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="LandformsWithoutItemKinds_AreComingSoon" fullname="LandGrand.Rules.Tests.CollectionTests.LandformsWithoutItemKinds_AreComingSoon" methodname="LandformsWithoutItemKinds_AreComingSoon" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="168738826" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="MountainsShelf_HoldsTwentyMountainsKinds_InLevelOrder" fullname="LandGrand.Rules.Tests.CollectionTests.MountainsShelf_HoldsTwentyMountainsKinds_InLevelOrder" methodname="MountainsShelf_HoldsTwentyMountainsKinds_InLevelOrder" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="705296413" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000584" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="Shelves_AreOnePerLandform_InEpisodeOrder" fullname="LandGrand.Rules.Tests.CollectionTests.Shelves_AreOnePerLandform_InEpisodeOrder" methodname="Shelves_AreOnePerLandform_InEpisodeOrder" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="1937037153" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001402" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="Totals_AddUpStarsAndClearedLevels" fullname="LandGrand.Rules.Tests.CollectionTests.Totals_AddUpStarsAndClearedLevels" methodname="Totals_AddUpStarsAndClearedLevels" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="19208940" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001131" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="Totals_AWorseReplay_DoesNotLowerThem" fullname="LandGrand.Rules.Tests.CollectionTests.Totals_AWorseReplay_DoesNotLowerThem" methodname="Totals_AWorseReplay_DoesNotLowerThem" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="2080710246" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="UnknownFoundKinds_AreNotCounted" fullname="LandGrand.Rules.Tests.CollectionTests.UnknownFoundKinds_AreNotCounted" methodname="UnknownFoundKinds_AreNotCounted" classname="LandGrand.Rules.Tests.CollectionTests" runstate="Runnable" seed="677355507" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000214" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1028" name="CrumbleLedgeTests" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.006684" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1036" name="SolidFollowsTimeSinceTouch" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.004318" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1029" name="SolidFollowsTimeSinceTouch(0.0f,True)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(0.0f,True)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="1289377876" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001973" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1030" name="SolidFollowsTimeSinceTouch(0.499f,True)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(0.499f,True)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="1307598077" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000227" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1031" name="SolidFollowsTimeSinceTouch(0.5f,False)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(0.5f,False)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="289984172" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000144" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1032" name="SolidFollowsTimeSinceTouch(0.501f,False)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(0.501f,False)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="1771441605" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000103" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1033" name="SolidFollowsTimeSinceTouch(3.499f,False)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(3.499f,False)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="1945548812" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000095" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1034" name="SolidFollowsTimeSinceTouch(3.5f,True)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(3.5f,True)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="1303881235" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000110" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1035" name="SolidFollowsTimeSinceTouch(3.501f,True)" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.SolidFollowsTimeSinceTouch(3.501f,True)" methodname="SolidFollowsTimeSinceTouch" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="751990354" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000089" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1037" name="UntouchedLedgeStaysWhole" fullname="LandGrand.Rules.Tests.CrumbleLedgeTests.UntouchedLedgeStaysWhole" methodname="UntouchedLedgeStaysWhole" classname="LandGrand.Rules.Tests.CrumbleLedgeTests" runstate="Runnable" seed="2057541296" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001237" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1038" name="DifficultySelectionRulesTests" fullname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" classname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.005394" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1040" name="DifficultyStars_AddsTheBestStarsOfThatDifficultyOnly" fullname="LandGrand.Rules.Tests.DifficultySelectionRulesTests.DifficultyStars_AddsTheBestStarsOfThatDifficultyOnly" methodname="DifficultyStars_AddsTheBestStarsOfThatDifficultyOnly" classname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" runstate="Runnable" seed="713338211" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1039" name="EachDifficulty_HasThreeStarsPerLevel" fullname="LandGrand.Rules.Tests.DifficultySelectionRulesTests.EachDifficulty_HasThreeStarsPerLevel" methodname="EachDifficulty_HasThreeStarsPerLevel" classname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" runstate="Runnable" seed="217164886" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1042" name="Easy_HasNoLockedGuide" fullname="LandGrand.Rules.Tests.DifficultySelectionRulesTests.Easy_HasNoLockedGuide" methodname="Easy_HasNoLockedGuide" classname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" runstate="Runnable" seed="1329647974" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000270" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1041" name="LockedCards_AskToClearTheDifficultyBefore" fullname="LandGrand.Rules.Tests.DifficultySelectionRulesTests.LockedCards_AskToClearTheDifficultyBefore" methodname="LockedCards_AskToClearTheDifficultyBefore" classname="LandGrand.Rules.Tests.DifficultySelectionRulesTests" runstate="Runnable" seed="979126006" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000329" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1043" name="LandformMapRulesTests" fullname="LandGrand.Rules.Tests.LandformMapRulesTests" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003145" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1044" name="EachRegion_HasFortyFiveStarsToEarn" fullname="LandGrand.Rules.Tests.LandformMapRulesTests.EachRegion_HasFortyFiveStarsToEarn" methodname="EachRegion_HasFortyFiveStarsToEarn" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" seed="340910947" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000274" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="EpisodeStars_AddsTheBestStarsOfThatRegionOnly" fullname="LandGrand.Rules.Tests.LandformMapRulesTests.EpisodeStars_AddsTheBestStarsOfThatRegionOnly" methodname="EpisodeStars_AddsTheBestStarsOfThatRegionOnly" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" seed="1934259777" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000575" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1045" name="FreshProfile_HasNoStarsInAnyRegion" fullname="LandGrand.Rules.Tests.LandformMapRulesTests.FreshProfile_HasNoStarsInAnyRegion" methodname="FreshProfile_HasNoStarsInAnyRegion" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" seed="1470148175" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1047" name="LockedRegions_AskToFinishTheLandformBefore" fullname="LandGrand.Rules.Tests.LandformMapRulesTests.LockedRegions_AskToFinishTheLandformBefore" methodname="LockedRegions_AskToFinishTheLandformBefore" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" seed="1929631736" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000295" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="Mountains_HasNoLockedGuide" fullname="LandGrand.Rules.Tests.LandformMapRulesTests.Mountains_HasNoLockedGuide" methodname="Mountains_HasNoLockedGuide" classname="LandGrand.Rules.Tests.LandformMapRulesTests" runstate="Runnable" seed="922726643" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1049" name="LevelCatalogTests" fullname="LandGrand.Rules.Tests.LevelCatalogTests" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.039444" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1055" name="ItemKinds_AreSharedData" fullname="LandGrand.Rules.Tests.LevelCatalogTests.ItemKinds_AreSharedData" methodname="ItemKinds_AreSharedData" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1084244864" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.022345" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1056" name="ItemKinds_HaveANamePictureAndDraftDescription" fullname="LandGrand.Rules.Tests.LevelCatalogTests.ItemKinds_HaveANamePictureAndDraftDescription" methodname="ItemKinds_HaveANamePictureAndDraftDescription" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1284588552" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001119" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1051" name="LevelsWithoutData_AreNotFound" fullname="LandGrand.Rules.Tests.LevelCatalogTests.LevelsWithoutData_AreNotFound" methodname="LevelsWithoutData_AreNotFound" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="58142069" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000298" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1058" name="MountainsEasy1_HasACheckpointHazardsAndAGoalInOrder" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_HasACheckpointHazardsAndAGoalInOrder" methodname="MountainsEasy1_HasACheckpointHazardsAndAGoalInOrder" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1690259925" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.004565" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="MountainsEasy1_HasADraftLessonOfThreeOrFourSentences" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_HasADraftLessonOfThreeOrFourSentences" methodname="MountainsEasy1_HasADraftLessonOfThreeOrFourSentences" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1517341997" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000846" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="MountainsEasy1_HasFivePickupsOfTheFourMountainsKinds" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_HasFivePickupsOfTheFourMountainsKinds" methodname="MountainsEasy1_HasFivePickupsOfTheFourMountainsKinds" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="307940490" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001261" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="MountainsEasy1_IsDescribedAsData" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_IsDescribedAsData" methodname="MountainsEasy1_IsDescribedAsData" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1005017773" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000372" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="MountainsEasy1_IsMarkedAsDraft" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_IsMarkedAsDraft" methodname="MountainsEasy1_IsMarkedAsDraft" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="805625066" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000343" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1057" name="MountainsEasy1_ShowsItsGoals" fullname="LandGrand.Rules.Tests.LevelCatalogTests.MountainsEasy1_ShowsItsGoals" methodname="MountainsEasy1_ShowsItsGoals" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1271132750" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000854" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="Review_HasTwoOrThreeDraftSentences" fullname="LandGrand.Rules.Tests.LevelCatalogTests.Review_HasTwoOrThreeDraftSentences" methodname="Review_HasTwoOrThreeDraftSentences" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="1327374135" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003542" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1060" name="SceneName_NamesTheLevelScene" fullname="LandGrand.Rules.Tests.LevelCatalogTests.SceneName_NamesTheLevelScene" methodname="SceneName_NamesTheLevelScene" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="565522235" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000558" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="TimeLimits_FollowTheDifficulty" fullname="LandGrand.Rules.Tests.LevelCatalogTests.TimeLimits_FollowTheDifficulty" methodname="TimeLimits_FollowTheDifficulty" classname="LandGrand.Rules.Tests.LevelCatalogTests" runstate="Runnable" seed="609271733" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000271" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1062" name="LevelRunTests" fullname="LandGrand.Rules.Tests.LevelRunTests" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" testcasecount="41" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.035037" total="41" passed="41" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1074" name="ABadPickupNumber_IsIgnored" fullname="LandGrand.Rules.Tests.LevelRunTests.ABadPickupNumber_IsIgnored" methodname="ABadPickupNumber_IsIgnored" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="685487283" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000782" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1067" name="AClearedRun_IsSavedAndOpensTheNextLevel" fullname="LandGrand.Rules.Tests.LevelRunTests.AClearedRun_IsSavedAndOpensTheNextLevel" methodname="AClearedRun_IsSavedAndOpensTheNextLevel" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="425295331" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1089" name="AClearedRun_StopsTheClock" fullname="LandGrand.Rules.Tests.LevelRunTests.AClearedRun_StopsTheClock" methodname="AClearedRun_StopsTheClock" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="820617305" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1103" name="AFallIntoThePit_KeepsItemsAndTimeAndCountsOnlyWhilePlaying" fullname="LandGrand.Rules.Tests.LevelRunTests.AFallIntoThePit_KeepsItemsAndTimeAndCountsOnlyWhilePlaying" methodname="AFallIntoThePit_KeepsItemsAndTimeAndCountsOnlyWhilePlaying" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1068224071" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000653" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1072" name="AFirstFind_IsRememberedInTheProgress" fullname="LandGrand.Rules.Tests.LevelRunTests.AFirstFind_IsRememberedInTheProgress" methodname="AFirstFind_IsRememberedInTheProgress" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1155453226" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="AfterTheGoal_HazardsAndCheckpointsDoNothing" fullname="LandGrand.Rules.Tests.LevelRunTests.AfterTheGoal_HazardsAndCheckpointsDoNothing" methodname="AfterTheGoal_HazardsAndCheckpointsDoNothing" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="667203727" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000482" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1088" name="AfterTimeUp_NothingCountsAnyMore" fullname="LandGrand.Rules.Tests.LevelRunTests.AfterTimeUp_NothingCountsAnyMore" methodname="AfterTimeUp_NothingCountsAnyMore" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1771315881" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000392" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="AHazard_KeepsCollectedItemsAndKeepsPlaying" fullname="LandGrand.Rules.Tests.LevelRunTests.AHazard_KeepsCollectedItemsAndKeepsPlaying" methodname="AHazard_KeepsCollectedItemsAndKeepsPlaying" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1402345364" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000328" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1090" name="AHazard_KeepsTheTimerRunning" fullname="LandGrand.Rules.Tests.LevelRunTests.AHazard_KeepsTheTimerRunning" methodname="AHazard_KeepsTheTimerRunning" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="536236983" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1079" name="AHazardAfterTheCheckpoint_SendsTheExplorerBackToTheCheckpoint" fullname="LandGrand.Rules.Tests.LevelRunTests.AHazardAfterTheCheckpoint_SendsTheExplorerBackToTheCheckpoint" methodname="AHazardAfterTheCheckpoint_SendsTheExplorerBackToTheCheckpoint" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="2031500610" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000251" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1077" name="AHazardBeforeTheCheckpoint_SendsTheExplorerBackToTheStart" fullname="LandGrand.Rules.Tests.LevelRunTests.AHazardBeforeTheCheckpoint_SendsTheExplorerBackToTheStart" methodname="AHazardBeforeTheCheckpoint_SendsTheExplorerBackToTheStart" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1837069214" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000244" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1071" name="AKindFoundInAnEarlierSession_DoesNotAskForThePopup" fullname="LandGrand.Rules.Tests.LevelRunTests.AKindFoundInAnEarlierSession_DoesNotAskForThePopup" methodname="AKindFoundInAnEarlierSession_DoesNotAskForThePopup" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1484333992" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1083" name="ANewRun_HasTheFullTimeOfItsDifficulty" fullname="LandGrand.Rules.Tests.LevelRunTests.ANewRun_HasTheFullTimeOfItsDifficulty" methodname="ANewRun_HasTheFullTimeOfItsDifficulty" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1647928395" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000230" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1093" name="ARetry_IsAFreshAttempt" fullname="LandGrand.Rules.Tests.LevelRunTests.ARetry_IsAFreshAttempt" methodname="ARetry_IsAFreshAttempt" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1244020839" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000276" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="ARunThatIsNotCleared_SavesNothing" fullname="LandGrand.Rules.Tests.LevelRunTests.ARunThatIsNotCleared_SavesNothing" methodname="ARunThatIsNotCleared_SavesNothing" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1418679334" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="ASecondPickupOfAFoundKind_OnlyChimes" fullname="LandGrand.Rules.Tests.LevelRunTests.ASecondPickupOfAFoundKind_OnlyChimes" methodname="ASecondPickupOfAFoundKind_OnlyChimes" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="281476701" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000235" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1068" name="CollectingAPickup_CountsOnceAndAsksForThePopupOnAFirstFind" fullname="LandGrand.Rules.Tests.LevelRunTests.CollectingAPickup_CountsOnceAndAsksForThePopupOnAFirstFind" methodname="CollectingAPickup_CountsOnceAndAsksForThePopupOnAFirstFind" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="542032300" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000239" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1098" name="EasyFallIntoThePit_IgnoresTheCheckpoint" fullname="LandGrand.Rules.Tests.LevelRunTests.EasyFallIntoThePit_IgnoresTheCheckpoint" methodname="EasyFallIntoThePit_IgnoresTheCheckpoint" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="297510783" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000198" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1097" name="EasyFallIntoThePit_ReturnsToTheSafeSpotNearTheEdge" fullname="LandGrand.Rules.Tests.LevelRunTests.EasyFallIntoThePit_ReturnsToTheSafeSpotNearTheEdge" methodname="EasyFallIntoThePit_ReturnsToTheSafeSpotNearTheEdge" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1771851657" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1101" name="EasySpikes_KeepItemsAndTime" fullname="LandGrand.Rules.Tests.LevelRunTests.EasySpikes_KeepItemsAndTime" methodname="EasySpikes_KeepItemsAndTime" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="671911680" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000379" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1099" name="EasySpikes_ReturnToTheSafeSpotBeforeThem" fullname="LandGrand.Rules.Tests.LevelRunTests.EasySpikes_ReturnToTheSafeSpotBeforeThem" methodname="EasySpikes_ReturnToTheSafeSpotBeforeThem" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="641254502" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000252" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1096" name="GoalResults_AllMetWhenEverythingIsCollected" fullname="LandGrand.Rules.Tests.LevelRunTests.GoalResults_AllMetWhenEverythingIsCollected" methodname="GoalResults_AllMetWhenEverythingIsCollected" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1954487461" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1095" name="GoalResults_ShowCollectAllAndFinishInTime" fullname="LandGrand.Rules.Tests.LevelRunTests.GoalResults_ShowCollectAllAndFinishInTime" methodname="GoalResults_ShowCollectAllAndFinishInTime" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="728780178" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001964" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1063" name="NewRun_IsPlayingFromTheStart" fullname="LandGrand.Rules.Tests.LevelRunTests.NewRun_IsPlayingFromTheStart" methodname="NewRun_IsPlayingFromTheStart" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1519218008" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000407" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1102" name="NormalFallIntoThePit_StillGoesToTheCheckpoint" fullname="LandGrand.Rules.Tests.LevelRunTests.NormalFallIntoThePit_StillGoesToTheCheckpoint" methodname="NormalFallIntoThePit_StillGoesToTheCheckpoint" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1091572157" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1100" name="NormalSpikes_StillSendTheExplorerToTheCheckpoint" fullname="LandGrand.Rules.Tests.LevelRunTests.NormalSpikes_StillSendTheExplorerToTheCheckpoint" methodname="NormalSpikes_StillSendTheExplorerToTheCheckpoint" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1568352902" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000431" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1078" name="ReachingTheCheckpoint_MovesTheRespawnPoint" fullname="LandGrand.Rules.Tests.LevelRunTests.ReachingTheCheckpoint_MovesTheRespawnPoint" methodname="ReachingTheCheckpoint_MovesTheRespawnPoint" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1789245155" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000323" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="ReachingTheGoal_ClearsTheLevelWithStars" fullname="LandGrand.Rules.Tests.LevelRunTests.ReachingTheGoal_ClearsTheLevelWithStars" methodname="ReachingTheGoal_ClearsTheLevelWithStars" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="505572968" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000252" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1065" name="ReachingTheGoalAgain_ChangesNothing" fullname="LandGrand.Rules.Tests.LevelRunTests.ReachingTheGoalAgain_ChangesNothing" methodname="ReachingTheGoalAgain_ChangesNothing" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="274193564" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000200" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="ReachingZero_GivesTimeUpAndStopsTheRun" fullname="LandGrand.Rules.Tests.LevelRunTests.ReachingZero_GivesTimeUpAndStopsTheRun" methodname="ReachingZero_GivesTimeUpAndStopsTheRun" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1317693628" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000250" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="Respawns_AreCounted" fullname="LandGrand.Rules.Tests.LevelRunTests.Respawns_AreCounted" methodname="Respawns_AreCounted" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="360227721" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000200" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1076" name="StarsFollowTheCollectedCount" fullname="LandGrand.Rules.Tests.LevelRunTests.StarsFollowTheCollectedCount" methodname="StarsFollowTheCollectedCount" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="656569044" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1094" name="TakenFlags_MatchTheItemsCollected" fullname="LandGrand.Rules.Tests.LevelRunTests.TakenFlags_MatchTheItemsCollected" methodname="TakenFlags_MatchTheItemsCollected" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1604663229" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="TheGoalWaitsForThePopup" fullname="LandGrand.Rules.Tests.LevelRunTests.TheGoalWaitsForThePopup" methodname="TheGoalWaitsForThePopup" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="696917451" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000237" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1091" name="ThePauseMenu_CannotOpenBehindThePopup" fullname="LandGrand.Rules.Tests.LevelRunTests.ThePauseMenu_CannotOpenBehindThePopup" methodname="ThePauseMenu_CannotOpenBehindThePopup" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="2063282552" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1084" name="TimeCountsDownWhilePlaying" fullname="LandGrand.Rules.Tests.LevelRunTests.TimeCountsDownWhilePlaying" methodname="TimeCountsDownWhilePlaying" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="734625488" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1085" name="TimeStopsWhileThePauseMenuIsOpen" fullname="LandGrand.Rules.Tests.LevelRunTests.TimeStopsWhileThePauseMenuIsOpen" methodname="TimeStopsWhileThePauseMenuIsOpen" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="579693490" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000218" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1086" name="TimeStopsWhileThePopupIsOpen" fullname="LandGrand.Rules.Tests.LevelRunTests.TimeStopsWhileThePopupIsOpen" methodname="TimeStopsWhileThePopupIsOpen" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="1492776113" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000214" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="TouchingACollectedPickupAgain_CountsNothing" fullname="LandGrand.Rules.Tests.LevelRunTests.TouchingACollectedPickupAgain_CountsNothing" methodname="TouchingACollectedPickupAgain_CountsNothing" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="386742305" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="WhilePaused_ThePickupsAndTheGoalWait" fullname="LandGrand.Rules.Tests.LevelRunTests.WhilePaused_ThePickupsAndTheGoalWait" methodname="WhilePaused_ThePickupsAndTheGoalWait" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="483718274" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000200" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1073" name="WhileThePopupIsOpen_TheRunIsPaused" fullname="LandGrand.Rules.Tests.LevelRunTests.WhileThePopupIsOpen_TheRunIsPaused" methodname="WhileThePopupIsOpen_TheRunIsPaused" classname="LandGrand.Rules.Tests.LevelRunTests" runstate="Runnable" seed="146358461" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000210" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1104" name="MountainsEasyLevelsTests" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.032459" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1120" name="AllFiveItems_GiveThreeStars_OnEasy2AndEasy3" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.AllFiveItems_GiveThreeStars_OnEasy2AndEasy3" methodname="AllFiveItems_GiveThreeStars_OnEasy2AndEasy3" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="196096850" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000623" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1105" name="Catalog_HasTheThreeMountainsEasyLevels_InPlayOrder" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Catalog_HasTheThreeMountainsEasyLevels_InPlayOrder" methodname="Catalog_HasTheThreeMountainsEasyLevels_InPlayOrder" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="351748788" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003798" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1113" name="ClearingAllThreeEasyLevels_UnlocksNormal" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.ClearingAllThreeEasyLevels_UnlocksNormal" methodname="ClearingAllThreeEasyLevels_UnlocksNormal" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="857930568" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1108" name="Easy1_KeepsItsBuiltLayout" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Easy1_KeepsItsBuiltLayout" methodname="Easy1_KeepsItsBuiltLayout" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1873191891" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003563" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1109" name="Easy2_IsTheVolcanoTrail" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Easy2_IsTheVolcanoTrail" methodname="Easy2_IsTheVolcanoTrail" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1959839641" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1110" name="Easy2_SecretPumice_IsOnALedgeHigherThanADoubleJump" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Easy2_SecretPumice_IsOnALedgeHigherThanADoubleJump" methodname="Easy2_SecretPumice_IsOnALedgeHigherThanADoubleJump" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1586246594" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002127" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1111" name="Easy3_IsFoldedPeaks" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Easy3_IsFoldedPeaks" methodname="Easy3_IsFoldedPeaks" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1928766983" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001093" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1106" name="EveryLevel_FollowsTheEasyRules" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.EveryLevel_FollowsTheEasyRules" methodname="EveryLevel_FollowsTheEasyRules" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1817874537" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001908" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1107" name="EveryLevel_KeepsItsPartsInsideTheLevel_AndOffThePits" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.EveryLevel_KeepsItsPartsInsideTheLevel_AndOffThePits" methodname="EveryLevel_KeepsItsPartsInsideTheLevel_AndOffThePits" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="748711697" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003204" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1112" name="NewItemKinds_AreMountainsRocksAndOneMineral" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.NewItemKinds_AreMountainsRocksAndOneMineral" methodname="NewItemKinds_AreMountainsRocksAndOneMineral" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="52651648" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1115" name="Next_AfterTheLastEasyLevel_IsNormalLevel1" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Next_AfterTheLastEasyLevel_IsNormalLevel1" methodname="Next_AfterTheLastEasyLevel_IsNormalLevel1" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1353423893" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000874" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1116" name="Next_AfterTheWholeLandform_IsTheNextEpisode" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Next_AfterTheWholeLandform_IsTheNextEpisode" methodname="Next_AfterTheWholeLandform_IsTheNextEpisode" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1888170403" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000562" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1117" name="Next_IsNone_WhenNothingOpenFollows" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Next_IsNone_WhenNothingOpenFollows" methodname="Next_IsNone_WhenNothingOpenFollows" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="250232694" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000305" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1114" name="Next_IsTheNextLevel_InsideADifficulty" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Next_IsTheNextLevel_InsideADifficulty" methodname="Next_IsTheNextLevel_InsideADifficulty" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="479116844" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000380" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1118" name="ReviewPickup_OfAKnownKind_OnlyChimes" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.ReviewPickup_OfAKnownKind_OnlyChimes" methodname="ReviewPickup_OfAKnownKind_OnlyChimes" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1759060004" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000683" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1119" name="ReviewPickup_OfANeverFoundKind_PopsUp" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.ReviewPickup_OfANeverFoundKind_PopsUp" methodname="ReviewPickup_OfANeverFoundKind_PopsUp" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1990903963" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000513" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1125" name="StartBanner_HoldsTheClock_UntilItEnds" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.StartBanner_HoldsTheClock_UntilItEnds" methodname="StartBanner_HoldsTheClock_UntilItEnds" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1190412218" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000611" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1127" name="StartBanner_OnlyAtTheStartOfAnAttempt" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.StartBanner_OnlyAtTheStartOfAnAttempt" methodname="StartBanner_OnlyAtTheStartOfAnAttempt" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="264496671" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000236" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1126" name="Timer_WarnsInTheLast20Seconds_AndTicksInTheLast10" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Timer_WarnsInTheLast20Seconds_AndTicksInTheLast10" methodname="Timer_WarnsInTheLast20Seconds_AndTicksInTheLast10" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1386707202" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000515" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1124" name="Vent_DoesNotLaunchWhilePausedOrOver" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Vent_DoesNotLaunchWhilePausedOrOver" methodname="Vent_DoesNotLaunchWhilePausedOrOver" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="626850515" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000421" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1122" name="Vent_LaunchesOnlyWhenStandingOnItDuringAPuff" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Vent_LaunchesOnlyWhenStandingOnItDuringAPuff" methodname="Vent_LaunchesOnlyWhenStandingOnItDuringAPuff" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="1017012313" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000630" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1123" name="Vent_NeverChangesTimeItemsRespawnOrStars" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Vent_NeverChangesTimeItemsRespawnOrStars" methodname="Vent_NeverChangesTimeItemsRespawnOrStars" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="997410710" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000707" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1121" name="Vent_PuffsOnAFixedCycle" fullname="LandGrand.Rules.Tests.MountainsEasyLevelsTests.Vent_PuffsOnAFixedCycle" methodname="Vent_PuffsOnAFixedCycle" classname="LandGrand.Rules.Tests.MountainsEasyLevelsTests" runstate="Runnable" seed="510666632" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1128" name="MountainsNormalTests" fullname="LandGrand.Rules.Tests.MountainsNormalTests" classname="LandGrand.Rules.Tests.MountainsNormalTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.010041" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1129" name="FiveNormalLevelsHaveSevenItemsAndTwoSafeFlags" fullname="LandGrand.Rules.Tests.MountainsNormalTests.FiveNormalLevelsHaveSevenItemsAndTwoSafeFlags" methodname="FiveNormalLevelsHaveSevenItemsAndTwoSafeFlags" classname="LandGrand.Rules.Tests.MountainsNormalTests" runstate="Runnable" seed="194622783" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.007267" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1130" name="MountainsHasTwentyKindsInLessonOrder" fullname="LandGrand.Rules.Tests.MountainsNormalTests.MountainsHasTwentyKindsInLessonOrder" methodname="MountainsHasTwentyKindsInLessonOrder" classname="LandGrand.Rules.Tests.MountainsNormalTests" runstate="Runnable" seed="1390912070" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001593" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1131" name="MovingPlatformTests" fullname="LandGrand.Rules.Tests.MovingPlatformTests" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002977" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1138" name="TravelsAtFortyPixelsPerSecond" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002177" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1132" name="TravelsAtFortyPixelsPerSecond(0.0f,1000.0f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(0.0f,1000.0f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="1375271523" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000475" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1133" name="TravelsAtFortyPixelsPerSecond(4.999f,1199.96f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(4.999f,1199.96f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="1767865393" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000139" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1134" name="TravelsAtFortyPixelsPerSecond(5.0f,1200.0f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(5.0f,1200.0f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="866656150" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000118" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1135" name="TravelsAtFortyPixelsPerSecond(5.001f,1199.96f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(5.001f,1199.96f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="1823183093" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000087" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1136" name="TravelsAtFortyPixelsPerSecond(7.5f,1100.0f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(7.5f,1100.0f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="108281047" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000076" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1137" name="TravelsAtFortyPixelsPerSecond(10.0f,1000.0f)" fullname="LandGrand.Rules.Tests.MovingPlatformTests.TravelsAtFortyPixelsPerSecond(10.0f,1000.0f)" methodname="TravelsAtFortyPixelsPerSecond" classname="LandGrand.Rules.Tests.MovingPlatformTests" runstate="Runnable" seed="382312777" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000075" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1139" name="NameRuleTests" fullname="LandGrand.Rules.Tests.NameRuleTests" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.007329" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1155" name="BadNames_AreRefused_WithAMessage" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003365" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1146" name="BadNames_AreRefused_WithAMessage(null)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(null)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1839708879" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001256" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1147" name="BadNames_AreRefused_WithAMessage(&quot;&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1922770178" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000106" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1148" name="BadNames_AreRefused_WithAMessage(&quot;    &quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;    &quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="953413196" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000083" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1149" name="BadNames_AreRefused_WithAMessage(&quot;Juan Carlos 12&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;Juan Carlos 12&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1387319698" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000082" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1150" name="BadNames_AreRefused_WithAMessage(&quot;1234567890123&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;1234567890123&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="2093382238" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000074" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1151" name="BadNames_AreRefused_WithAMessage(&quot;Ana!&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;Ana!&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1522438749" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000080" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1152" name="BadNames_AreRefused_WithAMessage(&quot;Ana_B&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;Ana_B&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="472552441" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000073" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1153" name="BadNames_AreRefused_WithAMessage(&quot;Ana\tB&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;Ana\tB&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1027560281" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000074" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1154" name="BadNames_AreRefused_WithAMessage(&quot;Ana😀&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.BadNames_AreRefused_WithAMessage(&quot;Ana😀&quot;)" methodname="BadNames_AreRefused_WithAMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="493678451" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000079" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1156" name="EachProblem_HasItsOwnMessage" fullname="LandGrand.Rules.Tests.NameRuleTests.EachProblem_HasItsOwnMessage" methodname="EachProblem_HasItsOwnMessage" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1718384650" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000399" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1145" name="ValidNames_AreAccepted" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.002439" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1140" name="ValidNames_AreAccepted(&quot;Ana&quot;,&quot;Ana&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted(&quot;Ana&quot;,&quot;Ana&quot;)" methodname="ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="523837533" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000501" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1141" name="ValidNames_AreAccepted(&quot;A&quot;,&quot;A&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted(&quot;A&quot;,&quot;A&quot;)" methodname="ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1207747452" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000141" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1142" name="ValidNames_AreAccepted(&quot;Juan Carlo 1&quot;,&quot;Juan Carlo 1&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted(&quot;Juan Carlo 1&quot;,&quot;Juan Carlo 1&quot;)" methodname="ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1181749582" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000136" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1143" name="ValidNames_AreAccepted(&quot;Noelño&quot;,&quot;Noelño&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted(&quot;Noelño&quot;,&quot;Noelño&quot;)" methodname="ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="208828093" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000105" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1144" name="ValidNames_AreAccepted(&quot;  Ana  &quot;,&quot;Ana&quot;)" fullname="LandGrand.Rules.Tests.NameRuleTests.ValidNames_AreAccepted(&quot;  Ana  &quot;,&quot;Ana&quot;)" methodname="ValidNames_AreAccepted" classname="LandGrand.Rules.Tests.NameRuleTests" runstate="Runnable" seed="1632532723" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000133" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1157" name="NormalProfileTests" fullname="LandGrand.Rules.Tests.NormalProfileTests" classname="LandGrand.Rules.Tests.NormalProfileTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.003565" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1160" name="EverestClearEarnsTopOfTheWorld" fullname="LandGrand.Rules.Tests.NormalProfileTests.EverestClearEarnsTopOfTheWorld" methodname="EverestClearEarnsTopOfTheWorld" classname="LandGrand.Rules.Tests.NormalProfileTests" runstate="Runnable" seed="982142371" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1159" name="PhilippinePeaksNeedsNormalOneThroughFour" fullname="LandGrand.Rules.Tests.NormalProfileTests.PhilippinePeaksNeedsNormalOneThroughFour" methodname="PhilippinePeaksNeedsNormalOneThroughFour" classname="LandGrand.Rules.Tests.NormalProfileTests" runstate="Runnable" seed="555878264" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1161" name="ScholarNeedsFifteenKnownDistinctKinds" fullname="LandGrand.Rules.Tests.NormalProfileTests.ScholarNeedsFifteenKnownDistinctKinds" methodname="ScholarNeedsFifteenKnownDistinctKinds" classname="LandGrand.Rules.Tests.NormalProfileTests" runstate="Runnable" seed="416506324" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000487" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1158" name="TwentyKindsUseTwoPagesAndClampPageNumbers" fullname="LandGrand.Rules.Tests.NormalProfileTests.TwentyKindsUseTwoPagesAndClampPageNumbers" methodname="TwentyKindsUseTwoPagesAndClampPageNumbers" classname="LandGrand.Rules.Tests.NormalProfileTests" runstate="Runnable" seed="638650829" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.001254" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1162" name="PlayerProgressTests" fullname="LandGrand.Rules.Tests.PlayerProgressTests" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.008067" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1165" name="ClearingALevel_OpensTheNextOne_AndKeepsEarlierOnesOpen" fullname="LandGrand.Rules.Tests.PlayerProgressTests.ClearingALevel_OpensTheNextOne_AndKeepsEarlierOnesOpen" methodname="ClearingALevel_OpensTheNextOne_AndKeepsEarlierOnesOpen" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="857125378" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1170" name="FoundItemKinds_AreKept_AndNeverRemoved" fullname="LandGrand.Rules.Tests.PlayerProgressTests.FoundItemKinds_AreKept_AndNeverRemoved" methodname="FoundItemKinds_AreKept_AndNeverRemoved" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="1576336590" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000334" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1164" name="FreshProfile_OnlyEasyIsUnlocked_AndOnlyLevelOneIsAvailable" fullname="LandGrand.Rules.Tests.PlayerProgressTests.FreshProfile_OnlyEasyIsUnlocked_AndOnlyLevelOneIsAvailable" methodname="FreshProfile_OnlyEasyIsUnlocked_AndOnlyLevelOneIsAvailable" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="2061993097" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1163" name="FreshProfile_OnlyMountainsIsUnlocked" fullname="LandGrand.Rules.Tests.PlayerProgressTests.FreshProfile_OnlyMountainsIsUnlocked" methodname="FreshProfile_OnlyMountainsIsUnlocked" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="642342635" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000206" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1167" name="HardUnlocksAfterAllFiveNormalLevels_WhateverTheStars" fullname="LandGrand.Rules.Tests.PlayerProgressTests.HardUnlocksAfterAllFiveNormalLevels_WhateverTheStars" methodname="HardUnlocksAfterAllFiveNormalLevels_WhateverTheStars" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="1153392889" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1171" name="NextLevelAfter_IsTheNextAvailableLevelOrZero" fullname="LandGrand.Rules.Tests.PlayerProgressTests.NextLevelAfter_IsTheNextAvailableLevelOrZero" methodname="NextLevelAfter_IsTheNextAvailableLevelOrZero" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="1958166151" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000229" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1166" name="NormalUnlocksAfterAllEasyLevels_WhateverTheStars" fullname="LandGrand.Rules.Tests.PlayerProgressTests.NormalUnlocksAfterAllEasyLevels_WhateverTheStars" methodname="NormalUnlocksAfterAllEasyLevels_WhateverTheStars" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="293704971" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000195" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1172" name="ReplayingWithFewerStars_NeverLowersTheBest" fullname="LandGrand.Rules.Tests.PlayerProgressTests.ReplayingWithFewerStars_NeverLowersTheBest" methodname="ReplayingWithFewerStars_NeverLowersTheBest" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="853410628" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1169" name="UnclearedLevel_HasZeroStars" fullname="LandGrand.Rules.Tests.PlayerProgressTests.UnclearedLevel_HasZeroStars" methodname="UnclearedLevel_HasZeroStars" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="1000669262" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1168" name="WorseReplay_KeepsTheBestStars" fullname="LandGrand.Rules.Tests.PlayerProgressTests.WorseReplay_KeepsTheBestStars" methodname="WorseReplay_KeepsTheBestStars" classname="LandGrand.Rules.Tests.PlayerProgressTests" runstate="Runnable" seed="185255664" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.000357" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1173" name="ProgressSaveTests" fullname="LandGrand.Rules.Tests.ProgressSaveTests" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.084806" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1179" name="CorruptFile_GivesFreshProfile" fullname="LandGrand.Rules.Tests.ProgressSaveTests.CorruptFile_GivesFreshProfile" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.036480" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1176" name="CorruptFile_GivesFreshProfile(&quot;&quot;)" fullname="LandGrand.Rules.Tests.ProgressSaveTests.CorruptFile_GivesFreshProfile(&quot;&quot;)" methodname="CorruptFile_GivesFreshProfile" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="199463449" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.020612" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1177" name="CorruptFile_GivesFreshProfile(&quot;not json at all&quot;)" fullname="LandGrand.Rules.Tests.ProgressSaveTests.CorruptFile_GivesFreshProfile(&quot;not json at all&quot;)" methodname="CorruptFile_GivesFreshProfile" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="2078438507" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.004252" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1178" name="CorruptFile_GivesFreshProfile(&quot;{\&quot;name\&quot;:\&quot;Ana\&quot;,\&quot;levels\&quot;:[&quot;)" fullname="LandGrand.Rules.Tests.ProgressSaveTests.CorruptFile_GivesFreshProfile(&quot;{\&quot;name\&quot;:\&quot;Ana\&quot;,\&quot;levels\&quot;:[&quot;)" methodname="CorruptFile_GivesFreshProfile" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="1517320518" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:12Z" duration="0.004442" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1181" name="InterruptedSave_KeepsThePreviousSave" fullname="LandGrand.Rules.Tests.ProgressSaveTests.InterruptedSave_KeepsThePreviousSave" methodname="InterruptedSave_KeepsThePreviousSave" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="408557186" result="Passed" start-time="2026-11-15 13:20:12Z" end-time="2026-11-15 13:20:13Z" duration="0.027310" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1175" name="MissingFile_GivesFreshProfile" fullname="LandGrand.Rules.Tests.ProgressSaveTests.MissingFile_GivesFreshProfile" methodname="MissingFile_GivesFreshProfile" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="70412138" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.002012" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1174" name="SaveThenLoad_GivesEqualProgress" fullname="LandGrand.Rules.Tests.ProgressSaveTests.SaveThenLoad_GivesEqualProgress" methodname="SaveThenLoad_GivesEqualProgress" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="1321382809" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.005520" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1180" name="SecondSave_ReplacesTheFirst" fullname="LandGrand.Rules.Tests.ProgressSaveTests.SecondSave_ReplacesTheFirst" methodname="SecondSave_ReplacesTheFirst" classname="LandGrand.Rules.Tests.ProgressSaveTests" runstate="Runnable" seed="116270996" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.008552" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1182" name="RockfallTests" fullname="LandGrand.Rules.Tests.RockfallTests" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.009624" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1195" name="CycleEdges" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.006713" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1183" name="CycleEdges(0.0f,Warning)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(0.0f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="614552988" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.001212" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1184" name="CycleEdges(1.199f,Warning)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.199f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="993726078" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000373" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1185" name="CycleEdges(1.2f,Falling)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.2f,Falling)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="1606663890" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000285" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1186" name="CycleEdges(1.201f,Falling)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.201f,Falling)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="2022344648" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000198" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1187" name="CycleEdges(1.499f,Falling)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.499f,Falling)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="561792169" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000219" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1188" name="CycleEdges(1.5f,Landed)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.5f,Landed)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="650579236" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000176" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1189" name="CycleEdges(1.501f,Landed)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.501f,Landed)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="225066917" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000152" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1190" name="CycleEdges(1.649f,Landed)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.649f,Landed)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="447627948" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000144" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1191" name="CycleEdges(1.65f,Clear)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.65f,Clear)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="1704979690" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000136" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1192" name="CycleEdges(1.651f,Clear)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(1.651f,Clear)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="1198473058" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000134" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1193" name="CycleEdges(2.999f,Clear)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(2.999f,Clear)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="1557920611" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000128" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1194" name="CycleEdges(3.0f,Warning)" fullname="LandGrand.Rules.Tests.RockfallTests.CycleEdges(3.0f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="175671579" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000135" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1196" name="OffsetAndHitBoxFollowTheRock" fullname="LandGrand.Rules.Tests.RockfallTests.OffsetAndHitBoxFollowTheRock" methodname="OffsetAndHitBoxFollowTheRock" classname="LandGrand.Rules.Tests.RockfallTests" runstate="Runnable" seed="1529833594" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000922" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1197" name="StarRuleTests" fullname="LandGrand.Rules.Tests.StarRuleTests" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.006931" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1216" name="ClearedLevel_NeverGetsLessThanOneStar" fullname="LandGrand.Rules.Tests.StarRuleTests.ClearedLevel_NeverGetsLessThanOneStar" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.001141" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1214" name="ClearedLevel_NeverGetsLessThanOneStar(0,0)" fullname="LandGrand.Rules.Tests.StarRuleTests.ClearedLevel_NeverGetsLessThanOneStar(0,0)" methodname="ClearedLevel_NeverGetsLessThanOneStar" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="323725955" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000496" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1215" name="ClearedLevel_NeverGetsLessThanOneStar(-3,5)" fullname="LandGrand.Rules.Tests.StarRuleTests.ClearedLevel_NeverGetsLessThanOneStar(-3,5)" methodname="ClearedLevel_NeverGetsLessThanOneStar" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="1381856457" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000109" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1217" name="CollectedAboveTotal_StillGivesThreeStars" fullname="LandGrand.Rules.Tests.StarRuleTests.CollectedAboveTotal_StillGivesThreeStars" methodname="CollectedAboveTotal_StillGivesThreeStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="979428448" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1204" name="FiveItemLevel_GivesExpectedStars" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.001701" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1198" name="FiveItemLevel_GivesExpectedStars(0,5,1)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(0,5,1)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="176908058" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000299" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1199" name="FiveItemLevel_GivesExpectedStars(1,5,1)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(1,5,1)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="2069858839" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000093" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1200" name="FiveItemLevel_GivesExpectedStars(2,5,1)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(2,5,1)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="1036128116" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000079" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1201" name="FiveItemLevel_GivesExpectedStars(3,5,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(3,5,2)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="881111665" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000073" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1202" name="FiveItemLevel_GivesExpectedStars(4,5,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(4,5,2)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="1565646332" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000071" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1203" name="FiveItemLevel_GivesExpectedStars(5,5,3)" fullname="LandGrand.Rules.Tests.StarRuleTests.FiveItemLevel_GivesExpectedStars(5,5,3)" methodname="FiveItemLevel_GivesExpectedStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="230438596" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000062" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1213" name="JustAboveForty_GivesTwoStars" fullname="LandGrand.Rules.Tests.StarRuleTests.JustAboveForty_GivesTwoStars" methodname="JustAboveForty_GivesTwoStars" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="1853740077" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000170" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1212" name="LargerTotals_UseTheSamePercentages" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.002167" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1205" name="LargerTotals_UseTheSamePercentages(40,100,1)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(40,100,1)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="436651304" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000166" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1206" name="LargerTotals_UseTheSamePercentages(41,100,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(41,100,2)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="517029256" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000091" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1207" name="LargerTotals_UseTheSamePercentages(99,100,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(99,100,2)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="10526165" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000068" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1208" name="LargerTotals_UseTheSamePercentages(100,100,3)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(100,100,3)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="1051417966" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000120" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1209" name="LargerTotals_UseTheSamePercentages(8,20,1)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(8,20,1)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="943326805" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000095" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1210" name="LargerTotals_UseTheSamePercentages(9,20,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(9,20,2)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="859048308" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000098" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1211" name="LargerTotals_UseTheSamePercentages(19,20,2)" fullname="LandGrand.Rules.Tests.StarRuleTests.LargerTotals_UseTheSamePercentages(19,20,2)" methodname="LargerTotals_UseTheSamePercentages" classname="LandGrand.Rules.Tests.StarRuleTests" runstate="Runnable" seed="72544247" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000076" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1218" name="WindZoneTests" fullname="LandGrand.Rules.Tests.WindZoneTests" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.018225" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="1228" name="CycleEdges" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.006379" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1219" name="CycleEdges(0.0f,Calm)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(0.0f,Calm)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="560585937" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.001082" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1220" name="CycleEdges(1.999f,Calm)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(1.999f,Calm)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="2080113442" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000435" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1221" name="CycleEdges(2.0f,Warning)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(2.0f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="753760838" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000285" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1222" name="CycleEdges(2.001f,Warning)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(2.001f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="21655227" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000283" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1223" name="CycleEdges(2.599f,Warning)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(2.599f,Warning)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="146032948" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000296" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1224" name="CycleEdges(2.6f,Push)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(2.6f,Push)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="1918001402" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000277" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1225" name="CycleEdges(2.601f,Push)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(2.601f,Push)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="59996298" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000450" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1226" name="CycleEdges(3.999f,Push)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(3.999f,Push)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="848124266" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000205" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1227" name="CycleEdges(4.0f,Calm)" fullname="LandGrand.Rules.Tests.WindZoneTests.CycleEdges(4.0f,Calm)" methodname="CycleEdges" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="1791244674" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000162" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1229" name="OffsetWrapsAndPushStaysInsideTheZone" fullname="LandGrand.Rules.Tests.WindZoneTests.OffsetWrapsAndPushStaysInsideTheZone" methodname="OffsetWrapsAndPushStaysInsideTheZone" classname="LandGrand.Rules.Tests.WindZoneTests" runstate="Runnable" seed="619156108" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000595" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1232" name="Tests" fullname="LandGrand.Tests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.006561" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="HardCheckpointTests" fullname="LandGrand.Tests.HardCheckpointTests" classname="LandGrand.Tests.HardCheckpointTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.003322" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1002" name="HardHazardsReturnToTheFurthestOfThreeFlags" fullname="LandGrand.Tests.HardCheckpointTests.HardHazardsReturnToTheFurthestOfThreeFlags" methodname="HardHazardsReturnToTheFurthestOfThreeFlags" classname="LandGrand.Tests.HardCheckpointTests" runstate="Runnable" seed="368490106" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000734" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1003" name="HardLayoutListsDefaultToEmptyAndKeepTheirOwnCopies" fullname="LandGrand.Tests.HardCheckpointTests.HardLayoutListsDefaultToEmptyAndKeepTheirOwnCopies" methodname="HardLayoutListsDefaultToEmptyAndKeepTheirOwnCopies" classname="LandGrand.Tests.HardCheckpointTests" runstate="Runnable" seed="650917882" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.001466" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1004" name="NormalCheckpointTests" fullname="LandGrand.Tests.NormalCheckpointTests" classname="LandGrand.Tests.NormalCheckpointTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.002461" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1005" name="FurthestCheckpointWinsAndNeverMovesBack" fullname="LandGrand.Tests.NormalCheckpointTests.FurthestCheckpointWinsAndNeverMovesBack" methodname="FurthestCheckpointWinsAndNeverMovesBack" classname="LandGrand.Tests.NormalCheckpointTests" runstate="Runnable" seed="1107746672" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000577" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1006" name="LayoutListsAreEmptyUnlessSuppliedAndKeepTheirOwnCopies" fullname="LandGrand.Tests.NormalCheckpointTests.LayoutListsAreEmptyUnlessSuppliedAndKeepTheirOwnCopies" methodname="LayoutListsAreEmptyUnlessSuppliedAndKeepTheirOwnCopies" classname="LandGrand.Tests.NormalCheckpointTests" runstate="Runnable" seed="1558429690" result="Passed" start-time="2026-11-15 13:20:13Z" end-time="2026-11-15 13:20:13Z" duration="0.000930" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Marjovic/AppData/LocalLow/LandGrand/LandGrand\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,7 @@
+The following asset generators ran in a temporary copy:
+Tools/Art/make_hard_art.py: exit 0
+Tools/Art/make_hard_backdrops.py: exit 0
+Tools/Art/make_profile_art.py: exit 0
+Tools/Audio/make_hard_audio.py: exit 0
+191 regenerated files matched the supplied output by PNG pixels, WAV bytes or decoded OGG samples.
+The repository media and scripts were read only.
