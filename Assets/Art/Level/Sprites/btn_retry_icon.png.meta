@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 612a2a41a0f08ee498ac470d74c47df1
+guid: 67627aa078d87764c846b3d76c170d99
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2814187302792626459
-    second: btn_retry_pressed_0
+      213: 3422357396981855915
+    second: btn_retry_icon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,13 +115,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: btn_retry_pressed_0
+      name: btn_retry_icon_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 120
-        height: 26
+        width: 34
+        height: 30
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,8 +130,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5ee71adee8ff1f8d0800000000000000
-      internalID: -2814187302792626459
+      spriteID: ba6b88d8be7ae7f20800000000000000
+      internalID: 3422357396981855915
       vertices: []
       indices: 
       edges: []
@@ -150,7 +150,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      btn_retry_pressed_0: -2814187302792626459
+      btn_retry_icon_0: 3422357396981855915
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

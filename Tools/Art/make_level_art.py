@@ -10,6 +10,12 @@ import math  # math gives sine waves and square roots for the new themes
 from PIL import Image  # Image is used to read and turn the explorer pictures
 import make_mainmenu_art as mm  # Main Menu palette, button and drawing helpers
 import make_landform_map_art as lm  # Map colours and the noise helper
+import make_menu_camp as camp  # The Main Menu's 34x30 icon button, reused for the pause menu icons
+
+# Pause and Time's up icons (D-057), drawn at 2x like the Main Menu's Settings, Tutorial and Exit icons.
+RESUME = camp.PLAY  # Resume: the same play triangle as the Main Menu's PLAY button
+RETRY = ["...###.#.", ".##...##.", "#....###.", "#........", "#.......#", "#.......#", ".#.....#.", "..#####.."]  # Retry: a circle arrow going round
+HOME = ["....#....", "...###...", "..#####..", ".#######.", "#########", ".#######.", ".###.###.", ".###.###.", ".###.###."]  # Main Menu: a house
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))  # The Unity project folder
 OUT = os.path.join(ROOT, "Assets", "Art", "Level", "Sprites")  # Where the PNGs go
@@ -688,9 +694,9 @@ def main():
     for pressed in (False, True):  # Normal and pressed pictures
         tag = "_pressed" if pressed else ""  # File name ending
         save(pause_icon(pressed), "btn_pause%s.png" % tag)  # Pause button
-        save(mm.button(120, 26, "RESUME", *green, pressed=pressed, scale=2), "btn_resume%s.png" % tag)  # Resume
-        save(mm.button(120, 26, "RETRY", *brown, pressed=pressed, scale=2), "btn_retry%s.png" % tag)  # Retry
-        save(mm.button(120, 26, "MAIN MENU", *brown, pressed=pressed, scale=2), "btn_menu%s.png" % tag)  # Back to Main Menu
+        save(camp.icon_button(RESUME, green[1], green[0], green[2], pressed), "btn_resume_icon%s.png" % tag)  # Resume: green play icon (D-057)
+        save(camp.icon_button(RETRY, brown[1], brown[0], brown[2], pressed), "btn_retry_icon%s.png" % tag)  # Retry: brown circle arrow icon
+        save(camp.icon_button(HOME, brown[1], brown[0], brown[2], pressed), "btn_home_icon%s.png" % tag)  # Main Menu: brown house icon
     save(gem_icon(), "icon_gem.png")  # Counter icon
     save(progress_track(), "progress_track.png")  # Empty trail bar
     save(progress_fill(), "progress_fill.png")  # Walked part of the bar

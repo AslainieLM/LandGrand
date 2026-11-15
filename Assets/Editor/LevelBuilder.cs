@@ -377,14 +377,26 @@ public static class LevelBuilder // Makes the level scenes
         timer.SetAsFirstSibling(); // Draw the countdown behind the pop-up and the result panel
         controller.pauseButton.transform.SetAsFirstSibling(); // Same for the pause button
 
-        controller.pausePanel = MenuPanel("Pause Menu", root, font, "Paused", 140f, out var pauseBox); // Dark backdrop and panel
-        controller.resumeButton = SpriteButton("Resume", pauseBox, "btn_resume", new Vector2(240f, 112f), c); // Back to the game
-        controller.pauseRetryButton = SpriteButton("Retry", pauseBox, "btn_retry", new Vector2(240f, 142f), c); // Start again from the lesson
-        controller.pauseMenuButton = SpriteButton("Main Menu", pauseBox, "btn_menu", new Vector2(240f, 172f), c); // Leave to the Main Menu
+        // Pause and Time's up use icon buttons with a small name under each, like the Main Menu's Settings, Tutorial and Exit (D-057).
+        // Panel y 80 to 190: heading at 100, icons at 136 (y 121 to 151), names at 164.
+        controller.pausePanel = MenuPanel("Pause Menu", root, font, "Paused", 110f, out var pauseBox); // Dark backdrop and panel, 240 wide
+        controller.resumeButton = LabelledIcon("Resume", pauseBox, "btn_resume_icon", 172f); // Green play icon: back to the game
+        controller.pauseRetryButton = LabelledIcon("Retry", pauseBox, "btn_retry_icon", 240f); // Circle arrow: start again from the lesson
+        controller.pauseMenuButton = LabelledIcon("Main Menu", pauseBox, "btn_home_icon", 308f); // House: leave to the Main Menu
 
-        controller.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel
-        controller.timeUpRetryButton = SpriteButton("Retry", timeUpBox, "btn_retry", new Vector2(240f, 128f), c); // Start again from the lesson
-        controller.timeUpMenuButton = SpriteButton("Main Menu", timeUpBox, "btn_menu", new Vector2(240f, 158f), c); // Leave to the Main Menu
+        controller.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel, same size
+        controller.timeUpRetryButton = LabelledIcon("Retry", timeUpBox, "btn_retry_icon", 204f); // Circle arrow: start again from the lesson
+        controller.timeUpMenuButton = LabelledIcon("Main Menu", timeUpBox, "btn_home_icon", 276f); // House: leave to the Main Menu
+    }
+
+    static Button LabelledIcon(string name, Transform panel, string spriteName, float x) // A 34x30 icon button with its name under it in the reading font (D-051, D-057)
+    {
+        var at = new Vector2(x, 136f); // Middle of the icon on the screen
+        var button = SpriteButton(name, panel, spriteName, at, K.CanvasCenter); // The icon; its picture swaps to the pressed one
+        var label = M.ReadingLabel("Label", button.transform, name, new Vector2(x, 164f), at, new Vector2(80f, 22f), K.Ink, TMPro.TextAlignmentOptions.Midline); // Its name, 4 pixels under the icon; 80 wide for "Main Menu"
+        label.textWrappingMode = TMPro.TextWrappingModes.NoWrap; // One line
+        label.raycastTarget = false; // Taps on the name do not block anything
+        return button; // The controller connects it
     }
 
     static void BuildProgress(LevelData level, LevelController controller, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
@@ -416,7 +428,7 @@ public static class LevelBuilder // Makes the level scenes
         var dim = holder.gameObject.AddComponent<Image>(); // Dark backdrop
         dim.color = new Color(0f, 0f, 0f, 0.55f); // See-through black
         dim.raycastTarget = true; // Blocks taps on the controls behind the menu
-        panel = M.Panel("Panel", holder, c, new Vector2(220f, height)); // Cream panel
+        panel = M.Panel("Panel", holder, c, new Vector2(240f, height)); // Cream panel, x 120 to 360: room for three icons 72 pixels apart with their names
         M.Label("Heading", panel, font, heading, new Vector2(240f, c.y - height / 2f + 20f), c, new Vector2(200f, 16f), Clay, TMPro.TextAlignmentOptions.Midline); // Title near the top of the panel
         return holder.gameObject; // The controller shows and hides it
     }
