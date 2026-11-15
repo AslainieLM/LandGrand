@@ -1,0 +1,65 @@
+// Draft Mountains Normal layouts for the bot check (scratch). Same numbers go into the Codex tickets.
+static class NormalLevels {
+    static Boulder S(float x) => new(x, false);
+    static Boulder B(float x) => new(x, true);
+    static readonly float[] CP = { 2400, 4800 };
+
+    public static readonly Lvl N1 = new("N1 Pulag", 7200, 7040, CP,
+        new[] { new Pit(900, 48), new Pit(2000, 96), new Pit(3300, 56), new Pit(5200, 64), new Pit(6200, 96) },
+        new float[] { 1700, 4150, 5550, 6850 },
+        new[] { S(420), B(1480), S(2650), B(3950), S(4450), B(5850), S(6650) },
+        new[] { new Ledge(700, 40, 64), new Ledge(3580, 40, 64), new Ledge(3660, 72, 48) },
+        new[] { new Crumble(1150, 40), new Crumble(1220, 64), new Crumble(2000, 0), new Crumble(2032, 0), new Crumble(2064, 0), new Crumble(6200, 0), new Crumble(6232, 0), new Crumble(6264, 0) },
+        new Rock[0], new Platform[0], new Wind[0], new Vent[0],
+        new[] { new Pickup("sandstone", 732, 40), new Pickup("clay", 1236, 64), new Pickup("granite", 2560, 0), new Pickup("feldspar", 3000, 24),
+                new Pickup("sandstone", 3684, 72), new Pickup("clay", 5232, 40), new Pickup("granite", 6500, 48) });
+
+    public static readonly Lvl N2 = new("N2 Pinatubo", 7200, 7040, CP,
+        new[] { new Pit(800, 48), new Pit(2500, 56), new Pit(3500, 64), new Pit(5100, 56), new Pit(6200, 64) },
+        new float[] { 1300, 4440, 6880 },
+        new[] { S(500), B(1500), S(2700), B(4000), S(4600), B(5900), S(6700) },
+        new[] { new Ledge(2200, 40, 64), new Ledge(4300, 48, 80) },
+        new Crumble[0],
+        new[] { new Rock(1100, 0), new Rock(1900, 1.0f), new Rock(3000, 0.5f), new Rock(3700, 2.0f), new Rock(5400, 0), new Rock(5460, 1.5f), new Rock(6500, 1.0f) },
+        new Platform[0], new Wind[0], new Vent[0],
+        new[] { new Pickup("conglomerate", 1100, 0), new Pickup("shale", 2232, 40), new Pickup("pumice", 2528, 48), new Pickup("quartz", 3000, 0),
+                new Pickup("conglomerate", 4340, 48), new Pickup("shale", 5430, 0), new Pickup("pumice", 6232, 40) });
+
+    public static readonly Lvl N3 = new("N3 Matutum", 7200, 7040, CP,
+        new[] { new Pit(2000, 200), new Pit(3400, 56), new Pit(5200, 240), new Pit(6100, 200) },
+        new float[] { 1500, 3000, 4600, 6600 },
+        new[] { S(450), B(1600), S(2700), B(3900), S(4450), B(5700), S(6750) },
+        new[] { new Ledge(1260, 72, 64), new Ledge(3700, 40, 64), new Ledge(4200, 48, 48) },
+        new Crumble[0], new Rock[0],
+        new[] { new Platform(1000, 1200, 40), new Platform(2000, 2152, 0), new Platform(5200, 5392, 0), new Platform(6100, 6252, 0) },
+        new Wind[0], new Vent[0],
+        new[] { new Pickup("basalt", 1292, 72), new Pickup("magnetite", 2100, 40), new Pickup("andesite", 3016, 48), new Pickup("basalt", 3732, 40),
+                new Pickup("magnetite", 4224, 48), new Pickup("andesite", 5300, 32), new Pickup("basalt", 6900, 0) });
+
+    public static readonly Lvl N4 = new("N4 Apo", 7200, 7040, CP,
+        new[] { new Pit(800, 48), new Pit(1500, 96), new Pit(3600, 64), new Pit(5400, 200), new Pit(6300, 64) },
+        new float[] { 1100, 3900, 6700 },
+        new[] { S(500), B(1900), S(2600), B(3300), S(4600), B(5000), S(6500) },
+        new[] { new Ledge(2940, 100, 72), new Ledge(4050, 48, 64) },
+        new[] { new Crumble(1500, 0), new Crumble(1532, 0), new Crumble(1564, 0) },
+        new[] { new Rock(2200, 0), new Rock(4300, 1.5f) },
+        new[] { new Platform(5400, 5552, 0) },
+        new Wind[0], new[] { new Vent(2900) },
+        new[] { new Pickup("pyrite", 1560, 48), new Pickup("obsidian", 2200, 0), new Pickup("sulfur", 2976, 100), new Pickup("quartz", 3632, 48),
+                new Pickup("pyrite", 4082, 48), new Pickup("sulfur", 5476, 32), new Pickup("obsidian", 6950, 0) });
+
+    public static readonly Lvl N5 = new("N5 Everest", 7200, 7040, CP,
+        new[] { new Pit(2200, 48), new Pit(3500, 56), new Pit(4000, 96), new Pit(5500, 64) },
+        new float[] { 1500, 2900, 5000, 6500 },
+        new[] { S(600), B(1700), S(2700), B(3800), S(4600), B(6000), S(6800) },
+        new[] { new Ledge(1200, 48, 64), new Ledge(4700, 40, 64), new Ledge(4780, 72, 48) },
+        new[] { new Crumble(4000, 0), new Crumble(4032, 0), new Crumble(4064, 0) },
+        new[] { new Rock(4300, 0) },
+        new Platform[0],
+        new[] { new Wind(900, 500, 0), new Wind(2000, 400, 1.0f), new Wind(3300, 600, 2.0f), new Wind(5300, 500, 0.5f), new Wind(6200, 500, 1.5f) },
+        new Vent[0],
+        new[] { new Pickup("limestone", 1232, 48), new Pickup("gneiss", 2224, 40), new Pickup("marble", 2916, 48), new Pickup("garnet", 3528, 40),
+                new Pickup("limestone", 4804, 72), new Pickup("gneiss", 5532, 40), new Pickup("marble", 6900, 0) });
+
+    public static readonly Lvl[] All = { N1, N2, N3, N4, N5 };
+}

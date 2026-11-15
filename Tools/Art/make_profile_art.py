@@ -113,6 +113,18 @@ SYMBOLS = {  # One pattern per badge
         "......#####...", "......####....", "......###.....", "......#.......", ".....###......",
         "....o####.....", "...ooo#####...", "..oooo######..", ".ooooo#######.", "oooooo########",
         "oooooo########", "oooooo########"],
+    "philippine_peaks": [  # Two Philippine peaks side by side (D-062)
+        "....#.........", "...###........", "..#####...#...", "..#####..###..", ".#######.####.",
+        ".#######o#####", "#######oo#####", "######ooo#####", "#####oooo#####", "####ooooo#####",
+        "##############"],
+    "top_of_the_world": [  # The highest peak with a flag on top (D-062)
+        "......#####...", "......#####...", "......#......", "......#......", ".....###.....",
+        ".....###.....", "....o####....", "...oo#####...", "..ooo######..", ".oooo#######.",
+        "ooooo########", "ooooo########"],
+    "rock_scholar": [  # A magnifying glass over a rock (D-062)
+        "...#####.....", "..#ooooo#....", ".#ooooooo#...", ".#ooooooo#...", ".#ooooooo#...",
+        "..#ooooo#....", "...#####.....", "........##...", ".........##..", "..........##.",
+        "...........##"],
     "perfect_trail": None,  # Three stars in an arc, built by code below
     "mountain_collector": [  # A backpack
         "....######....", "...########...", "..##########..", ".############.", ".############.",
@@ -149,6 +161,7 @@ BADGES = [  # id, tier
     ("first_steps", "bronze"), ("rock_hound", "bronze"), ("crystal_finder", "bronze"),
     ("star_explorer", "silver"), ("volcano_visitor", "silver"), ("summit_climber", "silver"),
     ("perfect_trail", "gold"), ("mountain_collector", "gold"),
+    ("philippine_peaks", "silver"), ("top_of_the_world", "gold"), ("rock_scholar", "silver"),  # Mountains Normal badges (D-062)
 ]
 CX, CY, R = 16.0, 13.5, 13.0  # Medal centre and outer radius
 

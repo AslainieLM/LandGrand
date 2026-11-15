@@ -12,9 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 87960109b494a474ea7bbedc037a57a0
   - enabled: 1
-    path: Assets/Scenes/Profile.unity
-    guid: f9416a31c8ee4b343b042eb15271988b
-  - enabled: 1
     path: Assets/Scenes/LandformMap.unity
     guid: 822b7116cf8bb494a969487552e626f2
   - enabled: 1
@@ -23,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelSelection.unity
     guid: c6253e709eab1d94895aa4ad261859e5
+  - enabled: 1
+    path: Assets/Scenes/Profile.unity
+    guid: f9416a31c8ee4b343b042eb15271988b
   - enabled: 1
     path: Assets/Scenes/Lesson.unity
     guid: c8c967a1c2890894789ce8ed19ce042c

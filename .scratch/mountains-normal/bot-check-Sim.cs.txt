@@ -1,0 +1,150 @@
+// Scratch physics bot for Mountains Normal (not project code). Same motor numbers as ExplorerMotor.
+record struct R(float x, float y, float w, float h) {
+    public float xMax => x + w; public float yMax => y + h;
+    public bool Overlaps(R o) => o.xMax > x && o.x < xMax && o.yMax > y && o.y < yMax;
+}
+record Pit(float X, float W);
+record Boulder(float X, bool Big);
+record Ledge(float X, float Top, float W);
+record Crumble(float X, float Top);           // 32 wide
+record Rock(float X, float Offset);           // X = middle of the landing spot
+record Platform(float X0, float X1, float Top); // left edge moves X0..X1, 48 wide
+record Wind(float X, float W, float Offset);
+record Vent(float X);                         // 24 wide
+record Pickup(string Kind, float X, float Y); // X = middle, Y = bottom
+record Lvl(string Name, float Width, float Goal, float[] Checkpoints, Pit[] Pits, float[] Spikes, Boulder[] Boulders, Ledge[] Ledges,
+           Crumble[] Crumbles, Rock[] Rocks, Platform[] Platforms, Wind[] Winds, Vent[] Vents, Pickup[] Pickups);
+
+static class Rules {
+    public const float CrumbleBreak = 0.5f, CrumbleReturn = 3f;
+    public const float RockCycle = 3f, RockFallStart = 1.2f, RockLand = 1.5f, RockGone = 1.65f;
+    public const float PlatformSpeed = 40f;
+    public const float WindCycle = 4f, WindWarn = 2f, WindPush = 2.6f, WindSpeed = 40f;
+    public const float VentCycle = 2f, VentPuffAt = 1.55f, VentLaunch = 480f;
+    static float Phase(float t, float cycle, float offset) => ((t + offset) % cycle + cycle) % cycle;
+    public static float RockY(Rock r, float t) { float p = Phase(t, RockCycle, r.Offset); if (p < RockFallStart || p >= RockGone) return float.NaN; if (p >= RockLand) return 0; return 270f * (1 - (p - RockFallStart) / (RockLand - RockFallStart)); }
+    public static float RockPhase(Rock r, float t) => Phase(t, RockCycle, r.Offset);
+    public static float PlatformX(Platform p, float t) { float span = p.X1 - p.X0; if (span <= 0) return p.X0; float d = (t * PlatformSpeed) % (2 * span); return p.X0 + (d < span ? d : 2 * span - d); }
+    public static bool Pushing(Wind w, float t) => Phase(t, WindCycle, w.Offset) >= WindPush;
+    public static float WindPhase(Wind w, float t) => Phase(t, WindCycle, w.Offset);
+    public static bool VentPuff(float t) => Phase(t, VentCycle, 0) >= VentPuffAt;
+}
+
+class Sim {
+    public Lvl L; public float px, py, vx, vy, t; public bool grounded, jumpedFromGround, airJumpUsed; float lastGrounded = -1;
+    const float W = 12, H = 26, walk = 72, g = 900, maxFall = 420, jump = 290, dj = 230, coyote = 0.08f;
+    List<R> statics = new(); public List<R> spikes = new();
+    float[] crumbleTouched; float[] crumbleBroke; int standingPlatform = -1;
+    public Sim(Lvl l, float t0 = 0) {
+        L = l; t = t0; crumbleTouched = Enumerable.Repeat(-1f, l.Crumbles.Length).ToArray(); crumbleBroke = Enumerable.Repeat(-99f, l.Crumbles.Length).ToArray();
+        float from = 0; foreach (var p in l.Pits.OrderBy(p => p.X).Append(new Pit(l.Width, 0))) { statics.Add(new R(from, -64, p.X - from, 64)); from = p.X + p.W; }
+        foreach (var b in l.Boulders) { float bw = b.Big ? 48 : 32, bh = b.Big ? 36 : 24; statics.Add(new R(b.X + 1, 0, bw - 2, bh - 1)); }
+        foreach (var e in l.Ledges) statics.Add(new R(e.X, e.Top - 10, e.W, 10));
+        foreach (var s in l.Spikes) spikes.Add(new R(s + 3, 0, 26, 8));
+        px = 40; py = 0;
+    }
+    public void Place(float x, float y) { px = x; py = y; vx = vy = 0; grounded = false; }
+    bool CrumbleSolid(int i) => !(t - crumbleBroke[i] < Rules.CrumbleReturn);
+    public IEnumerable<(R r, int plat)> Solids() {
+        foreach (var s in statics) yield return (s, -1);
+        for (int i = 0; i < L.Crumbles.Length; i++) if (CrumbleSolid(i)) yield return (new R(L.Crumbles[i].X, L.Crumbles[i].Top - 10, 32, 10), -1);
+        for (int i = 0; i < L.Platforms.Length; i++) yield return (new R(Rules.PlatformX(L.Platforms[i], t), L.Platforms[i].Top - 10, 48, 10), i);
+    }
+    public float Push() => L.Winds.Any(w => px > w.X && px < w.X + w.W && Rules.Pushing(w, t)) ? -Rules.WindSpeed : 0;
+    public void Step(int dir, bool press, float dt = 1f / 60f) {
+        if (standingPlatform >= 0) { var p = L.Platforms[standingPlatform]; px += Rules.PlatformX(p, t + dt) - Rules.PlatformX(p, t); }
+        t += dt; vx = dir * walk + Push();
+        bool canGround = grounded || (t - lastGrounded <= coyote && !jumpedFromGround);
+        if (press && canGround) { vy = jump; jumpedFromGround = true; grounded = false; }
+        else if (press && !grounded && !airJumpUsed) { vy = dj; airJumpUsed = true; }
+        vy = Math.Max(vy - g * dt, -maxFall); MoveX(vx * dt); MoveY(vy * dt); px = Math.Clamp(px, W / 2, L.Width - W / 2);
+        for (int i = 0; i < L.Crumbles.Length; i++) {
+            var c = L.Crumbles[i]; bool on = grounded && Math.Abs(py - c.Top) < 0.5f && px + W / 2 > c.X && px - W / 2 < c.X + 32 && CrumbleSolid(i);
+            if (on && crumbleTouched[i] < 0) crumbleTouched[i] = t;
+            if (crumbleTouched[i] >= 0 && t - crumbleTouched[i] >= Rules.CrumbleBreak) { crumbleBroke[i] = t; crumbleTouched[i] = -1; }
+        }
+        if (grounded) foreach (var v in L.Vents) if (px > v.X && px < v.X + 24 && Math.Abs(py) < 0.5f && Rules.VentPuff(t)) Launch(Rules.VentLaunch);
+    }
+    public void Launch(float s) { vy = s; grounded = false; jumpedFromGround = true; airJumpUsed = false; standingPlatform = -1; }
+    void MoveX(float dx) { if (dx == 0) return; float next = px + dx; var box = new R(next - W / 2, py + 0.01f, W, H - 0.02f);
+        foreach (var (s, _) in Solids()) { if (!box.Overlaps(s)) continue; next = dx > 0 ? s.x - W / 2 : s.xMax + W / 2; box = box with { x = next - W / 2 }; } px = next; }
+    void MoveY(float dy) { float next = py + dy, left = px - W / 2, right = px + W / 2; bool landed = false; int plat = -1;
+        if (dy <= 0) { foreach (var (s, pi) in Solids()) { if (right <= s.x || left >= s.xMax) continue; if (py >= s.yMax - 0.01f && next <= s.yMax) { next = s.yMax; landed = true; plat = pi; } } }
+        else foreach (var (s, _) in Solids()) { if (right <= s.x || left >= s.xMax) continue; float head = py + H; if (head <= s.y + 0.01f && next + H > s.y) { next = s.y - H; vy = 0; } }
+        py = next; grounded = landed; standingPlatform = landed ? plat : -1;
+        if (landed) { vy = 0; lastGrounded = t; jumpedFromGround = false; airJumpUsed = false; } }
+    public R Body => new(px - W / 2, py, W, H);
+    public bool OnSpikes() => spikes.Any(s => Body.Overlaps(s));
+    public bool HitByRock() => L.Rocks.Any(r => { float y = Rules.RockY(r, t); return !float.IsNaN(y) && Body.Overlaps(new R(r.X - 8, y, 16, 16)); });
+    public bool InPit => py < -40;
+    public bool GroundAt(float x) => Solids().Any(p => x > p.r.x && x < p.r.xMax && p.r.yMax <= 0.5f && p.r.yMax > -0.5f);
+    public bool BlockedAhead(float d) { var b = new R(px - W / 2 + d, py + 0.5f, W, H - 1); return Solids().Any(s => b.Overlaps(s.r)); }
+    public bool OnPlatform => standingPlatform >= 0;
+    public int PlatformIndex => standingPlatform;
+}
+
+static class Program {
+    static (bool ok, float t, string why) Bot(Lvl l) {
+        var s = new Sim(l); bool prev = false; float stuckX = -1, stuckT = 0;
+        while (s.t < 180f) {
+            int dir = 1;
+            foreach (var r in l.Rocks) { float dx = r.X - s.px, ph = Rules.RockPhase(r, s.t); if (dx > 10 && dx < 44 && ph > 0.7f && ph < Rules.RockGone + 0.05f && s.grounded) dir = 0; }
+            var pitAheadObj = l.Pits.FirstOrDefault(p => p.X - s.px > 0 && p.X - s.px < 14);
+            if (s.grounded && !s.OnPlatform && pitAheadObj != null) {
+                int pi = Array.FindIndex(l.Platforms, p => Math.Abs(p.X0 - pitAheadObj.X) < 1 && p.Top == 0);
+                if (pi >= 0) { float x = Rules.PlatformX(l.Platforms[pi], s.t); dir = (s.px < pitAheadObj.X - 10 || x - l.Platforms[pi].X0 < 4) ? 1 : 0; }
+                foreach (var w in l.Winds) if (s.px > w.X - 80 && s.px < w.X + w.W) { float ph = Rules.WindPhase(w, s.t); if (ph > Rules.WindWarn - 1.0f) dir = 0; }
+            }
+            if (s.OnPlatform) { var p = l.Platforms[s.PlatformIndex]; float x = Rules.PlatformX(p, s.t); dir = x > p.X1 - 24 ? 1 : 0; if (s.px < x + 18) dir = 1; }
+            bool platPit = pitAheadObj != null && l.Platforms.Any(p => Math.Abs(p.X0 - pitAheadObj.X) < 1 && p.Top == 0);
+            bool pitAhead = s.grounded && dir == 1 && !s.GroundAt(s.px + 7) && !platPit && !s.OnPlatform;
+            bool spikeAhead = s.grounded && dir == 1 && s.spikes.Any(k => k.x - s.px < 22 && k.x - s.px > 0);
+            bool wall = s.grounded && dir == 1 && s.BlockedAhead(6);
+            bool want = (wall || pitAhead || spikeAhead) && s.grounded;
+            bool dbl = !s.grounded && !s.airJumpUsed && s.vy <= 0 && (!s.GroundAt(s.px + 10) || s.spikes.Any(k => k.x - s.px < 30 && k.xMax > s.px) || s.BlockedAhead(4));
+            if (!s.grounded) dir = 1;
+            bool press = (want || dbl) && !prev; prev = press;
+            s.Step(dir, press);
+            if (s.OnSpikes()) return (false, s.t, $"spikes at x={s.px:F0}");
+            if (s.HitByRock()) return (false, s.t, $"rock at x={s.px:F0}");
+            if (s.InPit) return (false, s.t, $"pit at x={s.px:F0}");
+            if (s.px >= l.Goal - 8) return (true, s.t, "goal");
+            foreach (var m in new[] { 1000f, 2000f, 3000f, 4000f, 5000f, 6000f, 7000f }) if (s.px >= m && s.px - 72f / 60 * 1.01f < m && l.Name.StartsWith("N3")) Console.Write($"[{m}@{s.t:F0}s] ");
+            if (Math.Abs(s.px - stuckX) < 0.5f) { stuckT += 1f / 60f; if (stuckT > 12f) return (false, s.t, $"stuck at x={s.px:F0},y={s.py:F0}"); } else { stuckX = s.px; stuckT = 0; }
+        }
+        return (false, s.t, "time");
+    }
+
+    // Can some (start time, start spot, jump frame, double-jump delay, direction) touch the pickup and land safely?
+    static bool Reach(Lvl l, Pickup k) {
+        var box = new R(k.X - 12, k.Y, 24, 24);
+        var starts = new List<(float x, float y)>();
+        foreach (var dx in new[] { -120f, -90f, -60f, -40f, -20f, 20f, 40f, 60f }) starts.Add((k.X + dx, 0));
+        foreach (var e in l.Ledges) if (Math.Abs(e.X - k.X) < 300) starts.Add((e.X + e.W / 2, e.Top));
+        foreach (var c in l.Crumbles) if (Math.Abs(c.X - k.X) < 300) starts.Add((c.X + 16, c.Top));
+        foreach (var p in l.Platforms) if (Math.Abs(p.X0 - k.X) < 400) starts.Add((-1, p.Top));
+        foreach (var (sx0, sy) in starts) foreach (var t0 in new[] { 0f, 0.5f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4.5f, 6f })
+            foreach (int dir in new[] { 1, -1 }) for (int j = 0; j < 40; j += 3) for (int d = -1; d < 40; d += 3) {
+                var s = new Sim(l, t0); float sx = sx0;
+                if (sx0 < 0) { var p = l.Platforms.First(q => Math.Abs(q.X0 - k.X) < 400 && q.Top == sy); sx = Rules.PlatformX(p, t0) + 24; }
+                s.Place(sx, sy); for (int q = 0; q < 6; q++) s.Step(0, false);
+                if (!s.grounded || s.InPit || s.OnSpikes()) break;
+                bool got = false;
+                for (int f = 0; f < 160; f++) {
+                    s.Step(dir, f == j || f == j + d);
+                    if (s.InPit || s.OnSpikes() || s.HitByRock()) break;
+                    if (s.Body.Overlaps(box)) got = true;
+                    if (got && s.grounded) return true;
+                }
+            }
+        return false;
+    }
+
+    static void Main() {
+        foreach (var l in NormalLevels.All) {
+            var r = Bot(l);
+            var missing = l.Pickups.Where(k => !Reach(l, k)).Select(k => $"{k.Kind}({k.X},{k.Y})").ToList();
+            Console.WriteLine($"{l.Name}: bot {(r.ok ? "GOAL" : "FAILED")} {r.t:F1}s ({r.why}); pickups {l.Pickups.Length - missing.Count}/{l.Pickups.Length} reachable" + (missing.Count > 0 ? " MISSING " + string.Join(" ", missing) : ""));
+        }
+    }
+}

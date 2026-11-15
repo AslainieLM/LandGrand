@@ -19,7 +19,7 @@ using M = global::MainMenuBuilder; // Short name for the Main Menu builder, whos
 /// Level positions are level pixels: x goes right from the left edge, y goes up from the ground line (the top of the grass).
 /// Screen (UI) positions are pixels on the 480x270 screen, measured from the top-left corner.
 /// </summary>
-public static class LevelBuilder // Makes the level scenes
+public static partial class LevelBuilder // Makes the level scenes; the theme art lives in LevelThemes.cs
 {
     const string SpriteFolder = "Assets/Art/Level/Sprites/"; // Level PNGs
     const string ArtScript = "Tools/Art/make_level_art.py"; // Script that draws them
@@ -75,7 +75,7 @@ public static class LevelBuilder // Makes the level scenes
     static void BuildLevel(LevelData level, string path, TMPro.TMP_FontAsset font) // Builds one level scene from its data
     {
         var layout = level.Layout; // Width, theme, boulders, ledges and vents
-        var theme = layout.Theme; // Meadow, Volcanic or FoldedRock
+        var art = ArtFor(layout.Theme); // The ground, ledge, boulder, goal and prop art of this level theme (LevelThemes.cs)
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Start from an empty scene
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
         var background = new GameObject("Background").transform; // Holds the moving mountain layers
@@ -102,8 +102,8 @@ public static class LevelBuilder // Makes the level scenes
         {
             var piece = new Rect(groundFrom, -64f, pit.x - groundFrom, 64f); // One piece of ground
             solids.Add(piece); // The explorer can stand on it
-            Tiled("Ground Top", Themed("grass_top", "volcanic_top", "fold_top", theme), new Rect(piece.x, -8f, piece.width, 8f), 5, geometry.transform); // The ground's top edge
-            Tiled("Soil", Themed("soil", "volcanic_soil", "fold_soil", theme), new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
+            Tiled("Ground Top", art.GroundTop, new Rect(piece.x, -8f, piece.width, 8f), 5, geometry.transform); // The ground's top edge
+            Tiled("Soil", art.Soil, new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
             if (pit.w > 0f) Tiled("Pit", "pit_fill", new Rect(pit.x, -64f, pit.w, 64f), 3, geometry.transform); // Dark inside of the pit
             groundFrom = pit.x + pit.w; // The next piece starts after the pit
         }
@@ -116,8 +116,8 @@ public static class LevelBuilder // Makes the level scenes
 
         foreach (var b in layout.Boulders) // Each boulder
         {
-            string name = b.Size == BoulderSize.Small ? "boulder_small" : "boulder_big"; // The meadow picture's name
-            var sprite = S(Themed(name, name + "_volcanic", name + "_fold", theme)); // Its picture for this theme
+            string name = b.Size == BoulderSize.Small ? "boulder_small" : "boulder_big"; // The boulder's base name
+            var sprite = S(name + art.BoulderEnding); // Its picture for this theme
             float w = sprite.rect.width, h = sprite.rect.height; // Its size in pixels
             var r = M.Renderer(name, sprite, 6, geometry.transform); // Draws the boulder
             r.transform.position = LevelGeometry.ToWorld(b.X + w / 2f, h / 2f); // Sitting on the ground
@@ -126,12 +126,12 @@ public static class LevelBuilder // Makes the level scenes
         foreach (var l in layout.Ledges) // Each ledge
         {
             var r = new Rect(l.X, l.Top - 10f, l.Width, 10f); // Its shape: a 10-pixel stone slab
-            Tiled("Ledge", Themed("ledge", "ledge_volcanic", "ledge_fold", theme), r, 6, geometry.transform); // Draws the ledge
+            Tiled("Ledge", art.Ledge, r, 6, geometry.transform); // Draws the ledge
             solids.Add(r); // Solid like a boulder: it blocks the sides and the head, and holds the explorer from above, so nobody walks through it
         }
         geometry.solids = solids.ToArray(); // Ground, boulders and ledges
 
-        BuildGoal(level, theme, geometry.transform); // The cave, arch or stone pile, with its flag
+        BuildGoal(level, art, geometry.transform); // The cave, arch or stone pile, with its flag
         var checkpoint = M.Renderer("Checkpoint Flag", S("checkpoint_off"), 6, geometry.transform); // The mid-level flag, not reached yet
         checkpoint.transform.position = LevelGeometry.ToWorld(level.Checkpoint.X, 14f); // Its 28-pixel height sits on the ground
 
@@ -148,7 +148,7 @@ public static class LevelBuilder // Makes the level scenes
         explorer.dustFrames = Enumerable.Range(0, 3).Select(i => Spr($"Dust/dust_{i:00}")).ToArray(); // Dust puff for the double jump
 
         BuildVents(layout, geometry.transform); // Steam vents with their puffs (Easy 2)
-        BuildProps(level, layout, pits, geometry.transform, explorer); // Decoration only: lava cracks, wisps, snow, the eagle
+        BuildProps(level, pits, geometry.transform, explorer); // Decoration only: lava cracks, wisps, snow, the eagle
 
         var spots = new List<PickupSpot>(); // The collectibles placed in the level
         for (int i = 0; i < level.Pickups.Count; i++) // One object per pickup, in the order of LevelData
@@ -183,59 +183,42 @@ public static class LevelBuilder // Makes the level scenes
         controller.number = level.Number; // Its number
         controller.explorer = explorer; // The explorer
         controller.touchControls = controls.gameObject; // Hidden after the goal
-        BuildResult(level, controller, root, font); // The Result Screen panel
-        controller.pickups = spots.ToArray(); // The collectibles
-        controller.hitSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_hit.wav"); // Trap or pit
-        controller.checkpointSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_checkpoint.wav"); // Flag reached
-        if (controller.hitSound == null || controller.checkpointSound == null) Debug.LogError("Missing sfx_hit.wav or sfx_checkpoint.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
-        controller.tickSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_tick.wav"); // Countdown tick in the last 10 seconds (D-058)
-        if (controller.tickSound == null) Debug.LogError("Missing sfx_tick.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        var parts = controller.gameObject; // The parts sit on the same object as the controller, one Inspector box each
+        var hazards = controller.hazards = parts.AddComponent<HazardWatcher>(); // Checkpoint, spikes and pits
+        var collector = controller.collector = parts.AddComponent<PickupCollector>(); // Items, counter and pop-up
+        var timer = controller.timer = parts.AddComponent<LevelTimer>(); // The countdown
+        var menus = controller.menus = parts.AddComponent<LevelMenus>(); // Pause and Time's up
+        var bar = controller.progressBar = parts.AddComponent<TrailProgressBar>(); // The trail bar
+        controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
+        BuildResult(level, controller.result, root, font); // The Result Screen panel
+        collector.pickups = spots.ToArray(); // The collectibles
+        controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Chimes for items, stars and badges
+        hazards.hitSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_hit.wav"); // Trap or pit
+        hazards.checkpointSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_checkpoint.wav"); // Flag reached
+        if (hazards.hitSound == null || hazards.checkpointSound == null) Debug.LogError("Missing sfx_hit.wav or sfx_checkpoint.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
+        timer.tickSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_tick.wav"); // Countdown tick in the last 10 seconds (D-058)
+        if (timer.tickSound == null) Debug.LogError("Missing sfx_tick.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
         if (layout.Vents.Count > 0) // Only levels with vents need the hiss
         {
             controller.steamSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_steam.wav"); // The vent puff
             if (controller.steamSound == null) Debug.LogError("Missing sfx_steam.wav. Run: python Tools/Audio/make_mountains_audio.py"); // Say what to do
         }
-        controller.spikeAreas = spikeAreas.ToArray(); // The spike traps
-        controller.checkpointFlag = checkpoint; // The flag picture
-        controller.checkpointOnSprite = S("checkpoint_on"); // The raised flag
+        hazards.spikeAreas = spikeAreas.ToArray(); // The spike traps
+        hazards.checkpointFlag = checkpoint; // The flag picture
+        hazards.checkpointOnSprite = S("checkpoint_on"); // The raised flag
         var flash = M.Rect("Hazard Flash", root, K.CanvasCenter, K.CanvasCenter); // Full-screen red flash when the explorer is sent back
         flash.sizeDelta = new Vector2(480f, 270f); // Covers the screen
-        controller.hazardFlash = flash.gameObject.AddComponent<Image>(); // The flash picture
-        controller.hazardFlash.color = new Color(0.9f, 0.1f, 0.1f, 0f); // See-through until needed
-        controller.hazardFlash.raycastTarget = false; // Never blocks taps
-        BuildCollecting(level, controller, root, font); // The counter at the top left and the first-find pop-up
-        BuildTimerAndMenus(level, controller, root, font); // The countdown, the pause button, the pause menu and the Time up panel
+        hazards.hazardFlash = flash.gameObject.AddComponent<Image>(); // The flash picture
+        hazards.hazardFlash.color = new Color(0.9f, 0.1f, 0.1f, 0f); // See-through until needed
+        hazards.hazardFlash.raycastTarget = false; // Never blocks taps
+        BuildCollecting(level, collector, root, font); // The counter at the top left and the first-find pop-up
+        BuildTimerAndMenus(level, timer, menus, bar, root, font); // The countdown, the pause button, the pause menu and the Time up panel
         controller.banner = BuildBanner(root, font); // The level start banner, over the play area (D-055)
         K.Wire(controller, root, font, music, group); // Guide panel, music, click and canvas group
 
         K.FixFonts(); // Right pixel font on every text, never TextMeshPro's smooth default font
         Directory.CreateDirectory(Path.GetDirectoryName(path)); // Make the Scenes folder if it is missing
         EditorSceneManager.SaveScene(scene, path); // Save the scene
-    }
-
-    /// <summary>Picks the sprite name for a level theme: the meadow name, or the Volcanic or Folded rock version.</summary>
-    static string Themed(string meadow, string volcanic, string folded, LevelTheme theme) => theme == LevelTheme.Volcanic ? volcanic : theme == LevelTheme.FoldedRock ? folded : meadow; // One name per theme
-
-    static void BuildGoal(LevelData level, LevelTheme theme, Transform parent) // The end of the level: a cave, a lava-rock arch or a summit stone pile, with the goal flag
-    {
-        float goalX = level.Goal.X; // The goal from the level data
-        if (theme == LevelTheme.Volcanic) // Volcano Trail
-        {
-            var arch = M.Renderer("Arch", S("arch"), 4, parent); // Lava-rock arch the explorer walks under
-            arch.transform.position = LevelGeometry.ToWorld(goalX + 12f, 28f); // Its 56-pixel height sits on the ground; its open middle starts at the goal
-        }
-        else if (theme == LevelTheme.FoldedRock) // Folded Peaks
-        {
-            var cairn = M.Renderer("Cairn", S("cairn"), 4, parent); // Summit stone pile
-            cairn.transform.position = LevelGeometry.ToWorld(goalX + 24f, 22f); // Its 44-pixel height sits on the ground, just past the goal
-        }
-        else // The meadow trail
-        {
-            var cave = M.Renderer("Cave", S("cave"), 4, parent); // Cave entrance at the end
-            cave.transform.position = LevelGeometry.ToWorld(goalX + 20f, 28f); // Its 56-pixel height sits on the ground; its opening is at the goal
-        }
-        var goalFlag = M.Renderer("Goal Flag", S("flag"), 6, parent); // Flag before the goal
-        goalFlag.transform.position = LevelGeometry.ToWorld(goalX - 28f, 14f); // Just before the goal; its 28-pixel height sits on the ground
     }
 
     static void BuildVents(LevelLayout layout, Transform parent) // Each steam vent: its rim in the ground, a warning wisp and a puff above it (D-055)
@@ -257,53 +240,6 @@ public static class LevelBuilder // Makes the level scenes
             view.steam.transform.position = LevelGeometry.ToWorld(mid, 32f); // Its 64-pixel height starts at the ground line
             view.warnFrames = warnFrames; // Wisp pictures
             view.puffFrames = puffFrames; // Puff pictures
-        }
-    }
-
-    static void BuildProps(LevelData level, LevelLayout layout, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Living props: decoration only, no effect on play (D-055)
-    {
-        bool OverPit(float x, float halfWidth) => pits.Any(p => x + halfWidth > p.Place.X && x - halfWidth < p.Place.X + p.Width); // Keeps props off the gaps
-        if (layout.Theme == LevelTheme.Volcanic) // Volcano Trail: glowing cracks in the rock and faint fumaroles behind the trail
-        {
-            var crackFrames = Enumerable.Range(0, 4).Select(i => S($"Props/lava_crack_{i:00}")).ToArray(); // Glow cycle
-            var wispFrames = Enumerable.Range(0, 4).Select(i => S($"Props/wisp_{i:00}")).ToArray(); // Faint wisp cycle
-            int n = 0; // Counts the props, so neighbours glow out of step
-            for (float x = 180f; x < layout.Width - 120f; x += 340f) // A crack about every 340 pixels
-            {
-                if (OverPit(x, 12f)) continue; // Never over a pit
-                var crack = M.Renderer("Lava Crack", crackFrames[0], 6, parent); // In front of the rock
-                crack.transform.position = LevelGeometry.ToWorld(x, -22f - (n % 3) * 9f); // At different depths in the rock face
-                Loop(crack.gameObject, crackFrames, 3f + (n % 3) * 0.7f); // Slow glow, each a little different
-                n++; // Next prop
-            }
-            for (float x = 420f; x < layout.Width - 200f; x += 760f) // A wisp about every 760 pixels
-            {
-                if (OverPit(x, 8f) || layout.Vents.Any(v => Mathf.Abs(v.CenterX - x) < 60f)) continue; // Not over a pit, and well away from the real vents
-                var wisp = M.Renderer("Fumarole Wisp", wispFrames[0], 4, parent); // Behind boulders and the explorer
-                wisp.transform.position = LevelGeometry.ToWorld(x, 12f); // Its 24-pixel height starts at the ground line
-                Loop(wisp.gameObject, wispFrames, 5f + (n % 2)); // Gentle rising
-                n++; // Next prop
-            }
-        }
-        else if (layout.Theme == LevelTheme.FoldedRock) // Folded Peaks: snow near the summit and an eagle that flies off
-        {
-            var snow = new GameObject("Summit Snow").AddComponent<SummitSnow>(); // Drifting flakes
-            snow.transform.SetParent(parent, false); // Keep it under the level
-            snow.flakeSprites = new[] { S("Props/snow_00"), S("Props/snow_01") }; // Small and big flakes
-            snow.fromX = layout.Width - 1500f; // The last stretch before the summit
-            snow.toX = layout.Width; // Up to the end
-            var bigBoulders = layout.Boulders.Where(b => b.Size == BoulderSize.Big && b.X < level.Goal.X).OrderByDescending(b => b.X).ToList(); // Big boulders before the summit, nearest the summit first
-            if (bigBoulders.Count > 0) // A boulder to sit on
-            {
-                var perch = bigBoulders[0]; // The last big boulder before the summit
-                var eagle = new GameObject("Eagle").AddComponent<EagleFlyOff>(); // The startled eagle
-                eagle.transform.SetParent(parent, false); // Keep it under the level
-                eagle.body = M.Renderer("Art", S("Props/eagle_00"), 8, eagle.transform); // Its picture, in front of the boulder
-                eagle.transform.position = LevelGeometry.ToWorld(perch.X + 24f, 36f + 8f); // Standing on top of the 36-pixel boulder
-                eagle.perched = S("Props/eagle_00"); // Sitting
-                eagle.flapFrames = Enumerable.Range(1, 3).Select(i => S($"Props/eagle_{i:00}")).ToArray(); // Flying
-                eagle.explorer = explorer; // Who startles it
-            }
         }
     }
 
@@ -333,14 +269,14 @@ public static class LevelBuilder // Makes the level scenes
         return banner; // The controller plays it
     }
 
-    static void BuildCollecting(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
+    static void BuildCollecting(LevelData level, PickupCollector collector, Transform root, TMPro.TMP_FontAsset font) // Makes the counter and the hidden pop-up
     {
         var c = K.CanvasCenter; // Middle of the screen
         var counterAt = new Vector2(74f, 30f); // Middle of the top-left panel: 6 pixels from the left and top edges (decisions D-049, D-050)
         var counter = M.Panel("Counter", root, counterAt, new Vector2(136f, 46f)); // Cream panel at the top left, x 6 to 142, with two 22-pixel lines: the level name, then the count
-        controller.levelNameLabel = M.Label("Level Name", counter, font, level.Episode + " " + level.Difficulty + " " + level.Number, new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is, for example "Mountains Easy 2"
+        collector.levelNameLabel = M.Label("Level Name", counter, font, level.Episode + " " + level.Difficulty + " " + level.Number, new Vector2(14f + 60f, 19f), counterAt, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Which level this is, for example "Mountains Easy 2"
         M.Picture("Gem", counter, S("icon_gem"), new Vector2(20f, 41f), counterAt); // Collectible icon, under the name
-        controller.counterLabel = M.Label("Count", counter, font, "0/" + level.Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
+        collector.counterLabel = M.Label("Count", counter, font, "0/" + level.Pickups.Count, new Vector2(30f + 20f, 41f), counterAt, new Vector2(40f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // The 0/5 count, right of the gem
 
         counter.SetAsFirstSibling(); // Draw the counter behind the Result Screen and the pop-up
         var find = M.Rect("Find Item", root, c, c); // Holder of the whole pop-up, hidden at the start
@@ -351,11 +287,11 @@ public static class LevelBuilder // Makes the level scenes
         var panel = M.Panel("Panel", find, c, new Vector2(360f, 176f)); // Cream pop-up panel, x 60 to 420, y 47 to 223, roomy enough for 22-pixel text (decision D-050)
         M.Label("Heading", panel, font, "You found an item!", new Vector2(240f, 64f), c, new Vector2(320f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // Title
         M.Picture("Slot", panel, LessonSprite("item_slot"), new Vector2(92f, 98f), c); // Frame behind the picture
-        controller.findPicture = M.Picture("Picture", panel, null, new Vector2(92f, 98f), c); // The item picture; set when the pop-up opens
-        controller.findPicture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
-        controller.findName = M.ReadingLabel("Name", panel, "", new Vector2(216f, 98f), c, new Vector2(200f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name, right of the picture, in the reading font (D-051)
-        controller.findDescription = M.ReadingLabel("Description", panel, "", new Vector2(240f, 158f), c, new Vector2(336f, 72f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description in the reading font (D-051), x 72 to 408, up to three 24-pixel lines from y 122
-        controller.findDescription.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentence wrap onto three lines
+        collector.findPicture = M.Picture("Picture", panel, null, new Vector2(92f, 98f), c); // The item picture; set when the pop-up opens
+        collector.findPicture.rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
+        collector.findName = M.ReadingLabel("Name", panel, "", new Vector2(216f, 98f), c, new Vector2(200f, 22f), Clay, TMPro.TextAlignmentOptions.MidlineLeft); // Item name, right of the picture, in the reading font (D-051)
+        collector.findDescription = M.ReadingLabel("Description", panel, "", new Vector2(240f, 158f), c, new Vector2(336f, 72f), K.Ink, TMPro.TextAlignmentOptions.TopLeft); // Short description in the reading font (D-051), x 72 to 408, up to three 24-pixel lines from y 122
+        collector.findDescription.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentence wrap onto three lines
         var ok = M.Picture("OK", panel, S("btn_ok"), new Vector2(240f, 200f), c); // OK button, bottom of the pop-up
         ok.raycastTarget = true; // Buttons must catch taps
         var button = ok.gameObject.AddComponent<Button>(); // Makes it tappable
@@ -363,34 +299,33 @@ public static class LevelBuilder // Makes the level scenes
         button.targetGraphic = ok; // The picture that changes
         button.spriteState = new SpriteState { pressedSprite = S("btn_ok_pressed") }; // Pushed-in picture
         button.navigation = new Navigation { mode = Navigation.Mode.None }; // No arrow-key moving between buttons
-        controller.findOk = button; // The controller connects it
-        controller.findPanel = find.gameObject; // The controller shows and hides it
-        controller.itemPictures = ItemCatalog.All.Select(k => Item(k.Picture)).ToArray(); // Pictures of every kind
-        controller.sparkleFrames = Enumerable.Range(0, 4).Select(i => Spr($"Sparkle/sparkle_{i:00}")).ToArray(); // Sparkle frames from the start screen
-        controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Pickup chimes
+        collector.findOk = button; // The controller connects it
+        collector.findPanel = find.gameObject; // The controller shows and hides it
+        collector.itemPictures = ItemCatalog.All.Select(k => Item(k.Picture)).ToArray(); // Pictures of every kind
+        collector.sparkleFrames = Enumerable.Range(0, 4).Select(i => Spr($"Sparkle/sparkle_{i:00}")).ToArray(); // Sparkle frames from the start screen
     }
 
-    static void BuildTimerAndMenus(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the countdown, the pause button and the two hidden menus
+    static void BuildTimerAndMenus(LevelData level, LevelTimer timer, LevelMenus menus, TrailProgressBar bar, Transform root, TMPro.TMP_FontAsset font) // Makes the countdown, the pause button and the two hidden menus
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var timer = M.Panel("Timer", root, new Vector2(240f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top centre
+        var timerPanel = M.Panel("Timer", root, new Vector2(240f, 18f), new Vector2(56f, 22f)); // Small cream panel at the top centre
         int limit = level.TimeLimitSeconds; // The countdown's start
-        controller.timerLabel = M.Label("Time", timer, font, (limit / 60) + ":" + (limit % 60).ToString("00"), new Vector2(240f, 18f), new Vector2(240f, 18f), new Vector2(52f, 16f), K.Ink, TMPro.TextAlignmentOptions.Midline); // The countdown
-        controller.pauseButton = SpriteButton("Pause", root, "btn_pause", new Vector2(462f, 19f), c); // Pause button, top right, 6 pixels from the right and top edges
-        BuildProgress(level, controller, root); // The trail bar under the countdown
-        timer.SetAsFirstSibling(); // Draw the countdown behind the pop-up and the result panel
-        controller.pauseButton.transform.SetAsFirstSibling(); // Same for the pause button
+        timer.label = M.Label("Time", timerPanel, font, (limit / 60) + ":" + (limit % 60).ToString("00"), new Vector2(240f, 18f), new Vector2(240f, 18f), new Vector2(52f, 16f), K.Ink, TMPro.TextAlignmentOptions.Midline); // The countdown
+        menus.pauseButton = SpriteButton("Pause", root, "btn_pause", new Vector2(462f, 19f), c); // Pause button, top right, 6 pixels from the right and top edges
+        BuildProgress(level, bar, root); // The trail bar under the countdown
+        timerPanel.SetAsFirstSibling(); // Draw the countdown behind the pop-up and the result panel
+        menus.pauseButton.transform.SetAsFirstSibling(); // Same for the pause button
 
         // Pause and Time's up use icon buttons with a small name under each, like the Main Menu's Settings, Tutorial and Exit (D-057).
         // Panel y 80 to 190: heading at 100, icons at 136 (y 121 to 151), names at 164.
-        controller.pausePanel = MenuPanel("Pause Menu", root, font, "Paused", 110f, out var pauseBox); // Dark backdrop and panel, 240 wide
-        controller.resumeButton = LabelledIcon("Resume", pauseBox, "btn_resume_icon", 172f); // Green play icon: back to the game
-        controller.pauseRetryButton = LabelledIcon("Retry", pauseBox, "btn_retry_icon", 240f); // Circle arrow: start again from the lesson
-        controller.pauseMenuButton = LabelledIcon("Main Menu", pauseBox, "btn_home_icon", 308f); // House: leave to the Main Menu
+        menus.pausePanel = MenuPanel("Pause Menu", root, font, "Paused", 110f, out var pauseBox); // Dark backdrop and panel, 240 wide
+        menus.resumeButton = LabelledIcon("Resume", pauseBox, "btn_resume_icon", 172f); // Green play icon: back to the game
+        menus.pauseRetryButton = LabelledIcon("Retry", pauseBox, "btn_retry_icon", 240f); // Circle arrow: start again from the lesson
+        menus.pauseMenuButton = LabelledIcon("Main Menu", pauseBox, "btn_home_icon", 308f); // House: leave to the Main Menu
 
-        controller.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel, same size
-        controller.timeUpRetryButton = LabelledIcon("Retry", timeUpBox, "btn_retry_icon", 204f); // Circle arrow: start again from the lesson
-        controller.timeUpMenuButton = LabelledIcon("Main Menu", timeUpBox, "btn_home_icon", 276f); // House: leave to the Main Menu
+        menus.timeUpPanel = MenuPanel("Time Up", root, font, "Time" + (char)39 + "s up!", 110f, out var timeUpBox); // Dark backdrop and panel, same size
+        menus.timeUpRetryButton = LabelledIcon("Retry", timeUpBox, "btn_retry_icon", 204f); // Circle arrow: start again from the lesson
+        menus.timeUpMenuButton = LabelledIcon("Main Menu", timeUpBox, "btn_home_icon", 276f); // House: leave to the Main Menu
     }
 
     static Button LabelledIcon(string name, Transform panel, string spriteName, float x) // A 34x30 icon button with its name under it in the reading font (D-051, D-057)
@@ -403,25 +338,25 @@ public static class LevelBuilder // Makes the level scenes
         return button; // The controller connects it
     }
 
-    static void BuildProgress(LevelData level, LevelController controller, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
+    static void BuildProgress(LevelData level, TrailProgressBar bar, Transform root) // Makes the trail bar: start on the left, the checkpoint flag, the goal flag on the right, and the explorer marker (decision D-049)
     {
         var c = K.CanvasCenter; // Middle of the screen
-        var bar = M.Rect("Trail Progress", root, c, c); // Holder of the bar's parts, filling the screen's middle
-        M.Picture("Track", bar, S("progress_track"), new Vector2(240f, 39f), c); // Empty bar from x 168 to 311, rows 36 to 41, just under the countdown
+        var holder = M.Rect("Trail Progress", root, c, c); // Holder of the bar's parts, filling the screen's middle
+        M.Picture("Track", holder, S("progress_track"), new Vector2(240f, 39f), c); // Empty bar from x 168 to 311, rows 36 to 41, just under the countdown
         float left = 169f, width = 142f; // The groove inside the frame: its left edge and width in screen pixels
-        var fill = M.Picture("Fill", bar, S("progress_fill"), new Vector2(left, 39f), c); // Walked part of the bar
+        var fill = M.Picture("Fill", holder, S("progress_fill"), new Vector2(left, 39f), c); // Walked part of the bar
         fill.rectTransform.pivot = new Vector2(0f, 0.5f); // It grows to the right from its left edge
         fill.rectTransform.anchoredPosition = new Vector2(left - c.x, c.y - 39f); // Left edge at the groove's start, rows 37 to 40
         fill.rectTransform.sizeDelta = new Vector2(0f, 4f); // Nothing walked yet; the controller sets the width
         float checkpointX = left + Mathf.Round(level.Checkpoint.X / level.Goal.X * width); // Checkpoint place on the bar
-        controller.progressCheckpoint = M.Picture("Checkpoint", bar, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag; its pole (3 pixels left of the picture's middle) stands at the checkpoint place
-        controller.progressCheckpointOn = S("progress_checkpoint_on"); // Green flag once reached
-        M.Picture("Goal", bar, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the goal
-        controller.progressMarker = M.Picture("Explorer", bar, S("progress_marker"), new Vector2(left, 39f), c).rectTransform; // The explorer marker, in front of the flags
-        controller.progressFill = fill.rectTransform; // The controller widens it
-        controller.progressLeft = left - c.x; // Groove start as a UI offset
-        controller.progressWidth = width; // Groove width
-        bar.SetAsFirstSibling(); // Draw the bar behind the pop-up and the result panel
+        bar.checkpoint = M.Picture("Checkpoint", holder, S("progress_checkpoint_off"), new Vector2(checkpointX + 3f, 36f), c); // Grey flag; its pole (3 pixels left of the picture's middle) stands at the checkpoint place
+        bar.checkpointOn = S("progress_checkpoint_on"); // Green flag once reached
+        M.Picture("Goal", holder, S("progress_goal"), new Vector2(left + width + 3f, 36f), c); // Red flag at the right end: the goal
+        bar.marker = M.Picture("Explorer", holder, S("progress_marker"), new Vector2(left, 39f), c).rectTransform; // The explorer marker, in front of the flags
+        bar.fill = fill.rectTransform; // The controller widens it
+        bar.left = left - c.x; // Groove start as a UI offset
+        bar.width = width; // Groove width
+        holder.SetAsFirstSibling(); // Draw the bar behind the pop-up and the result panel
     }
 
     static GameObject MenuPanel(string name, Transform root, TMPro.TMP_FontAsset font, string heading, float height, out RectTransform panel) // A dark full-screen backdrop with a cream panel and a heading
@@ -449,15 +384,15 @@ public static class LevelBuilder // Makes the level scenes
         return button; // The controller connects it
     }
 
-    static void BuildResult(LevelData level, LevelController controller, Transform root, TMPro.TMP_FontAsset font) // Makes the hidden Result Screen panel
+    static void BuildResult(LevelData level, ResultScreen result, Transform root, TMPro.TMP_FontAsset font) // Makes the hidden Result Screen panel
     {
         var c = K.CanvasCenter; // Middle of the screen
         var panel = M.Panel("Result", root, c, new Vector2(456f, 250f)); // Big cream panel, x 12 to 468, y 10 to 260, laid out for 22-pixel text (decision D-050)
         M.Picture("Heading", panel, S("text_cleared"), new Vector2(240f, 30f), c); // "LEVEL CLEARED!"
-        controller.resultStars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 58f), c)).ToArray(); // Three stars at 2x size
-        controller.starFull = Sel("Trail/star_full"); // Earned star
-        controller.starEmpty = Sel("Trail/star_empty"); // Star not earned
-        BuildBadgeNotice(controller, panel); // "New badge!" to the right of the stars (D-060)
+        result.stars = Enumerable.Range(0, 3).Select(i => StarPicture("Star " + (i + 1), panel, new Vector2(212f + i * 28f, 58f), c)).ToArray(); // Three stars at 2x size
+        result.starFull = Sel("Trail/star_full"); // Earned star
+        result.starEmpty = Sel("Trail/star_empty"); // Star not earned
+        BuildBadgeNotice(result, panel); // "New badge!" to the right of the stars (D-060)
 
         int n = level.Pickups.Count; // How many items the level holds
         var items = new Image[n]; // One picture per item
@@ -468,47 +403,47 @@ public static class LevelBuilder // Makes the level scenes
             items[i] = M.Picture("Item " + (i + 1), panel, null, at, c); // The item picture; set when the result opens
             items[i].rectTransform.sizeDelta = new Vector2(24f, 24f); // Item pictures are 24x24
         }
-        controller.resultItems = items; // The controller fills them
+        result.items = items; // The controller fills them
 
-        controller.goalIcons = new Image[2]; // A tick or cross per goal
-        controller.goalTexts = new TMPro.TMP_Text[2]; // The goal lines
+        result.goalIcons = new Image[2]; // A tick or cross per goal
+        result.goalTexts = new TMPro.TMP_Text[2]; // The goal lines
         for (int i = 0; i < 2; i++) // Both goals, side by side on one row to leave room for the review
         {
             float x = 70f + i * 126f; // Icon place: "Collect 5/5" on the left, "Finish before time runs out" from the middle
-            controller.goalIcons[i] = M.Picture("Goal Icon " + (i + 1), panel, S("icon_tick"), new Vector2(x, 120f), c); // Tick or cross
-            controller.goalTexts[i] = M.ReadingLabel("Goal " + (i + 1), panel, "", new Vector2(x + 10f + 115f, 120f), c, new Vector2(230f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words in the reading font, starting 10 pixels right of the icon
+            result.goalIcons[i] = M.Picture("Goal Icon " + (i + 1), panel, S("icon_tick"), new Vector2(x, 120f), c); // Tick or cross
+            result.goalTexts[i] = M.ReadingLabel("Goal " + (i + 1), panel, "", new Vector2(x + 10f + 115f, 120f), c, new Vector2(230f, 22f), K.Ink, TMPro.TextAlignmentOptions.MidlineLeft); // Goal words in the reading font, starting 10 pixels right of the icon
         }
-        controller.tickSprite = S("icon_tick"); // Goal met
-        controller.crossSprite = S("icon_cross"); // Goal not met
+        result.tickSprite = S("icon_tick"); // Goal met
+        result.crossSprite = S("icon_cross"); // Goal not met
 
-        controller.reviewLabel = M.ReadingLabel("Review", panel, "", new Vector2(240f, 170f), c, new Vector2(424f, 72f), Clay, TMPro.TextAlignmentOptions.Top); // Review sentences in the reading font (D-051), wrapped onto up to three 24-pixel lines from y 134
-        controller.reviewLabel.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentences wrap onto lines
-        controller.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 218f), c, new Vector2(300f, 22f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking, under the review
+        result.reviewLabel = M.ReadingLabel("Review", panel, "", new Vector2(240f, 170f), c, new Vector2(424f, 72f), Clay, TMPro.TextAlignmentOptions.Top); // Review sentences in the reading font (D-051), wrapped onto up to three 24-pixel lines from y 134
+        result.reviewLabel.textWrappingMode = TMPro.TextWrappingModes.Normal; // Let the sentences wrap onto lines
+        result.reviewDraftNote = M.Label("Draft Note", panel, font, "", new Vector2(240f, 218f), c, new Vector2(300f, 22f), DraftRed, TMPro.TextAlignmentOptions.Midline); // Draft marking, under the review
 
         // Buttons left to right (D-059): Back to Map, Replay, Next. Each has its icon before the word.
-        controller.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(22f + S("btn_map").rect.width / 2f, 243f), c); // Map pin: back to the Landform Map, left edge at x 22
-        controller.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(238f, 243f), c); // Circle arrow: start again from the lesson, in the middle
-        controller.continueButton = SpriteButton("Next", panel, "btn_next_level", new Vector2(240f, 243f), c); // Next Level or Next Episode; the controller picks the picture
-        var next = (RectTransform)controller.continueButton.transform; // Its box
+        result.mapButton = SpriteButton("Back to Map", panel, "btn_map", new Vector2(22f + S("btn_map").rect.width / 2f, 243f), c); // Map pin: back to the Landform Map, left edge at x 22
+        result.replayButton = SpriteButton("Replay", panel, "btn_replay", new Vector2(238f, 243f), c); // Circle arrow: start again from the lesson, in the middle
+        result.nextButton = SpriteButton("Next", panel, "btn_next_level", new Vector2(240f, 243f), c); // Next Level or Next Episode; the controller picks the picture
+        var next = (RectTransform)result.nextButton.transform; // Its box
         next.pivot = new Vector2(1f, 0.5f); // Measured from its right edge, so either picture ends at the same place
         next.anchoredPosition = new Vector2(458f - c.x, next.anchoredPosition.y); // Right edge at x 458, 10 pixels inside the panel's right side
-        controller.nextLevelSprite = S("btn_next_level"); // "Next Level"
-        controller.nextLevelPressed = S("btn_next_level_pressed"); // Its pushed-in picture
-        controller.nextEpisodeSprite = S("btn_next_episode"); // "Next Episode"
-        controller.nextEpisodePressed = S("btn_next_episode_pressed"); // Its pushed-in picture
-        controller.resultPanel = panel.gameObject; // The controller shows it at the goal
+        result.nextLevelSprite = S("btn_next_level"); // "Next Level"
+        result.nextLevelPressed = S("btn_next_level_pressed"); // Its pushed-in picture
+        result.nextEpisodeSprite = S("btn_next_episode"); // "Next Episode"
+        result.nextEpisodePressed = S("btn_next_episode_pressed"); // Its pushed-in picture
+        result.panel = panel.gameObject; // The controller shows it at the goal
     }
 
-    static void BuildBadgeNotice(LevelController controller, Transform panel) // The hidden "New badge!" notice: ribbon, medal and name, right of the stars (D-060)
+    static void BuildBadgeNotice(ResultScreen result, Transform panel) // The hidden "New badge!" notice: ribbon, medal and name, right of the stars (D-060)
     {
         var c = K.CanvasCenter; // Middle of the screen
         var notice = M.Rect("New Badge", panel, c, c); // Holder the controller shows
         M.Picture("Ribbon", notice, B("badge_new_ribbon"), new Vector2(396f, 48f), c); // Red "NEW BADGE!" ribbon, x 348 to 444, y 38 to 58
-        controller.badgeNoticePicture = M.Picture("Badge", notice, B("badge_first_steps"), new Vector2(326f, 60f), c); // The medal, x 310 to 342, right of the third star
-        controller.badgeNoticeName = M.ReadingLabel("Name", notice, "", new Vector2(396f, 70f), c, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // Its name under the ribbon, in the reading font
-        controller.badgeNoticeName.textWrappingMode = TMPro.TextWrappingModes.NoWrap; // One line
-        controller.badgePictures = AchievementCatalog.All.Select(a => B("badge_" + a.Id)).ToArray(); // Every earned badge picture
-        controller.badgeNotice = notice.gameObject; // The controller shows it
+        result.badgeNoticePicture = M.Picture("Badge", notice, B("badge_first_steps"), new Vector2(326f, 60f), c); // The medal, x 310 to 342, right of the third star
+        result.badgeNoticeName = M.ReadingLabel("Name", notice, "", new Vector2(396f, 70f), c, new Vector2(120f, 22f), Clay, TMPro.TextAlignmentOptions.Midline); // Its name under the ribbon, in the reading font
+        result.badgeNoticeName.textWrappingMode = TMPro.TextWrappingModes.NoWrap; // One line
+        result.badgePictures = AchievementCatalog.All.Select(a => B("badge_" + a.Id)).ToArray(); // Every earned badge picture
+        result.badgeNotice = notice.gameObject; // The controller shows it
         notice.gameObject.SetActive(false); // Hidden until a badge is earned
     }
 
