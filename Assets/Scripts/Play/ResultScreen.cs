@@ -130,8 +130,10 @@ namespace LandGrand.Play // Level play scripts live here
             { // Starts the summary route
                 GameSession.Episode = level.episode; // The summary uses the finished landform
                 GameSession.DescriptionFromBook = false; // Back goes to the map after a clear
-                level.GoTo("LandformDescription"); // Opens the new review screen
-                return; // The description handles the next landform
+                if (Application.CanStreamedLevelBeLoaded("LandformDescription")) { level.GoTo("LandformDescription"); return; } // Opens the review screen when it is built
+                GameSession.Episode = next.Episode; // Without the review screen, the map opens on the next landform
+                level.GoTo(level.mapScene); // The old route, so Next never breaks
+                return; // Done
             } // Ends the summary route
             if (next.Step == NextStep.None) { level.GoTo(level.levelSelectionScene); return; } // Nothing open: back to the trail
             GameSession.Episode = next.Episode; // The Lesson Screen reads the landform from here

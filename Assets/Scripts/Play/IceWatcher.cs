@@ -22,7 +22,7 @@ namespace LandGrand.Play // Holds the level parts
             if (level == null || level.Run == null) return; // Waits for the attempt
             var explorer = level.explorer; // Reads the position before the motor moves
             var feet = explorer.Position; // Uses the middle of the feet
-            explorer.OnIce = explorer.Grounded && explorer.StandingOn == null && feet.y == 0f && level.Run.Level.Layout.IceZones.Any(zone => zone.Contains(feet.x)); // Only solid ground at height zero can be icy
+            explorer.OnIce = explorer.Grounded && explorer.StandingOn == null && Mathf.Abs(feet.y) < 0.01f && level.Run.Level.Layout.IceZones.Any(zone => zone.Contains(feet.x)); // Only solid ground at height zero can be icy
         } // Ends the ground check
 
         void LateUpdate() // Checks for the start of the slide sound
