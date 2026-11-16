@@ -23,14 +23,14 @@ namespace LandGrand.Play // Level play scripts live here
         public Sprite[] flipFrames; // Curled-up somersault pictures for the double jump (decision D-046)
 
         [Header("Feel (pixels and seconds)")] // Inspector heading for the movement numbers
-        public float walkSpeed = 72f; // Walking speed
+        public float walkSpeed = 84f; // Walking speed, a little faster than the first 72
         public float gravity = 900f; // How fast falling speeds up
         public float maxFallSpeed = 420f; // Fastest fall
         public float jumpSpeed = 290f; // First jump: about 47 pixels high
         public float doubleJumpSpeed = 230f; // Double jump: a little lower, about 29 pixels
         public float coyoteSeconds = 0.08f; // A jump still works this long after walking off an edge
         public float jumpBufferSeconds = 0.1f; // A jump pressed this long before landing still happens
-        public float walkFramesPerSecond = 10f; // Walk animation speed
+        public float walkFramesPerSecond = 12f; // Walk animation speed, raised with the walking speed so the feet keep pace
         public float flipSeconds = 0.3f; // How long the somersault lasts
         public Vector2 size = new Vector2(12f, 26f); // Body box: width and height
         public float fallOutY = -120f; // Falling below this puts the explorer back at the respawn point

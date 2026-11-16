@@ -2172,14 +2172,14 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3d3b5a512fd37b8498c0b19ae246ee41, type: 3}
   - {fileID: 21300000, guid: 18a071038ac9a4246b7981e399ed569d, type: 3}
   - {fileID: 21300000, guid: d6239c9234478374bb53e6bb7e7c394d, type: 3}
-  walkSpeed: 72
+  walkSpeed: 84
   gravity: 900
   maxFallSpeed: 420
   jumpSpeed: 290
   doubleJumpSpeed: 230
   coyoteSeconds: 0.08
   jumpBufferSeconds: 0.1
-  walkFramesPerSecond: 10
+  walkFramesPerSecond: 12
   flipSeconds: 0.3
   size: {x: 12, y: 26}
   fallOutY: -120

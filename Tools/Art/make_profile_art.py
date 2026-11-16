@@ -141,6 +141,46 @@ SYMBOLS = {  # One pattern per badge
         "#..#..#..#..#.", "##.##.##.##.##", "##############", "##############", "..............",
         "......o.......", ".....ooo......", "....ooooo.....", "...ooooooo....", "..ooooooooo...",
         ".ooooooooooo..", "ooooooooooooo."],
+    "pasture_pal": [  # A goat grazing (D-066, Hills Easy 2)
+        "..............", "..#.........#.", ".##..........#", "###.#########.", "##############",
+        ".#############", "..############", "..############", "..#.#.....#.#.", "..#.#.....#.#.",
+        "oooooooooooooo"],
+    "dune_surfer": [  # A sand dune with wind lines (D-066, Hills Easy 3)
+        "##....##......", "..##....##....", "..............", ".........#....", ".......#####..",
+        ".....########.", "...######ooooo", ".#######oooooo", "#######ooooooo", "######oooooooo",
+        "##############"],
+    "rolling_star": [  # Three cone hills under a star (D-066, Hills Easy 3 stars)
+        "......#......", ".....###.....", "...#######...", "....##.##....", ".............",
+        "..##.....##..", ".####...####.", "######o######", "#####ooo#####", "####ooooo####",
+        "#############"],
+    "hill_collector": [  # A rock bag with a hill on it (D-066, every Hills kind)
+        "....######....", "...#......#...", "..##########..", ".############.", ".#####oo#####.",
+        ".####oooo####.", ".###oooooo###.", "##oooooooooo##", "##############", "##############",
+        ".############."],
+    "philippine_hills": [  # Two limestone island hills over waves (D-066, Hills Normal 1-4)
+        "..............", "...####.......", "..######..###.", "..######.#####", "...####..#####",
+        "...o##o...###.", "....##....o#o.", "....##.....#..", "oo.oo.oo.oo.oo", ".oo.oo.oo.oo.o",
+        "oooooooooooooo"],
+    "balloon_rider": [  # A hot-air balloon (D-066, Hills Normal 5)
+        "....######....", "..##########..", ".####oo######.", "####oooo######", "####oooo######",
+        ".####oo######.", "..##########..", "....######....", ".....#..#.....", ".....####.....",
+        ".....####....."],
+    "slope_ranger": [  # A boot on a slope (D-066, any Hills Hard level)
+        "...........###", "........######", "......########", "....#####ooo##", "..#######ooo##",
+        ".########oo###", "######o#######", "#####ooo######", "##############", "##############",
+        "##############"],
+    "world_hills": [  # A globe with round hills on top (D-066, Hills Hard 5-7)
+        "...##....##...", "..####..####..", "...##########.", "..##oo####o##.", ".###ooo###oo#.",
+        ".####oo####o#.", ".######o#####.", ".############.", "..##########..", "...########...",
+        ".....####....."],
+    "steady_star": [  # A star over a round hill (D-066, 3 stars on every Hills Hard level)
+        "......#......", ".....###.....", "...#######...", "....#####....", "....##.##....",
+        ".............", "....ooooo....", "..ooooooooo..", ".ooooooooooo.", "ooooooooooooo",
+        "ooooooooooooo"],
+    "hill_master": [  # A crown over a round hill (D-066, all 15 Hills levels)
+        "#..#..#..#..#.", "##.##.##.##.##", "##############", "##############", "..............",
+        ".....oooo.....", "...oooooooo...", "..oooooooooo..", ".oooooooooooo.", "oooooooooooooo",
+        "oooooooooooooo"],
     "perfect_trail": None,  # Three stars in an arc, built by code below
     "mountain_collector": [  # A backpack
         "....######....", "...########...", "..##########..", ".############.", ".############.",
@@ -179,6 +219,9 @@ BADGES = [  # id, tier
     ("perfect_trail", "gold"), ("mountain_collector", "gold"),
     ("philippine_peaks", "silver"), ("top_of_the_world", "gold"), ("rock_scholar", "silver"),  # Mountains Normal badges (D-062)
     ("brave_hiker", "silver"), ("world_peaks", "silver"), ("hard_star", "gold"), ("mountain_master", "gold"),  # Mountains Hard badges (D-065)
+    ("pasture_pal", "silver"), ("dune_surfer", "silver"), ("rolling_star", "gold"), ("hill_collector", "gold"),  # Hills Easy badges (D-066)
+    ("philippine_hills", "silver"), ("balloon_rider", "gold"),  # Hills Normal badges (D-066)
+    ("slope_ranger", "silver"), ("world_hills", "silver"), ("steady_star", "gold"), ("hill_master", "gold"),  # Hills Hard badges (D-066)
 ]
 CX, CY, R = 16.0, 13.5, 13.0  # Medal centre and outer radius
 

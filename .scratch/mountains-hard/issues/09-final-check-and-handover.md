@@ -25,19 +25,19 @@
 
 **Blocked by:** 01–08
 
-**Status:** done; user play checklist remains open
+**Status:** done; the user played the whole checklist on 2026-11-16 and every item passed (fixes in `0726daf`)
 
 **Play checklist for the user** (copy it into the handover):
-- [ ] Each Hard level shows its banner (Mount Mayon to Mauna Kea), its lesson, its theme and its own background
-- [ ] Rolling boulders rumble first, roll left, can be jumped, never appear on top of the explorer, and send you to the last checkpoint
-- [ ] Ice makes the explorer slide; Mayon's first boulder and the Matterhorn's first ice patch are safe places to learn
-- [ ] All three checkpoint flags work, in the level and on the bar
-- [ ] The Result Screen shows 9 items; Next after Hard 7 opens the Landform Description Screen
-- [ ] The Description Screen shows the summary, stars n/45, kinds n/34, badges n/15 and "Hills is now open!"; the fanfare plays
-- [ ] To the Map: Hills unlocks with the padlock animation once; tapping Hills says "Coming soon"
-- [ ] The book button on the Mountains difficulty screen reopens the Description Screen; Back returns
-- [ ] The Profile shows 3 pages of Mountains kinds and 15 badges in a 5×3 grid
-- [ ] Easy and Normal still play as before
+- [x] Each Hard level shows its banner (Mount Mayon to Mauna Kea), its lesson, its theme and its own background
+- [x] Rolling boulders rumble first, roll left, can be jumped, never appear on top of the explorer, and send you to the last checkpoint
+- [x] Ice makes the explorer slide; Mayon's first boulder and the Matterhorn's first ice patch are safe places to learn
+- [x] All three checkpoint flags work, in the level and on the bar
+- [x] The Result Screen shows 9 items; Next after Hard 7 opens the Landform Description Screen
+- [x] The Description Screen shows the summary, stars n/45, kinds n/34, badges n/15 and "Hills is now open!"; the fanfare plays
+- [x] To the Map: Hills unlocks with the padlock animation once; tapping Hills says "Coming soon"
+- [x] The book button on the Mountains difficulty screen reopens the Description Screen; Back returns
+- [x] The Profile shows 3 pages of Mountains kinds and 15 badges in a 5×3 grid
+- [x] Easy and Normal still play as before
 
 **Verified:** Unity EditMode 234 passed, 19 focused Play Mode checks passed, all six builders succeeded, and 191 regenerated assets matched in a temporary copy. The glossary and handover are complete.
 
