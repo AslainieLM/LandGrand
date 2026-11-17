@@ -62,6 +62,7 @@ namespace LandGrand.Play // Level play scripts live here
             }
             Application.targetFrameRate = 60; // Smooth movement; Android would otherwise stay at 30 frames per second
             run = new LevelRun(LevelCatalog.Find(episode, difficulty, number)); // A fresh attempt at this scene's level
+            explorer.GroundWalkSpeed = run.Level.Layout.GroundWalkSpeed; // Gives the motor the optional ground speed from this trail
             sounds = gameObject.AddComponent<AudioSource>(); // Sound player for the chimes and effects
             sounds.playOnAwake = false; // Silent until something happens
             explorer.RespawnPoint = new Vector2(run.RespawnPoint.X, run.RespawnPoint.Y); // The attempt decides where the explorer comes back

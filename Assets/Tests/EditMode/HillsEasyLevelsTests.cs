@@ -51,14 +51,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void EveryPickup_IsOnTheHillsShelf_AndTenKindsAreTaught() // The Hills shelf is complete after Easy (spec section 3)
+        public void EveryPickup_IsOnTheHillsShelf_AndTenKindsAreTaught() // Keeps the ten kinds introduced in Easy
         {
             foreach (var level in HillsEasy) // Every level
                 foreach (var pickup in level.Pickups) // Every pickup
                     Assert.IsTrue(pickup.Kind.BelongsTo(Episode.Hills), pickup.Kind.Id); // Each kind is on the Hills shelf
             var kinds = HillsEasy.SelectMany(l => l.Kinds).Distinct().ToArray(); // Every kind the three levels use, once each
             Assert.AreEqual(10, kinds.Length); // Ten kinds: seven shared and three new
-            CollectionAssert.AreEquivalent(ItemCatalog.All.Where(k => k.BelongsTo(Episode.Hills)), kinds); // They are the whole Hills shelf
+            CollectionAssert.AreEquivalent(new[] { ItemCatalog.Limestone, ItemCatalog.Calcite, ItemCatalog.Clay, ItemCatalog.CoralStone, ItemCatalog.Andesite, ItemCatalog.Limonite, ItemCatalog.Kaolinite, ItemCatalog.Quartz, ItemCatalog.Magnetite, ItemCatalog.Feldspar }, kinds); // Preserves the ten authored Easy kinds
         }
 
         [Test] // Unity runs this method as a Test

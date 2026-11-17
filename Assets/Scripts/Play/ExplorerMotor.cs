@@ -51,11 +51,17 @@ namespace LandGrand.Play // Level play scripts live here
         public int Facing => facing; // Tells which way the explorer was walking
 
         public float ExternalPushX { get; set; } // Wind speed added to walking
+        internal float CurrentPushX { get; set; } // River speed added only while grounded
+        internal float? GroundWalkSpeed { get; set; } // Optional walk speed from the level data
+        internal bool BatPushActive => batPushLeft > 0f; // The bat part flashes only during a push
+        float batPushLeft; // Time left for the current bat push
+        int batPushDirection; // The push heads away from the bat
         internal bool OnIce { get; set; } // The ice watcher checks the ground below the feet
         internal bool OnSand { get; set; } // The sand watcher says the feet stand on soft sand, so walking is slower
         internal bool SlidingOnIce { get; private set; } // Lets the ice watcher play one sound at the start
         float walkVelocity; // Walking speed before the wind is added
         public DynamicSolid StandingOn { get; private set; } // Moving or breakable support
+        float lastSupportTop; // The height the rider last stood on, even across a pause
         Vector2 position; // Feet position in level pixels
         Vector2 velocity; // Speed in pixels per second
         bool grounded; // Standing on something
@@ -74,6 +80,7 @@ namespace LandGrand.Play // Level play scripts live here
             position = feet; // New place
             velocity = Vector2.zero; // No speed
             walkVelocity = 0f; // Starts again without a slide
+            batPushLeft = 0f; // Ends a push when the explorer is placed somewhere else
             SlidingOnIce = false; // Ends the old slide
             grounded = false; // Gravity will settle it on the ground
             airJumpUsed = false; // Both jumps ready again
@@ -94,24 +101,22 @@ namespace LandGrand.Play // Level play scripts live here
             flipClock = -1f; // No somersault from the launch itself
         }
 
+        internal void PushFromBat(int direction) // Starts a gentle sideways push
+        { // Opens the push
+            batPushDirection = direction; // Saves the way away from the bat
+            batPushLeft = Bat.PushSeconds; // Starts the short push without a respawn
+        } // Ends the push
+
         void Update() // Runs every frame: reads the controls, moves and animates
         {
             if (Frozen) { velocity = Vector2.zero; Animate(); return; } // Hold position while frozen and keep the ice speed for Resume
             float dt = Mathf.Min(Time.deltaTime, 1f / 30f); // Never step more than a 30th of a second, so nothing passes through ground
 
-            if (grounded && StandingOn != null) // Carries only an explorer still on the previous top
-            { // Starts the carry check
-                var before = StandingOn.PreviousBounds; // Platform position before this frame
-                bool supported = StandingOn.IsSolid && position.x + size.x / 2f > before.xMin && position.x - size.x / 2f < before.xMax && Mathf.Abs(position.y - before.yMax) < 0.02f; // Old feet still match its top
-                if (supported) MoveX(StandingOn.Movement.x); // Stops carrying against other solids
-                else grounded = false; // A vanished or departed slab no longer holds the feet
-            } // Ends the carry check
+            Carry(); // Moves a rider along with a slab or basket
             int dir = input.Direction; // Walk left, right or not at all
-            SlidingOnIce = OnIce && IceSlide.IsSliding(walkVelocity, dir); // A release or turn begins a slide
-            float target = dir * SoftSand.WalkSpeed(walkSpeed, OnSand && grounded); // Speed the held arrow asks for; soft sand slows walking only while the explorer is still on the ground this frame
-            walkVelocity = OnIce ? IceSlide.Next(walkVelocity, target, dt) : target; // Only ice changes speed gradually
-            velocity.x = walkVelocity + ExternalPushX; // Wind still adds to walking
-            if (dir != 0) facing = dir; // Face the way of walking
+            float batStep = Mathf.Min(dt, batPushLeft); // Use only the time left for the bat
+            if (dir != 0 && batStep < dt) facing = dir; // A bat push ignores the held walk direction
+            bool startedGrounded = grounded; // Keeps the old sand footing when this step begins with a jump
 
             bool pressed = input.JumpPressed; // Jump pressed this frame
             jumpBufferLeft = pressed ? jumpBufferSeconds : jumpBufferLeft - dt; // Remember a press for a moment
@@ -132,8 +137,22 @@ namespace LandGrand.Play // Level play scripts live here
                 Dust(); // Small dust puff under the feet
             }
 
-            velocity.y = Mathf.Max(velocity.y - gravity * dt, -maxFallSpeed); // Gravity pulls down, up to the fastest fall
-            MoveX(velocity.x * dt); // Move across, stopping at solids
+            float normalTime = dt - batStep; // Any time left after a bat push uses ordinary walking
+            float baseSpeed = grounded ? GroundWalkSpeed ?? walkSpeed : walkSpeed; // Only grounded feet use the optional level speed
+            SlidingOnIce = OnIce && IceSlide.IsSliding(walkVelocity, dir); // Releasing or turning starts a slide as before
+            float target = dir * SoftSand.WalkSpeed(baseSpeed, OnSand && startedGrounded); // Keeps the sand speed on its original footing
+            walkVelocity = OnIce ? IceSlide.Next(walkVelocity, target, normalTime) : target; // Only ice changes speed gradually
+            velocity.x = walkVelocity + ExternalPushX; // Wind still adds on the ground or in the air
+            if (grounded) velocity.x += CurrentPushX; // The river stops pushing as soon as the explorer jumps
+            if (batStep > 0f) // A gentle bat took some or all of this frame
+            { // Opens the push movement
+                float speed = Bat.PushSpeed * batPushDirection; // Matches the push distance and time
+                MoveX(speed * batStep); // Moves the explorer without using the held arrow
+                batPushLeft -= batStep; // Spends time only when the motor moves
+                if (normalTime == 0f) velocity.x = speed; // Shows motion during the push
+            } // Ends the push movement
+            velocity.y = Mathf.Max(velocity.y - gravity * dt, -maxFallSpeed); // Gravity keeps the same jump and fall
+            MoveX(velocity.x * normalTime); // Walks only in the rest of the frame
             MoveY(velocity.y * dt); // Move up or down, landing on solids and ledges
             float inside = Mathf.Clamp(position.x, size.x / 2f, geometry.width - size.x / 2f); // Find the point inside the level
             if (inside != position.x) walkVelocity = 0f; // The level wall stops a slide
@@ -142,6 +161,27 @@ namespace LandGrand.Play // Level play scripts live here
             Apply(); // Show the new place
             Animate(); // Pick the picture
         }
+
+        void Carry() // Follows the dynamic top the explorer stood on last frame
+        { // Opens the carry check
+            var support = StandingOn; // Remembers the former support even if MoveY changes it
+            if (!grounded || support == null) return; // Nothing to carry away
+            var before = support.PreviousBounds; // Uses the previous top because the object already moved
+            float top = support.Bounds.yMax; // Uses the current support height
+            bool onPreviousTop = position.x + size.x / 2f > before.xMin && position.x - size.x / 2f < before.xMax && Mathf.Abs(position.y - lastSupportTop) < 0.02f; // Checks where the explorer last stood
+            if (!onPreviousTop || (!support.IsSolid && top >= lastSupportTop)) // A gone slab only carries through its last sinking step
+            { // Opens the release
+                grounded = false; // Lets the explorer fall
+                return; // Stops following this slab
+            } // Ends the release
+            MoveX(support.Movement.x); // Keeps the old horizontal carry and wall check
+            if (top == lastSupportTop) return; // Sideways slabs need no vertical work
+            MoveY(top - position.y); // Follows vertically while checking fixed floors and ceilings
+            if (!support.IsSolid || Mathf.Abs(position.y - top) >= 0.02f) return; // A submerged raft or ceiling ends the ride
+            grounded = true; // A rising platform can still hold the explorer after the move
+            StandingOn = support; // Remembers the basket or raft for the next step
+            lastSupportTop = top; // Saves the height the explorer was actually carried to
+        } // Ends the carry check
 
         void MoveX(float dx) // Moves across and stops at the side of a solid
         {
@@ -163,22 +203,31 @@ namespace LandGrand.Play // Level play scripts live here
             float next = position.y + dy; // Where the move would end
             float left = position.x - size.x / 2f, right = position.x + size.x / 2f; // Body edges across
             bool landed = false; // Did the explorer land this frame?
+            DynamicSolid landedOn = null; // Records the actual moving top that caught the feet
             if (dy <= 0f) // Falling or standing
             {
-                foreach (var s in geometry.solids) Land(s, ref next, ref landed, left, right); // Solid tops
-                foreach (var l in geometry.LedgeShapes) Land(l, ref next, ref landed, left, right); // Ledge and slab tops (only from above)
-            }
+                foreach (var s in geometry.solids) landed |= TryLand(s, s.yMax, ref next, left, right); // Fixed solid tops
+                foreach (var ledge in geometry.ledges) landed |= TryLand(ledge, ledge.yMax, ref next, left, right); // Fixed one-way tops
+            } // Ends the landing search
             else // Going up
-            {
-                foreach (var s in geometry.solids) // Only solids stop a jump; ledges and slabs let the explorer through
-                {
-                    if (right <= s.xMin || left >= s.xMax) continue; // Not above or below this one
-                    float head = position.y + size.y; // Top of the head now
-                    if (head <= s.yMin + 0.01f && next + size.y > s.yMin) { next = s.yMin - size.y; velocity.y = 0f; } // Bump the head
-                }
-            }
+            { // Opens the head check
+                float ceiling = StopAtCeiling(next, left, right); // Only fixed solids can stop a jump from below
+                if (ceiling < next) velocity.y = 0f; // Stops the jump on a head bump
+                next = ceiling; // Uses the height still clear of the ceiling
+            } // Ends the head check
+            foreach (var slab in geometry.dynamicSolids) // Sweeps any moving one-way top against the feet
+            { // Opens one slab check
+                if (slab == null || !slab.IsSolid) continue; // Gone slabs cannot catch a landing
+                var bounds = slab.Bounds; // The top now
+                float oldTop = slab == StandingOn && lastSupportTop == bounds.yMax ? bounds.yMax : slab.PreviousBounds.yMax; // A carried rider already reached the new top
+                if (dy > 0f && bounds.yMax <= oldTop) continue; // A fixed or falling slab never blocks a jump from below
+                if (!TryLand(bounds, oldTop, ref next, left, right, slab.HadTop)) continue; // Tests the slab's motion only if it had a top
+                landed = true; // A real slab caught the feet
+                if (landedOn == null || bounds.yMax > landedOn.Bounds.yMax) landedOn = slab; // Keeps the first support at the highest top
+            } // Ends one slab check
             position.y = next; // Final height
-            StandingOn = landed ? geometry.SupportAt(new Vector2(position.x, next), size.x) : null; // Remembers the slab for carrying or breaking
+            StandingOn = landedOn; // Only a top that caught the feet can carry the explorer
+            if (StandingOn != null) lastSupportTop = next; // Carries from the height this rider reached
             grounded = landed; // Standing only if something is under the feet
             if (landed) // On the ground
             {
@@ -190,11 +239,25 @@ namespace LandGrand.Play // Level play scripts live here
             }
         }
 
-        void Land(Rect r, ref float next, ref bool landed, float left, float right) // Lands on the top of r if the feet cross it
-        {
-            if (right <= r.xMin || left >= r.xMax) return; // Not above this one
-            if (position.y >= r.yMax - 0.01f && next <= r.yMax) { next = r.yMax; landed = true; } // Feet were above the top and now reach it
-        }
+        float StopAtCeiling(float next, float left, float right) // Keeps an upward move below fixed solids
+        { // Opens the head check
+            foreach (var solid in geometry.solids) // A one-way top never blocks the head
+            { // Opens one solid check
+                if (right <= solid.xMin || left >= solid.xMax) continue; // Only checks things above the body
+                float head = position.y + size.y; // Top of the head before the move
+                if (head <= solid.yMin + 0.01f && next + size.y > solid.yMin) next = solid.yMin - size.y; // Moves up only as far as this solid allows
+            } // Ends one solid check
+            return next; // Gives back the height that is clear
+        } // Ends the head check
+
+        bool TryLand(Rect r, float previousTop, ref float next, float left, float right, bool hadTop = true) // Checks whether the feet crossed a top
+        { // Opens the landing check
+            if (right <= r.xMin || left >= r.xMax) return false; // Not above this one
+            if (!OneWayTop.Crosses(position.y, next, previousTop, r.yMax, hadTop)) return false; // Feet must meet the top from above
+            if (r.yMax > previousTop && r.yMax > position.y && StopAtCeiling(r.yMax, left, right) < r.yMax) return false; // A rising top cannot force the head through a ceiling
+            next = r.yMax; // Lands at the current height of the top
+            return true; // The top now supports the explorer
+        } // Ends the landing check
 
         void Apply() // Puts the object at the feet position, on whole pixels
         {

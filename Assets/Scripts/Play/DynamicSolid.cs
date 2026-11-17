@@ -5,6 +5,7 @@ namespace LandGrand.Play // Level play parts
     { // Opens the solid
         public abstract Rect Bounds { get; } // Current pixel bounds
         public abstract bool IsSolid { get; } // Whether it blocks the explorer
+        internal virtual bool HadTop => true; // Most solids already had a top on the previous frame
         public Rect PreviousBounds { get; protected set; } // Bounds before this frame
         public Vector2 Movement => Bounds.position - PreviousBounds.position; // Carries a standing explorer
     } // Ends the solid

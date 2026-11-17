@@ -7,7 +7,7 @@ namespace LandGrand.Rules.Tests // Tests plain rules
         [Test] // Runs this check
         public void FiveNormalLevelsHaveSevenItemsAndTwoSafeFlags() // Checks the shared Normal rules
         { // Starts the check
-            var levels = LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Normal).ToArray(); // Finds Normal trails
+            var levels = LevelCatalog.All.Where(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Normal).ToArray(); // Finds the Mountains Normal trails
             Assert.AreEqual(5, levels.Length); // All five are playable
             foreach (var level in levels) // Checks each trail
             { // Opens the trail checks

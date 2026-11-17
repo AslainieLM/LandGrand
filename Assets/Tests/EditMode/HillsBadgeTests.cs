@@ -32,14 +32,14 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         }
 
         [Test] // Unity runs this method as a Test
-        public void HillCollector_NeedsEveryHillsKind() // All ten kinds on the Hills shelf, shared kinds included
+        public void HillCollector_NeedsEveryHillsKind() // All seventeen kinds on the Hills shelf, including shared kinds
         {
             var p = new PlayerProgress(); // A brand new profile
             var kinds = ItemCatalog.All.Where(k => k.BelongsTo(Episode.Hills)).ToList(); // The Hills shelf
-            Assert.AreEqual(10, kinds.Count); // Ten kinds on the shelf
-            foreach (var k in kinds.Skip(1)) p.RecordFoundKind(k.Id); // All but one
-            Assert.IsFalse(Earned("hill_collector", p)); // Not yet
-            p.RecordFoundKind(kinds[0].Id); // The last one
+            Assert.AreEqual(17, kinds.Count); // The shelf grew by seven kinds
+            foreach (var k in kinds.Take(10)) p.RecordFoundKind(k.Id); // Loads a save with the original complete shelf
+            Assert.IsFalse(Earned("hill_collector", p)); // The original ten do not fill the expanded shelf
+            foreach (var k in kinds.Skip(10)) p.RecordFoundKind(k.Id); // Fills the new part of the shelf
             Assert.IsTrue(Earned("hill_collector", p)); // Earned
         }
 

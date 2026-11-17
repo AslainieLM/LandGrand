@@ -51,11 +51,13 @@ public static partial class LevelBuilder // Builds the new objects from any leve
         view.rollSound.playOnAwake = false; // Starts silent
     } // Ends the boulder build
 
-    static void DrawGroundTop(Rect piece, string top, IReadOnlyList<IceZone> zones, IReadOnlyList<SandZone> sand, Transform parent) // Uses ice or soft sand tiles in place of the usual top tiles
+    static void DrawGroundTop(Rect piece, ThemeArt art, LevelLayout layout, Transform parent) // Uses ice, sand or water on the ground line
     { // Starts the ground art
-        var strips = zones.Select(ice => (x: ice.X, w: ice.Width, name: "Ice Top", tile: "ice_top")) // Each ice strip
-            .Concat(sand.Select(s => (x: s.X, w: s.Width, name: "Soft Sand Top", tile: "soft_top"))) // Each soft sand strip
-            .OrderBy(strip => strip.x).ToList(); // Checks strips from left to right
+        var strips = layout.IceZones.Select(ice => (x: ice.X, w: ice.Width, name: "Ice Top", tile: "ice_top", script: HardArtScript)) // Each ice strip
+            .Concat(layout.SandZones.Select(s => (x: s.X, w: s.Width, name: "Soft Sand Top", tile: "soft_top", script: HillsArtScript))) // Each soft sand strip
+            .Concat(layout.Currents.Select(c => (x: c.X, w: c.Width, name: "Current Top", tile: "current_top", script: K.HillsNormalArtScript))) // Each river strip
+            .OrderBy(strip => strip.x); // Checks strips from left to right
+        var top = ThemeSprite(art, art.GroundTop); // Loads the normal top for this theme
         float from = piece.xMin; // Starts at the left edge of the ground
         foreach (var strip in strips) // Each strip in order
         { // Starts one strip
@@ -63,7 +65,7 @@ public static partial class LevelBuilder // Builds the new objects from any leve
             float right = Mathf.Min(piece.xMax, strip.x + strip.w); // Stops the strip at the right edge of the ground
             if (right <= left) continue; // This strip misses this piece
             if (left > from) Tiled("Ground Top", top, new Rect(from, -8f, left - from, 8f), 5, parent); // Normal tiles before the strip
-            Tiled(strip.name, HardSprite(strip.tile), new Rect(left, -8f, right - left, 8f), 5, parent); // The ice or sand tile replaces the top tile
+            Tiled(strip.name, K.Sprite(SpriteFolder, strip.tile, strip.script), new Rect(left, -8f, right - left, 8f), 5, parent); // The ice or sand tile replaces the top tile
             from = right; // Resumes after the strip
         } // Ends the strip
         if (piece.xMax > from) Tiled("Ground Top", top, new Rect(from, -8f, piece.xMax - from, 8f), 5, parent); // The rest of the ground

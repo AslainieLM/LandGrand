@@ -22,16 +22,6 @@ namespace LandGrand.Play // Level play scripts live here
                 foreach (var slab in dynamicSolids) if (slab != null && slab.IsSolid) yield return slab.Bounds; // Moving and breakable slabs act like ledges
             } // Ends the list
         } // Ends the shape list
-        public DynamicSolid SupportAt(Vector2 feet, float bodyWidth) // Finds a dynamic slab under the feet
-        { // Starts the support check
-            foreach (var solid in dynamicSolids) // Checks each placed slab
-            { // Opens the slab check
-                if (solid == null || !solid.IsSolid) continue; // Gone slabs cannot support
-                var bounds = solid.Bounds; // Current pixel shape
-                if (feet.x + bodyWidth / 2f > bounds.xMin && feet.x - bodyWidth / 2f < bounds.xMax && Mathf.Abs(feet.y - bounds.yMax) < 0.02f) return solid; // Feet rest on its top
-            } // Ends the slab check
-            return null; // Standing on static ground or in the air
-        } // Ends the support check
         public float width = 4800f; // Level width in pixels
 
         /// <summary>True when something solid or a ledge top holds up a body standing at this feet spot.</summary>

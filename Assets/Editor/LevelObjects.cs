@@ -22,8 +22,14 @@ public static partial class LevelBuilder // Builds objects from shared level dat
             view.art.transform.position = LevelGeometry.ToWorld(ledge.X + 16f, ledge.Top - 5f); // Initial slab position
             solids.Add(view); // Holds the explorer up like a ledge
         } // Ends the slab build
-        foreach (var platform in data.Layout.MovingPlatforms) // Each moving crossing
+        for (int i = 0; i < data.Layout.MovingPlatforms.Count; i++) // Each moving crossing
         { // Opens the platform build
+            var platform = data.Layout.MovingPlatforms[i]; // Reads the route for this platform
+            if (platform.IsVertical) // This route is a balloon basket
+            { // Opens the basket build
+                solids.Add(BuildBalloon(platform, i, geometry.transform, controller)); // Adds the moving basket top to the shapes
+                continue; // The horizontal slab build does not apply
+            } // Ends the basket build
             var view = new GameObject("Moving Platform").AddComponent<MovingPlatformView>(); // Owns the moving solid
             view.transform.SetParent(geometry.transform, false); // Keeps it with the level
             view.x0 = platform.X0; view.x1 = platform.X1; view.top = platform.Top; // Exact travel endpoints
@@ -31,6 +37,7 @@ public static partial class LevelBuilder // Builds objects from shared level dat
             view.art.transform.position = LevelGeometry.ToWorld(platform.X0 + 24f, platform.Top - 5f); // Starts at the near end
             solids.Add(view); // Makes it carry the explorer like a ledge
         } // Ends the platform build
+        BuildFloats(data, geometry, controller, solids); // Adds the rafts and the water sounds
         geometry.dynamicSolids = solids.ToArray(); // Gives the motor the placed solids
         foreach (var rock in data.Layout.Rockfalls) // Each timed rock
         { // Opens the rock build

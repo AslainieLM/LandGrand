@@ -73,8 +73,15 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public HazardType Type { get; } // Pit or spikes
         public Spot Place { get; } // Left end of the danger
         public float Width { get; } // Width in level pixels
+        public bool IsWater { get; } // True when this pit is filled with water
 
-        public Hazard(HazardType type, Spot place, float width) { Type = type; Place = place; Width = width; } // Makes a hazard
+        public Hazard(HazardType type, Spot place, float width, bool isWater = false) // Makes a hazard
+        { // Opens the placement
+            Type = type; // Saves the hazard type
+            Place = place; // Saves the left edge
+            Width = width; // Saves the width
+            IsWater = isWater; // Saves whether there is water in the pit
+        } // Ends the placement
     }
 
     /// <summary>
@@ -190,8 +197,16 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Limonite = new ItemKind("limonite", "Limonite", "A yellow-brown iron mineral. It gives many soils their rusty color.", "limonite", true, false, Episode.Hills); // A mineral that colors soil, first taught on Hills
         public static readonly ItemKind Kaolinite = new ItemKind("kaolinite", "Kaolinite", "A soft, white clay mineral. It forms when feldspar slowly breaks down.", "kaolinite", true, false, Episode.Hills); // A soft clay mineral, first taught on Hills
 
+        public static readonly ItemKind Aragonite = new ItemKind("aragonite", "Aragonite", "A mineral that corals and shells use to build their hard parts.", "aragonite", true, false, Episode.Hills); // Draft mineral on the Hills shelf
+        public static readonly ItemKind Coquina = new ItemKind("coquina", "Coquina", "A rock made of broken shells pressed and stuck together.", "coquina", true, true, Episode.Hills); // Draft rock on the Hills shelf
+        public static readonly ItemKind Flowstone = new ItemKind("flowstone", "Flowstone", "Sheets of stone left by water flowing over cave walls.", "flowstone", true, true, Episode.Hills); // Draft rock on the Hills shelf
+        public static readonly ItemKind Dripstone = new ItemKind("dripstone", "Dripstone", "Stone made by dripping water. It forms stalactites.", "dripstone", true, true, Episode.Hills); // Draft rock on the Hills shelf
+        public static readonly ItemKind VolcanicBreccia = new ItemKind("volcanic_breccia", "Volcanic Breccia", "Sharp pieces of volcanic rock glued together by ash.", "volcanic_breccia", true, true, Episode.Hills); // Draft rock on the Hills shelf
+        public static readonly ItemKind Ignimbrite = new ItemKind("ignimbrite", "Ignimbrite", "A rock made when a hot cloud of volcanic ash settles and welds.", "ignimbrite", true, true, Episode.Hills); // Draft rock on the Hills shelf
+        public static readonly ItemKind Zeolite = new ItemKind("zeolite", "Zeolite", "A mineral that forms in volcanic ash. It is full of tiny holes.", "zeolite", true, false, Episode.Hills); // Draft mineral on the Hills shelf
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite }; // The full list; Hills kinds come last so the Mountains order stays
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite }; // Appends the Hills Normal kinds after the existing kinds
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -200,6 +215,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     /// <summary>Every level that has data. Levels without data are not playable yet.</summary>
     public static class LevelCatalog // Shared level list
     {
+        const float HillsNormalGroundWalk = 72f; // Ground speed used by the Hills Normal layout bot
         static readonly List<LevelData> Levels = new List<LevelData> // All levels with data
         {
             // Mountains, Easy, level 1 (D-043): a meadow trail to a cave. Its whole layout is here; the builder reads it.
@@ -806,6 +822,219 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     new[] { L(300f, 24f, 64f), L(380f, 48f, 64f), L(460f, 72f, 80f), L(1500f, 40f, 64f), L(2000f, 28f, 80f), L(3500f, 28f, 56f), L(3580f, 56f, 56f), L(3480f, 84f, 64f) }, // Eight ledges
                     sandZones: new[] { new SandZone(560f, 160f), new SandZone(1900f, 400f), new SandZone(2640f, 150f), new SandZone(4050f, 330f) }), // Four soft sand zones; the first is safe ground
                 "La Paz Dunes"), // Start banner
+            new LevelData(Episode.Hills, Difficulty.Normal, 1, // Hundred Islands
+                new Lesson("Hundred Islands", new[] // Four draft lesson lines from section 7
+                { // Opens the lesson
+                    "Hundred Islands is in Pangasinan.", // The authored lesson line
+                    "Its hills are old coral reefs.", // The authored lesson line
+                    "Waves wore them into small hills.", // The authored lesson line
+                    "Corals build reefs from aragonite.", // The authored lesson line
+                }, "lesson_hundred_islands", true), // Lesson art and the draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Aragonite, new Spot(436f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Coquina, new Spot(848f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.CoralStone, new Spot(1232f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Aragonite, new Spot(2600f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.CoralStone, new Spot(3524f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Coquina, new Spot(4312f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Aragonite, new Spot(6716f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two safe flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1800f, 0f), 104f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(3500f, 0f), 48f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(6100f, 0f), 192f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Spikes, new Spot(2900f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5300f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Goal near the right end
+                new[] // Three draft review lines from section 7
+                { // Opens the review
+                    "Hundred Islands are hills made from old coral reefs.", // The authored review line
+                    "Corals build their reefs from aragonite.", // The authored review line
+                    "Coquina is a rock made of broken shells.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.IslandHills, // Width and theme
+                    new[] { B(420f, BoulderSize.Small), B(1500f, BoulderSize.Big), B(2700f, BoulderSize.Small), B(3900f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(5900f, BoulderSize.Big), B(6700f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1200f, 40f, 64f), L(4200f, 40f, 64f), L(4280f, 84f, 64f) }, // Ledges from the checked layout
+                    floats: new[] { new SinkingFloat(824f, 0f, 800f), new SinkingFloat(1828f, 0f, 1800f), new SinkingFloat(6132f, 0f, 6100f), new SinkingFloat(6212f, 0f, 6100f) }, // Four rafts at the water line
+                    pools: new[] { new ShallowPool(800f, 96f) }, // The practice pool has a safe floor
+                    groundWalkSpeed: HillsNormalGroundWalk), // Matches the checked ground speed
+                "Hundred Islands"), // Start banner
+            new LevelData(Episode.Hills, Difficulty.Normal, 2, // Callao Cave
+                new Lesson("Callao Cave", new[] // Four draft lesson lines from section 7
+                { // Opens the lesson
+                    "Callao Cave is in a limestone hill.", // The authored lesson line
+                    "Rain slowly dissolves limestone.", // The authored lesson line
+                    "Drips build stalactites and flowstone.", // The authored lesson line
+                    "Do not disturb bats in caves.", // The authored lesson line
+                }, "lesson_callao_cave", true), // Lesson art and the draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Flowstone, new Spot(516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Dripstone, new Spot(1120f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Calcite, new Spot(2600f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Flowstone, new Spot(3332f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Dripstone, new Spot(5112f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Calcite, new Spot(6550f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Flowstone, new Spot(6716f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two safe flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(900f, 0f), 48f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(3300f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(5600f, 0f), 56f), // Pit from the checked layout
+                    new Hazard(HazardType.Spikes, new Spot(1700f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6300f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Goal near the right end
+                new[] // Three draft review lines from section 7
+                { // Opens the review
+                    "Callao Cave formed inside a limestone hill.", // The authored review line
+                    "Dripping water leaves dripstone and flowstone.", // The authored review line
+                    "Calcite is the mineral in cave stone.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.LimestoneCave, // Width and theme
+                    new[] { B(500f, BoulderSize.Small), B(2000f, BoulderSize.Big), B(2700f, BoulderSize.Small), B(4200f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(5200f, BoulderSize.Big), B(6700f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1088f, 40f, 64f), L(5000f, 40f, 64f), L(5080f, 84f, 64f) }, // Ledges from the checked layout
+                    bats: new[] { new Bat(1350f, 16f, 24f, 12f, 3f, 0f), new Bat(3800f, 16f, 24f, 12f, 2.6f, 0.5f), new Bat(6000f, 16f, 24f, 12f, 3.2f, 1.2f) }, // Three bat loops
+                    ambienceOverride: "amb_cave_drips", // The cave has its own ambience
+                    groundWalkSpeed: HillsNormalGroundWalk), // Matches the checked ground speed
+                "Callao Cave"), // Start banner
+            new LevelData(Episode.Hills, Difficulty.Normal, 3, // Pagsanjan Gorge
+                new Lesson("Pagsanjan Gorge", new[] // Four draft lesson lines from section 7
+                { // Opens the lesson
+                    "Pagsanjan Gorge is in Laguna.", // The authored lesson line
+                    "A river cut this deep, narrow valley.", // The authored lesson line
+                    "Water and stones wear the rock away.", // The authored lesson line
+                    "Boatmen paddle up to the falls.", // The authored lesson line
+                }, "lesson_pagsanjan", true), // Lesson art and the draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.VolcanicBreccia, new Spot(516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(1120f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Andesite, new Spot(1932f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.VolcanicBreccia, new Spot(3160f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(4112f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Andesite, new Spot(5832f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.VolcanicBreccia, new Spot(6766f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two safe flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1700f, 0f), 56f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(3700f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(5800f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Spikes, new Spot(2000f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4250f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6400f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Goal near the right end
+                new[] // Three draft review lines from section 7
+                { // Opens the review
+                    "Rivers slowly cut valleys into the land.", // The authored review line
+                    "Pagsanjan Gorge was cut by a river.", // The authored review line
+                    "Volcanic breccia is broken volcanic rock glued by ash.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.RiverGorge, // Width and theme
+                    new[] { B(500f, BoulderSize.Small), B(1450f, BoulderSize.Big), B(2650f, BoulderSize.Small), B(3500f, BoulderSize.Big), B(4550f, BoulderSize.Small), B(6050f, BoulderSize.Big), B(6750f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1900f, 40f, 64f), L(4000f, 40f, 64f), L(4080f, 84f, 64f) }, // Ledges from the checked layout
+                    currents: new[] { new CurrentZone(1000f, 240f, 1), new CurrentZone(3000f, 320f, -1), new CurrentZone(5300f, 300f, 1) }, // Three currents with the middle one flowing left
+                    groundWalkSpeed: HillsNormalGroundWalk), // Keeps walking against a current at forty-two pixels per second
+                "Pagsanjan Gorge"), // Start banner
+            new LevelData(Episode.Hills, Difficulty.Normal, 4, // Banaue Rice Terraces
+                new Lesson("Banaue Rice Terraces", new[] // Four draft lesson lines from section 7
+                { // Opens the lesson
+                    "Ifugao farmers built the rice terraces.", // The authored lesson line
+                    "Terraces are steps cut into slopes.", // The authored lesson line
+                    "Steps slow water and keep soil in place.", // The authored lesson line
+                    "The terraces have clay-rich soil.", // The authored lesson line
+                }, "lesson_banaue", true), // Lesson art and the draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Clay, new Spot(516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Kaolinite, new Spot(748f, 32f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(2032f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Kaolinite, new Spot(3356f, 32f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(4112f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Kaolinite, new Spot(5360f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(6766f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two safe flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1200f, 0f), 56f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(3300f, 0f), 112f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(5900f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Spikes, new Spot(1800f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4300f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6500f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Goal near the right end
+                new[] // Three draft review lines from section 7
+                { // Opens the review
+                    "Rice terraces are steps on hill and mountain slopes.", // The authored review line
+                    "Terraces slow water and keep soil from washing away.", // The authored review line
+                    "Clay helps the terrace soil hold water.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.RiceTerraces, // Width and theme
+                    new[] { B(500f, BoulderSize.Small), B(1500f, BoulderSize.Big), B(2650f, BoulderSize.Small), B(3800f, BoulderSize.Big), B(4550f, BoulderSize.Small), B(6200f, BoulderSize.Big), B(6750f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(700f, 32f, 96f), L(2000f, 40f, 64f), L(4000f, 40f, 64f), L(4080f, 84f, 64f) }, // Ledges from the checked layout
+                    floats: new[] { new SinkingFloat(3332f, 0f, 3300f) }, // One raft over the terrace pond
+                    bats: new[] { new Bat(2900f, 16f, 24f, 12f, 3f, 0f) }, // One bat over the trail
+                    currents: new[] { new CurrentZone(5200f, 280f, -1) }, // One irrigation channel flows left
+                    groundWalkSpeed: HillsNormalGroundWalk), // Matches the checked ground speed
+                "Banaue Rice Terraces"), // Start banner
+            new LevelData(Episode.Hills, Difficulty.Normal, 5, // Cappadocia
+                new Lesson("Cappadocia", new[] // Four draft lesson lines from section 7
+                { // Opens the lesson
+                    "Cappadocia is in Türkiye.", // The authored lesson line
+                    "Volcanoes once covered it in thick ash.", // The authored lesson line
+                    "Wind and rain carved fairy chimneys.", // The authored lesson line
+                    "Hard ignimbrite caps protect them.", // The authored lesson line
+                }, "lesson_cappadocia", true), // Lesson art and the draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Ignimbrite, new Spot(516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Zeolite, new Spot(924f, 104f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(1532f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Ignimbrite, new Spot(2924f, 124f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Zeolite, new Spot(4280f, 112f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Tuff, new Spot(5584f, 112f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Ignimbrite, new Spot(6766f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Start at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two safe flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(3400f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(4200f, 0f), 160f), // Pit from the checked layout
+                    new Hazard(HazardType.Pit, new Spot(6100f, 0f), 64f), // Pit from the checked layout
+                    new Hazard(HazardType.Spikes, new Spot(1900f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3700f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6500f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Goal near the right end
+                new[] // Three draft review lines from section 7
+                { // Opens the review
+                    "Fairy chimneys are cones of soft volcanic rock.", // The authored review line
+                    "Hard ignimbrite caps keep the rain off them.", // The authored review line
+                    "Zeolite forms inside volcanic ash.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.FairyChimneys, // Width and theme
+                    new[] { B(500f, BoulderSize.Small), B(1200f, BoulderSize.Big), B(2600f, BoulderSize.Small), B(3100f, BoulderSize.Big), B(5000f, BoulderSize.Small), B(5900f, BoulderSize.Big), B(6750f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(4192f, 112f, 176f), L(5552f, 112f, 64f) }, // Ledges from the checked layout
+                    movingPlatforms: new[] { MovingPlatform.Vertical(900f, 24f, 80f, 0f), MovingPlatform.Vertical(2900f, 24f, 96f, 0.5f), MovingPlatform.Vertical(4144f, 24f, 120f, 0f), MovingPlatform.Vertical(5500f, 24f, 104f, 1f) }, // Four balloons with fixed x and different climb heights
+                    groundWalkSpeed: HillsNormalGroundWalk), // Matches the checked ground speed
+                "Cappadocia"), // Start banner
         }; // Ends the catalog
 
         static Boulder B(float x, BoulderSize size) => new Boulder(x, size); // Short way to write a boulder
@@ -817,7 +1046,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static bool HasLevels(Episode e) => Levels.Any(l => l.Episode == e); // Checks whether this landform has playable data
 
         /// <summary>True when this difficulty of the landform has at least one level with data. An open difficulty without data says "Coming soon" (D-066).</summary>
-        public static bool HasLevels(Episode e, Difficulty d) => Levels.Any(l => l.Episode == e && l.Difficulty == d); // Checks one difficulty; Hills Normal and Hard say no for now
+        public static bool HasLevels(Episode e, Difficulty d) => Levels.Any(l => l.Episode == e && l.Difficulty == d); // Checks one difficulty for playable levels
 
         /// <summary>The level's data, or null when that level has no data yet.</summary>
         public static LevelData Find(Episode e, Difficulty d, int number) => Levels.FirstOrDefault(l => l.Episode == e && l.Difficulty == d && l.Number == number); // Looks the level up

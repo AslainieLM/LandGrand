@@ -11,19 +11,32 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Mountains, Difficulty.Easy)); // Mountains Easy has data
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Mountains, Difficulty.Hard)); // Mountains Hard has data
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Easy)); // Hills Easy has data
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Normal)); // Hills Normal has no data yet
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Normal)); // Hills Normal has its five trails
             Assert.IsFalse(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has no data yet
         }
 
-        [Test]
-        public void NextAfterHillsEasy3IsHiddenBecauseHillsNormalHasNoData() // Next is hidden on Hills Easy 3
-        {
+        [Test] // Checks the new route from Easy to Normal
+        public void NextAfterHillsEasy3OpensHillsNormal1() // Shows Next after the last Easy clear
+        { // Opens the check
             var p = new PlayerProgress(); // A fresh save
             ClearMountains(p); // Opens Hills
-            ClearHillsEasy(p); // Hills Easy 1 to 3 cleared
-            Assert.AreEqual(NextStep.NextLevel, p.NextAfter(Episode.Hills, Difficulty.Easy, 3).Step); // The old rule still points at Normal 1
-            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Hills, Difficulty.Easy, 3).Step); // With no data, nothing playable follows
-        }
+            ClearHillsEasy(p); // Clears the three Hills Easy trails
+            var next = p.NextPlayableAfter(Episode.Hills, Difficulty.Easy, 3); // Looks for the next playable trail
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Shows Next
+            Assert.AreEqual(Episode.Hills, next.Episode); // Stays on Hills
+            Assert.AreEqual(Difficulty.Normal, next.Difficulty); // Opens Normal
+            Assert.AreEqual(1, next.Level); // Opens the first trail
+        } // Ends the check
+
+        [Test] // Checks the end of the new route
+        public void NextAfterHillsNormal5WaitsForHardData() // Hides Next only when the next trail has no data
+        { // Opens the check
+            var p = new PlayerProgress(); // A fresh save
+            ClearMountains(p); // Opens Hills
+            ClearHillsEasy(p); // Opens Hills Normal
+            for (int n = 1; n <= 5; n++) p.RecordClear(Episode.Hills, Difficulty.Normal, n, 1); // Clears all five new trails
+            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Hills, Difficulty.Normal, 5).Step); // Hills Hard has no playable scene yet
+        } // Ends the check
 
         [Test]
         public void NextInsideHillsEasyStillOpensTheNextLevel() // Levels with data keep working

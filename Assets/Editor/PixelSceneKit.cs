@@ -1,3 +1,4 @@
+using System.Collections.Generic; // Gives the set of generated picture names
 using System.Linq; // Gives access to list helpers such as Where
 using LandGrand; // Gives access to the shared scripts (UI zoom, PixelScreen)
 using LandGrand.LandformMap; // Gives access to the Mountains animations
@@ -19,6 +20,12 @@ using M = global::MainMenuBuilder; // Short name for the Main Menu builder, whos
 internal static class PixelSceneKit // Helpers for the scene builders
 {
     internal const float PPU = 32f; // Sprite pixels per Unity unit, same as every screen
+    internal const string HillsNormalArtScript = "Tools/Art/make_hills_normal_art.py"; // The generator for the new Hills Normal sprites
+    static readonly HashSet<string> HillsNormalLessonAndItemPictures = new HashSet<string> // Pictures used by several different builders
+    { // Opens the picture list
+        "lesson_hundred_islands", "lesson_callao_cave", "lesson_pagsanjan", "lesson_banaue", "lesson_cappadocia", // Five new lesson pictures
+        "aragonite", "coquina", "flowstone", "dripstone", "volcanic_breccia", "ignimbrite", "zeolite", // Seven new item pictures
+    }; // Ends the picture list
     internal static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
     internal static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text and wide-screen edges
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
@@ -60,17 +67,22 @@ internal static class PixelSceneKit // Helpers for the scene builders
     }
 
     /// <summary>Music for the level scenes: the landform's own tune, quieter than the menu, and its wind or stream for the difficulty (D-042, D-062, D-066).</summary>
-    internal static StartScreenMusic LevelMusic(LandGrand.Rules.Episode episode, LandGrand.Rules.Difficulty difficulty) // Music for the level scene
+    internal static StartScreenMusic LevelMusic(LandGrand.Rules.LevelData level) // Music for the level scene
     {
         var music = new GameObject("Music").AddComponent<StartScreenMusic>(); // Music player
-        string tune = LandGrand.Rules.LandformAudio.MusicFor(episode) + ".ogg"; // The tune file for this landform
-        string ambience = LandGrand.Rules.LandformAudio.AmbienceFor(episode, difficulty) + ".ogg"; // The wind or stream for this landform and difficulty
+        string tune = LandGrand.Rules.LandformAudio.MusicFor(level.Episode) + ".ogg"; // The tune file for this landform
+        string ambience = LandGrand.Rules.LandformAudio.AmbienceFor(level) + ".ogg"; // Uses the level override or the landform's sound
         music.music = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + tune); // The landform's tune
         music.ambience = AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + ambience); // Landform and difficulty choose the sound
         music.musicVolume = 0.28f; // Quieter than the menu (0.40), so the breeze and the chimes come through
         music.ambienceVolume = 0.30f; // Same as the menu ambience
-        if (music.music == null) Debug.LogError($"Missing {AudioFolder}{tune}. Run: python Tools/Audio/{LandGrand.Rules.LandformAudio.MusicScriptFor(episode)}"); // Say what to do, using the script named in the audio table
-        if (music.ambience == null) Debug.LogError($"Missing {AudioFolder}{ambience}. Run: python Tools/Audio/{LandGrand.Rules.LandformAudio.AmbienceScriptFor(episode, difficulty)}"); // Say what to do, using the script named in the audio table
+        if (music.music == null) Debug.LogError($"Missing {AudioFolder}{tune}. Run: python Tools/Audio/{LandGrand.Rules.LandformAudio.MusicScriptFor(level.Episode)}"); // Say what to do, using the script named in the audio table
+        if (music.ambience == null) // An ambience file has not been made or imported
+        { // Opens the missing-file message
+            string script = LandGrand.Rules.LandformAudio.AmbienceScriptFor(level); // Finds the generator for this chosen sound
+            string repair = script != null ? $"Run: python Tools/Audio/{script}" : "Check the level's ambience file name."; // Explains how to repair the chosen sound
+            Debug.LogError($"Missing {AudioFolder}{ambience}. {repair}"); // Names the missing file and repair
+        } // Ends the missing-file message
         return music; // The controller fades it out when leaving
     }
 
@@ -162,7 +174,11 @@ internal static class PixelSceneKit // Helpers for the scene builders
     internal static Sprite Sprite(string folder, string path, string artScript) // Loads one sprite
     {
         var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(folder + path + ".png"); // Load the PNG as a sprite
-        if (sprite == null) Debug.LogError($"Missing sprite {folder}{path}.png. Run python {artScript}"); // Say which file is missing
+        if (sprite == null) // A sprite has not been made or imported
+        { // Opens the missing-file message
+            string script = HillsNormalLessonAndItemPictures.Contains(path) ? HillsNormalArtScript : artScript; // Resolves the shared lesson and item pictures too
+            Debug.LogError($"Missing sprite {folder}{path}.png. Run python {script}"); // Say which file and generator to use
+        } // Ends the missing-file message
         return sprite; // Give it back
     }
 

@@ -88,6 +88,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
             layer.transform.SetParent(background, false); // Keep it under Background
             layer.follow = Layers[i].follow; // How much it copies the camera
             layer.driftPixelsPerSecond = Layers[i].drift; // Clouds drift on their own
+            layer.useLevelClock = art.PauseBackdropDrift; // The theme can freeze its drifting decoration during a pause
             layer.widthPixels = 960f; // Layer art is two screens wide
             layer.pixelsPerUnit = LevelGeometry.PixelsPerUnit; // Same pixel size as the sprites
             M.Renderer("Art", layerSprite, -100 + i * 10, layer.transform); // The picture; farther layers draw first
@@ -97,16 +98,19 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         geometry.width = layout.Width; // From the level data
         var solids = new List<Rect>(); // Ground pieces, boulders and ledges
         var pits = level.Hazards.Where(h => h.Type == HazardType.Pit).OrderBy(h => h.Place.X).ToList(); // Gaps in the ground, left to right
+        var gaps = pits.Select(h => (x: h.Place.X, w: h.Width, wet: h.IsWater, hasFloor: false)) // Reads the pit gaps
+            .Concat(layout.Pools.Select(p => (x: p.X, w: p.Width, wet: true, hasFloor: true))) // Adds each safe pool to the ground plan
+            .OrderBy(g => g.x).Append((x: layout.Width, w: 0f, wet: false, hasFloor: false)); // Ends the ground at the trail width
         float groundFrom = 0f; // Where the next piece of ground starts
-        foreach (var pit in pits.Select(h => (x: h.Place.X, w: h.Width)).Append((x: layout.Width, w: 0f))) // Ground up to each pit, then up to the level end
-        {
-            var piece = new Rect(groundFrom, -64f, pit.x - groundFrom, 64f); // One piece of ground
+        foreach (var gap in gaps) // Ground up to each gap, then up to the level end
+        { // Opens a ground piece
+            var piece = new Rect(groundFrom, -64f, gap.x - groundFrom, 64f); // One piece of ground
             solids.Add(piece); // The explorer can stand on it
-            DrawGroundTop(piece, art.GroundTop, layout.IceZones, layout.SandZones, geometry.transform); // Uses ice or soft sand in place of the top tile where needed
-            Tiled("Soil", art.Soil, new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
-            if (pit.w > 0f) Tiled("Pit", "pit_fill", new Rect(pit.x, -64f, pit.w, 64f), 3, geometry.transform); // Dark inside of the pit
-            groundFrom = pit.x + pit.w; // The next piece starts after the pit
-        }
+            DrawGroundTop(piece, art, layout, geometry.transform); // Swaps ice, sand or water into the ground top
+            Tiled("Soil", ThemeSprite(art, art.Soil), new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
+            if (gap.w > 0f) DrawGap(gap.x, gap.w, gap.wet, gap.hasFloor, art, solids, geometry.transform); // Draws the inside and adds a safe floor when specified
+            groundFrom = gap.x + gap.w; // The next piece starts after this gap
+        } // Ends a ground piece
         var spikeAreas = new List<Rect>(); // Danger areas of the spike traps
         foreach (var h in level.Hazards.Where(h => h.Type == HazardType.Spikes)) // Each spike trap
         {
@@ -117,7 +121,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         foreach (var b in layout.Boulders) // Each boulder
         {
             string name = b.Size == BoulderSize.Small ? "boulder_small" : "boulder_big"; // The boulder's base name
-            var sprite = S(name + art.BoulderEnding); // Its picture for this theme
+            var sprite = ThemeSprite(art, name + art.BoulderEnding); // Its picture from this theme
             float w = sprite.rect.width, h = sprite.rect.height; // Its size in pixels
             var r = M.Renderer(name, sprite, 6, geometry.transform); // Draws the boulder
             r.transform.position = LevelGeometry.ToWorld(b.X + w / 2f, h / 2f); // Sitting on the ground
@@ -126,7 +130,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         foreach (var l in layout.Ledges) // Each ledge
         {
             var r = new Rect(l.X, l.Top - 10f, l.Width, 10f); // Its shape: a 10-pixel stone slab
-            Tiled("Ledge", art.Ledge, r, 6, geometry.transform); // Draws the ledge
+            Tiled("Ledge", ThemeSprite(art, art.Ledge), r, 6, geometry.transform); // Draws the theme ledge
             solids.Add(r); // Solid like a boulder: it blocks the sides and the head, and holds the explorer from above, so nobody walks through it
         }
         geometry.solids = solids.ToArray(); // Ground, boulders and ledges
@@ -170,7 +174,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         follow.target = explorer; // Follow the explorer
         follow.geometry = geometry; // Stop at the level's ends
 
-        var music = K.LevelMusic(level.Episode, level.Difficulty); // The landform's music and the wind or stream for this difficulty
+        var music = K.LevelMusic(level); // Uses the landform tune and the ambience chosen for this level
         K.Events(); // Sends taps to the buttons
         var root = K.Canvas("Level UI", ppc, out var group); // UI with the same whole-number zoom as the art
 
@@ -198,6 +202,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         BuildObjects(level, geometry, explorer, controller); // Builds the reused level objects
         BuildHardObjects(level, geometry, explorer, controller); // Builds the placed boulders and ice
         BuildSoftSand(layout, geometry, controller); // Adds the soft sand part, its step sound and puffs (Hills Easy 3)
+        BuildBatsAndCurrents(layout, geometry, controller); // Adds bat and current parts when the trail has those objects
         BuildResult(level, controller.result, root, font); // The Result Screen panel
         collector.pickups = spots.ToArray(); // The collectibles
         controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Chimes for items, stars and badges

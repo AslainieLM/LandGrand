@@ -13,6 +13,7 @@ namespace LandGrand.Play // Level play scripts live here
         [Tooltip("0 = fixed to the screen (sky). 1 = moves with the ground. Far layers use small numbers.")]
         public float follow = 0.2f; // Share of the camera's movement this layer copies
         public float driftPixelsPerSecond = 0f; // Slow drift of its own, for clouds
+        public bool useLevelClock; // Stops new themed drift while the level is paused
         public float widthPixels = 960f; // Width of the layer art, which tiles sideways
         public float pixelsPerUnit = 32f; // Sprite pixels per world unit
 
@@ -31,7 +32,8 @@ namespace LandGrand.Play // Level play scripts live here
 
         void LateUpdate() // Runs every frame after the camera moved
         {
-            drift += driftPixelsPerSecond * Time.deltaTime; // Clouds drift on their own
+            if (useLevelClock) drift = LevelClock.Now * driftPixelsPerSecond; // Drift stops with the gameplay clock
+            else drift += driftPixelsPerSecond * Time.deltaTime; // Keeps the original cloud timing
             float camPixels = cam.position.x * pixelsPerUnit; // Camera place across, in pixels
             float offset = Mathf.Repeat(camPixels * follow + drift, widthPixels); // How far the layer has slid, wrapping after one width
             float x = -Mathf.Round(offset) / pixelsPerUnit; // Whole pixels so the art stays sharp
