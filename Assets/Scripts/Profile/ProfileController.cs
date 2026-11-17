@@ -74,7 +74,10 @@ namespace LandGrand.Profile // Profile scripts live here
 
         [Header("Achievements")] // Inspector heading for the badges
         public TabView[] badgeLandformTabs; // Mountains, Hills, Plains, Plateaus, in episode order; each landform has its own badge page (D-066)
-        public SlotView[] badges; // One 5 by 3 page of cells; a landform's badges fill from the top-left
+        public SlotView[] badges; // One 5 by 2 page of cells, like the Collection; a landform's badges fill from the top-left
+        public UnityEngine.UI.Button previousBadgePage, nextBadgePage; // Badge page arrows
+        public TMP_Text badgePageNumber; // Current badge page and total
+        int badgePage; // Zero-based badge page inside this landform
         public TMP_Text badgeComingSoon; // Shown when an open landform has no badges yet
         public NamedSprite[] badgePictures; // Every badge picture, earned and locked, by name
 
@@ -113,6 +116,8 @@ namespace LandGrand.Profile // Profile scripts live here
             for (int i = 0; i < badgeLandformTabs.Length; i++) { var e = (Episode)i; badgeLandformTabs[i].button.onClick.AddListener(() => ChooseBadgeLandform(e)); } // One listener per badge landform tab
             previousPage.onClick.AddListener(() => ChangePage(-1)); // Previous twelve kinds
             nextPage.onClick.AddListener(() => ChangePage(1)); // Next twelve kinds
+            previousBadgePage.onClick.AddListener(() => ChangeBadgePage(-1)); // Previous ten badges
+            nextBadgePage.onClick.AddListener(() => ChangeBadgePage(1)); // Next ten badges
             card.SetActive(false); // No card at the start
             namePanel.gameObject.SetActive(false); // No name panel at the start
             ShowStrip(); // Name and totals
@@ -217,9 +222,17 @@ namespace LandGrand.Profile // Profile scripts live here
         {
             if (!CanShowLandform(e)) return; // Same lock guard as the Collection tabs; stay on the shown landform
             badgeLandform = e; // Remember it
+            badgePage = 0; // A landform choice starts on badge page one
             ShowLandformTabs(badgeLandformTabs, e); // Marks the chosen badge tab
             ShowBadges(); // Fills the chosen page
         }
+
+        void ChangeBadgePage(int step) // Moves within the chosen landform's badges
+        { // Opens the page change
+            if (Leaving) return; // Ignores taps while leaving
+            badgePage += step; // ShowBadges keeps it within the pages
+            ShowBadges(); // Redraws the badge page
+        } // Ends the page change
 
         void ShowBadges() // Fills the badge page of the chosen landform and its count
         {
@@ -227,14 +240,23 @@ namespace LandGrand.Profile // Profile scripts live here
             var all = AchievementCatalog.ForLandform(badgeLandform); // This landform's badges, in order
             tabCount.text = Total("Badges", all.Count(a => a.IsEarned(progress)) + "/" + all.Count); // For example "Badges 3/15" on Mountains, "Badges 0/10" on Hills
             badgeComingSoon.gameObject.SetActive(all.Count == 0); // "Coming soon" for an open landform with no badges yet
+            int count = Mathf.Max(1, (all.Count + badges.Length - 1) / badges.Length); // Badge pages needed, at least one
+            badgePage = Mathf.Clamp(badgePage, 0, count - 1); // Stays within this landform's pages
+            previousBadgePage.gameObject.SetActive(count > 1); // Hides paging when one page holds them all
+            nextBadgePage.gameObject.SetActive(count > 1); // Hides paging when one page holds them all
+            badgePageNumber.gameObject.SetActive(count > 1); // Hides the single-page count
+            previousBadgePage.interactable = badgePage > 0; // Stops at the first page
+            nextBadgePage.interactable = badgePage + 1 < count; // Stops at the last page
+            badgePageNumber.text = (badgePage + 1) + "/" + count; // One-based page numbers, like the Collection
+            int first = badgePage * badges.Length; // Index of the first badge on this page
             for (int i = 0; i < badges.Length; i++) // Each badge cell on the page
             {
                 var cell = badges[i]; // The cell
-                bool used = i < all.Count; // Is there a badge for it?
+                bool used = first + i < all.Count; // Is there a badge for it?
                 cell.root.SetActive(used); // Hide spare cells
                 cell.button.onClick.RemoveAllListeners(); // Forget any earlier listener
                 if (!used) continue; // Nothing more for a spare cell
-                var badge = all[i]; // The badge
+                var badge = all[first + i]; // The badge on this page
                 bool earned = badge.IsEarned(progress); // Earned or locked
                 cell.picture.sprite = BadgeOf(badge, earned); // Medal, or its dark locked shape
                 cell.label.text = badge.Name; // The name shows even while locked, so the player has a goal

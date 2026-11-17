@@ -52,7 +52,6 @@ namespace LandGrand.Play // Level play scripts live here
 
         public float ExternalPushX { get; set; } // Wind speed added to walking
         internal float CurrentPushX { get; set; } // River speed added only while grounded
-        internal float? GroundWalkSpeed { get; set; } // Optional walk speed from the level data
         internal bool BatPushActive => batPushLeft > 0f; // The bat part flashes only during a push
         float batPushLeft; // Time left for the current bat push
         int batPushDirection; // The push heads away from the bat
@@ -138,9 +137,8 @@ namespace LandGrand.Play // Level play scripts live here
             }
 
             float normalTime = dt - batStep; // Any time left after a bat push uses ordinary walking
-            float baseSpeed = grounded ? GroundWalkSpeed ?? walkSpeed : walkSpeed; // Only grounded feet use the optional level speed
             SlidingOnIce = OnIce && IceSlide.IsSliding(walkVelocity, dir); // Releasing or turning starts a slide as before
-            float target = dir * SoftSand.WalkSpeed(baseSpeed, OnSand && startedGrounded); // Keeps the sand speed on its original footing
+            float target = dir * SoftSand.WalkSpeed(walkSpeed, OnSand && startedGrounded); // Keeps the sand speed on its original footing
             walkVelocity = OnIce ? IceSlide.Next(walkVelocity, target, normalTime) : target; // Only ice changes speed gradually
             velocity.x = walkVelocity + ExternalPushX; // Wind still adds on the ground or in the air
             if (grounded) velocity.x += CurrentPushX; // The river stops pushing as soon as the explorer jumps

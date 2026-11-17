@@ -16,7 +16,7 @@ Built and verified on 2026-11-17 in Unity 6000.6.8f1. All five Hills Normal scen
 
 Final run: **360 passed, 0 failed, 0 skipped** in `Temp/editmode.xml`. The run before Hills Normal had 296 passing tests. All three generators reproduced the reviewed previews. All six builders completed, with zero missing assets and zero refused props. Unity generated 23 level scenes. Lesson contains the five new illustrations and seven kind pictures, and Profile contains all seven kind pictures. Callao references `amb_cave_drips`. The other four Hills Normal trails reference `amb_stream_normal`.
 
-A batch Play Mode smoke check opened all five scenes with progress kept in memory. It verified the N1 raft carrying, pause, recovery, safe pool floor and checkpoint return from a water pit. It checked the N2 24 px bat push, N3 running at 42 px/s against the current and launching at 84 px/s, and the N4 mix. In N5 it boarded a rising basket, paused and resumed while riding, rode it down, landed on the crossing ledge, opened the zeolite card and crossed the 160 px gap. The temporary smoke runner was removed after the check.
+A batch Play Mode smoke check opened all five scenes with progress kept in memory. It verified the N1 raft carrying, pause, recovery, safe pool floor and checkpoint return from a water pit. It checked the N2 24 px bat push, N3 running against the current (42 px/s at the old 72 px/s ground speed; 54 px/s now) and launching at 84 px/s, and the N4 mix. In N5 it boarded a rising basket, paused and resumed while riding, rode it down, landed on the crossing ledge, opened the zeolite card and crossed the 160 px gap. The temporary smoke runner was removed after the check.
 
 The 18 earlier level scenes were reserialized by the level builder. Their fixed geometry, named objects, original asset references and ambience match the baseline. Shared pickup panels now include the seven new item picture references. Existing PNG, WAV and OGG files have an empty Git diff.
 
@@ -27,7 +27,7 @@ The 18 earlier level scenes were reserialized by the level builder. Their fixed 
 
 ## Approved choices and numeric differences
 
-- All level dimensions, pickups, hazards, periods, phases, ledge heights, and checkpoint placements match the authored layouts. Hills Normal uses **72 px/s on the ground** as confirmed in chat, compared with the existing motor's 84 px/s default. The 30 px/s opposing current produces the specified 42 px/s walk. Air speed is 84 px/s.
+- All level dimensions, pickups, hazards, periods, phases, ledge heights, and checkpoint placements match the authored layouts. *Review fix 2026-11-17 (Claude):* the separate 72 px/s ground speed was removed; Hills Normal uses the game's 84 px/s walk everywhere, like every other level. The layout bot was re-run at 84 px/s and every level still passes (83.8–91.1 s, all pickups, lint clean, the N5 balloon still required). Walking against the 30 px/s current gives 54 px/s.
 - Seven fixed decoration x positions moved to the nearest places allowed by `HillsPropFits`. The table lists the original and final pixel positions. Ties took the left spot. Repeating decoration stays near the approximate spacing in the spec and fits around trail objects.
 
 | Level | Decoration | Original x | Final x | Clearance |
@@ -423,3 +423,15 @@ Start-Process -FilePath $unityExe -ArgumentList '-batchmode -projectPath . -runT
 - `Tools/Art/make_hills_normal_art.py` Generates the new sprite, item and lesson art and the labeled preview.
 - `Tools/Art/make_hills_normal_backdrops.py` Generates five sets of six seamless 960×270 layers and the backdrop preview.
 - `Tools/Audio/make_hills_normal_audio.py` Generates, measures and plots the four sounds.
+
+## Review fixes (2026-11-17, after /code-review by Claude)
+
+- Removed `LevelLayout.GroundWalkSpeed` and its use in `ExplorerMotor` and `LevelController`; the bot re-check at 84 px/s passes (see `layouts.md`).
+- `layouts.md`: water pits are an ordinary Normal pit (back to the furthest flag), as built.
+- Hill Collector needs the whole Hills shelf, so it grows with the shelf (10 after Easy, 17 after Normal, more after Hard). Recorded as a D-067 addition in the vault.
+- The landing and carry code for moving solids was rewritten and is shared with Mountains, so the play checklist now includes the Mountains Normal moving platforms and crumbling ledges and the Mountains Hard boulders and ice.
+
+Extra play checks:
+- [ ] Mountains Normal: ride a moving platform and stand on crumbling ledges; they carry and drop you as before
+- [ ] Mountains Hard and Hills Easy E3: ice and soft sand feel as before
+

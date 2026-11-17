@@ -29,7 +29,6 @@ namespace LandGrand.Rules.Tests // Tests the plain level data
             Assert.AreEqual(new Spot(7040f, 0f), level.Goal); // Goal near the right edge
             CollectionAssert.AreEqual(new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, level.Checkpoints); // Two flags at fixed places
             Assert.AreEqual(180, level.TimeLimitSeconds); // Three minutes
-            Assert.AreEqual(72f, level.Layout.GroundWalkSpeed); // Uses the approved ground speed from the layout bot
             Assert.AreEqual(7, level.Pickups.Count); // Seven pickups
             Assert.AreEqual(7, level.Layout.Boulders.Count); // Seven boulders
             Assert.AreEqual(ledges, level.Layout.Ledges.Count); // The listed ledges
@@ -155,7 +154,6 @@ namespace LandGrand.Rules.Tests // Tests the plain level data
                 Assert.IsEmpty(layout.Currents, level.SceneName); // No river strips
                 Assert.IsFalse(layout.MovingPlatforms.Any(p => p.IsVertical), level.SceneName); // No balloons
                 Assert.IsNull(layout.AmbienceOverride, level.SceneName); // Keeps its table ambience
-                Assert.IsNull(layout.GroundWalkSpeed, level.SceneName); // Keeps the existing ground speed
             } // Ends the trail check
         } // Ends the check
     } // Ends the checks

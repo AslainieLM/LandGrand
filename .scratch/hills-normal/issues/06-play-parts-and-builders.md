@@ -77,7 +77,7 @@
 
 ## Approved numbers and verification
 
-- Grounded walk speed is 72 px/s for Hills Normal, so the 30 px/s current yields 42 px/s against it. Air speed remains 84 px/s. No layout coordinates changed.
+- Review fix (2026-11-17): the separate 72 px/s ground speed was removed. Hills Normal uses the game's 84 px/s walk on the ground and in the air, like every other level; the layout bot was re-run at 84 px/s and every level still passes (83.8–91.1 s). Walking against the 30 px/s current gives 54 px/s. No layout coordinates changed.
 - Fixed decoration x moves (px), nearest legal spots: seabird 2600 to 2585, bulul 1500 to 1493 and 4800 to 4781, cone house 900 to 883 and 5600 to 5633, far balloon 4200 to 4137 and 6500 to 6493.
 - The batch gameplay audit covered raft support and recovery, pause, the safe pool, water checkpoints, bat push, river speed, the terrace mix, and the balloon crossing and zeolite card. It used temporary progress in memory.
 - The Standards and Spec reviews found landing and pause edge cases. The motor now sweeps changing tops from the prior frame, remembers the actual support, and keeps a rider attached across pause. Added NUnit coverage and reran the scene audit.

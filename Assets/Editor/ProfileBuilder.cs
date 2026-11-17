@@ -27,7 +27,7 @@ public static class ProfileBuilder // Makes the Profile scene
     const string ProfilePath = "Assets/Scenes/Profile.unity"; // Where the Profile is saved
     const int GridColumns = 6; // Items per row in the Collection grid (D-060)
     const int BadgeColumns = 5; // Badges per row on the Achievements page (D-060)
-    const int BadgeRows = 3; // Rows on each landform's badge page: 5 by 3 (D-066)
+    const int BadgeRows = 2; // Rows on each badge page: 5 by 2, with page arrows like the Collection
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for small headings
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, for the draft note
     static readonly Color32 Muted = new Color32(110, 100, 90, 255); // Soft grey-brown for "Coming soon" and the card tag
@@ -109,7 +109,7 @@ public static class ProfileBuilder // Makes the Profile scene
 
     /// <summary>
     /// The two sections under the strip (D-060): Collection and Achievements tabs at y 58 to 80, and one cream page panel at y 80 to 264.
-    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: the same four landform tabs, then a grid of 5 by 3 badges with names.
+    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: the same four landform tabs, then a grid of 5 by 2 badges with names and page arrows.
     /// </summary>
     static void BuildSections(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the tabs, both pages and their grids
     {
@@ -141,12 +141,12 @@ public static class ProfileBuilder // Makes the Profile scene
         controller.pictures = ItemCatalog.All.Select(k => new ProfileController.NamedSprite { name = k.Picture, sprite = Item(k.Picture) }).ToArray(); // Every item picture, by name
         controller.collectionPage = collection.gameObject; // The controller shows it
 
-        // Achievements page: the same four landform tabs, then one 5 by 3 badge grid for the chosen landform (D-066).
+        // Achievements page: the same four landform tabs, then a 5 by 2 badge grid with page arrows, like the Collection.
         var achievements = M.Rect("Achievements", root, page, page); // Holder the controller shows and hides
         controller.badgeLandformTabs = LandformTabRow(achievements, "Badge landform "); // The controller switches them; same tabs and place as the Collection
-        var badges = new ProfileController.SlotView[BadgeColumns * BadgeRows]; // One page of cells: 15 badges
+        var badges = new ProfileController.SlotView[BadgeColumns * BadgeRows]; // One page of cells: 10 badges
         for (int i = 0; i < badges.Length; i++) // Each cell
-            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(56f + (i % BadgeColumns) * 92f, 122f + (i / BadgeColumns) * 52f), 26f, 88f); // Five medals per row; rows at y 122, 174 and 226, below the tabs
+            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(56f + (i % BadgeColumns) * 92f, 132f + (i / BadgeColumns) * 68f), 26f, 88f); // Five medals per row; rows at y 132 and 200, like the Collection
         controller.badgeComingSoon = M.ReadingLabel("Badges coming soon", achievements, "Coming soon", new Vector2(240f, 170f), page, new Vector2(200f, 22f), Muted, TextAlignmentOptions.Midline); // For an open landform with no badges yet
         foreach (var b in badges) // Keeps names within each medal column
         { // Opens the name layout
@@ -157,6 +157,9 @@ public static class ProfileBuilder // Makes the Profile scene
             b.label.rectTransform.sizeDelta = new Vector2(88f, 32f); // Fits the name between this medal and the next row
         } // Ends the name layout
         controller.badges = badges; // The badge grid
+        controller.previousBadgePage = M.MakeButton("Previous badge page", achievements, "prev_icon", new Vector2(204f, 246f), K.CanvasCenter); // Same arrow and place as the Collection
+        controller.nextBadgePage = M.MakeButton("Next badge page", achievements, "next_icon", new Vector2(276f, 246f), K.CanvasCenter); // Same arrow and place as the Collection
+        controller.badgePageNumber = M.ReadingLabel("Badge page number", achievements, "1/2", new Vector2(240f, 246f), K.CanvasCenter, new Vector2(44f, 22f), K.Ink, TextAlignmentOptions.Midline); // Page count between the arrows
         controller.badgePictures = AchievementCatalog.All.SelectMany(a => new[] { "badge_" + a.Id, "badge_" + a.Id + "_locked" }).Select(n => new ProfileController.NamedSprite { name = n, sprite = P(n) }).ToArray(); // Earned and locked pictures, by name for all 25 badges
         controller.achievementsPage = achievements.gameObject; // The controller shows it
     }

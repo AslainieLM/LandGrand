@@ -41,6 +41,7 @@
 - [ ] Collection: the Hills tab shows 17 kinds, and "Found here" counts them
 - [ ] Philippine Hills (after N1–N4) and Balloon Rider (after N5) can be earned; "New badge!" shows
 - [ ] Mountains and Hills Easy still play as before
+- [ ] Mountains Normal: moving platforms carry you and crumbling ledges drop you as before (the landing code was rewritten)
 
 **Builder to run:** all of the above.
 

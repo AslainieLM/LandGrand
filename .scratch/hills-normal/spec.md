@@ -48,7 +48,7 @@ The Hills outline, the shared-kind rules, the badges and the audio table come fr
 3. **N3 river current:**
    - A shallow water strip on solid ground, not a pit.
    - While the explorer is grounded in it, there is a steady push of 30 px/s, to the right or the left (data).
-   - Walking against it still moves forward at 42 px/s.
+   - Walking against it still moves forward at 54 px/s (the game's 84 px/s walk minus 30).
    - Ripple marks show the direction.
 4. **N4 Banaue mix:** one float, one bat loop and one current strip. No new object.
 5. **N5 hot-air balloon:**

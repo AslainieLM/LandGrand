@@ -1,21 +1,21 @@
 check: idle on float 1828 falls into the pit at 2.85s (rule: 0.6 wait + 2.0 sink, then a short fall)
 check: idle 5 s on practice float 824 ends at y=-16.0 (pool floor -16, safe)
-check: 1 s walking right in the left current moves 43.0 px (expect 42)
+check: 1 s walking right in the left current moves 55.0 px (expect 42)
 check: 1 s idle in the left current moves -29.0 px (expect -30)
 check: idle next to bat 1350 for 4 s: 1 pushes, ended at x=1314.0 (started 1340; push goes away from the bat, then 1 s rest)
-E1 Chocolate Hills: bot GOAL 66.0s (goal); pickups 5/5; time on sand 0.0s
-E2 Batanes: bot GOAL 72.7s (goal); pickups 5/5; time on sand 0.0s
-E3 La Paz: bot GOAL 81.1s (goal); pickups 5/5; time on sand 21.1s
-N1 Hundred Islands: bot GOAL 97.6s (goal); pickups 7/7 reachable lint clean
-   floats (s standing): 824:0.38, 1828:0.08, 6132:0.15, 6212:0.15
-N2 Callao Cave: bot GOAL 99.9s (goal); pickups 7/7 reachable lint clean
-   bats (s in loop span / pushes): 1350:1.68/1, 3800:1.85/2, 6000:1.68/1
-N3 Pagsanjan Gorge: bot GOAL 98.5s (goal); pickups 7/7 reachable lint clean
-   currents (s in strip): 1000R:2.37, 3000L:7.62, 5300R:2.93
-N4 Banaue Rice Terraces: bot GOAL 101.0s (goal); pickups 7/7 reachable lint clean
-   floats (s standing): 3332:0.15
-   bats (s in loop span / pushes): 2900:1.68/1
-   currents (s in strip): 5200L:6.67
-N5 Cappadocia: bot GOAL 106.1s (goal); pickups 7/7 reachable lint clean
-   balloons (s from arriving to jumping off): 900:3.87, 2900:1.98, 4144:3.70, 5500:2.13
-   without balloons: FAILED (pit at x=4272)
+E1 Chocolate Hills: bot GOAL 56.8s (goal); pickups 5/5; time on sand 0.0s
+E2 Batanes: bot GOAL 62.4s (goal); pickups 5/5; time on sand 0.0s
+E3 La Paz: bot GOAL 70.1s (goal); pickups 5/5; time on sand 17.9s
+N1 Hundred Islands: bot GOAL 83.8s (goal); pickups 7/7 reachable lint clean
+   floats (s standing): 824:0.25, 1828:0.30, 6132:0.02, 6212:0.30
+N2 Callao Cave: bot GOAL 85.9s (goal); pickups 7/7 reachable lint clean
+   bats (s in loop span / pushes): 1350:1.47/1, 3800:1.55/2, 6000:1.48/1
+N3 Pagsanjan Gorge: bot GOAL 84.2s (goal); pickups 7/7 reachable lint clean
+   currents (s in strip): 1000R:2.12, 3000L:5.92, 5300R:2.63
+N4 Banaue Rice Terraces: bot GOAL 86.2s (goal); pickups 7/7 reachable lint clean
+   floats (s standing): 3332:0.02
+   bats (s in loop span / pushes): 2900:1.25/1
+   currents (s in strip): 5200L:5.18
+N5 Cappadocia: bot GOAL 91.1s (goal); pickups 7/7 reachable lint clean
+   balloons (s from arriving to jumping off): 900:0.00, 2900:2.23, 4144:3.67, 5500:2.30
+   without balloons: FAILED (pit at x=4285)

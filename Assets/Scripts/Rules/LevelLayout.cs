@@ -69,16 +69,14 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public IReadOnlyList<Bat> Bats { get; } // Gentle bats that circle the trail
         public IReadOnlyList<CurrentZone> Currents { get; } // Water strips that push the explorer
         public string AmbienceOverride { get; } // Optional ambience file name without its extension
-        public float? GroundWalkSpeed { get; } // Optional ground walk speed in pixels per second
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null, float? groundWalkSpeed = null) // Makes a layout
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null) // Makes a layout
         {
             Pools = (pools ?? new ShallowPool[0]).ToArray(); // Copy the safe pools
             Floats = (floats ?? new SinkingFloat[0]).ToArray(); // Copy the rafts
             Bats = (bats ?? new Bat[0]).ToArray(); // Copy the bat loops
             Currents = (currents ?? new CurrentZone[0]).ToArray(); // Copy the water strips
             AmbienceOverride = ambienceOverride; // Save the optional sound name
-            GroundWalkSpeed = groundWalkSpeed; // Save the optional ground speed
             SandZones = (sandZones ?? new SandZone[0]).ToArray(); // Copy the soft sand; most levels have none
             CrumbleLedges = (crumbleLedges ?? new CrumbleLedge[0]).ToArray(); // Copy the breakable ledges
             Rockfalls = (rockfalls ?? new Rockfall[0]).ToArray(); // Copy the rocks

@@ -29,7 +29,7 @@ Shared Normal rules (from Mountains Normal, `MountainsNormalTests.cs`): width 72
 | | `BalloonMinRise`, `BalloonMaxRise` | 48, 96 px | Allowed High − Low |
 | | phase | s | At phase 0 the balloon is at Low going up |
 
-Floats and balloons are one-way tops, like the game's dynamic slabs (`LevelGeometry.LedgeShapes`): they hold from above only and never block the sides or the head. Standing on one carries the explorer up or down. A fall into a water pit is an ordinary pit hazard (short return).
+Floats and balloons are one-way tops, like the game's dynamic slabs (`LevelGeometry.LedgeShapes`): they hold from above only and never block the sides or the head. Standing on one carries the explorer up or down. A fall into a water pit is an ordinary Normal pit hazard: back to the furthest flag reached, or the start before the first flag.
 
 Lint rules checked by the bot: no pit, pool, spikes or bat loop within 100 px of a checkpoint; no current or balloon within 40 px of a checkpoint; no hazard (pit, spikes, bat loop) before x 200 or within 120 px of the goal; no pit or spikes within 80 px of any bat loop or current strip; every water gap next to a float is at most 40 px; balloon rise 48–96 and no balloon over a pit; the first object of a type in its introducing level is on safe ground (80 px clear, not over a pit; the first current pushes with the player); exactly 7 pickups, one secret; no pickup inside a bat loop. All ledges must be reachable from the ground (the reach check starts only from ledges already reached).
 
@@ -72,7 +72,7 @@ Coordinates: pixels, x from the level start, y up from the ground line. `B(x, Sm
 
 - Width 7200. Goal at 7040 (Falls Landing). Checkpoints 2400, 4800.
 - Pits: 1700 (56), 3700 (64), 5800 (64). Spikes: 2000, 4250, 6400.
-- Currents (x, width, direction): (1000, 240, right) practice; (3000, 320, **left**, against travel: 42 px/s forward); (5300, 300, right, ends 200 px before pit 5800).
+- Currents (x, width, direction): (1000, 240, right) practice; (3000, 320, **left**, against travel: 54 px/s forward at the game's 84 px/s walk); (5300, 300, right, ends 200 px before pit 5800).
 - Boulders: B(500, Small), B(1450, Big), B(2650, Small), B(3500, Big), B(4550, Small), B(6050, Big), B(6750, Small).
 - Ledges: L(1900, 40, 64), L(4000, 40, 64), L(4080, 84, 64).
 - Pickups:
@@ -122,17 +122,17 @@ Coordinates: pixels, x from the level start, y up from the ground line. `B(x, Sm
 
 | Level | Bot to goal | Pickups reachable | Lint | New objects (bot) |
 |---|---|---|---|---|
-| N1 Hundred Islands | 97.6 s | 7/7 | clean | floats, s standing: 824 0.38, 1828 0.08, 6132 0.15, 6212 0.15 |
-| N2 Callao Cave | 99.9 s | 7/7 | clean | bats, s in loop span / pushes: 1350 1.68/1, 3800 1.85/2, 6000 1.68/1 |
-| N3 Pagsanjan Gorge | 98.5 s | 7/7 | clean | currents, s in strip: 1000R 2.37, 3000L 7.62, 5300R 2.93 |
-| N4 Banaue Rice Terraces | 101.0 s | 7/7 | clean | float 3332 0.15; bat 2900 1.68/1; current 5200L 6.67 |
-| N5 Cappadocia | 106.1 s | 7/7 | clean | balloons, s arriving to jumping off: 900 3.87, 2900 1.98, 4144 3.70, 5500 2.13 |
+| N1 Hundred Islands | 83.8 s | 7/7 | clean | floats, s standing: 824 0.25, 1828 0.30, 6132 0.02, 6212 0.30 |
+| N2 Callao Cave | 85.9 s | 7/7 | clean | bats, s in loop span / pushes: 1350 1.47/1, 3800 1.55/2, 6000 1.48/1 |
+| N3 Pagsanjan Gorge | 84.2 s | 7/7 | clean | currents, s in strip: 1000R 2.12, 3000L 5.92, 5300R 2.63 |
+| N4 Banaue Rice Terraces | 86.2 s | 7/7 | clean | float 3332 0.02; bat 2900 1.25/1; current 5200L 5.18 |
+| N5 Cappadocia | 91.1 s | 7/7 | clean | balloons, s arriving to jumping off: 900 0.00, 2900 2.23, 4144 3.67, 5500 2.30 |
 
-- Target band: Mountains Normal bot times 97.6–111.6 s. All levels are well under 180 s.
+- Re-run 2026-11-17 at the game's real walk speed of 84 px/s (the first run used 72 px/s, like the earlier bots; that run gave 97.6–106.1 s, inside the Mountains Normal band of 97.6–111.6 s). All levels are well under 180 s.
 - N5 without balloons: the bot fails at the 160 px gap (pit at x 4272), so the balloon is required.
 - Every ledge is reachable from the ground (ledge closure check), so the secret ledges are real routes.
 - Hills Easy regression with the extended sim: E1 66.0 s, E2 72.7 s, E3 81.1 s, 5/5 pickups each (unchanged).
-- Mechanics self-checks: standing still on a float over a pit drops the explorer into the pit at 2.85 s (0.6 s wait + 2 s sink + short fall); on the practice float it ends safely on the pool floor at -16; walking against the left current moves 43 px in 1 s (42 expected, frame rounding); standing in it drifts 29 px left; one bat touch pushes 26 px (24 plus frame rounding) and the explorer is then out of the loop.
+- Mechanics self-checks: standing still on a float over a pit drops the explorer into the pit at 2.85 s (0.6 s wait + 2 s sink + short fall); on the practice float it ends safely on the pool floor at -16; walking against the left current moves 55 px in 1 s (84 − 30 = 54 expected, frame rounding); standing in it drifts 29 px left; one bat touch pushes 26 px (24 plus frame rounding) and the explorer is then out of the loop.
 
 ## Notes for the build
 

@@ -78,7 +78,7 @@ static class Rules {
 
 class Sim {
     public Lvl L; public float px, py, vx, vy, t, baseVx; public bool grounded, jumpedFromGround, airJumpUsed; float lastGrounded = -1;
-    public const float W = 12, H = 26, walk = 72, g = 900, maxFall = 420, jump = 290, dj = 230, coyote = 0.08f;
+    public const float W = 12, H = 26, walk = 84, g = 900, maxFall = 420, jump = 290, dj = 230, coyote = 0.08f;
     List<R> statics = new(); public List<R> spikes = new();
     float[] crumbleTouched; float[] crumbleBroke; int standingPlatform = -1; long[] rollSkipped;
     // new objects
