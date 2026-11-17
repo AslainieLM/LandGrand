@@ -36,7 +36,9 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Wind gust**: a brief leftward push within a marked stretch of trail, preceded by visible wind streaks.
 - **Normal checkpoints**: the two safe flags in each Normal level. Hazards return the explorer to the furthest flag reached, or the start before either flag.
 - **Rolling boulder**: a trap that warns before rolling left along the ground. It skips a roll if the explorer is too close to its starting point.
+- **Rolling log** gives a dust warning and rolls left or right. It skips a cycle if the explorer is too close at the start.
 - **Icy ground**: a stretch of trail where the explorer takes time to speed up and slides before stopping.
+- **Slippery mud** uses the same slide and stopping rule as icy ground. A slide in mud adds a squelch and a splash.
 - **Hard checkpoints**: the three safe flags in each Hard level. Hazards return the explorer to the furthest flag reached, or to the start before the first flag.
 - **Soft sand**: a darker stretch of dune where the explorer walks more slowly, with a crunch and sand puffs. Jumps are not changed.
 - **Sinking float**: a bamboo raft that sinks after the explorer stands on it, then rises after the explorer leaves. It supports the explorer from above until it goes under.
@@ -49,6 +51,7 @@ Domain words used in the game, its code and its planning notes. The project vaul
 
 - **Landform Description Screen**: the screen that reviews a completed landform, shows the explorer's trip totals and names the next landform.
 - **Episode complete**: the explorer has cleared all 15 levels of one landform across Easy, Normal and Hard.
+- **Hills complete** means the explorer has cleared all 15 Hills levels. Next Episode after Hills Hard 7 opens the Hills Landform Description Screen. Plains unlocks and shows "Coming soon" on the map.
 - **Unlock animation**: the opening padlock, fading grey and sparkles that the map shows the first time a landform opens.
 - **Level ambience**: the background sound of a trail, such as wind, a stream or cave drips. A trail can use its own ambience.
 - **Landform audio table**: the list that names each landform's level music and its ambience for Easy, Normal and Hard (wind for Mountains, stream and rain for Hills).
