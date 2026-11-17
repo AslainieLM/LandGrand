@@ -73,17 +73,17 @@ EditMode tests: `Temp/editmode.xml`. Builder logs: `Temp/build-*.log`.
 
 ## Play checklist for the user
 
-- [ ] Map: Hills opens with its trees, stream and birds (no cloud); tapping Hills opens the difficulty screen; Plains says "Finish Hills first"
-- [ ] Hills screens show birds and grass, not snow; Hills music plays in the levels with the stream and birds
-- [ ] Each Hills Easy level shows its banner (Chocolate Hills, Batanes Hills, La Paz Dunes), its lesson, its theme and its own background
-- [ ] Batanes has grazing goats and cows; Chocolate Hills has palms; La Paz has dune grass
-- [ ] Soft sand in La Paz: slower walking, same jumps, step sound and puffs; the first patch is a safe place to learn
-- [ ] Pits and spikes send the explorer a short way back, as in Mountains Easy
-- [ ] Each level has 5 pickups, and the secret spots are reachable; coral stone, limonite and kaolinite pop-ups show their draft text
-- [ ] Collection: the Hills tab shows 10 kinds; shared kinds (limestone, quartz and others) show on both Mountains and Hills
-- [ ] Achievements: Mountains and Hills badge tabs; Pasture Pal, Dune Surfer and Rolling Star can be earned; "New badge!" shows
-- [ ] After Hills Easy 3, Next is hidden; Hills Normal says "Coming soon"
-- [ ] Mountains Easy, Normal and Hard still play as before, with Mountains music and wind
+- [x] Map: Hills opens with its trees, stream and birds (no cloud); tapping Hills opens the difficulty screen; Plains says "Finish Hills first"
+- [x] Hills screens show birds and grass, not snow; Hills music plays in the levels with the stream and birds
+- [x] Each Hills Easy level shows its banner (Chocolate Hills, Batanes Hills, La Paz Dunes), its lesson, its theme and its own background
+- [x] Batanes has grazing goats and cows; Chocolate Hills has palms; La Paz has dune grass
+- [x] Soft sand in La Paz: slower walking, same jumps, step sound and puffs; the first patch is a safe place to learn
+- [x] Pits and spikes send the explorer a short way back, as in Mountains Easy
+- [x] Each level has 5 pickups, and the secret spots are reachable; coral stone, limonite and kaolinite pop-ups show their draft text
+- [x] Collection: the Hills tab shows 10 kinds; shared kinds (limestone, quartz and others) show on both Mountains and Hills
+- [x] Achievements: Mountains and Hills badge tabs; Pasture Pal, Dune Surfer and Rolling Star can be earned; "New badge!" shows
+- [x] After Hills Easy 3, Next is hidden; Hills Normal says "Coming soon"
+- [x] Mountains Easy, Normal and Hard still play as before, with Mountains music and wind
 
 ## Review fixes (2026-11-17, after /code-review)
 
