@@ -45,6 +45,8 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             { "amb_stream_normal", "make_hills_audio.py" }, // The Normal Hills stream
             { "amb_rain_hard", "make_hills_audio.py" }, // The Hard Hills rain
             { "amb_cave_drips", "make_hills_normal_audio.py" }, // The Callao Cave loop
+            { "amb_wind_turbines", "make_hills_hard_audio.py" }, // The Pililla wind farm loop
+            { "amb_city_hills", "make_hills_hard_audio.py" }, // The Seven Hills of Rome loop
         }; // Ends the ambience script table
 
         /// <summary>The level tune for this landform's levels.</summary>

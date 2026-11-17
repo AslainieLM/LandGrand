@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys } // Adds the Hills Normal themes at the end
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys, TarsierForest, RainySlope, KarstRidge, WindHills, DrumlinBay, CityHills, KarstTowers } // Appends seven Hills Hard themes
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list
@@ -68,10 +68,14 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public IReadOnlyList<SinkingFloat> Floats { get; } // Rafts on pools or pits
         public IReadOnlyList<Bat> Bats { get; } // Gentle bats that circle the trail
         public IReadOnlyList<CurrentZone> Currents { get; } // Water strips that push the explorer
+        public IReadOnlyList<MudZone> MudZones { get; } // Slippery mud stretches on the trail
+        public IReadOnlyList<RollingLog> Logs { get; } // Logs that roll along the trail
         public string AmbienceOverride { get; } // Optional ambience file name without its extension
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null) // Makes a layout
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null, MudZone[] mudZones = null, RollingLog[] logs = null) // Makes a layout
         {
+            MudZones = (mudZones ?? new MudZone[0]).ToArray(); // Copy the mud stretches
+            Logs = (logs ?? new RollingLog[0]).ToArray(); // Copy the logs
             Pools = (pools ?? new ShallowPool[0]).ToArray(); // Copy the safe pools
             Floats = (floats ?? new SinkingFloat[0]).ToArray(); // Copy the rafts
             Bats = (bats ?? new Bat[0]).ToArray(); // Copy the bat loops
