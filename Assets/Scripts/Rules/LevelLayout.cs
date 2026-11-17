@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes } // The available level themes; the Hills themes go at the end (D-066)
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys } // Adds the Hills Normal themes at the end
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list
@@ -31,6 +31,18 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public Ledge(float x, float top, float width) { X = x; Top = top; Width = width; } // Makes a ledge
     }
 
+    public readonly struct ShallowPool // Marks a safe water gap with a floor
+    { // Opens the pool
+        public float X { get; } // The left edge of the pool
+        public float Width { get; } // The width in pixels
+
+        public ShallowPool(float x, float width) // Places a safe practice pool
+        { // Opens the placement
+            X = x; // Saves the left edge
+            Width = width; // Saves the pool width
+        } // Ends the placement
+    } // Ends the pool
+
     /// <summary>
     /// The scenery part of a level's layout (CONTEXT.md "Level layout"): its width, theme, boulders, ledges and steam vents.
     /// The rest of the layout (pits, spikes, pickups, checkpoint and goal) sits on LevelData. One builder makes every level from both.
@@ -52,8 +64,21 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public IReadOnlyList<IceZone> IceZones { get; } // Slippery stretches of ground
         public IReadOnlyList<SandZone> SandZones { get; } // Soft sand that slows walking (D-066)
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null) // Makes a layout
+        public IReadOnlyList<ShallowPool> Pools { get; } // Safe water with a floor
+        public IReadOnlyList<SinkingFloat> Floats { get; } // Rafts on pools or pits
+        public IReadOnlyList<Bat> Bats { get; } // Gentle bats that circle the trail
+        public IReadOnlyList<CurrentZone> Currents { get; } // Water strips that push the explorer
+        public string AmbienceOverride { get; } // Optional ambience file name without its extension
+        public float? GroundWalkSpeed { get; } // Optional ground walk speed in pixels per second
+
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null, float? groundWalkSpeed = null) // Makes a layout
         {
+            Pools = (pools ?? new ShallowPool[0]).ToArray(); // Copy the safe pools
+            Floats = (floats ?? new SinkingFloat[0]).ToArray(); // Copy the rafts
+            Bats = (bats ?? new Bat[0]).ToArray(); // Copy the bat loops
+            Currents = (currents ?? new CurrentZone[0]).ToArray(); // Copy the water strips
+            AmbienceOverride = ambienceOverride; // Save the optional sound name
+            GroundWalkSpeed = groundWalkSpeed; // Save the optional ground speed
             SandZones = (sandZones ?? new SandZone[0]).ToArray(); // Copy the soft sand; most levels have none
             CrumbleLedges = (crumbleLedges ?? new CrumbleLedge[0]).ToArray(); // Copy the breakable ledges
             Rockfalls = (rockfalls ?? new Rockfall[0]).ToArray(); // Copy the rocks
