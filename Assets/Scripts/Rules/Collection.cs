@@ -19,6 +19,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public Episode Landform { get; } // The landform of this shelf
         public IReadOnlyList<ShelfSlot> Slots { get; } // Its item kinds, in lesson order
         public bool IsComingSoon => Slots.Count == 0; // No item kinds yet: the shelf says "Coming soon"
+        public int FoundCount => Slots.Count(slot => slot.IsFound); // How many kinds on this shelf are found, for "Found here 3/10"
 
         public Shelf(Episode landform, IReadOnlyList<ShelfSlot> slots) { Landform = landform; Slots = slots; } // Makes a shelf
         public int PageCount(int perPage) => perPage <= 0 ? 1 : Math.Max(1, (Slots.Count + perPage - 1) / perPage); // How many pages the shelf needs, rounded up, at least 1

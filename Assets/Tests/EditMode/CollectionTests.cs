@@ -39,6 +39,18 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
+        public void ShelfFoundCount_CountsOnlyThatShelf() // "Found here 1/10" on Hills, "Found here 2/34" on Mountains
+        {
+            var p = new PlayerProgress(); // A brand new profile
+            p.RecordFoundKind("granite"); // A Mountains-only kind
+            p.RecordFoundKind("quartz"); // A shared kind
+            var shelves = Collection.Shelves(p); // Every shelf
+            Assert.AreEqual(2, shelves[(int)Episode.Mountains].FoundCount); // Both are on the Mountains shelf
+            Assert.AreEqual(1, shelves[(int)Episode.Hills].FoundCount); // Only quartz is on the Hills shelf
+            Assert.AreEqual(0, shelves[(int)Episode.Plains].FoundCount); // Plains has no kinds yet
+        }
+
+        [Test] // Unity runs this method as a Test
         public void HillsKinds_AreTheThreeNewOnes_AndTheSharedSevenOnTheShelf() // Hills shelf is 10 kinds after Easy (spec section 3)
         {
             CollectionAssert.AreEquivalent(new[] { "coral_stone", "limonite", "kaolinite" }, ItemCatalog.All.Where(k => k.Landforms.Length == 1 && k.BelongsTo(Episode.Hills)).Select(k => k.Id)); // Only Hills kinds

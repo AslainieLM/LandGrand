@@ -60,7 +60,7 @@ namespace LandGrand.Profile // Profile scripts live here
         public TabView achievementsTab; // "Achievements"
         public GameObject collectionPage; // Landform tabs and the item grid
         public GameObject achievementsPage; // The badge grid
-        public TMP_Text badgeCount; // "Badges 3/15"
+        public TMP_Text tabCount; // The open tab's count: "Found here 3/34" on the Collection, "Badges 3/15" on Achievements
 
         [Header("Collection")] // Inspector heading for the item grid
         public TabView[] landformTabs; // Mountains, Hills, Plains, Plateaus, in episode order
@@ -196,6 +196,7 @@ namespace LandGrand.Profile // Profile scripts live here
             nextPage.interactable = page + 1 < count; // Stops at the last page
             pageNumber.text = (page + 1) + "/" + count; // Shows one-based page numbers
             comingSoon.gameObject.SetActive(shelf.IsComingSoon); // "Coming soon" when it has none yet
+            tabCount.text = Total("Found here", shelf.FoundCount + "/" + shelf.Slots.Count); // Found kinds on this shelf only, for example "Found here 3/34"; the top line counts every shelf
             for (int i = 0; i < slots.Length; i++) // Each cell of the grid
             {
                 var slot = slots[i]; // The cell
@@ -224,7 +225,7 @@ namespace LandGrand.Profile // Profile scripts live here
         {
             var progress = GameProgress.Current; // Saved progress
             var all = AchievementCatalog.ForLandform(badgeLandform); // This landform's badges, in order
-            badgeCount.text = Total("Badges", all.Count(a => a.IsEarned(progress)) + "/" + all.Count); // For example "Badges 3/15" on Mountains, "Badges 0/10" on Hills
+            tabCount.text = Total("Badges", all.Count(a => a.IsEarned(progress)) + "/" + all.Count); // For example "Badges 3/15" on Mountains, "Badges 0/10" on Hills
             badgeComingSoon.gameObject.SetActive(all.Count == 0); // "Coming soon" for an open landform with no badges yet
             for (int i = 0; i < badges.Length; i++) // Each badge cell on the page
             {

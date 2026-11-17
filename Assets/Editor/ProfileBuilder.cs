@@ -119,8 +119,8 @@ public static class ProfileBuilder // Makes the Profile scene
         controller.collectionTab = Tab("Collection tab", root, "tab_collection", 8f, 69f); // Left tab, joined to the page when chosen
         float nextX = 8f + P("tab_collection_on").rect.width + 4f; // The second tab starts 4 pixels after the first
         controller.achievementsTab = Tab("Achievements tab", root, "tab_achievements", nextX, 69f); // Second tab
-        controller.badgeCount = M.ReadingLabel("Badge count", root, "Badges 0/15", new Vector2(412f, 69f), K.CanvasCenter, new Vector2(112f, 22f), K.Ink, TextAlignmentOptions.MidlineRight); // For example "Badges 3/15", right end of the tab row, x 356 to 468
-        controller.badgeCount.richText = true; // The word is clay with a colour tag
+        controller.tabCount = M.ReadingLabel("Tab count", root, "Found here 0/34", new Vector2(396f, 69f), K.CanvasCenter, new Vector2(144f, 22f), K.Ink, TextAlignmentOptions.MidlineRight); // "Found here 3/34" on the Collection, "Badges 3/15" on Achievements; right end of the tab row, x 324 to 468
+        controller.tabCount.richText = true; // The word is clay with a colour tag
 
         // Collection page: landform tabs and the item grid.
         var collection = M.Rect("Collection", root, page, page); // Holder the controller shows and hides
