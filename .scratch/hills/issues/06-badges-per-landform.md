@@ -20,13 +20,13 @@
    - `world_peaks` still needs Mountains Hard 5–7.
 
 **Checklist**
-- [ ] The Mountains badge page looks exactly as before (15 badges, 5×3)
-- [ ] The Hills badge page shows 10 badges in two rows; earned ones are in colour
-- [ ] The Description Screen after Mountains Hard 7 still says badges n/15
-- [ ] EditMode tests pass (report the count)
+- [ ] The Mountains badge page looks exactly as before (15 badges, 5×3); the four landform tabs now sit above it, so check the row spacing in Unity
+- [x] The Hills badge page shows 10 badges in two rows; earned ones are in colour (built in code)
+- [x] The Description Screen after Mountains Hard 7 still says badges n/15 (built in code)
+- [ ] EditMode tests pass (report the count); not run yet
 
 **Blocked by:** 01
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** **LandGrand > Build Profile Scene**, **LandGrand > Build Landform Description Scene**

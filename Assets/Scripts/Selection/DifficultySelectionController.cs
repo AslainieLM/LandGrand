@@ -67,6 +67,7 @@ namespace LandGrand.Selection // Difficulty and level selection scripts live her
         {
             if (Leaving) return; // Ignore taps while leaving
             if (!open) { ShowGuide(RegionGuide.ForLockedDifficulty(card.difficulty)); return; } // Locked: explain and stay
+            if (!LevelCatalog.HasLevels(GameSession.Episode, card.difficulty)) { ShowGuide("Coming soon"); return; } // Open but no level data yet: say so in the guide and do not open an empty trail (D-066)
             GameSession.Difficulty = card.difficulty; // Remember the difficulty for the trail
             Leave(levelScene); // Open the level trail
         }

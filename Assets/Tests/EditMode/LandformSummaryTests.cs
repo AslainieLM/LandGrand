@@ -16,7 +16,17 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(summary.Sentences.All(s => s.Length <= 44)); // Fits the short reading lines
         } // Ends the Mountains check
 
-        [TestCase(Episode.Hills, "bg_hills")] // Hills has a future review
+        [Test] // Runs the Hills check
+        public void HillsHasFiveShortDraftLinesAndItsOwnPicture() // Checks the Hills review content (D-066)
+        { // Starts the check
+            var summary = LandformSummary.For(Episode.Hills); // Loads the Hills review
+            Assert.AreEqual("Hills", summary.Title); // Names the landform
+            Assert.AreEqual("bg_hills", summary.Picture); // Uses the Hills menu picture
+            Assert.IsTrue(summary.IsDraft); // Still needs a teacher's review
+            CollectionAssert.AreEqual(new[] { "Hills are lower and rounder than mountains.", "Rain, rivers, wind and ice shape hills.", "Many hills are made of limestone or sand.", "Grass and trees hold hill soil in place.", "People farm, live and use wind on hills." }, summary.Sentences); // The exact draft lines
+            Assert.IsTrue(summary.Sentences.All(s => s.Length <= 44)); // Fits the short reading lines
+        } // Ends the Hills check
+
         [TestCase(Episode.Plains, "bg_plains")] // Plains has a future review
         [TestCase(Episode.Plateaus, "bg_plateaus")] // Plateaus has a future review
         public void OtherLandformsHaveOnlyAComingSoonLine(Episode landform, string art) // Keeps the placeholders short

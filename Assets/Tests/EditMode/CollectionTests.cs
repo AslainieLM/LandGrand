@@ -7,16 +7,45 @@ namespace LandGrand.Rules.Tests // Test code lives here
     public class CollectionTests // A group of checks
     {
         [Test] // Unity runs this method as a Test
-        public void EveryItemKind_HasAHomeLandform_AndIsARockOrMineral() // Each kind sits on exactly one shelf
+        public void EveryItemKind_IsOnAShelf_AndIsARockOrMineral() // Each kind sits on one or more shelves (D-066)
         {
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Granite.HomeLandform); // Granite is taught in the Mountains lesson
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Quartz.HomeLandform); // So is quartz
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Feldspar.HomeLandform); // So is feldspar
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Mica.HomeLandform); // So is mica
+            Assert.IsTrue(ItemCatalog.Granite.BelongsTo(Episode.Mountains)); // Granite is taught in the Mountains lesson
+            Assert.IsTrue(ItemCatalog.Quartz.BelongsTo(Episode.Mountains)); // So is quartz
+            Assert.IsTrue(ItemCatalog.Feldspar.BelongsTo(Episode.Mountains)); // So is feldspar
+            Assert.IsTrue(ItemCatalog.Mica.BelongsTo(Episode.Mountains)); // So is mica
             Assert.IsTrue(ItemCatalog.Granite.IsRock); // Granite is a rock
             Assert.IsFalse(ItemCatalog.Quartz.IsRock); // Quartz is a mineral
             Assert.IsFalse(ItemCatalog.Feldspar.IsRock); // Feldspar is a mineral
             Assert.IsFalse(ItemCatalog.Mica.IsRock); // Mica is a mineral
+            foreach (var kind in ItemCatalog.All) Assert.IsTrue(kind.Landforms.Length >= 1, kind.Id); // Every kind is on at least one shelf
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void SharedKinds_AreOnBothMountainsAndHillsShelves_AndCountOnce() // Seven kinds are on both shelves (D-066)
+        {
+            var shared = new[] { ItemCatalog.Limestone, ItemCatalog.Calcite, ItemCatalog.Clay, ItemCatalog.Andesite, ItemCatalog.Quartz, ItemCatalog.Magnetite, ItemCatalog.Feldspar }; // The shared kinds from the spec
+            foreach (var kind in shared) // Each shared kind
+            {
+                Assert.IsTrue(kind.BelongsTo(Episode.Mountains), kind.Id); // On the Mountains shelf
+                Assert.IsTrue(kind.BelongsTo(Episode.Hills), kind.Id); // On the Hills shelf too
+            }
+            Assert.IsFalse(ItemCatalog.Granite.BelongsTo(Episode.Hills)); // Granite is Mountains only
+            Assert.IsFalse(ItemCatalog.CoralStone.BelongsTo(Episode.Mountains)); // Coral stone is Hills only
+            var p = new PlayerProgress(); // A brand new profile
+            p.RecordFoundKind("quartz"); // Find a shared kind once
+            Assert.AreEqual(1, Collection.FoundCount(p)); // It counts once, not once per shelf
+            Assert.AreEqual(1, Collection.Shelves(p)[(int)Episode.Mountains].Slots.Count(s => s.IsFound)); // Found on the Mountains shelf
+            Assert.AreEqual(1, Collection.Shelves(p)[(int)Episode.Hills].Slots.Count(s => s.IsFound)); // And on the Hills shelf
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void HillsKinds_AreTheThreeNewOnes_AndTheSharedSevenOnTheShelf() // Hills shelf is 10 kinds after Easy (spec section 3)
+        {
+            CollectionAssert.AreEquivalent(new[] { "coral_stone", "limonite", "kaolinite" }, ItemCatalog.All.Where(k => k.Landforms.Length == 1 && k.BelongsTo(Episode.Hills)).Select(k => k.Id)); // Only Hills kinds
+            Assert.IsTrue(ItemCatalog.CoralStone.IsRock); // Coral stone is a rock
+            Assert.IsFalse(ItemCatalog.Limonite.IsRock); // Limonite is a mineral
+            Assert.IsFalse(ItemCatalog.Kaolinite.IsRock); // Kaolinite is a mineral
+            Assert.IsTrue(ItemCatalog.All.Where(k => k.BelongsTo(Episode.Hills)).All(k => k.IsDraft)); // All Hills text is a draft (Q-04)
         }
 
         [Test] // Unity runs this method as a Test
@@ -35,13 +64,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void LandformsWithoutItemKinds_AreComingSoon() // Hills, Plains and Plateaus wait on Q-04
+        public void LandformsWithoutItemKinds_AreComingSoon() // Plains and Plateaus wait for their levels
         {
             var shelves = Collection.Shelves(new PlayerProgress()); // Shelves of a fresh profile
-            Assert.IsTrue(shelves[1].IsComingSoon); // Hills
+            Assert.IsFalse(shelves[1].IsComingSoon); // Hills has its kinds now (D-066)
+            Assert.AreEqual(10, shelves[1].Slots.Count); // Ten Hills kinds: seven shared and three new
             Assert.IsTrue(shelves[2].IsComingSoon); // Plains
             Assert.IsTrue(shelves[3].IsComingSoon); // Plateaus
-            Assert.AreEqual(0, shelves[1].Slots.Count); // No slots on a "Coming soon" shelf
+            Assert.AreEqual(0, shelves[2].Slots.Count); // No slots on a "Coming soon" shelf
         }
 
         [Test] // Unity runs this method as a Test
@@ -50,7 +80,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(34, Collection.TotalCount); // All Mountains lessons teach 34 kinds
+            Assert.AreEqual(37, Collection.TotalCount); // 34 Mountains kinds plus the 3 new Hills kinds (D-066)
         }
 
         [Test] // Unity runs this method as a Test

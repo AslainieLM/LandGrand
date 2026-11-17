@@ -11,8 +11,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Catalog_HasTheThreeMountainsEasyLevels_InPlayOrder() // 1, 2, 3
         {
-            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy).Select(l => l.Number).ToArray()); // In order
-            Assert.IsTrue(LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy).All(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy)); // All Mountains Easy
+            CollectionAssert.AreEqual(new[] { 1, 2, 3 }, LevelCatalog.All.Where(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy).Select(l => l.Number).ToArray()); // In order (Hills Easy has its own three)
+            Assert.IsTrue(LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy && l.Episode == Episode.Mountains).All(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy)); // All Mountains Easy
             Assert.AreEqual("MountainsEasy2", Easy(2).SceneName); // Start opens this scene
             Assert.AreEqual("MountainsEasy3", Easy(3).SceneName); // And this one
         }
@@ -112,17 +112,17 @@ namespace LandGrand.Rules.Tests // Test code lives here
         public void NewItemKinds_AreMountainsRocksAndOneMineral() // Home landform and Rock/Mineral tags (D-055)
         {
             var rocks = new[] { ItemCatalog.Andesite, ItemCatalog.Obsidian, ItemCatalog.Pumice, ItemCatalog.Slate, ItemCatalog.Marble }; // The five new rocks
-            foreach (var k in rocks) { Assert.IsTrue(k.IsRock, k.Id); Assert.AreEqual(Episode.Mountains, k.HomeLandform, k.Id); } // Rocks of the Mountains shelf
+            foreach (var k in rocks) { Assert.IsTrue(k.IsRock, k.Id); Assert.IsTrue(k.BelongsTo(Episode.Mountains), k.Id); } // Rocks of the Mountains shelf
             Assert.IsFalse(ItemCatalog.Garnet.IsRock); // Garnet is a mineral
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Garnet.HomeLandform); // On the Mountains shelf too
-            Assert.AreEqual(Episode.Mountains, ItemCatalog.Find("basalt").HomeLandform); // Normal now teaches basalt
+            Assert.IsTrue(ItemCatalog.Garnet.BelongsTo(Episode.Mountains)); // On the Mountains shelf too
+            Assert.IsTrue(ItemCatalog.Find("basalt").BelongsTo(Episode.Mountains)); // Normal now teaches basalt
         }
 
         [Test] // Unity runs this method as a Test
         public void ClearingAllThreeEasyLevels_UnlocksNormal() // LG-31
         {
             var p = new PlayerProgress(); // A fresh profile
-            foreach (var level in LevelCatalog.All.Where(l => l.Difficulty == Difficulty.Easy)) { var run = new LevelRun(level); run.ReachGoal(); run.RecordResult(p); } // Clear each level with no items
+            foreach (var level in LevelCatalog.All.Where(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Easy)) { var run = new LevelRun(level); run.ReachGoal(); run.RecordResult(p); } // Clear each Mountains level with no items
             Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Mountains, Difficulty.Normal)); // Normal opens
             Assert.AreEqual(0, p.NextLevelAfter(Episode.Mountains, Difficulty.Easy, 3)); // Continue after Easy 3 goes back to the trail
             Assert.IsNotNull(LevelCatalog.Find(Episode.Mountains, Difficulty.Normal, 1)); // Normal is now playable

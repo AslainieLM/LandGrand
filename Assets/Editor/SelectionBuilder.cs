@@ -139,17 +139,47 @@ public static class SelectionBuilder // Makes the difficulty and level selection
         var ppc = K.Camera(); // The same 480x270 pixel-perfect view as the other screens
         var picture = M.Renderer("Landform", S("bg_mountains"), 0, null); // The landform picture; Mountains until the screen opens
         picture.transform.position = M.Px(240f, 135f); // It fills the screen
-        K.MountainsLife(out CloudDrift cloud, out CircleFlight eagle, out SnowFlurry snow); // Slow cloud, eagle and snow behind the cards
-        var backdrop = picture.gameObject.AddComponent<LandGrand.LandformBackdrop>(); // Shows the picked landform's picture when the screen opens (D-063)
+        var backdrop = picture.gameObject.AddComponent<LandGrand.LandformBackdrop>(); // Shows the picked landform's picture and life when the screen opens (D-063)
         backdrop.picture = picture; // The picture to swap
         backdrop.pictures = Landforms.Select(n => S("bg_" + n)).ToArray(); // Mountains, Hills, Plains, Plateaus, in Episode order
-        backdrop.snow = snow.gameObject; // Snow falls only over the Mountains picture
-        cloud.startX = 20f; cloud.endX = 460f; cloud.y = 40f; cloud.speedPixelsPerSecond = 2.5f; // Cloud drifts slowly across the whole sky
-        eagle.centerPixels = new Vector2(240f, 62f); eagle.radiusPixels = new Vector2(100f, 16f); eagle.secondsPerLap = 18f; // Eagle circles slowly above the middle peak
-        snow.area = new Rect(0f, 28f, 480f, 180f); snow.count = 50; snow.windPixelsPerSecond = new Vector2(10f, 6f); // Light snow over the whole picture
+        backdrop.lifeSets = MenuLife(); // One life set per landform, in the same order
         music = K.MenuMusic(); // Calm menu music and wind-and-birds ambience
         K.Events(); // Sends taps to the buttons
         return K.Canvas(canvasName, ppc, out group); // UI with the same whole-number zoom as the art
+    }
+
+    /// <summary>Life for each landform's menu picture, in Episode order. Every set has a cloud. Mountains adds snow and an eagle, Hills adds birds and grass.</summary>
+    static GameObject[] MenuLife() // Makes the four menu life sets
+    {
+        var sets = new GameObject[4]; // Mountains, Hills, Plains, Plateaus
+        var mountains = K.MountainsLife(out CloudDrift cloud, out CircleFlight eagle, out SnowFlurry snow); // Cloud, eagle and snow for Mountains
+        LandformLife.ConfigureCloud(cloud); // Same cloud path as every landform
+        eagle.centerPixels = new Vector2(240f, 62f); eagle.radiusPixels = new Vector2(100f, 16f); eagle.secondsPerLap = 18f; // Eagle circles slowly above the middle peak
+        snow.area = new Rect(0f, 28f, 480f, 180f); snow.count = 50; snow.windPixelsPerSecond = new Vector2(10f, 6f); // Light snow over the whole picture
+        sets[(int)Episode.Mountains] = mountains.gameObject; // Mountains set
+        sets[(int)Episode.Hills] = HillsMenuLife(); // Hills set
+        sets[(int)Episode.Plains] = CloudOnly("Plains life"); // Plains has only the cloud
+        sets[(int)Episode.Plateaus] = CloudOnly("Plateaus life"); // Plateaus has only the cloud
+        return sets; // The backdrop turns on just the picked one
+    }
+
+    /// <summary>Hills menu life: a cloud, two birds circling over the hills and six grass tufts along the bottom.</summary>
+    static GameObject HillsMenuLife() // Makes the Hills menu animations
+    {
+        var life = new GameObject("Hills life").transform; // Parent for the Hills menu animations
+        LandformLife.Cloud(life); // Drifting cloud
+        LandformLife.Bird(life, new Vector2(330f, 60f), new Vector2(24f, 10f), 12f); // First bird circles over the hills
+        LandformLife.Bird(life, new Vector2(330f, 60f), new Vector2(24f, 10f), 15f); // Second bird circles at its own speed
+        foreach (float x in new[] { 30f, 110f, 190f, 290f, 370f, 450f }) LandformLife.Grass(life, x); // Six grass tufts along the bottom
+        return life.gameObject; // The backdrop shows it only for Hills
+    }
+
+    /// <summary>A landform's life set with only the drifting cloud (for landforms that have no other life yet).</summary>
+    static GameObject CloudOnly(string name) // Makes a set with just a cloud
+    {
+        var life = new GameObject(name).transform; // Parent for the set
+        LandformLife.Cloud(life); // Drifting cloud
+        return life.gameObject; // The backdrop shows it only for this landform
     }
 
     /// <summary>A cream plaque near the top with a title picture inside. Gives back the title picture.</summary>

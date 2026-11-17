@@ -13,7 +13,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public ShelfSlot(ItemKind kind, bool isFound) { Kind = kind; IsFound = isFound; } // Makes a slot
     }
 
-    /// <summary>One row of the Collection: the item kinds whose home landform is this landform (D-052).</summary>
+    /// <summary>One row of the Collection: the item kinds on this landform's shelf (D-052, D-066).</summary>
     public sealed class Shelf // One landform's row
     {
         public Episode Landform { get; } // The landform of this shelf
@@ -32,7 +32,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     }
 
     /// <summary>
-    /// The Collection shown in the Profile (D-052): every item kind, grouped by home landform, marked found or not.
+    /// The Collection shown in the Profile (D-052): every item kind, grouped by landform shelf (a shared kind is on more than one), marked found or not.
     /// The future Completion Screen (LG-15) uses the same numbers, so both screens always agree.
     /// </summary>
     public static class Collection // Reads the Collection from the player's progress
@@ -45,7 +45,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         {
             return ((Episode[])Enum.GetValues(typeof(Episode))) // Every landform, in episode order
                 .Select(landform => new Shelf(landform, ItemCatalog.All // For each landform, look through every kind
-                    .Where(kind => kind.HomeLandform == landform) // Only the kinds whose home it is, keeping the catalog's lesson order
+                    .Where(kind => kind.BelongsTo(landform)) // Only the kinds on this landform's shelf (a shared kind can be on two), keeping the catalog's lesson order
                     .Select(kind => new ShelfSlot(kind, progress.HasFoundKind(kind.Id))) // Mark each one found or not
                     .ToArray())) // Fix the slots
                 .ToArray(); // Fix the shelves

@@ -125,7 +125,7 @@ namespace LandGrand.Play // Level play scripts live here
 
         void Next() // The Next button: the next level, the next landform, or back to the trail when nothing open follows (D-059, LG-32)
         {
-            var next = GameProgress.Current.NextAfter(level.episode, level.difficulty, level.number); // The rules decide
+            var next = GameProgress.Current.NextPlayableAfter(level.episode, level.difficulty, level.number); // The rules decide; a level with no data counts as nothing open
             if (next.Step == NextStep.NextEpisode) // Reviews the landform that the explorer just finished
             { // Starts the summary route
                 GameSession.Episode = level.episode; // The summary uses the finished landform
@@ -142,10 +142,13 @@ namespace LandGrand.Play // Level play scripts live here
             level.GoTo(level.lessonScene); // The next level starts from its lesson
         }
 
-        void ShowNextButton() // Shows "Next Level" or "Next Episode" on the Next button
+        void ShowNextButton() // Shows "Next Level" or "Next Episode" on the Next button, or hides it when nothing playable follows
         {
+            var next = GameProgress.Current.NextPlayableAfter(level.episode, level.difficulty, level.number); // The rules decide, and only to a level with data
+            nextButton.gameObject.SetActive(next.Step != NextStep.None); // No Next when nothing playable follows (D-066); Back to Map and Replay stay
+            if (next.Step == NextStep.None) return; // Nothing to show on the button
             if (nextLevelSprite == null || nextEpisodeSprite == null) return; // A scene built before D-059 keeps its old picture
-            bool episode = GameProgress.Current.NextAfter(level.episode, level.difficulty, level.number).Step == NextStep.NextEpisode; // Is a new landform next?
+            bool episode = next.Step == NextStep.NextEpisode; // Is a new landform next?
             var image = (Image)nextButton.targetGraphic; // The button picture
             image.sprite = episode ? nextEpisodeSprite : nextLevelSprite; // The right words
             var state = nextButton.spriteState; // Its pressed picture

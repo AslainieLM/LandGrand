@@ -56,7 +56,7 @@ namespace LandGrand.Play // Level play scripts live here
             LevelClock.Reset(); // Moving objects start their cycles at time 0
             if (!PartsBuilt()) // An old scene, built before the parts were split
             {
-                Debug.LogError("This level scene is out of date. Run LandGrand > Build Mountains Levels, then press Play again."); // Say what to do
+                Debug.LogError("This level scene is out of date. Run LandGrand > Build Levels, then press Play again."); // Say what to do
                 enabled = false; // Stop Update so the console shows one clear message, not an error every frame
                 return; // Do not start the attempt
             }
@@ -174,9 +174,9 @@ namespace LandGrand.Play // Level play scripts live here
         /// <summary>The explorer's body box if its feet stood here, in level pixels.</summary>
         internal Rect ExplorerBodyAt(Vector2 feet) => new Rect(feet.x - explorer.size.x / 2f, feet.y, explorer.size.x, explorer.size.y); // Shared by pickups and hazards
 
-        internal void PlaySfx(AudioClip clip) // Plays a sound effect at the player sound-effects volume
+        internal void PlaySfx(AudioClip clip, float volume = 1f) // Plays a sound effect at the player sound-effects volume, scaled by an optional part volume
         {
-            if (clip != null) sounds.PlayOneShot(clip, GameSettings.SfxVolume); // Quiet or silent when the player lowered the slider
+            if (clip != null) sounds.PlayOneShot(clip, volume * GameSettings.SfxVolume); // Quiet or silent when the player lowered the slider; volume 1 keeps the old loudness
         }
 
         internal void Say(string text) => ShowGuide(text); // Shows a short guide message, for the parts

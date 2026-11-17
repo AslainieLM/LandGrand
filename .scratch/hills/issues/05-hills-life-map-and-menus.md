@@ -20,6 +20,6 @@
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** **LandGrand > Build Landform Map Scene**, **LandGrand > Build Selection Scenes**, **LandGrand > Build Lesson Scene**

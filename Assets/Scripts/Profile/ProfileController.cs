@@ -11,7 +11,8 @@ namespace LandGrand.Profile // Profile scripts live here
     /// <summary>
     /// Runs the Profile screen (D-052, D-060): the explorer strip (name, pencil, totals), then two section tabs.
     /// Collection has one tab per landform and shows that landform's rocks and minerals in a grid; landforms not yet open
-    /// on the map have a grey tab with a padlock. Achievements shows the badges; locked ones are dark but keep their name.
+    /// on the map have a grey tab with a padlock. Achievements has the same landform tabs, and each landform has its own 5 by 3 badge page;
+    /// locked badges are dark but keep their name, and a landform with no badges yet says "Coming soon".
     /// Tapping a found item or any badge opens a card. Back closes the card or the name panel first, then returns to the Main Menu.
     /// It only shows saved progress; the only thing it changes is the name, through the shared name panel.
     /// </summary>
@@ -72,7 +73,9 @@ namespace LandGrand.Profile // Profile scripts live here
         public Color hiddenColor = new Color(0f, 0f, 0f, 0.8f); // Black times any colour is black, so the picture becomes one flat dark shape with no shading that hints at the item
 
         [Header("Achievements")] // Inspector heading for the badges
-        public SlotView[] badges; // One cell per badge, in AchievementCatalog order
+        public TabView[] badgeLandformTabs; // Mountains, Hills, Plains, Plateaus, in episode order; each landform has its own badge page (D-066)
+        public SlotView[] badges; // One 5 by 3 page of cells; a landform's badges fill from the top-left
+        public TMP_Text badgeComingSoon; // Shown when an open landform has no badges yet
         public NamedSprite[] badgePictures; // Every badge picture, earned and locked, by name
 
         [Header("Card")] // Inspector heading for the card
@@ -94,6 +97,7 @@ namespace LandGrand.Profile // Profile scripts live here
 
         const float PencilGap = 14f; // Pixels from the end of the name to the middle of the pencil
         Episode landform = Episode.Mountains; // Which landform's items are shown
+        Episode badgeLandform = Episode.Mountains; // Which landform's badges are shown
 
         protected override void Awake() // Runs once when the Profile opens: fills it from the saved progress and connects the buttons
         {
@@ -106,12 +110,13 @@ namespace LandGrand.Profile // Profile scripts live here
             collectionTab.button.onClick.AddListener(() => ShowSection(false)); // Collection tab
             achievementsTab.button.onClick.AddListener(() => ShowSection(true)); // Achievements tab
             for (int i = 0; i < landformTabs.Length; i++) { var e = (Episode)i; landformTabs[i].button.onClick.AddListener(() => ChooseLandform(e)); } // One listener per landform tab
+            for (int i = 0; i < badgeLandformTabs.Length; i++) { var e = (Episode)i; badgeLandformTabs[i].button.onClick.AddListener(() => ChooseBadgeLandform(e)); } // One listener per badge landform tab
             previousPage.onClick.AddListener(() => ChangePage(-1)); // Previous twelve kinds
             nextPage.onClick.AddListener(() => ChangePage(1)); // Next twelve kinds
             card.SetActive(false); // No card at the start
             namePanel.gameObject.SetActive(false); // No name panel at the start
             ShowStrip(); // Name and totals
-            ShowBadges(); // The badge grid and its count
+            ChooseBadgeLandform(Episode.Mountains); // The Mountains badge page and its count
             ShowSection(false); // Open on the Collection, Mountains first
         }
 
@@ -139,23 +144,37 @@ namespace LandGrand.Profile // Profile scripts live here
             collectionTab.image.sprite = achievements ? collectionTab.off : collectionTab.on; // The chosen tab looks joined to the page
             achievementsTab.image.sprite = achievements ? achievementsTab.on : achievementsTab.off; // The other tab looks behind
             if (!achievements) ChooseLandform(landform); // Draw the chosen landform's items
+            else ChooseBadgeLandform(badgeLandform); // Draw the chosen landform's badges
         }
 
         void ChooseLandform(Episode e) // Shows one landform's rocks and minerals, or says to finish the earlier landform first
         {
-            if (Leaving) return; // Ignore taps while leaving
-            var progress = GameProgress.Current; // Saved progress
-            if (!progress.IsEpisodeUnlocked(e)) { ShowGuide("Finish " + (e - 1) + " first"); return; } // Locked like on the map (D-041); stay on the shown landform
+            if (!CanShowLandform(e)) return; // Ignore taps while leaving, and stay on the shown landform when locked
             landform = e; // Remember it
             page = 0; // A landform choice starts on page one
-            for (int i = 0; i < landformTabs.Length; i++) // Each landform tab
-            {
-                var tab = landformTabs[i]; // The tab
-                bool open = progress.IsEpisodeUnlocked((Episode)i); // Is that landform open on the map?
-                tab.image.sprite = !open ? tab.locked : i == (int)e ? tab.on : tab.off; // Locked, chosen, or not chosen
-            }
+            ShowLandformTabs(landformTabs, e); // Marks the chosen tab
             ShowCollectionPage(); // Fills the selected page
         } // Ends the tab change
+
+        /// <summary>False while leaving or when the landform is locked (the lock guide is shown then). Shared by both landform tab rows.</summary>
+        bool CanShowLandform(Episode e) // The lock guard for both tab rows
+        { // Opens the block
+            if (Leaving) return false; // Ignore taps while leaving
+            if (!GameProgress.Current.IsEpisodeUnlocked(e)) { ShowGuide(RegionGuide.ForLocked(e)); return false; } // Locked like on the map (D-041); the same text as the map
+            return true; // Open, so the tab can change
+        } // Ends the block
+
+        /// <summary>Sets each landform tab picture: locked, chosen or not chosen. Shared by both tab rows.</summary>
+        static void ShowLandformTabs(TabView[] tabs, Episode chosen) // The tab pictures for one row
+        { // Opens the block
+            var progress = GameProgress.Current; // Saved progress
+            for (int i = 0; i < tabs.Length; i++) // Each landform tab
+            { // Opens the block
+                var tab = tabs[i]; // The tab
+                bool open = progress.IsEpisodeUnlocked((Episode)i); // Is that landform open on the map?
+                tab.image.sprite = !open ? tab.locked : i == (int)chosen ? tab.on : tab.off; // Locked, chosen, or not chosen
+            } // Ends the block
+        } // Ends the block
 
         void ChangePage(int step) // Moves within the chosen landform
         { // Opens the page change
@@ -193,12 +212,21 @@ namespace LandGrand.Profile // Profile scripts live here
             }
         }
 
-        void ShowBadges() // Fills the badge grid and the count
+        void ChooseBadgeLandform(Episode e) // Shows one landform's badges, or says to finish the earlier landform first
+        {
+            if (!CanShowLandform(e)) return; // Same lock guard as the Collection tabs; stay on the shown landform
+            badgeLandform = e; // Remember it
+            ShowLandformTabs(badgeLandformTabs, e); // Marks the chosen badge tab
+            ShowBadges(); // Fills the chosen page
+        }
+
+        void ShowBadges() // Fills the badge page of the chosen landform and its count
         {
             var progress = GameProgress.Current; // Saved progress
-            var all = AchievementCatalog.All; // Every badge, in order
-            badgeCount.text = Total("Badges", AchievementCatalog.EarnedCount(progress) + "/" + all.Count); // For example "Badges 3/15"
-            for (int i = 0; i < badges.Length; i++) // Each badge cell
+            var all = AchievementCatalog.ForLandform(badgeLandform); // This landform's badges, in order
+            badgeCount.text = Total("Badges", all.Count(a => a.IsEarned(progress)) + "/" + all.Count); // For example "Badges 3/15" on Mountains, "Badges 0/10" on Hills
+            badgeComingSoon.gameObject.SetActive(all.Count == 0); // "Coming soon" for an open landform with no badges yet
+            for (int i = 0; i < badges.Length; i++) // Each badge cell on the page
             {
                 var cell = badges[i]; // The cell
                 bool used = i < all.Count; // Is there a badge for it?

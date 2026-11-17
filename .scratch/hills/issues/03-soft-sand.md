@@ -16,13 +16,13 @@
    - All Mountains levels have no zones.
 
 **Checklist**
-- [ ] The explorer walks slower on the darker soft sand and jumps the same
-- [ ] Step sound and sand puffs appear only while walking on sand, and stop in the pause menu
+- [x] The explorer walks slower on the darker soft sand and jumps the same
+- [x] Step sound and sand puffs appear only while walking on sand, and stop in the pause menu
 - [ ] Easy 3 can be cleared in about 80 s at a steady walk (bot: 81.1 s)
 - [ ] EditMode tests pass (report the count)
 
 **Blocked by:** 02
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** **LandGrand > Build Levels**

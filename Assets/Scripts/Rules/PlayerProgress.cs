@@ -88,6 +88,17 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             return new NextTarget(NextStep.None, e, d, level); // Nothing open follows
         }
 
+        /// <summary>
+        /// Same as NextAfter, but a next level with no level data becomes None, so the Result Screen hides Next (D-066, decision 9).
+        /// Example: Hills Easy 3 is followed by Hills Normal 1, which has no data yet, so the answer is None.
+        /// </summary>
+        public NextTarget NextPlayableAfter(Episode e, Difficulty d, int level) // Next, but only to a level that can be played
+        {
+            var next = NextAfter(e, d, level); // The progress rules decide first
+            if (next.Step == NextStep.NextLevel && LevelCatalog.Find(next.Episode, next.Difficulty, next.Level) == null) return new NextTarget(NextStep.None, e, d, level); // That level has no data: nothing to open
+            return next; // Otherwise keep the answer
+        }
+
         /// <summary>True when the level was cleared at least once.</summary>
         public bool IsCleared(Episode e, Difficulty d, int level) => bestStars.ContainsKey((e, d, level)); // Only cleared levels are stored
 

@@ -9,9 +9,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         static bool Earned(string id, PlayerProgress p) => AchievementCatalog.Find(id).IsEarned(p); // Short way to ask about one badge
 
         [Test] // Unity runs this method as a Test
-        public void Catalog_HasFifteenBadges_InOrder() // The completed Mountains set
+        public void Catalog_HasTwentyFiveBadges_InOrder() // Fifteen Mountains badges, then ten Hills badges
         {
-            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
+            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master", "pasture_pal", "dune_surfer", "rolling_star", "hill_collector", "philippine_hills", "balloon_rider", "slope_ranger", "world_hills", "steady_star", "hill_master" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
             foreach (var a in AchievementCatalog.All) // Every badge
             {
                 Assert.IsFalse(string.IsNullOrEmpty(a.Name), a.Id); // A name
@@ -24,7 +24,16 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Tiers_MatchTheBadgeOrder() // Keeps each badge tier
         {
-            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
+            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
+        }
+
+        [Test] // Unity runs this method as a Test
+        public void ForLandform_SplitsTheBadgesIntoPages() // Mountains has 15, Hills has 10, the rest have none yet
+        {
+            CollectionAssert.AreEqual(AchievementCatalog.All.Take(15).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Mountains).Select(a => a.Id)); // The Mountains page keeps the first 15 in order
+            CollectionAssert.AreEqual(AchievementCatalog.All.Skip(15).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Hills).Select(a => a.Id)); // The Hills page is the ten after them
+            Assert.AreEqual(0, AchievementCatalog.ForLandform(Episode.Plains).Count); // Plains has no badges yet
+            Assert.AreEqual(0, AchievementCatalog.ForLandform(Episode.Plateaus).Count); // Plateaus has no badges yet
         }
 
         [Test] // Unity runs this method as a Test
@@ -32,7 +41,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             var p = new PlayerProgress(); // A brand new profile
             Assert.AreEqual(0, AchievementCatalog.EarnedCount(p)); // None
-            Assert.AreEqual(15, AchievementCatalog.All.Count); // Out of fifteen
+            Assert.AreEqual(25, AchievementCatalog.All.Count); // Out of twenty-five
         }
 
         [Test] // Unity runs this method as a Test
@@ -90,7 +99,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         public void MountainCollector_NeedsEveryMountainsKind() // All 34 Mountains kinds
         {
             var p = new PlayerProgress(); // A brand new profile
-            var kinds = ItemCatalog.All.Where(k => k.HomeLandform == Episode.Mountains).ToList(); // The Mountains shelf
+            var kinds = ItemCatalog.All.Where(k => k.BelongsTo(Episode.Mountains)).ToList(); // The Mountains shelf
             foreach (var k in kinds.Skip(1)) p.RecordFoundKind(k.Id); // All but one
             Assert.IsFalse(Earned("mountain_collector", p)); // Not yet
             p.RecordFoundKind(kinds[0].Id); // The last one

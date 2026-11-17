@@ -15,13 +15,14 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Pickup**: one item placed in a level. Several pickups can be the same item kind.
 - **Found**: an item kind is found once the explorer has collected any pickup of it in any level. Being found is never undone by replaying.
 - **Collection**: every item kind, shown in the Profile, with found kinds in colour and the others still hidden. It is a review of what the explorer has found, not a separate inventory.
-- **Home landform**: the one landform an item kind belongs to: the landform whose lesson first teaches it. An item kind found in other landforms still has only one home landform.
-- **Shelf**: one row of the Collection for one landform (Mountains, Hills, Plains, Plateaus). It holds the item kinds whose home landform it is.
+- **Shared kind**: an item kind that belongs to more than one landform's shelf, such as limestone on both Mountains and Hills. It is found once and counted once, but shows on every shelf it belongs to.
+- **Shelf**: one row of the Collection for one landform (Mountains, Hills, Plains, Plateaus). It holds every item kind that belongs to that landform, shared kinds included.
 - **Item card**: the pop-up opened by tapping a found item kind in the Collection: picture, name, rock or mineral, and description.
 - **Review pickup**: a pickup of an item kind that an earlier level already taught, placed to link the new lesson back to an old one. It gives only a chime, never the first-find pop-up, unless the explorer skipped finding that kind earlier.
 
 - **Achievement**: a reward for reaching a goal in the game, such as clearing a first level or finding every Mountains rock and mineral. It is shown as a badge. An achievement is earned from progress the game already keeps (stars, cleared levels, found item kinds); it is never earned on its own and never lost.
 - **Badge**: the round medal that shows one achievement: bronze, silver or gold. A locked badge is dark with a padlock but still shows its name and how to earn it.
+- **Badge page**: the 5×3 grid of one landform's badges in the Profile's Achievements tab. Each landform has its own page; the general badges sit on the Mountains page.
 
 ## Levels
 
@@ -37,9 +38,12 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Rolling boulder**: a trap that warns before rolling left along the ground. It skips a roll if the explorer is too close to its starting point.
 - **Icy ground**: a stretch of trail where the explorer takes time to speed up and slides before stopping.
 - **Hard checkpoints**: the three safe flags in each Hard level. Hazards return the explorer to the furthest flag reached, or to the start before the first flag.
+- **Soft sand**: a darker stretch of dune where the explorer walks more slowly, with a crunch and sand puffs. Jumps are not changed.
+- **Coming soon difficulty**: a difficulty that is open but has no levels yet. Tapping it says "Coming soon" instead of opening an empty trail.
 
 ## Landforms
 
 - **Landform Description Screen**: the screen that reviews a completed landform, shows the explorer's trip totals and names the next landform.
 - **Episode complete**: the explorer has cleared all 15 levels of one landform across Easy, Normal and Hard.
 - **Unlock animation**: the opening padlock, fading grey and sparkles that the map shows the first time a landform opens.
+- **Landform audio table**: the list that names each landform's level music and its ambience for Easy, Normal and Hard (wind for Mountains, stream and rain for Hills).

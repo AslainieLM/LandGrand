@@ -33,7 +33,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.AreEqual(5, progress.StarsFor(Episode.Mountains)); // Keeps the best stars from Mountains
             Assert.AreEqual(45, PlayerProgress.MaxStarsFor(Episode.Mountains)); // Three stars for each of 15 levels
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Mountains)); // Mountains opens difficulty selection
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Hills)); // Open Hills will say Coming soon
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills)); // Hills has Easy levels now, so it is not Coming soon (D-066)
         } // Ends the total check
 
         [Test] // Runs the animation decision check

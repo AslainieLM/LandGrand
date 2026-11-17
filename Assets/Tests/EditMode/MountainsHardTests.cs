@@ -7,7 +7,7 @@ namespace LandGrand.Rules.Tests // Holds plain rule tests
     public class MountainsHardTests // Checks the new trail data
     { // Opens the checks
         static LevelData[] Hard => LevelCatalog.All.Where(l => l.Episode == Episode.Mountains && l.Difficulty == Difficulty.Hard).ToArray(); // All seven Hard trails
-        static ItemKind[] EarlierKinds => LevelCatalog.All.Where(l => l.Difficulty != Difficulty.Hard).SelectMany(l => l.Kinds).Distinct().ToArray(); // Kinds taught before Hard
+        static ItemKind[] EarlierKinds => LevelCatalog.All.Where(l => l.Episode == Episode.Mountains && l.Difficulty != Difficulty.Hard).SelectMany(l => l.Kinds).Distinct().ToArray(); // Kinds taught before Mountains Hard (Hills levels do not count here)
 
         [Test] // Runs the trail check
         public void SevenHardTrailsHaveThreeFlagsAndNinePickups() // Checks their shared size and time
@@ -31,9 +31,9 @@ namespace LandGrand.Rules.Tests // Holds plain rule tests
         [Test] // Runs the pickup check
         public void EachTrailTeachesTwoKindsAndReviewsOneEarlierKind() // Checks all 34 taught kinds
         { // Starts the check
-            var newKinds = ItemCatalog.All.Where(k => k.HomeLandform == Episode.Mountains).Except(EarlierKinds).ToArray(); // Kinds first taught on Hard
+            var newKinds = ItemCatalog.All.Where(k => k.BelongsTo(Episode.Mountains)).Except(EarlierKinds).ToArray(); // Kinds first taught on Hard
             Assert.That(newKinds.Length, Is.EqualTo(14)); // Seven new rocks and seven new minerals
-            Assert.That(ItemCatalog.All.Count(k => k.HomeLandform == Episode.Mountains), Is.EqualTo(34)); // The complete Mountains shelf
+            Assert.That(ItemCatalog.All.Count(k => k.BelongsTo(Episode.Mountains)), Is.EqualTo(34)); // The complete Mountains shelf
             foreach (var level in Hard) // Checks the items on each trail
             { // Starts the pickup checks
                 var taught = level.Pickups.Where(p => newKinds.Contains(p.Kind)).GroupBy(p => p.Kind).ToArray(); // Groups the new pickups by kind

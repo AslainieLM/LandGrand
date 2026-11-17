@@ -26,6 +26,8 @@ public static class ProfileBuilder // Makes the Profile scene
     const string MainMenuPath = "Assets/Scenes/MainMenu.unity"; // The Profile goes after this scene
     const string ProfilePath = "Assets/Scenes/Profile.unity"; // Where the Profile is saved
     const int GridColumns = 6; // Items per row in the Collection grid (D-060)
+    const int BadgeColumns = 5; // Badges per row on the Achievements page (D-060)
+    const int BadgeRows = 3; // Rows on each landform's badge page: 5 by 3 (D-066)
     static readonly Color32 Clay = new Color32(154, 85, 50, 255); // Clay brown from the palette, for small headings
     static readonly Color32 DraftRed = new Color32(168, 63, 36, 255); // Scarf shade from the palette, for the draft note
     static readonly Color32 Muted = new Color32(110, 100, 90, 255); // Soft grey-brown for "Coming soon" and the card tag
@@ -107,7 +109,7 @@ public static class ProfileBuilder // Makes the Profile scene
 
     /// <summary>
     /// The two sections under the strip (D-060): Collection and Achievements tabs at y 58 to 80, and one cream page panel at y 80 to 264.
-    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: a grid of 5 by 3 badges with names.
+    /// Collection: four landform tabs at y 88 to 108, then a grid of 6 by 2 items with names. Achievements: the same four landform tabs, then a grid of 5 by 3 badges with names.
     /// </summary>
     static void BuildSections(ProfileController controller, Transform root, TMP_FontAsset font) // Makes the tabs, both pages and their grids
     {
@@ -122,14 +124,7 @@ public static class ProfileBuilder // Makes the Profile scene
 
         // Collection page: landform tabs and the item grid.
         var collection = M.Rect("Collection", root, page, page); // Holder the controller shows and hides
-        var lands = new ProfileController.TabView[ShelfNames.Length]; // One tab per landform
-        for (int i = 0; i < lands.Length; i++) // Each landform, in episode order
-        {
-            string id = ShelfNames[i].ToLowerInvariant(); // "mountains", "hills", and so on
-            lands[i] = Tab("Landform " + ShelfNames[i], collection, "land_" + id, 18f + i * 112f, 98f); // 108 wide, 4 apart, x 18 to 462
-            lands[i].locked = P("land_" + id + "_locked"); // Grey with a padlock
-        }
-        controller.landformTabs = lands; // The controller switches them
+        controller.landformTabs = LandformTabRow(collection, "Landform "); // The controller switches them; the shared row of four
         var slots = new ProfileController.SlotView[GridColumns * 2]; // Two rows of items
         for (int i = 0; i < slots.Length; i++) // Each cell
             slots[i] = Cell("Item " + (i + 1), collection, LessonSprite("item_slot"), new Vector2(60f + (i % GridColumns) * 72f, 132f + (i / GridColumns) * 68f), 24f, 70f); // Frames 72 apart; rows at y 132 and 200
@@ -146,11 +141,13 @@ public static class ProfileBuilder // Makes the Profile scene
         controller.pictures = ItemCatalog.All.Select(k => new ProfileController.NamedSprite { name = k.Picture, sprite = Item(k.Picture) }).ToArray(); // Every item picture, by name
         controller.collectionPage = collection.gameObject; // The controller shows it
 
-        // Achievements page: the badge grid.
+        // Achievements page: the same four landform tabs, then one 5 by 3 badge grid for the chosen landform (D-066).
         var achievements = M.Rect("Achievements", root, page, page); // Holder the controller shows and hides
-        var badges = new ProfileController.SlotView[AchievementCatalog.All.Count]; // One cell per badge
-        for (int i = 0; i < badges.Length; i++) // Each badge
-            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(56f + (i % 5) * 92f, 104f + (i / 5) * 58f), 26f, 88f); // Five medals per row; rows at y 104, 162 and 220
+        controller.badgeLandformTabs = LandformTabRow(achievements, "Badge landform "); // The controller switches them; same tabs and place as the Collection
+        var badges = new ProfileController.SlotView[BadgeColumns * BadgeRows]; // One page of cells: 15 badges
+        for (int i = 0; i < badges.Length; i++) // Each cell
+            badges[i] = Cell("Badge " + (i + 1), achievements, null, new Vector2(56f + (i % BadgeColumns) * 92f, 122f + (i / BadgeColumns) * 52f), 26f, 88f); // Five medals per row; rows at y 122, 174 and 226, below the tabs
+        controller.badgeComingSoon = M.ReadingLabel("Badges coming soon", achievements, "Coming soon", new Vector2(240f, 170f), page, new Vector2(200f, 22f), Muted, TextAlignmentOptions.Midline); // For an open landform with no badges yet
         foreach (var b in badges) // Keeps names within each medal column
         { // Opens the name layout
             b.label.textWrappingMode = TextWrappingModes.Normal; // Lets a long badge name use two lines
@@ -160,11 +157,24 @@ public static class ProfileBuilder // Makes the Profile scene
             b.label.rectTransform.sizeDelta = new Vector2(88f, 32f); // Fits the name between this medal and the next row
         } // Ends the name layout
         controller.badges = badges; // The badge grid
-        controller.badgePictures = AchievementCatalog.All.SelectMany(a => new[] { "badge_" + a.Id, "badge_" + a.Id + "_locked" }).Select(n => new ProfileController.NamedSprite { name = n, sprite = P(n) }).ToArray(); // Earned and locked pictures, by name
+        controller.badgePictures = AchievementCatalog.All.SelectMany(a => new[] { "badge_" + a.Id, "badge_" + a.Id + "_locked" }).Select(n => new ProfileController.NamedSprite { name = n, sprite = P(n) }).ToArray(); // Earned and locked pictures, by name for all 25 badges
         controller.achievementsPage = achievements.gameObject; // The controller shows it
     }
 
     /// <summary>A tab button whose left edge is at x and middle at y; its pictures are Profile/name_on and Profile/name_off.</summary>
+    /// <summary>One row of four landform tabs at the top of a Profile page. The Collection and Achievements pages both use it.</summary>
+    static ProfileController.TabView[] LandformTabRow(Transform parent, string namePrefix) // Makes the four landform tabs
+    { // Opens the block
+        var tabs = new ProfileController.TabView[ShelfNames.Length]; // One tab per landform
+        for (int i = 0; i < tabs.Length; i++) // Each landform, in episode order
+        { // Opens the block
+            string id = ShelfNames[i].ToLowerInvariant(); // "mountains", "hills", and so on
+            tabs[i] = Tab(namePrefix + ShelfNames[i], parent, "land_" + id, 18f + i * 112f, 98f); // 108 wide, 4 apart, x 18 to 462
+            tabs[i].locked = P("land_" + id + "_locked"); // Grey with a padlock
+        } // Ends the block
+        return tabs; // The row, in episode order
+    } // Ends the block
+
     static ProfileController.TabView Tab(string label, Transform parent, string name, float left, float y) // Makes one tab
     {
         var on = P(name + "_on"); // Chosen picture

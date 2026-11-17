@@ -1,4 +1,4 @@
-using LandGrand.Rules; // Uses the ice speed rule
+using LandGrand.Rules; // Uses the ice and soft sand speed rules
 using LandGrand.StartScreen; // Gives access to SpriteFlipbook for the dust puff
 using UnityEngine; // Gives access to MonoBehaviour, Rect, Sprite and Time
 
@@ -52,6 +52,7 @@ namespace LandGrand.Play // Level play scripts live here
 
         public float ExternalPushX { get; set; } // Wind speed added to walking
         internal bool OnIce { get; set; } // The ice watcher checks the ground below the feet
+        internal bool OnSand { get; set; } // The sand watcher says the feet stand on soft sand, so walking is slower
         internal bool SlidingOnIce { get; private set; } // Lets the ice watcher play one sound at the start
         float walkVelocity; // Walking speed before the wind is added
         public DynamicSolid StandingOn { get; private set; } // Moving or breakable support
@@ -107,7 +108,7 @@ namespace LandGrand.Play // Level play scripts live here
             } // Ends the carry check
             int dir = input.Direction; // Walk left, right or not at all
             SlidingOnIce = OnIce && IceSlide.IsSliding(walkVelocity, dir); // A release or turn begins a slide
-            float target = dir * walkSpeed; // Speed the held arrow asks for
+            float target = dir * SoftSand.WalkSpeed(walkSpeed, OnSand && grounded); // Speed the held arrow asks for; soft sand slows walking only while the explorer is still on the ground this frame
             walkVelocity = OnIce ? IceSlide.Next(walkVelocity, target, dt) : target; // Only ice changes speed gradually
             velocity.x = walkVelocity + ExternalPushX; // Wind still adds to walking
             if (dir != 0) facing = dir; // Face the way of walking

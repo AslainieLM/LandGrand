@@ -21,9 +21,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public string Picture { get; } // Name of its picture file, without ".png"
         public bool IsDraft { get; } // True until a teacher reviews the text (D-043, Q-04)
         public bool IsRock { get; } // True for a rock, false for a mineral; the item card shows "Rock" or "Mineral"
-        public Episode HomeLandform { get; } // The landform whose lesson first teaches it; its shelf in the Collection (D-052)
+        public Episode[] Landforms { get; } // The landforms whose shelves show this kind; a shared kind is on more than one (D-066)
 
-        public ItemKind(string id, string name, string description, string picture, bool isDraft, bool isRock, Episode homeLandform) // Makes a kind
+        public ItemKind(string id, string name, string description, string picture, bool isDraft, bool isRock, params Episode[] landforms) // Makes a kind; one or more landforms
         {
             Id = id; // Remember the id
             Name = name; // Remember the name
@@ -31,8 +31,11 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             Picture = picture; // Remember the picture name
             IsDraft = isDraft; // Remember the review state
             IsRock = isRock; // Remember whether it is a rock or a mineral
-            HomeLandform = homeLandform; // Remember its home landform
+            Landforms = landforms.ToArray(); // Keep our own copy of the landforms
         }
+
+        /// <summary>True when this kind is on the shelf of this landform.</summary>
+        public bool BelongsTo(Episode episode) => Landforms.Contains(episode); // Looks the landform up in the list
     }
 
     /// <summary>The short lesson shown before a level: a title, three or four sentences and a picture.</summary>
@@ -142,12 +145,12 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     {
         // Draft texts for Grade 5 (D-043). They need a teacher's review before final use (Q-04).
         public static readonly ItemKind Granite = new ItemKind("granite", "Granite", "A hard, speckled rock. It forms when melted rock cools slowly deep underground.", "granite", true, true, Episode.Mountains); // A rock, first taught in the Mountains lesson
-        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
-        public static readonly ItemKind Feldspar = new ItemKind("feldspar", "Feldspar", "A common mineral that is often pink or white. It is a main part of granite.", "feldspar", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
+        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true, false, Episode.Mountains, Episode.Hills); // A mineral, taught in Mountains and shared with Hills
+        public static readonly ItemKind Feldspar = new ItemKind("feldspar", "Feldspar", "A common mineral that is often pink or white. It is a main part of granite.", "feldspar", true, false, Episode.Mountains, Episode.Hills); // A mineral, taught in Mountains and shared with Hills
         public static readonly ItemKind Mica = new ItemKind("mica", "Mica", "A shiny mineral that peels into thin, flat sheets. It is found in granite.", "mica", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
 
         // Mountains Easy 2, volcanic mountains (D-055). Drafts like the rest (Q-04).
-        public static readonly ItemKind Andesite = new ItemKind("andesite", "Andesite", "A grey rock made when lava cools. Many Philippine volcanoes are made of it.", "andesite", true, true, Episode.Mountains); // A rock from cooled lava
+        public static readonly ItemKind Andesite = new ItemKind("andesite", "Andesite", "A grey rock made when lava cools. Many Philippine volcanoes are made of it.", "andesite", true, true, Episode.Mountains, Episode.Hills); // A rock from cooled lava, taught in Mountains and shared with Hills
         public static readonly ItemKind Obsidian = new ItemKind("obsidian", "Obsidian", "A shiny black rock like glass. It forms when lava cools very fast.", "obsidian", true, true, Episode.Mountains); // Volcanic glass, a rock
         public static readonly ItemKind Pumice = new ItemKind("pumice", "Pumice", "A light rock full of tiny holes from gas bubbles. Some pumice can float on water.", "pumice", true, true, Episode.Mountains); // A light, bubbly rock
 
@@ -157,14 +160,14 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Garnet = new ItemKind("garnet", "Garnet", "A dark red mineral that grows as small crystals inside squeezed rock.", "garnet", true, false, Episode.Mountains); // A mineral that grows in changed rock
 
         public static readonly ItemKind Sandstone = new ItemKind("sandstone", "Sandstone", "A rock made of sand grains stuck together. It wears away in wind and rain.", "sandstone", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Clay = new ItemKind("clay", "Clay", "Very fine soil from weathered rock. It feels sticky when it is wet.", "clay", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Clay = new ItemKind("clay", "Clay", "Very fine soil from weathered rock. It feels sticky when it is wet.", "clay", true, false, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
         public static readonly ItemKind Conglomerate = new ItemKind("conglomerate", "Conglomerate", "A rock of round pebbles stuck in sand. Rivers rounded the pebbles long ago.", "conglomerate", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Shale = new ItemKind("shale", "Shale", "A rock made from mud that settled in water. It splits into thin layers.", "shale", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Basalt = new ItemKind("basalt", "Basalt", "A dark rock made from cooled lava. It often has tiny holes from gas.", "basalt", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Magnetite = new ItemKind("magnetite", "Magnetite", "A black mineral that sticks to a magnet. It makes the black sand in rivers.", "magnetite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Magnetite = new ItemKind("magnetite", "Magnetite", "A black mineral that sticks to a magnet. It makes the black sand in rivers.", "magnetite", true, false, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
         public static readonly ItemKind Sulfur = new ItemKind("sulfur", "Sulfur", "A bright yellow mineral. It forms around hot volcanic vents.", "sulfur", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Pyrite = new ItemKind("pyrite", "Pyrite", "Called fool's gold. Its shiny gold cubes are not real gold.", "pyrite", true, false, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Limestone = new ItemKind("limestone", "Limestone", "A pale rock made from shells under the sea. Heat can turn it into marble.", "limestone", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Limestone = new ItemKind("limestone", "Limestone", "A pale rock made from shells under the sea. Heat can turn it into marble.", "limestone", true, true, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
         public static readonly ItemKind Gneiss = new ItemKind("gneiss", "Gneiss", "A rock with light and dark bands. Deep heat and squeezing make it.", "gneiss", true, true, Episode.Mountains); // Draft Mountains kind
 
         public static readonly ItemKind Scoria = new ItemKind("scoria", "Scoria", "A red-brown lava rock full of holes. Gas bubbles made the holes.", "scoria", true, true, Episode.Mountains); // Draft Mountains kind
@@ -176,14 +179,19 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Serpentinite = new ItemKind("serpentinite", "Serpentinite", "A smooth green rock that looks like snake skin. Few plants grow on its soil.", "serpentinite", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Chromite = new ItemKind("chromite", "Chromite", "A heavy black mineral. It gives us chromium for shiny metal parts.", "chromite", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Schist = new ItemKind("schist", "Schist", "A shiny rock that splits into thin layers. Heat and squeezing made it.", "schist", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Calcite = new ItemKind("calcite", "Calcite", "A clear or white mineral. It is the main mineral in limestone and marble.", "calcite", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Calcite = new ItemKind("calcite", "Calcite", "A clear or white mineral. It is the main mineral in limestone and marble.", "calcite", true, false, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
         public static readonly ItemKind Trachyte = new ItemKind("trachyte", "Trachyte", "A grey lava rock with tiny crystals. Much of Kilimanjaro's top is made of it.", "trachyte", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Tanzanite = new ItemKind("tanzanite", "Tanzanite", "A blue-violet gem. It is found only near Mount Kilimanjaro in Tanzania.", "tanzanite", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Gabbro = new ItemKind("gabbro", "Gabbro", "A dark rock with big grains. It forms deep under the sea floor.", "gabbro", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Olivine = new ItemKind("olivine", "Olivine", "A green mineral in lava. It makes the green sand of a Hawaii beach.", "olivine", true, false, Episode.Mountains); // Draft Mountains kind
 
+        // Hills kinds (D-066). Drafts like the rest (Q-04). They are on the Hills shelf only.
+        public static readonly ItemKind CoralStone = new ItemKind("coral_stone", "Coral Stone", "A pale rock made from old coral. The Ivatan build strong stone houses with it.", "coral_stone", true, true, Episode.Hills); // A rock from old coral, first taught on Hills
+        public static readonly ItemKind Limonite = new ItemKind("limonite", "Limonite", "A yellow-brown iron mineral. It gives many soils their rusty color.", "limonite", true, false, Episode.Hills); // A mineral that colors soil, first taught on Hills
+        public static readonly ItemKind Kaolinite = new ItemKind("kaolinite", "Kaolinite", "A soft, white clay mineral. It forms when feldspar slowly breaks down.", "kaolinite", true, false, Episode.Hills); // A soft clay mineral, first taught on Hills
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine }; // The full list
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite }; // The full list; Hills kinds come last so the Mountains order stays
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -700,6 +708,104 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     rollingBoulders: new[] { new RollingBoulder(1600f, 1400f, 0f), new RollingBoulder(3900f, 3680f, 1f), new RollingBoulder(6000f, 5780f, 2f), new RollingBoulder(8600f, 8380f, 0.5f) }, // Rolling boulders
                     iceZones: new[] { new IceZone(4400f, 300f), new IceZone(7500f, 400f) }), // Icy ground
                 "Mauna Kea"), // Start banner
+            // Hills, Easy 1 to 3 (D-066, spec section 6). Drafts like the rest (Q-04). E3 has four soft sand zones.
+            new LevelData(Episode.Hills, Difficulty.Easy, 1, // Hills, Easy, level 1: Chocolate Hills
+                new Lesson("Hills", new[] // Draft lesson for Grade 5
+                {
+                    "Hills are lower and rounder than mountains.", // What a hill is
+                    "Bohol has over 1,200 Chocolate Hills.", // How many there are
+                    "They are made of old sea limestone.", // What they are made of
+                    "Dry grass turns them brown like chocolate.", // Why they look brown
+                }, "lesson_chocolate_hills", true), // Picture name, and still a draft
+                new[] // Five collectibles
+                {
+                    new Pickup(ItemCatalog.Limestone, new Spot(316f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Calcite, new Spot(560f, 40f)), // On a ledge
+                    new Pickup(ItemCatalog.Clay, new Spot(1140f, 28f)), // On a low ledge
+                    new Pickup(ItemCatalog.CoralStone, new Spot(3668f, 56f)), // Secret spot: the high ledge after the step
+                    new Pickup(ItemCatalog.Limestone, new Spot(4600f, 16f)), // Near the viewing deck
+                },
+                new Spot(32f, 0f), // Start at the left edge
+                new[] { new Spot(2400f, 0f) }, // Checkpoint flag in the middle
+                new[] // Two pits and one spike trap
+                {
+                    new Hazard(HazardType.Pit, new Spot(1880f, 0f), 48f), // Pit before the checkpoint
+                    new Hazard(HazardType.Pit, new Spot(3150f, 0f), 48f), // Pit after the checkpoint
+                    new Hazard(HazardType.Spikes, new Spot(3450f, 0f), 32f), // Spikes after the pits
+                },
+                new Spot(4740f, 0f), // Viewing deck at the goal
+                new[] { "Hills are lower and rounder than mountains.", "The Chocolate Hills are limestone from an old sea floor.", "Limestone has calcite in it, and the hills sit on clay." }, // Draft review
+                new LevelLayout(4800f, LevelTheme.ChocolateHills, // Width and theme
+                    new[] { B(300f, BoulderSize.Small), B(900f, BoulderSize.Big), B(1400f, BoulderSize.Small), B(2150f, BoulderSize.Big), B(2700f, BoulderSize.Small), B(3300f, BoulderSize.Big), B(3900f, BoulderSize.Small), B(4300f, BoulderSize.Big) }, // Eight boulders
+                    new[] { L(520f, 40f, 80f), L(1100f, 28f, 80f), L(1600f, 40f, 64f), L(2950f, 28f, 80f), L(3560f, 28f, 48f), L(3620f, 56f, 96f), L(4000f, 28f, 80f) }), // Seven ledges
+                "Chocolate Hills"), // Start banner
+
+            new LevelData(Episode.Hills, Difficulty.Easy, 2, // Hills, Easy, level 2: Batanes Hills
+                new Lesson("Rolling Hills", new[] // Draft lesson for Grade 5
+                {
+                    "Batanes has wide, rolling green hills.", // Where the hills are
+                    "Grass roots hold the hill soil in place.", // Why grass helps
+                    "Cows and goats eat grass on the hills.", // Animals on the hills
+                    "Too much grazing can leave soil bare.", // What can go wrong
+                }, "lesson_batanes", true), // Picture name, and still a draft
+                new[] // Five collectibles
+                {
+                    new Pickup(ItemCatalog.Andesite, new Spot(376f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Limonite, new Spot(1332f, 28f)), // On a low ledge
+                    new Pickup(ItemCatalog.Kaolinite, new Spot(2082f, 40f)), // On a ledge
+                    new Pickup(ItemCatalog.CoralStone, new Spot(3112f, 84f)), // Secret spot: climb to the high ledge
+                    new Pickup(ItemCatalog.Andesite, new Spot(4316f, 24f)), // On a boulder near the house
+                },
+                new Spot(32f, 0f), // Start at the left edge
+                new[] { new Spot(2700f, 0f) }, // Checkpoint flag in the middle
+                new[] // Two pits and two spike traps
+                {
+                    new Hazard(HazardType.Pit, new Spot(700f, 0f), 48f), // Pit near the start
+                    new Hazard(HazardType.Spikes, new Spot(1800f, 0f), 32f), // Spikes before the checkpoint
+                    new Hazard(HazardType.Pit, new Spot(3380f, 0f), 56f), // Pit after the checkpoint
+                    new Hazard(HazardType.Spikes, new Spot(3800f, 0f), 32f), // Spikes near the house
+                },
+                new Spot(5240f, 0f), // Stone house at the goal
+                new[] { "Rolling hills have gentle, rounded slopes.", "Grass and roots keep hill soil from washing away.", "Feldspar in rock slowly breaks down into kaolinite clay." }, // Draft review
+                new LevelLayout(5400f, LevelTheme.RollingPasture, // Width and theme
+                    new[] { B(360f, BoulderSize.Small), B(1550f, BoulderSize.Big), B(2350f, BoulderSize.Small), B(4300f, BoulderSize.Small), B(4700f, BoulderSize.Big) }, // Five boulders
+                    new[] { L(1300f, 28f, 80f), L(2050f, 40f, 64f), L(3000f, 40f, 64f), L(3080f, 84f, 72f), L(3300f, 28f, 64f), L(3452f, 28f, 64f), L(4900f, 28f, 64f) }), // Seven ledges
+                "Batanes Hills"), // Start banner
+
+            new LevelData(Episode.Hills, Difficulty.Easy, 3, // Hills, Easy, level 3: La Paz Dunes
+                new Lesson("Sand Dunes", new[] // Draft lesson for Grade 5
+                {
+                    "Wind can pile sand into hills called dunes.", // What a dune is
+                    "La Paz in Ilocos Norte has big sand dunes.", // Where to see them
+                    "Sea and river bring the sand to the coast.", // Where the sand comes from
+                    "Plants on dunes help keep the sand still.", // How dunes stay put
+                }, "lesson_la_paz", true), // Picture name, and still a draft
+                new[] // Five collectibles
+                {
+                    new Pickup(ItemCatalog.Quartz, new Spot(500f, 72f)), // On top of the stepped climb
+                    new Pickup(ItemCatalog.Magnetite, new Spot(1532f, 40f)), // On a ledge
+                    new Pickup(ItemCatalog.Limonite, new Spot(3266f, 0f)), // On the ground between the two spike traps
+                    new Pickup(ItemCatalog.Feldspar, new Spot(3512f, 84f)), // Secret spot: climb back up to the high ledge
+                    new Pickup(ItemCatalog.Quartz, new Spot(4416f, 24f)), // On a boulder near the dune marker
+                },
+                new Spot(32f, 0f), // Start at the left edge
+                new[] { new Spot(2500f, 0f) }, // Checkpoint flag in the middle
+                new[] // Three pits and three spike traps
+                {
+                    new Hazard(HazardType.Pit, new Spot(800f, 0f), 48f), // Pit 1: one jump clears it
+                    new Hazard(HazardType.Spikes, new Spot(1300f, 0f), 32f), // Spikes 1
+                    new Hazard(HazardType.Pit, new Spot(2800f, 0f), 64f), // The wide pit: needs the double jump
+                    new Hazard(HazardType.Spikes, new Spot(3200f, 0f), 32f), // First of the spike pair
+                    new Hazard(HazardType.Spikes, new Spot(3300f, 0f), 32f), // Second of the spike pair, with limonite between them
+                    new Hazard(HazardType.Pit, new Spot(3900f, 0f), 56f), // Pit 3
+                },
+                new Spot(5240f, 0f), // Dune marker at the goal
+                new[] { "Dunes are hills of sand piled up by the wind.", "Most sand grains are quartz, a tough mineral.", "The black grains in Ilocos sand are magnetite." }, // Draft review
+                new LevelLayout(5400f, LevelTheme.SandDunes, // Width and theme
+                    new[] { B(1050f, BoulderSize.Big), B(1800f, BoulderSize.Small), B(4400f, BoulderSize.Small), B(4700f, BoulderSize.Big), B(5000f, BoulderSize.Small) }, // Five boulders
+                    new[] { L(300f, 24f, 64f), L(380f, 48f, 64f), L(460f, 72f, 80f), L(1500f, 40f, 64f), L(2000f, 28f, 80f), L(3500f, 28f, 56f), L(3580f, 56f, 56f), L(3480f, 84f, 64f) }, // Eight ledges
+                    sandZones: new[] { new SandZone(560f, 160f), new SandZone(1900f, 400f), new SandZone(2640f, 150f), new SandZone(4050f, 330f) }), // Four soft sand zones; the first is safe ground
+                "La Paz Dunes"), // Start banner
         }; // Ends the catalog
 
         static Boulder B(float x, BoulderSize size) => new Boulder(x, size); // Short way to write a boulder
@@ -709,6 +815,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static IReadOnlyList<LevelData> All => Levels; // The builder makes one scene for each
 
         public static bool HasLevels(Episode e) => Levels.Any(l => l.Episode == e); // Checks whether this landform has playable data
+
+        /// <summary>True when this difficulty of the landform has at least one level with data. An open difficulty without data says "Coming soon" (D-066).</summary>
+        public static bool HasLevels(Episode e, Difficulty d) => Levels.Any(l => l.Episode == e && l.Difficulty == d); // Checks one difficulty; Hills Normal and Hard say no for now
 
         /// <summary>The level's data, or null when that level has no data yet.</summary>
         public static LevelData Find(Episode e, Difficulty d, int number) => Levels.FirstOrDefault(l => l.Episode == e && l.Difficulty == d && l.Number == number); // Looks the level up

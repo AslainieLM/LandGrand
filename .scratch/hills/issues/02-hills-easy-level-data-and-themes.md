@@ -18,13 +18,13 @@
    - Update `LevelCatalogTests.cs:27` and `EpisodeCompletionTests.cs:36` (Hills now has levels).
 
 **Checklist**
-- [ ] The map's "Coming soon" on Hills is gone because `HasLevels(Hills)` is now true (no map code change)
-- [ ] The Hills Collection tab shows the 10 kinds
-- [ ] Mountains levels build and play unchanged
-- [ ] EditMode tests pass (report the count)
+- [x] The map's "Coming soon" on Hills is gone because `HasLevels(Hills)` is now true (no map code change)
+- [x] The Hills Collection tab shows the 10 kinds (code: 10 Hills kinds, checked by `CollectionTests`; the screen itself not yet run)
+- [ ] Mountains levels build and play unchanged (code unchanged; not run in Unity)
+- [ ] EditMode tests pass (report the count) (not run: Unity Editor was open)
 
 **Blocked by:** 01
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** **LandGrand > Build Levels**, **LandGrand > Build Lesson Scene**, **LandGrand > Build Selection Scenes**

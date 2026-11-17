@@ -37,7 +37,7 @@ namespace LandGrand.Rules.Tests // Tests plain rules
         public void NormalIntroducesTenKindsInLessonOrder() // Checks the Normal collection entries
         { // Starts the check
             CollectionAssert.AreEqual(new[] { "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss" }, ItemCatalog.All.Skip(10).Take(10).Select(k => k.Id)); // Exact introduction order
-            Assert.IsTrue(ItemCatalog.All.All(k => k.HomeLandform == Episode.Mountains && k.IsDraft)); // Shared draft shelf
+            Assert.IsTrue(ItemCatalog.All.Where(k => k.BelongsTo(Episode.Mountains)).All(k => k.IsDraft)); // Every Mountains kind is a draft
         } // Ends the check
     } // Ends the group
 } // Ends the tests

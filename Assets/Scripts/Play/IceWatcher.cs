@@ -1,4 +1,5 @@
 using System.Linq; // Checks whether the feet are in any ice zone
+using LandGrand.Rules; // Gives the shared standing-on-a-zone check
 using UnityEngine; // Gives access to the level part and sound clip
 
 namespace LandGrand.Play // Holds the level parts
@@ -22,7 +23,7 @@ namespace LandGrand.Play // Holds the level parts
             if (level == null || level.Run == null) return; // Waits for the attempt
             var explorer = level.explorer; // Reads the position before the motor moves
             var feet = explorer.Position; // Uses the middle of the feet
-            explorer.OnIce = explorer.Grounded && explorer.StandingOn == null && Mathf.Abs(feet.y) < 0.01f && level.Run.Level.Layout.IceZones.Any(zone => zone.Contains(feet.x)); // Only solid ground at height zero can be icy
+            explorer.OnIce = ZoneFooting.IsStandingIn(explorer.Grounded, explorer.StandingOn != null, feet.y, feet.x, x => level.Run.Level.Layout.IceZones.Any(zone => zone.Contains(x))); // Same flat-ground test as sand; only solid ground at height zero can be icy
         } // Ends the ground check
 
         void LateUpdate() // Checks for the start of the slide sound

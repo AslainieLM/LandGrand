@@ -1,6 +1,7 @@
 using System.IO; // Gives access to folders and files
 using LandGrand.LandformMap; // Gives access to the Landform Map scripts
 using LandGrand.Rules; // Gives access to Episode
+using LandGrand.StartScreen; // Gives access to SpriteFlipbook for the swaying trees
 using TMPro; // Gives access to TextMeshPro text
 using UnityEditor; // Gives access to editor tools such as menu items
 using UnityEditor.SceneManagement; // Gives access to making and saving scenes
@@ -87,12 +88,7 @@ public static class LandformMapBuilder // Makes the Landform Map scene
             if (r.episode != Episode.Mountains) regions[i].unlock = DescriptionArt.Unlock(root, r.padlock, K.CanvasCenter); // Gives newly opened regions their own sparkles
         }
         regions[0].life = life.gameObject; // Keeps the existing Mountains animations
-        var hillsCloud = M.Renderer("Hills Cloud", S("Mountains/cloud"), 10, null).gameObject.AddComponent<CloudDrift>(); // Reuses a drifting cloud when Hills opens
-        hillsCloud.startX = 292f; // Starts in the Hills sky
-        hillsCloud.endX = 460f; // Stays in the Hills part of the map
-        hillsCloud.y = 38f; // Floats over the Hills
-        hillsCloud.gameObject.SetActive(false); // Locked Hills stays still
-        regions[(int)Episode.Hills].life = hillsCloud.gameObject; // Starts the cloud with the open region
+        regions[(int)Episode.Hills].life = HillsLife().gameObject; // Trees, stream and birds, shown only while Hills is open
 
         // Controller: connects everything. The guide panel and Back icon are made here, last, so they draw on top.
         var controller = new GameObject("Landform Map").AddComponent<LandformMapController>(); // The map brain
@@ -109,4 +105,40 @@ public static class LandformMapBuilder // Makes the Landform Map scene
     }
 
     static Sprite S(string path) => K.Sprite(SpriteFolder, path, "Tools/Art/make_landform_map_art.py"); // Loads one Landform Map sprite
+
+    // Hills trees: x across, which hill line they stand on (true = far hill), and how fast they sway.
+    static readonly (float x, bool far, float framesPerSecond)[] HillsTrees = // One entry per tree
+    {
+        (290f, true, 1.2f), (312f, true, 1.4f), (405f, true, 1.6f), (440f, true, 1.8f), // Four on the far hill line
+        (270f, false, 1.3f), (455f, false, 1.5f), // Two on the near hill line
+    };
+    const float TreeHalfHeight = 5.5f; // Half of the 11 pixel tree, so its bottom sits on the line
+    static readonly float[] StreamRows = { 104f, 116f, 128f }; // Screen rows of the three stream ripples
+
+    /// <summary>Hills map life: six swaying trees, three shining ripples in the stream and two birds. Only shown while Hills is open.</summary>
+    static Transform HillsLife() // Makes the Hills animations
+    {
+        var life = new GameObject("Hills life").transform; // Parent for the Hills animations
+        foreach (var t in HillsTrees) // One tree each
+        {
+            float line = t.far ? 72f + Mathf.Round(12f * Mathf.Sin(t.x / 27f)) : 94f + Mathf.Round(10f * Mathf.Sin(t.x / 19f + 1f)); // Hill line height at this x
+            var tree = M.Renderer("Tree", LandformLife.HillsSprite("tree_0"), 2, life); // Tree picture behind the birds
+            tree.transform.position = M.Px(t.x, line - TreeHalfHeight); // Bottom edge sits on the hill line
+            var sway = tree.gameObject.AddComponent<SpriteFlipbook>(); // Makes the tree sway
+            sway.frames = new[] { LandformLife.HillsSprite("tree_0"), LandformLife.HillsSprite("tree_1") }; // Two tree poses
+            sway.framesPerSecond = t.framesPerSecond; // Each tree sways a little differently
+        }
+        foreach (float y in StreamRows) // One ripple per stream row
+        {
+            float x = 340f + Mathf.Round(9f * Mathf.Sin(y / 9f)) - 3f; // Stream shine wobbles across the water
+            var ripple = M.Renderer("Ripple", LandformLife.HillsSprite("ripple_0"), 1, life); // Ripple picture, behind the trees
+            ripple.transform.position = M.Px(x, y); // Put it on its row
+            var shine = ripple.gameObject.AddComponent<SpriteFlipbook>(); // Makes the water shine
+            shine.frames = new[] { LandformLife.HillsSprite("ripple_0"), LandformLife.HillsSprite("ripple_1") }; // Two shine poses
+            shine.framesPerSecond = 2f; // Shines twice a second
+        }
+        LandformLife.Bird(life, new Vector2(372f, 30f), new Vector2(20f, 20f), 12f); // First bird circles high over the hills
+        LandformLife.Bird(life, new Vector2(372f, 30f), new Vector2(20f, 20f), 15f); // Second bird circles at its own speed
+        return life; // The map shows it only while Hills is open
+    }
 }

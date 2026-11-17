@@ -126,6 +126,27 @@ public static partial class LevelBuilder // The theme half of the level builder
             Props = SeaPeakProps, // Decorations for this theme
             Backdrop = "Backdrop/SeaPeak/", BackdropScript = "Tools/Art/make_hard_backdrops.py", // This trail's six background layers
         }, // Ends the theme
+        [LevelTheme.ChocolateHills] = new ThemeArt // Hills Easy 1 art
+        { // Opens the theme
+            GroundTop = "choc_top", Soil = "choc_soil", Ledge = "ledge_choc", BoulderEnding = "_choc", // Ground and stone pictures
+            GoalName = "Viewing Deck", GoalSprite = "viewing_deck", GoalOffset = new Vector2(24f, 24f), // Goal rests on the ground
+            Props = ChocolateHillsProps, // Palm trees and cogon grass
+            Backdrop = "Backdrop/ChocolateHills/", BackdropScript = "Tools/Art/make_hills_easy_backdrops.py", // Its own six background layers (D-063)
+        }, // Ends the theme
+        [LevelTheme.RollingPasture] = new ThemeArt // Hills Easy 2 art
+        { // Opens the theme
+            GroundTop = "pasture_top", Soil = "pasture_soil", Ledge = "ledge_pasture", BoulderEnding = "_pasture", // Ground and stone pictures
+            GoalName = "Stone House", GoalSprite = "stone_house", GoalOffset = new Vector2(8f, 24f), // Goal rests on the ground
+            Props = RollingPastureProps, // Goats, cows and stone fences
+            Backdrop = "Backdrop/RollingPasture/", BackdropScript = "Tools/Art/make_hills_easy_backdrops.py", // Its own six background layers (D-063)
+        }, // Ends the theme
+        [LevelTheme.SandDunes] = new ThemeArt // Hills Easy 3 art
+        { // Opens the theme
+            GroundTop = "dune_top", Soil = "dune_soil", Ledge = "ledge_dune", BoulderEnding = "_dune", // Ground and stone pictures
+            GoalName = "Dune Marker", GoalSprite = "dune_marker", GoalOffset = new Vector2(8f, 24f), // Goal rests on the ground
+            Props = SandDunesProps, // Beach grass
+            Backdrop = "Backdrop/SandDunes/", BackdropScript = "Tools/Art/make_hills_easy_backdrops.py", // Its own six background layers (D-063)
+        }, // Ends the theme
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -279,6 +300,60 @@ public static partial class LevelBuilder // The theme half of the level builder
     { // Starts the prop setup
         GroundProps(level, parent, "silversword", 200f, 290f); // Silverswords on the slope
     } // Ends the prop setup
+
+    static void ChocolateHillsProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Palm trees and cogon grass on the hills
+    { // Starts the prop setup
+        HillsGroundProps(level, parent, "palm_tree", 200f, 420f, 20f, 3); // Palm trees about every 420 pixels, behind the ground
+        HillsGroundProps(level, parent, "cogon_tuft", 90f, 150f, 4f, 7); // Cogon grass tufts about every 150 pixels, in front
+    } // Ends the prop setup
+
+    static void RollingPastureProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Goats, cows and stone fences on the pasture
+    { // Starts the prop setup
+        HillsGroundProps(level, parent, "stone_fence", 260f, 520f, 5f, 3); // Stone fences about every 520 pixels, behind the ground
+        var goatFrames = new[] { S("Props/goat_00"), S("Props/goat_01") }; // Two goat pictures for the swap
+        float[] goatX = { 600f, 1700f, 3950f }; // Where the three goats stand
+        float[] goatSeconds = { 1.5f, 2f, 2.5f }; // How long each goat keeps one picture; each goat is a little different
+        for (int i = 0; i < goatX.Length; i++) HillsAnimal(level, parent, "Goat", goatFrames, goatX[i], 6f, goatSeconds[i]); // Places each goat, if its spot passes the fit check
+        var cowFrames = new[] { S("Props/cow_00"), S("Props/cow_01") }; // Two cow pictures for the swap
+        float[] cowX = { 1100f, 2550f, 4550f }; // Where the three cows stand
+        float[] cowSeconds = { 2f, 1.8f, 2.4f }; // How long each cow keeps one picture; each cow is a little different
+        for (int i = 0; i < cowX.Length; i++) HillsAnimal(level, parent, "Cow", cowFrames, cowX[i], 8f, cowSeconds[i]); // Places each cow, if its spot passes the fit check
+    } // Ends the prop setup
+
+    static void SandDunesProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Beach grass on the dunes
+    { // Starts the prop setup
+        HillsGroundProps(level, parent, "beach_grass", 120f, 200f, 6f, 7); // Beach grass about every 200 pixels, in front
+    } // Ends the prop setup
+
+    static void HillsGroundProps(LevelData level, Transform parent, string name, float start, float spacing, float centreY, int order) // Places one kind of Hills decoration along the trail
+    { // Starts the placement
+        var sprite = S("Props/" + name); // Loads the prop picture
+        float halfWidth = sprite.rect.width / 2f; // Half the picture width, so the whole picture is checked
+        for (float x = start; x < level.Goal.X - 90f; x += spacing) // Spaces the props out until the goal
+        { // Tests one place
+            if (!HillsPropFits(level, x, halfWidth)) continue; // Skips any place over a gap, ledge or boulder
+            var prop = M.Renderer(name, sprite, order, parent); // Draws the decoration
+            prop.transform.position = LevelGeometry.ToWorld(x, centreY); // Puts its middle at the given height
+        } // Moves to the next place
+    } // Ends the placement
+
+    static void HillsAnimal(LevelData level, Transform parent, string name, Sprite[] frames, float x, float centreY, float seconds) // One animal that swaps its two pictures on a timer
+    { // Starts the animal
+        float halfWidth = frames[0].rect.width / 2f; // Half the picture width, so the whole animal is checked
+        if (!HillsPropFits(level, x, halfWidth)) { Debug.LogWarning($"{name} at x {x} is refused by the fit check and is not placed"); return; } // Report the refused spot and do not move the animal
+        var animal = M.Renderer(name, frames[0], 4, parent); // Draws it behind the explorer
+        animal.transform.position = LevelGeometry.ToWorld(x, centreY); // Puts its middle at the given spot
+        Loop(animal.gameObject, frames, 1f / seconds); // Swaps the frames every given number of seconds
+    } // Ends the animal
+
+    static bool HillsPropFits(LevelData level, float x, float halfWidth) // The shared check, plus the Hills rules for ledges and soft sand
+    { // Opens the block
+        bool Overlaps(float left, float right) => x + halfWidth >= left && x - halfWidth <= right; // One overlap test for both ledges and sand
+        var layout = level.Layout; // The placed objects
+        return PropFits(level, x, halfWidth) // Pits, pickups, flags, boulders and the rest
+            && !layout.Ledges.Any(l => Overlaps(l.X, l.X + l.Width)) // No prop under a ledge
+            && !layout.SandZones.Any(s => Overlaps(s.X, s.X + Mathf.Min(16f, s.Width))); // No grass on the first 16 pixels of soft sand, so the soft tiles stay readable (spec section 9)
+    } // Ends the block
 
     static void GroundProps(LevelData level, Transform parent, string name, float start, float spacing) // Places one kind of ground decoration
     { // Starts the placement

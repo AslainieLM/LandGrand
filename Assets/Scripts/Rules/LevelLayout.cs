@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak } // The available level themes
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes } // The available level themes; the Hills themes go at the end (D-066)
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list
@@ -50,9 +50,11 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 
         public IReadOnlyList<RollingBoulder> RollingBoulders { get; } // Boulders that roll along the trail
         public IReadOnlyList<IceZone> IceZones { get; } // Slippery stretches of ground
+        public IReadOnlyList<SandZone> SandZones { get; } // Soft sand that slows walking (D-066)
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null) // Makes a layout
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null) // Makes a layout
         {
+            SandZones = (sandZones ?? new SandZone[0]).ToArray(); // Copy the soft sand; most levels have none
             CrumbleLedges = (crumbleLedges ?? new CrumbleLedge[0]).ToArray(); // Copy the breakable ledges
             Rockfalls = (rockfalls ?? new Rockfall[0]).ToArray(); // Copy the rocks
             MovingPlatforms = (movingPlatforms ?? new MovingPlatform[0]).ToArray(); // Copy the platforms

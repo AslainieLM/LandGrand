@@ -52,7 +52,9 @@ namespace LandGrand.Selection // Difficulty and level selection scripts live her
             var difficulty = GameSession.Difficulty; // The difficulty picked on the cards
             ShowTitle(title, titles, (int)episode * 3 + (int)difficulty); // "MOUNTAINS: EASY" at the top
 
-            int count = Mathf.Min(PlayerProgress.LevelCount(difficulty), stones.Length); // Stones this difficulty needs
+            bool hasLevels = LevelCatalog.HasLevels(episode, difficulty); // Level data exists for this landform and difficulty
+            if (!hasLevels) ShowGuide("Coming soon"); // No level data yet: say so in the guide instead of an empty trail (D-066)
+            int count = hasLevels ? Mathf.Min(PlayerProgress.LevelCount(difficulty), stones.Length) : 0; // Stones this difficulty needs; none without level data
             float spacing = count > 1 ? Mathf.Min(maxSpacing, trailWidth / (count - 1)) : 0f; // Gap that fits the trail on the screen
             var places = new Vector2[count]; // Middle of each stone, in map pixels
             for (int i = 0; i < count; i++) // Work out each place

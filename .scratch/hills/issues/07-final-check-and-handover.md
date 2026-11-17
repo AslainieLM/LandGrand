@@ -25,7 +25,7 @@
 
 **Blocked by:** 01–06
 
-**Status:** not started
+**Status:** done in code; 295 EditMode tests pass and all builders ran after the review fixes (2026-11-17); play checklist not yet played
 
 **Play checklist for the user** (copy it into the handover):
 - [ ] Map: Hills opens with its trees, stream and birds (no cloud); tapping Hills opens the difficulty screen; Plains says "Finish Hills first"

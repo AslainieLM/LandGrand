@@ -45,7 +45,8 @@ namespace LandGrand // Holds the shared screens
             var shelf = Collection.Shelves(progress)[(int)episode]; // Uses only kinds from this landform
             stars.text = progress.StarsFor(episode) + "/" + PlayerProgress.MaxStarsFor(episode); // Best stars over all its levels
             kinds.text = shelf.Slots.Count(s => s.IsFound) + "/" + shelf.Slots.Count; // Found and total kinds
-            badges.text = AchievementCatalog.EarnedCount(progress) + "/" + AchievementCatalog.All.Count; // Uses the same totals as Profile
+            var page = AchievementCatalog.ForLandform(episode); // Only this landform's badge page
+            badges.text = page.Count(a => a.IsEarned(progress)) + "/" + page.Count; // Earned and total on this landform's page, as Profile shows it
         } // Ends the review
 
         void ShowUnlock() // Sets up the next landform banner

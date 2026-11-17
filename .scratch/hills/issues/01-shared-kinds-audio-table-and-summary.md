@@ -18,12 +18,12 @@
    - Update `CollectionTests.cs:38-44,53` and `LandformSummaryTests.cs:19-27`, which assumed Hills is empty.
 
 **Checklist**
-- [ ] No Unity types in Rules; every new line commented (D-033)
-- [ ] Mountains Collection still shows 34 kinds on 3 pages
-- [ ] EditMode tests pass (report the count)
+- [x] No Unity types in Rules; every new line commented (D-033)
+- [x] Mountains Collection still shows 34 kinds on 3 pages (checked in code; not run in Unity)
+- [ ] EditMode tests pass (report the count) (not run: Unity Editor open)
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** none for the rules alone. **LandGrand > Build Levels** after ticket 02 (the audio change shows up in the level scenes).

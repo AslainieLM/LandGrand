@@ -14,7 +14,7 @@ using M = global::MainMenuBuilder; // Short name for the Main Menu builder, whos
 /// <summary>
 /// Builds every level in LevelCatalog as its own scene (Assets/Scenes/MountainsEasy1.unity, MountainsEasy2.unity, ...)
 /// and adds them to the build list after the Lesson Screen, in play order (D-055).
-/// Run it from the menu: LandGrand > Build Mountains Levels. Draw the art first with: python Tools/Art/make_level_art.py
+/// Run it from the menu: LandGrand > Build Levels. It builds every landform's levels. Draw the art first with: python Tools/Art/make_level_art.py
 /// Everything that differs between levels comes from the level data (LevelData and its LevelLayout); this builder holds no level numbers.
 /// Level positions are level pixels: x goes right from the left edge, y goes up from the ground line (the top of the grass).
 /// Screen (UI) positions are pixels on the 480x270 screen, measured from the top-left corner.
@@ -40,7 +40,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         ("L0", 0f, 0f), ("L1", 0.03f, 1.5f), ("L2", 0.1f, 0f), ("L3", 0.2f, 0f), ("L4", 0.35f, 0f), ("L5", 0.55f, 0f), // Sky, clouds, far snowy range, middle rocky range, pine forest, alpine meadow
     };
 
-    [MenuItem("LandGrand/Build Mountains Levels")] // Adds the command to Unity's LandGrand menu
+    [MenuItem("LandGrand/Build Levels")] // Adds the command to Unity's LandGrand menu; it builds every level, not only Mountains
     public static void BuildAll() // Builds and saves one scene per level
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return; // Stop if the user cancels saving the open scene
@@ -102,7 +102,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         {
             var piece = new Rect(groundFrom, -64f, pit.x - groundFrom, 64f); // One piece of ground
             solids.Add(piece); // The explorer can stand on it
-            DrawGroundTop(piece, art.GroundTop, layout.IceZones, geometry.transform); // Uses ice in place of the top tile where needed
+            DrawGroundTop(piece, art.GroundTop, layout.IceZones, layout.SandZones, geometry.transform); // Uses ice or soft sand in place of the top tile where needed
             Tiled("Soil", art.Soil, new Rect(piece.x, -64f, piece.width, 56f), 5, geometry.transform); // Rock or soil below it
             if (pit.w > 0f) Tiled("Pit", "pit_fill", new Rect(pit.x, -64f, pit.w, 64f), 3, geometry.transform); // Dark inside of the pit
             groundFrom = pit.x + pit.w; // The next piece starts after the pit
@@ -170,7 +170,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         follow.target = explorer; // Follow the explorer
         follow.geometry = geometry; // Stop at the level's ends
 
-        var music = K.LevelMusic(level.Difficulty); // The Mountains music and the wind for this difficulty
+        var music = K.LevelMusic(level.Episode, level.Difficulty); // The landform's music and the wind or stream for this difficulty
         K.Events(); // Sends taps to the buttons
         var root = K.Canvas("Level UI", ppc, out var group); // UI with the same whole-number zoom as the art
 
@@ -197,6 +197,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
         BuildObjects(level, geometry, explorer, controller); // Builds the reused level objects
         BuildHardObjects(level, geometry, explorer, controller); // Builds the placed boulders and ice
+        BuildSoftSand(layout, geometry, controller); // Adds the soft sand part, its step sound and puffs (Hills Easy 3)
         BuildResult(level, controller.result, root, font); // The Result Screen panel
         collector.pickups = spots.ToArray(); // The collectibles
         controller.chimes = Enumerable.Range(1, 3).Select(i => AssetDatabase.LoadAssetAtPath<AudioClip>($"Assets/Audio/sfx_mineral_chime_{i}.wav")).ToArray(); // Chimes for items, stars and badges

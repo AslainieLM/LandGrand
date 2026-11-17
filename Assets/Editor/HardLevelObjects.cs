@@ -11,6 +11,8 @@ public static partial class LevelBuilder // Builds the new objects from any leve
 { // Opens the builder
     const string HardArtScript = "Tools/Art/make_hard_art.py"; // Makes the Hard pictures
     const string HardAudioScript = "Tools/Audio/make_hard_audio.py"; // Makes the Hard sounds
+    const string HillsAudioScript = "Tools/Audio/make_hills_audio.py"; // Makes the Hills sounds, such as the sand step
+    const string HillsArtScript = "Tools/Art/make_hills_easy_art.py"; // Makes the Hills pictures, such as the sand puff
 
     static void BuildHardObjects(LevelData data, LevelGeometry geometry, ExplorerMotor explorer, LevelController level) // Connects placed boulders and ice
     { // Starts the object build
@@ -49,20 +51,34 @@ public static partial class LevelBuilder // Builds the new objects from any leve
         view.rollSound.playOnAwake = false; // Starts silent
     } // Ends the boulder build
 
-    static void DrawGroundTop(Rect piece, string top, IReadOnlyList<IceZone> zones, Transform parent) // Uses ice tiles in place of the usual top tiles
+    static void DrawGroundTop(Rect piece, string top, IReadOnlyList<IceZone> zones, IReadOnlyList<SandZone> sand, Transform parent) // Uses ice or soft sand tiles in place of the usual top tiles
     { // Starts the ground art
+        var strips = zones.Select(ice => (x: ice.X, w: ice.Width, name: "Ice Top", tile: "ice_top")) // Each ice strip
+            .Concat(sand.Select(s => (x: s.X, w: s.Width, name: "Soft Sand Top", tile: "soft_top"))) // Each soft sand strip
+            .OrderBy(strip => strip.x).ToList(); // Checks strips from left to right
         float from = piece.xMin; // Starts at the left edge of the ground
-        foreach (var ice in zones.OrderBy(zone => zone.X)) // Checks strips from left to right
+        foreach (var strip in strips) // Each strip in order
         { // Starts one strip
-            float left = Mathf.Max(from, ice.X); // Clips ice to the ground already being drawn
-            float right = Mathf.Min(piece.xMax, ice.X + ice.Width); // Stops ice at the right edge of the ground
+            float left = Mathf.Max(from, strip.x); // Clips the strip to the ground already being drawn
+            float right = Mathf.Min(piece.xMax, strip.x + strip.w); // Stops the strip at the right edge of the ground
             if (right <= left) continue; // This strip misses this piece
-            if (left > from) Tiled("Ground Top", top, new Rect(from, -8f, left - from, 8f), 5, parent); // Normal tiles before the ice
-            Tiled("Ice Top", HardSprite("ice_top"), new Rect(left, -8f, right - left, 8f), 5, parent); // Ice replaces the top tile
-            from = right; // Resumes after the ice
+            if (left > from) Tiled("Ground Top", top, new Rect(from, -8f, left - from, 8f), 5, parent); // Normal tiles before the strip
+            Tiled(strip.name, HardSprite(strip.tile), new Rect(left, -8f, right - left, 8f), 5, parent); // The ice or sand tile replaces the top tile
+            from = right; // Resumes after the strip
         } // Ends the strip
         if (piece.xMax > from) Tiled("Ground Top", top, new Rect(from, -8f, piece.xMax - from, 8f), 5, parent); // The rest of the ground
     } // Ends the ground art
+
+    static void BuildSoftSand(LevelLayout layout, LevelGeometry geometry, LevelController level) // Adds the sand part, its step sound and its puffs
+    { // Starts the sand build
+        if (layout.SandZones.Count == 0) return; // Trails without soft sand need no sand part
+        var watcher = level.gameObject.AddComponent<SandWatcher>(); // The sand part sits on the level controller
+        watcher.stepSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_sand_step.wav"); // The sand crunch
+        if (watcher.stepSound == null) Debug.LogError($"Missing Assets/Audio/sfx_sand_step.wav. Run: python {HillsAudioScript}"); // Names the script that makes it
+        watcher.puffFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"Props/sand_puff_{i:00}", HillsArtScript)).ToArray(); // Both puff pictures
+        watcher.puff = M.Renderer("Sand Puff", watcher.puffFrames[0], 19, geometry.transform); // Shows at the feet, just behind the explorer
+        watcher.puff.enabled = false; // Hidden until the first step
+    } // Ends the sand build
 
     static void BuildIceGlints(IceZone ice, Transform parent) // Adds small glints to one ice strip
     { // Starts the glint build

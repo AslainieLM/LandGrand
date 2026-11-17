@@ -9,12 +9,12 @@
 3. If a rule decides this (for example "has next level"), put it in Rules with tests. Example: `LevelCatalog.Next(e, d, n)` returns null when there is no data.
 
 **Checklist**
-- [ ] Mountains: Next after Easy 3 still opens Normal 1, and Next after Normal 5 still opens Hard 1
-- [ ] Hills: after Easy 3, Next is hidden; Normal shows "Coming soon" when tapped
+- [x] Mountains: Next after Easy 3 still opens Normal 1, and Next after Normal 5 still opens Hard 1
+- [x] Hills: after Easy 3, Next is hidden; Normal shows "Coming soon" when tapped
 - [ ] EditMode tests pass (report the count)
 
 **Blocked by:** 02
 
-**Status:** not started
+**Status:** built by Claude (Haiku), not yet run in Unity
 
 **Builder to run:** **LandGrand > Build Selection Scenes**, **LandGrand > Build Levels**
