@@ -134,8 +134,8 @@ namespace LandGrand.Rules.Tests // Tests the plain level data
         { // Opens the check
             var shelves = Collection.Shelves(new PlayerProgress()); // Reads every shelf
             Assert.AreEqual(34, shelves[(int)Episode.Mountains].Slots.Count); // The original Mountains shelf size
-            Assert.AreEqual(17, shelves[(int)Episode.Hills].Slots.Count); // Ten old kinds plus seven new
-            var newKinds = ItemCatalog.All.Skip(37).ToArray(); // Reads only the appended kinds
+            Assert.AreEqual(23, shelves[(int)Episode.Hills].Slots.Count); // The shelf includes the Hard kinds
+            var newKinds = ItemCatalog.All.Skip(37).Take(7).ToArray(); // Reads only the Normal kinds
             CollectionAssert.AreEqual(new[] { "aragonite", "coquina", "flowstone", "dripstone", "volcanic_breccia", "ignimbrite", "zeolite" }, newKinds.Select(k => k.Id)); // Stable catalog order
             Assert.IsTrue(newKinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Hills }) && k.Description.Length <= 80 && k.Picture == k.Id)); // Hills draft pictures and short item cards
             CollectionAssert.AreEqual(new[] { false, true, true, true, true, true, false }, newKinds.Select(k => k.IsRock)); // The authored mineral and rock labels

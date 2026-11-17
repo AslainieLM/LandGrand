@@ -28,7 +28,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Easy, 4)); // Hills Easy has only three levels
             Assert.IsNotNull(LevelCatalog.Find(Episode.Hills, Difficulty.Normal, 1)); // Hills Normal has its first trail
             Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Normal, 6)); // Normal ends after its fifth trail
-            Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Hard, 1)); // Hills Hard comes later
+            Assert.IsNotNull(LevelCatalog.Find(Episode.Hills, Difficulty.Hard, 1)); // Hills Hard has its first trail
+            Assert.IsNull(LevelCatalog.Find(Episode.Hills, Difficulty.Hard, 8)); // Hills Hard ends after its seventh trail
+            Assert.IsNull(LevelCatalog.Find(Episode.Plains, Difficulty.Easy, 1)); // Plains is coming soon
         }
 
         [Test] // Unity runs this method as a Test

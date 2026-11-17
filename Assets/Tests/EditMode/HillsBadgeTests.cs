@@ -32,19 +32,19 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         }
 
         [Test] // Unity runs this method as a Test
-        public void HillCollector_NeedsEveryHillsKind() // All seventeen kinds on the Hills shelf, including shared kinds
+        public void HillCollector_NeedsEveryHillsKind() // All twenty-three kinds on the Hills shelf, including shared kinds
         {
             var p = new PlayerProgress(); // A brand new profile
             var kinds = ItemCatalog.All.Where(k => k.BelongsTo(Episode.Hills)).ToList(); // The Hills shelf
-            Assert.AreEqual(17, kinds.Count); // The shelf grew by seven kinds
-            foreach (var k in kinds.Take(10)) p.RecordFoundKind(k.Id); // Loads a save with the original complete shelf
-            Assert.IsFalse(Earned("hill_collector", p)); // The original ten do not fill the expanded shelf
-            foreach (var k in kinds.Skip(10)) p.RecordFoundKind(k.Id); // Fills the new part of the shelf
+            Assert.AreEqual(23, kinds.Count); // The six Hard kinds are on the shelf
+            foreach (var k in kinds.Take(17)) p.RecordFoundKind(k.Id); // Loads a save with the complete Normal shelf
+            Assert.IsFalse(Earned("hill_collector", p)); // The first seventeen do not fill the expanded shelf
+            foreach (var k in kinds.Skip(17)) p.RecordFoundKind(k.Id); // Fills the six new slots
             Assert.IsTrue(Earned("hill_collector", p)); // Earned
         }
 
         [Test] // Unity runs this method as a Test
-        public void HillsNormalAndHardBadges_StayLockedOnAFreshProfile() // No level data or clears yet, so nothing is earned
+        public void HillsNormalAndHardBadges_StayLockedOnAFreshProfile() // A new save has no clears
         {
             var p = new PlayerProgress(); // A brand new profile
             foreach (var id in new[] { "philippine_hills", "balloon_rider", "slope_ranger", "world_hills", "steady_star", "hill_master" }) // Every Hills badge past Easy
@@ -52,7 +52,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         }
 
         [Test] // Unity runs this method as a Test
-        public void HillsNormalAndHardRules_WorkOnceTheirClearsExist() // The rules are right, even though the levels come later
+        public void HillsNormalAndHardRules_WorkOnceTheirClearsExist() // Checks the badges using saved clears
         {
             var normal = new PlayerProgress(); // Normal clears only
             for (int n = 1; n <= 4; n++) normal.RecordClear(Episode.Hills, Difficulty.Normal, n, 1); // Normal 1 to 4

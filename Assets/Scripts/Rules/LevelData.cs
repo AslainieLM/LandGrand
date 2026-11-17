@@ -205,8 +205,15 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Ignimbrite = new ItemKind("ignimbrite", "Ignimbrite", "A rock made when a hot cloud of volcanic ash settles and welds.", "ignimbrite", true, true, Episode.Hills); // Draft rock on the Hills shelf
         public static readonly ItemKind Zeolite = new ItemKind("zeolite", "Zeolite", "A mineral that forms in volcanic ash. It is full of tiny holes.", "zeolite", true, false, Episode.Hills); // Draft mineral on the Hills shelf
 
+        public static readonly ItemKind Peridotite = new ItemKind("peridotite", "Peridotite", "A dark green rock from deep inside the Earth. It is full of olivine.", "peridotite", true, true, Episode.Hills); // Draft Hills rock
+        public static readonly ItemKind Chlorite = new ItemKind("chlorite", "Chlorite", "A soft green mineral. It forms when rocks like basalt slowly change.", "chlorite", true, false, Episode.Hills); // Draft Hills mineral
+        public static readonly ItemKind Dacite = new ItemKind("dacite", "Dacite", "A pale grey volcanic rock with small light crystals.", "dacite", true, true, Episode.Hills); // Draft Hills rock
+        public static readonly ItemKind Quartzite = new ItemKind("quartzite", "Quartzite", "A very hard rock made when sandstone is heated and squeezed.", "quartzite", true, true, Episode.Hills); // Draft Hills rock
+        public static readonly ItemKind Travertine = new ItemKind("travertine", "Travertine", "A cream rock made by spring water. Romans built with it.", "travertine", true, true, Episode.Hills); // Draft Hills rock
+        public static readonly ItemKind Leucite = new ItemKind("leucite", "Leucite", "A white mineral with round crystals, found in some volcanic rock.", "leucite", true, false, Episode.Hills); // Draft Hills mineral
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite }; // Appends the Hills Normal kinds after the existing kinds
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite, Peridotite, Chlorite, Dacite, Quartzite, Travertine, Leucite }; // Appends the Hills Hard kinds
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -1029,7 +1036,609 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     new[] { L(4192f, 112f, 176f), L(5552f, 112f, 64f) }, // Ledges from the checked layout
                     movingPlatforms: new[] { MovingPlatform.Vertical(900f, 24f, 80f, 0f), MovingPlatform.Vertical(2900f, 24f, 96f, 0.5f), MovingPlatform.Vertical(4144f, 24f, 120f, 0f), MovingPlatform.Vertical(5500f, 24f, 104f, 1f) }), // Four balloons with fixed x and different climb heights
                 "Cappadocia"), // Start banner
+            HillsHard(1, new Lesson("Tarsier Forest", new[] // Tarsier Forest
+            { // Opens the draft lesson
+                "Hills give homes to many animals.", // Uses the authored lesson line
+                "Tarsiers live in Bohol's forest hills.", // Uses the authored lesson line
+                "Trees on hills give them food and shade.", // Uses the authored lesson line
+                "Keep forests safe so animals have homes.", // Uses the authored lesson line
+            }, "lesson_tarsier_forest", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Limestone, new Spot(396f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Peridotite, new Spot(650f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(1528f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Peridotite, new Spot(2632f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(3032f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(4032f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Peridotite, new Spot(6204f, 84f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Limestone, new Spot(7824f, 36f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Peridotite, new Spot(8932f, 48f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(3000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(4300f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6500f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8300f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(2800f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3900f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5500f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6900f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(8600f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Hills are homes for animals like tarsiers.", // Uses the authored review line
+                    "Forests on hills give food and shelter.", // Uses the authored review line
+                    "Peridotite is a dark green rock from deep inside the Earth.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.TarsierForest, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(380f, BoulderSize.Small), // Uses the checked placement
+                        B(1000f, BoulderSize.Big), // Uses the checked placement
+                        B(1900f, BoulderSize.Small), // Uses the checked placement
+                        B(2100f, BoulderSize.Small), // Uses the checked placement
+                        B(3500f, BoulderSize.Big), // Uses the checked placement
+                        B(4500f, BoulderSize.Small), // Uses the checked placement
+                        B(5200f, BoulderSize.Small), // Uses the checked placement
+                        B(5800f, BoulderSize.Big), // Uses the checked placement
+                        B(6800f, BoulderSize.Small), // Uses the checked placement
+                        B(7800f, BoulderSize.Big), // Uses the checked placement
+                        B(9000f, BoulderSize.Small) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(2600f, 40f, 64f), // Uses the checked placement
+                        L(4000f, 48f, 64f), // Uses the checked placement
+                        L(6100f, 40f, 64f), // Uses the checked placement
+                        L(6180f, 84f, 48f), // Uses the checked placement
+                        L(8900f, 48f, 64f) // Uses the checked placement
+                    }, // Ends the placements
+                    mudZones: new[] // Slippery stretches
+                    { // Opens the placements
+                        new MudZone(500f, 300f), // Uses the checked placement
+                        new MudZone(1700f, 500f), // Uses the checked placement
+                        new MudZone(3200f, 500f), // Uses the checked placement
+                        new MudZone(5000f, 400f), // Uses the checked placement
+                        new MudZone(6000f, 400f), // Uses the checked placement
+                        new MudZone(7500f, 600f), // Uses the checked placement
+                        new MudZone(8800f, 400f) // Uses the checked placement
+                    }), // Ends the placements
+                "Tarsier Forest"), // Shows the banner at the start
+            HillsHard(2, new Lesson("Antipolo Slopes", new[] // Antipolo Slopes
+            { // Opens the draft lesson
+                "Heavy rain can loosen soil on slopes.", // Uses the authored lesson line
+                "Watch for new cracks in the ground.", // Uses the authored lesson line
+                "Tilting trees or posts are a warning.", // Uses the authored lesson line
+                "Move away and tell an adult.", // Uses the authored lesson line
+            }, "lesson_antipolo_slope", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Basalt, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Chlorite, new Spot(1528f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Basalt, new Spot(2532f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Chlorite, new Spot(2932f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Chlorite, new Spot(3804f, 84f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Basalt, new Spot(4916f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Basalt, new Spot(6732f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Chlorite, new Spot(7324f, 36f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Basalt, new Spot(8532f, 48f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(2900f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(4000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(5600f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6700f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8500f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1250f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(2700f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3260f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4650f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5900f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(7000f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(8650f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Cracks, tilting trees and muddy springs can warn of a landslide.", // Uses the authored review line
+                    "Move away from the slope and tell an adult.", // Uses the authored review line
+                    "Chlorite is a soft green mineral found in old basalt.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.RainySlope, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(1650f, BoulderSize.Big), // Uses the checked placement
+                        B(2200f, BoulderSize.Small), // Uses the checked placement
+                        B(3100f, BoulderSize.Big), // Uses the checked placement
+                        B(4900f, BoulderSize.Small), // Uses the checked placement
+                        B(5450f, BoulderSize.Big), // Uses the checked placement
+                        B(6500f, BoulderSize.Small), // Uses the checked placement
+                        B(7300f, BoulderSize.Big), // Uses the checked placement
+                        B(8000f, BoulderSize.Small), // Uses the checked placement
+                        B(9100f, BoulderSize.Big) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(2500f, 40f, 64f), // Uses the checked placement
+                        L(3700f, 40f, 64f), // Uses the checked placement
+                        L(3780f, 84f, 48f) // Uses the checked placement
+                    }, // Ends the placements
+                    logs: new[] // Left and right log routes
+                    { // Opens the placements
+                        new RollingLog(1000f, 800f, -1, 0f), // Uses the checked placement
+                        new RollingLog(2000f, 1800f, -1, 1.0f), // Uses the checked placement
+                        new RollingLog(3600f, 3380f, -1, 0f), // Uses the checked placement
+                        new RollingLog(4300f, 4520f, 1, 0.5f), // Uses the checked placement
+                        new RollingLog(5300f, 5080f, -1, 2.0f), // Uses the checked placement
+                        new RollingLog(6100f, 6330f, 1, 1.0f), // Uses the checked placement
+                        new RollingLog(7800f, 7580f, -1, 1.5f), // Uses the checked placement
+                        new RollingLog(8100f, 8320f, 1, 2.5f), // Uses the checked placement
+                        new RollingLog(9000f, 8780f, -1, 0.5f) // Uses the checked placement
+                    }), // Ends the placements
+                "Antipolo Slopes"), // Shows the banner at the start
+            HillsHard(3, new Lesson("Masungi Georeserve", new[] // Masungi Georeserve
+            { // Opens the draft lesson
+                "Masungi has sharp limestone hills.", // Uses the authored lesson line
+                "Rain slowly dissolves the limestone.", // Uses the authored lesson line
+                "People made trails to protect it.", // Uses the authored lesson line
+                "Stay on trails to keep hills safe.", // Uses the authored lesson line
+            }, "lesson_masungi", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Limestone, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(1528f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(2832f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(3052f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(4032f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(5632f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(7004f, 96f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Limestone, new Spot(8032f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(9252f, 48f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(2800f, 0f), 96f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(4000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(5600f, 0f), 96f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6600f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8000f, 0f), 96f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8900f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3300f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4450f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6250f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(7600f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(8650f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Rain slowly dissolves limestone into sharp shapes.", // Uses the authored review line
+                    "Staying on trails protects the hills.", // Uses the authored review line
+                    "Calcite is the mineral that makes limestone.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.KarstRidge, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(1000f, BoulderSize.Big), // Uses the checked placement
+                        B(2200f, BoulderSize.Small), // Uses the checked placement
+                        B(3600f, BoulderSize.Big), // Uses the checked placement
+                        B(4300f, BoulderSize.Small), // Uses the checked placement
+                        B(5300f, BoulderSize.Big), // Uses the checked placement
+                        B(6900f, BoulderSize.Small), // Uses the checked placement
+                        B(7400f, BoulderSize.Big), // Uses the checked placement
+                        B(8400f, BoulderSize.Small) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(3020f, 40f, 64f), // Uses the checked placement
+                        L(6980f, 96f, 48f), // Uses the checked placement
+                        L(9220f, 48f, 64f) // Uses the checked placement
+                    }, // Ends the placements
+                    crumbleLedges: new[] // Crumbling steps and bridges
+                    { // Opens the placements
+                        new CrumbleLedge(2800f, 0f), // Uses the checked placement
+                        new CrumbleLedge(2832f, 0f), // Uses the checked placement
+                        new CrumbleLedge(2864f, 0f), // Uses the checked placement
+                        new CrumbleLedge(5600f, 0f), // Uses the checked placement
+                        new CrumbleLedge(5632f, 0f), // Uses the checked placement
+                        new CrumbleLedge(5664f, 0f), // Uses the checked placement
+                        new CrumbleLedge(8000f, 0f), // Uses the checked placement
+                        new CrumbleLedge(8032f, 0f), // Uses the checked placement
+                        new CrumbleLedge(8064f, 0f), // Uses the checked placement
+                        new CrumbleLedge(6830f, 40f), // Uses the checked placement
+                        new CrumbleLedge(6900f, 64f) // Uses the checked placement
+                    }, // Ends the placements
+                    bats: new[] // Bat loops
+                    { // Opens the placements
+                        new Bat(1800f, 16f, 24f, 12f, 3.0f, 0f), // Uses the checked placement
+                        new Bat(2150f, 16f, 24f, 12f, 2.8f, 1.0f), // Uses the checked placement
+                        new Bat(3800f, 16f, 24f, 12f, 2.6f, 0.4f), // Uses the checked placement
+                        new Bat(4600f, 16f, 24f, 12f, 2.8f, 0.6f), // Uses the checked placement
+                        new Bat(5950f, 16f, 24f, 12f, 2.6f, 1.2f), // Uses the checked placement
+                        new Bat(9150f, 16f, 24f, 12f, 2.6f, 0.3f) // Uses the checked placement
+                    }, // Ends the placements
+                    mudZones: new[] // Slippery stretches
+                    { // Opens the placements
+                        new MudZone(500f, 400f), // Uses the checked placement
+                        new MudZone(1700f, 400f), // Uses the checked placement
+                        new MudZone(3450f, 450f), // Uses the checked placement
+                        new MudZone(5000f, 450f), // Uses the checked placement
+                        new MudZone(6700f, 120f), // Uses the checked placement
+                        new MudZone(7300f, 250f), // Uses the checked placement
+                        new MudZone(8150f, 400f) // Uses the checked placement
+                    }), // Ends the placements
+                "Masungi Georeserve"), // Shows the banner at the start
+            HillsHard(4, new Lesson("Pililla Wind Farm", new[] // Pililla Wind Farm
+            { // Opens the draft lesson
+                "Hilltops are often very windy.", // Uses the authored lesson line
+                "Pililla in Rizal has 27 wind turbines.", // Uses the authored lesson line
+                "Wind turns them to make electricity.", // Uses the authored lesson line
+                "Wind power is clean and never runs out.", // Uses the authored lesson line
+            }, "lesson_pililla", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Andesite, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Dacite, new Spot(878f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Andesite, new Spot(2050f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Dacite, new Spot(3732f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Andesite, new Spot(4032f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Dacite, new Spot(6080f, 112f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Dacite, new Spot(7584f, 112f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Andesite, new Spot(8232f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Andesite, new Spot(8516f, 24f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(850f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(2700f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(4000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(5300f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6000f, 0f), 160f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8200f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3100f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5700f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6900f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(9100f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Windy hills are good places for wind turbines.", // Uses the authored review line
+                    "Wind power makes clean electricity.", // Uses the authored review line
+                    "Dacite is a pale volcanic rock.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.WindHills, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(1350f, BoulderSize.Big), // Uses the checked placement
+                        B(2200f, BoulderSize.Small), // Uses the checked placement
+                        B(3560f, BoulderSize.Big), // Uses the checked placement
+                        B(4200f, BoulderSize.Small), // Uses the checked placement
+                        B(5550f, BoulderSize.Big), // Uses the checked placement
+                        B(6250f, BoulderSize.Small), // Uses the checked placement
+                        B(7000f, BoulderSize.Big), // Uses the checked placement
+                        B(8500f, BoulderSize.Small) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(3700f, 40f, 64f), // Uses the checked placement
+                        L(5992f, 112f, 176f), // Uses the checked placement
+                        L(7552f, 112f, 64f) // Uses the checked placement
+                    }, // Ends the placements
+                    movingPlatforms: new[] // Vertical balloon routes
+                    { // Opens the placements
+                        MovingPlatform.Vertical(5944f, 24f, 120f, 0f), // Uses the checked placement
+                        MovingPlatform.Vertical(7500f, 24f, 120f, 1.0f) // Uses the checked placement
+                    }, // Ends the placements
+                    windZones: new[] // Timed gusts
+                    { // Opens the placements
+                        new WindZone(600f, 400f, 0f), // Uses the checked placement
+                        new WindZone(2500f, 400f, 1.0f), // Uses the checked placement
+                        new WindZone(5000f, 500f, 0.5f), // Uses the checked placement
+                        new WindZone(7900f, 500f, 1.5f) // Uses the checked placement
+                    }, // Ends the placements
+                    logs: new[] // Left and right log routes
+                    { // Opens the placements
+                        new RollingLog(1700f, 1500f, -1, 0.5f), // Uses the checked placement
+                        new RollingLog(3300f, 3530f, 1, 1.0f), // Uses the checked placement
+                        new RollingLog(4500f, 4280f, -1, 2.0f), // Uses the checked placement
+                        new RollingLog(6400f, 6620f, 1, 1.5f), // Uses the checked placement
+                        new RollingLog(8900f, 8680f, -1, 0.5f) // Uses the checked placement
+                    }, // Ends the placements
+                    ambienceOverride: "amb_wind_turbines"), // Plays the local ambience
+                "Pililla Wind Farm"), // Shows the banner at the start
+            HillsHard(5, new Lesson("Clew Bay", new[] // Clew Bay
+            { // Opens the draft lesson
+                "Long ago, ice sheets covered Ireland.", // Uses the authored lesson line
+                "Moving ice left small rounded hills.", // Uses the authored lesson line
+                "These hills are called drumlins.", // Uses the authored lesson line
+                "Clew Bay has about a hundred of them.", // Uses the authored lesson line
+            }, "lesson_clew_bay", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Schist, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Quartzite, new Spot(1378f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Schist, new Spot(2750f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Quartzite, new Spot(3132f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Schist, new Spot(3524f, 36f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Quartzite, new Spot(5200f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Schist, new Spot(6032f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Quartzite, new Spot(7004f, 84f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Schist, new Spot(8832f, 48f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1350f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(2000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(3100f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(4550f, 0f), 56f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6000f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(8800f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3250f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4400f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5900f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6800f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Glaciers left rounded hills called drumlins.", // Uses the authored review line
+                    "Clew Bay's islands are drumlins in the sea.", // Uses the authored review line
+                    "Quartzite is a very hard rock made from sand.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.DrumlinBay, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(800f, BoulderSize.Small), // Uses the checked placement
+                        B(1050f, BoulderSize.Big), // Uses the checked placement
+                        B(2200f, BoulderSize.Small), // Uses the checked placement
+                        B(3500f, BoulderSize.Big), // Uses the checked placement
+                        B(4200f, BoulderSize.Small), // Uses the checked placement
+                        B(5350f, BoulderSize.Big), // Uses the checked placement
+                        B(6400f, BoulderSize.Small), // Uses the checked placement
+                        B(8200f, BoulderSize.Big), // Uses the checked placement
+                        B(8350f, BoulderSize.Small) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(6900f, 40f, 64f), // Uses the checked placement
+                        L(6980f, 84f, 48f) // Uses the checked placement
+                    }, // Ends the placements
+                    currents: new[] // Shallow current strips
+                    { // Opens the placements
+                        new CurrentZone(1720f, 200f, -1), // Uses the checked placement
+                        new CurrentZone(2480f, 520f, -1), // Uses the checked placement
+                        new CurrentZone(4950f, 560f, -1), // Uses the checked placement
+                        new CurrentZone(7280f, 560f, -1), // Uses the checked placement
+                        new CurrentZone(8950f, 350f, -1) // Uses the checked placement
+                    }, // Ends the placements
+                    mudZones: new[] // Slippery stretches
+                    { // Opens the placements
+                        new MudZone(600f, 400f), // Uses the checked placement
+                        new MudZone(3300f, 500f), // Uses the checked placement
+                        new MudZone(6200f, 500f), // Uses the checked placement
+                        new MudZone(8300f, 400f) // Uses the checked placement
+                    }, // Ends the placements
+                    logs: new[] // Left and right log routes
+                    { // Opens the placements
+                        new RollingLog(1700f, 1480f, -1, 0f), // Uses the checked placement
+                        new RollingLog(3900f, 4120f, 1, 1.0f), // Uses the checked placement
+                        new RollingLog(5800f, 5580f, -1, 2.0f), // Uses the checked placement
+                        new RollingLog(7900f, 8130f, 1, 0.5f), // Uses the checked placement
+                        new RollingLog(8700f, 8480f, -1, 1.5f) // Uses the checked placement
+                    }), // Ends the placements
+                "Clew Bay"), // Shows the banner at the start
+            HillsHard(6, new Lesson("Seven Hills of Rome", new[] // Seven Hills of Rome
+            { // Opens the draft lesson
+                "Rome was built on seven hills.", // Uses the authored lesson line
+                "Hills were easy to defend long ago.", // Uses the authored lesson line
+                "Romans built with travertine and tuff.", // Uses the authored lesson line
+                "Many old buildings still stand today.", // Uses the authored lesson line
+            }, "lesson_rome_hills", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Tuff, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Travertine, new Spot(1300f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Leucite, new Spot(2056f, 32f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Tuff, new Spot(3232f, 48f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Travertine, new Spot(3900f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Leucite, new Spot(4204f, 84f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Tuff, new Spot(5136f, 32f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Travertine, new Spot(6300f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Leucite, new Spot(8100f, 40f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1200f, 0f), 200f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(2000f, 0f), 112f, isWater: true), // Water pit with a flag return
+                    new Hazard(HazardType.Pit, new Spot(3200f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(3800f, 0f), 200f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(5000f, 0f), 192f, isWater: true), // Water pit with a flag return
+                    new Hazard(HazardType.Pit, new Spot(6200f, 0f), 200f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(7400f, 0f), 112f, isWater: true), // Water pit with a flag return
+                    new Hazard(HazardType.Pit, new Spot(8000f, 0f), 220f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1700f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3500f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5500f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(7800f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(9000f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Rome grew on seven hills.", // Uses the authored review line
+                    "Romans built with travertine from nearby springs.", // Uses the authored review line
+                    "Leucite is a white mineral in some volcanic rock.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.CityHills, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(1500f, BoulderSize.Big), // Uses the checked placement
+                        B(2250f, BoulderSize.Small), // Uses the checked placement
+                        B(3000f, BoulderSize.Big), // Uses the checked placement
+                        B(4600f, BoulderSize.Small), // Uses the checked placement
+                        B(5300f, BoulderSize.Big), // Uses the checked placement
+                        B(6000f, BoulderSize.Small), // Uses the checked placement
+                        B(7000f, BoulderSize.Big), // Uses the checked placement
+                        B(8300f, BoulderSize.Small), // Uses the checked placement
+                        B(9150f, BoulderSize.Big) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(4100f, 40f, 64f), // Uses the checked placement
+                        L(4180f, 84f, 48f) // Uses the checked placement
+                    }, // Ends the placements
+                    movingPlatforms: new[] // Platforms span the wide pits
+                    { // Opens the placements
+                        new MovingPlatform(1200f, 1352f, 0f), // Uses the checked placement
+                        new MovingPlatform(3800f, 3952f, 0f), // Uses the checked placement
+                        new MovingPlatform(6200f, 6352f, 0f), // Uses the checked placement
+                        new MovingPlatform(8000f, 8172f, 0f) // Uses the checked placement
+                    }, // Ends the placements
+                    floats: new[] // Floats over the water pits
+                    { // Opens the placements
+                        new SinkingFloat(2032f, 0f, 2000f), // Uses the checked placement
+                        new SinkingFloat(5032f, 0f, 5000f), // Uses the checked placement
+                        new SinkingFloat(5112f, 0f, 5000f), // Uses the checked placement
+                        new SinkingFloat(7432f, 0f, 7400f) // Uses the checked placement
+                    }, // Ends the placements
+                    logs: new[] // Left and right log routes
+                    { // Opens the placements
+                        new RollingLog(900f, 700f, -1, 0f), // Uses the checked placement
+                        new RollingLog(2700f, 2920f, 1, 1.0f), // Uses the checked placement
+                        new RollingLog(3560f, 3790f, 1, 0.7f), // Uses the checked placement
+                        new RollingLog(4500f, 4280f, -1, 2.0f), // Uses the checked placement
+                        new RollingLog(5700f, 5920f, 1, 0.5f), // Uses the checked placement
+                        new RollingLog(6900f, 6680f, -1, 1.5f), // Uses the checked placement
+                        new RollingLog(8500f, 8720f, 1, 2.5f) // Uses the checked placement
+                    }, // Ends the placements
+                    ambienceOverride: "amb_city_hills"), // Plays the local ambience
+                "Seven Hills of Rome"), // Shows the banner at the start
+            HillsHard(7, new Lesson("Guilin Karst", new[] // Guilin Karst
+            { // Opens the draft lesson
+                "Guilin in China has tower-shaped hills.", // Uses the authored lesson line
+                "They are made of thick limestone.", // Uses the authored lesson line
+                "Rain and rivers carved them over time.", // Uses the authored lesson line
+                "They are part of a UNESCO karst site.", // Uses the authored lesson line
+            }, "lesson_guilin", true), // Sets the artwork and draft flag
+                new[] // Nine pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Limestone, new Spot(416f, 24f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(700f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(1532f, 40f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(2750f, 0f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Limestone, new Spot(3056f, 32f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(4040f, 112f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(6564f, 96f)), // Secret pickup on the high ledge
+                    new Pickup(ItemCatalog.Limestone, new Spot(7856f, 32f)), // Uses the checked pickup
+                    new Pickup(ItemCatalog.Calcite, new Spot(8432f, 48f)), // Uses the checked pickup
+                }, // Ends the pickups
+                new[] // Pits and spikes in the layout
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 96f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(3000f, 0f), 112f, isWater: true), // Water pit with a flag return
+                    new Hazard(HazardType.Pit, new Spot(3600f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(3956f, 0f), 160f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(6100f, 0f), 96f), // Uses the checked pit
+                    new Hazard(HazardType.Pit, new Spot(7800f, 0f), 192f, isWater: true), // Water pit with a flag return
+                    new Hazard(HazardType.Pit, new Spot(8400f, 0f), 64f), // Uses the checked pit
+                    new Hazard(HazardType.Spikes, new Spot(1000f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5500f, 0f), 32f), // Uses the checked spike strip
+                    new Hazard(HazardType.Spikes, new Spot(9250f, 0f), 32f), // Uses the checked spike strip
+                }, // Ends the hazards
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Guilin's tower hills are made of limestone.", // Uses the authored review line
+                    "Rain and rivers carved them over a long time.", // Uses the authored review line
+                    "Limestone hills like these are called karst.", // Uses the authored review line
+                }, // Ends the review
+                new LevelLayout(9600f, LevelTheme.KarstTowers, // Uses the Hard trail width and theme
+                    new[] // Ground boulders
+                    { // Opens the placements
+                        B(400f, BoulderSize.Small), // Uses the checked placement
+                        B(1150f, BoulderSize.Big), // Uses the checked placement
+                        B(2200f, BoulderSize.Small), // Uses the checked placement
+                        B(4600f, BoulderSize.Big), // Uses the checked placement
+                        B(5200f, BoulderSize.Small), // Uses the checked placement
+                        B(7550f, BoulderSize.Big), // Uses the checked placement
+                        B(8700f, BoulderSize.Small) // Uses the checked placement
+                    }, // Ends the placements
+                    new[] // Stone ledges
+                    { // Opens the placements
+                        L(3948f, 112f, 176f), // Uses the checked placement
+                        L(6540f, 96f, 48f) // Uses the checked placement
+                    }, // Ends the placements
+                    crumbleLedges: new[] // Crumbling steps and bridges
+                    { // Opens the placements
+                        new CrumbleLedge(1500f, 0f), // Uses the checked placement
+                        new CrumbleLedge(1532f, 0f), // Uses the checked placement
+                        new CrumbleLedge(1564f, 0f), // Uses the checked placement
+                        new CrumbleLedge(6100f, 0f), // Uses the checked placement
+                        new CrumbleLedge(6132f, 0f), // Uses the checked placement
+                        new CrumbleLedge(6164f, 0f), // Uses the checked placement
+                        new CrumbleLedge(6400f, 40f), // Uses the checked placement
+                        new CrumbleLedge(6470f, 64f) // Uses the checked placement
+                    }, // Ends the placements
+                    movingPlatforms: new[] // Vertical balloon routes
+                    { // Opens the placements
+                        MovingPlatform.Vertical(3900f, 24f, 120f, 0f) // Uses the checked placement
+                    }, // Ends the placements
+                    windZones: new[] // Timed gusts
+                    { // Opens the placements
+                        new WindZone(1100f, 500f, 0f), // Uses the checked placement
+                        new WindZone(3300f, 500f, 1.0f), // Uses the checked placement
+                        new WindZone(8100f, 500f, 0.5f) // Uses the checked placement
+                    }, // Ends the placements
+                    floats: new[] // Floats over the water pits
+                    { // Opens the placements
+                        new SinkingFloat(3032f, 0f, 3000f), // Uses the checked placement
+                        new SinkingFloat(7832f, 0f, 7800f), // Uses the checked placement
+                        new SinkingFloat(7912f, 0f, 7800f) // Uses the checked placement
+                    }, // Ends the placements
+                    bats: new[] // Bat loops
+                    { // Opens the placements
+                        new Bat(1300f, 16f, 24f, 12f, 2.6f, 0f), // Uses the checked placement
+                        new Bat(5800f, 16f, 24f, 12f, 2.4f, 0.8f) // Uses the checked placement
+                    }, // Ends the placements
+                    currents: new[] // Shallow current strips
+                    { // Opens the placements
+                        new CurrentZone(2480f, 400f, -1), // Uses the checked placement
+                        new CurrentZone(7300f, 400f, -1) // Uses the checked placement
+                    }, // Ends the placements
+                    mudZones: new[] // Slippery stretches
+                    { // Opens the placements
+                        new MudZone(500f, 400f), // Uses the checked placement
+                        new MudZone(4150f, 400f), // Uses the checked placement
+                        new MudZone(5000f, 400f), // Uses the checked placement
+                        new MudZone(8550f, 350f) // Uses the checked placement
+                    }, // Ends the placements
+                    logs: new[] // Left and right log routes
+                    { // Opens the placements
+                        new RollingLog(2000f, 1780f, -1, 0.5f), // Uses the checked placement
+                        new RollingLog(4300f, 4520f, 1, 1.0f), // Uses the checked placement
+                        new RollingLog(6900f, 6680f, -1, 2.0f), // Uses the checked placement
+                        new RollingLog(8950f, 9170f, 1, 1.5f) // Uses the checked placement
+                    }), // Ends the placements
+                "Guilin Karst"), // Shows the banner at the start
         }; // Ends the catalog
+
+        static LevelData HillsHard(int number, Lesson lesson, Pickup[] pickups, Hazard[] hazards, string[] review, LevelLayout layout, string banner) // Uses the shared Hard start, flags and goal
+        { // Opens the trail setup
+            return new LevelData(Episode.Hills, Difficulty.Hard, number, lesson, pickups, new Spot(40f, 0f), // Starts near the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f), new Spot(7200f, 0f) }, // Uses the three Hard flags
+                hazards, new Spot(9440f, 0f), review, layout, banner); // Ends at the shared goal
+        } // Ends the trail setup
 
         static Boulder B(float x, BoulderSize size) => new Boulder(x, size); // Short way to write a boulder
         static Ledge L(float x, float top, float width) => new Ledge(x, top, width); // Short way to write a ledge

@@ -12,7 +12,8 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Mountains, Difficulty.Hard)); // Mountains Hard has data
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Easy)); // Hills Easy has data
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Normal)); // Hills Normal has its five trails
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has no data yet
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has seven trails
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Easy)); // The open Plains card says Coming soon
         }
 
         [Test] // Checks the new route from Easy to Normal
@@ -29,13 +30,17 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the check
 
         [Test] // Checks the end of the new route
-        public void NextAfterHillsNormal5WaitsForHardData() // Hides Next only when the next trail has no data
+        public void NextAfterHillsNormal5OpensHard1() // Shows Next after the last Normal clear
         { // Opens the check
             var p = new PlayerProgress(); // A fresh save
             ClearMountains(p); // Opens Hills
             ClearHillsEasy(p); // Opens Hills Normal
             for (int n = 1; n <= 5; n++) p.RecordClear(Episode.Hills, Difficulty.Normal, n, 1); // Clears all five new trails
-            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Hills, Difficulty.Normal, 5).Step); // Hills Hard has no playable scene yet
+            var next = p.NextPlayableAfter(Episode.Hills, Difficulty.Normal, 5); // Looks for the next trail
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Shows Next Level
+            Assert.AreEqual(Episode.Hills, next.Episode); // Stays in Hills
+            Assert.AreEqual(Difficulty.Hard, next.Difficulty); // Opens Hard
+            Assert.AreEqual(1, next.Level); // Starts on the first Hard trail
         } // Ends the check
 
         [Test]
@@ -88,6 +93,27 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             var p = new PlayerProgress(); // A fresh save
             Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Mountains, Difficulty.Easy, 1).Step); // Easy 2 is still locked
         }
+
+        [Test] // Checks the final Hills clear
+        public void HillsHard7OffersTheEpisodeReviewAndUnlocksPlains() // Follows the generic episode flow
+        { // Opens the check
+            var p = new PlayerProgress(); // Starts a new save
+            ClearMountains(p); // Opens Hills
+            var hills = System.Linq.Enumerable.Where(LevelCatalog.All, level => level.Episode == Episode.Hills); // Uses the built Hills trails
+            foreach (var level in hills) // Clears every trail before the finale
+                if (level.Difficulty != Difficulty.Hard || level.Number != 7) p.RecordClear(level.Episode, level.Difficulty, level.Number, 1); // Leaves the last trail open
+            Assert.IsFalse(p.IsEpisodeComplete(Episode.Hills)); // Hills needs the final clear
+            Assert.IsFalse(p.IsEpisodeUnlocked(Episode.Plains)); // Plains waits for Hills
+            p.RecordClear(Episode.Hills, Difficulty.Hard, 7, 1); // Finishes Hills
+            Assert.IsTrue(p.IsEpisodeComplete(Episode.Hills)); // All fifteen trails count
+            var next = p.NextPlayableAfter(Episode.Hills, Difficulty.Hard, 7); // Reads the Result Screen route
+            Assert.AreEqual(NextStep.NextEpisode, next.Step); // Result opens the Landform Description Screen
+            Assert.AreEqual(Episode.Plains, next.Episode); // Points to the next landform
+            Assert.IsTrue(p.IsEpisodeUnlocked(Episode.Plains)); // The map can open Plains
+            Assert.IsTrue(p.ShouldAnimateUnlock(Episode.Plains, false)); // The first visit shows the unlock
+            Assert.IsFalse(p.ShouldAnimateUnlock(Episode.Plains, true)); // The seen flag prevents a repeat
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains)); // Tapping Plains still says Coming soon
+        } // Ends the check
 
         static void ClearMountains(PlayerProgress p) // Clears all 15 Mountains levels
         {

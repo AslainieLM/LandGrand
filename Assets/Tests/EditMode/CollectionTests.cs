@@ -39,7 +39,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void ShelfFoundCount_CountsOnlyThatShelf() // "Found here 1/17" on Hills, "Found here 2/34" on Mountains
+        public void ShelfFoundCount_CountsOnlyThatShelf() // "Found here 1/23" on Hills, "Found here 2/34" on Mountains
         {
             var p = new PlayerProgress(); // A brand new profile
             p.RecordFoundKind("granite"); // A Mountains-only kind
@@ -80,7 +80,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             var shelves = Collection.Shelves(new PlayerProgress()); // Shelves of a fresh profile
             Assert.IsFalse(shelves[1].IsComingSoon); // Hills has its kinds now (D-066)
-            Assert.AreEqual(17, shelves[1].Slots.Count); // Ten from Easy plus seven from Normal
+            Assert.AreEqual(23, shelves[1].Slots.Count); // Ten from Easy, seven from Normal and six from Hard
             Assert.IsTrue(shelves[2].IsComingSoon); // Plains
             Assert.IsTrue(shelves[3].IsComingSoon); // Plateaus
             Assert.AreEqual(0, shelves[2].Slots.Count); // No slots on a "Coming soon" shelf
@@ -92,7 +92,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(44, Collection.TotalCount); // Thirty-four Mountains kinds and ten Hills-only kinds
+            Assert.AreEqual(50, Collection.TotalCount); // Thirty-four Mountains kinds and sixteen Hills-only kinds
         }
 
         [Test] // Unity runs this method as a Test
