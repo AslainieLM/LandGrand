@@ -1,0 +1,53 @@
+check: mud 500: let go at full walk, slides 34.6 px in 0.85 s (ice rule: 84^2/200 = 35.3 px, 0.84 s)
+check: mud 500: 0 to full walk in 0.53 s (84/160 = 0.53 s)
+check: right log 4300->4520: idle 100 px past spawn is hit 0.97 s after the roll starts ((100-13)/90 = 0.97 s)
+check: same spot, hop straight up when the log is 22 px behind: cleared
+check: same spot, walking right at 84 px/s: never caught (log 90 px/s gains 6 px/s; its run ends first)
+check: standing 20 px from a right log's spawn when it would start: skipped this cycle (skip rule 48 px)
+-- Mountains Hard (LevelData.cs numbers), re-run at walk 84 (spec band 131-156 s was at walk 72):
+H1 Mayon: bot GOAL 113.5s (goal)
+H2 Sierra Madre: bot GOAL 118.6s (goal)
+H3 Kitanglad: bot GOAL 134.1s (goal)
+H4 Hamiguitan: bot GOAL 113.4s (goal) [Hills Hard lint would say: hazard at start or goal]
+H5 Matterhorn: bot GOAL 118.0s (goal) [Hills Hard lint would say: log 4700 within 100 px of a checkpoint; hazard at start or goal]
+H6 Kilimanjaro: bot GOAL 131.0s (goal)
+H7 Mauna Kea: bot GOAL 122.4s (goal)
+-- Regression, Hills Easy and Normal (expect E1 56.8, E2 62.4, E3 70.1, N1 83.8, N2 85.9, N3 84.2, N4 86.2, N5 91.1):
+E1 56.8  E2 62.4  E3 70.1  N1 83.8  N2 85.9  N3 84.2  N4 86.2  N5 91.1  
+-- Hills Hard:
+H1 Tarsier Forest: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   mud: 7 stretches, 3100 px; bot on mud 31.8 s
+H2 Antipolo Slopes: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   logs: 6 left, 3 right; bot jumped 8 oncoming, stopped and hopped 0 from behind
+H3 Masungi: bot GOAL 115.5s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.2 s
+   mud: 7 stretches, 2470 px; bot on mud 26.8 s
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1800:1.48/1, 2150:0.98/2, 3800:1.48/1, 4600:1.48/1, 5950:1.12/2, 9150:1.48/1
+H4 Pililla: bot GOAL 125.8s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 123.3-130.6 s
+   logs: 3 left, 2 right; bot jumped 4 oncoming, stopped and hopped 0 from behind
+   balloons (s from arriving to jumping off): 5944:4.12, 7500:5.00
+   without balloons: FAILED (pit at x=6085)
+H5 Clew Bay: bot GOAL 126.4s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 126.4-126.4 s
+   mud: 4 stretches, 1800 px; bot on mud 16.8 s
+   logs: 3 left, 2 right; bot jumped 6 oncoming, stopped and hopped 0 from behind
+   currents (s in strip): 1720L:3.68, 2480L:9.63, 4950L:8.78, 7280L:10.37, 8950L:6.47
+H6 Rome: bot GOAL 130.5s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 129.3-137.6 s
+   logs: 3 left, 4 right; bot jumped 4 oncoming, stopped and hopped 2 from behind
+   floats (s standing): 2032:0.02, 5032:0.02, 5112:0.30, 7432:0.02
+   without moving platforms: FAILED (pit at x=1284)
+H7 Guilin: bot GOAL 132.0s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 131.0-134.7 s
+   mud: 4 stretches, 1550 px; bot on mud 16.7 s
+   logs: 2 left, 2 right; bot jumped 3 oncoming, stopped and hopped 0 from behind
+   crumbling ledges: 8
+   floats (s standing): 3032:0.02, 7832:0.02, 7912:0.32
+   bats (s in loop span / pushes): 1300:2.00/1, 5800:1.53/2
+   currents (s in strip): 2480L:7.40, 7300L:5.83
+   balloons (s from arriving to jumping off): 3900:5.63
+   without balloons: FAILED (pit at x=4041)
