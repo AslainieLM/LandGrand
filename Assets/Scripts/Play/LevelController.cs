@@ -179,6 +179,13 @@ namespace LandGrand.Play // Level play scripts live here
             if (clip != null) sounds.PlayOneShot(clip, volume * GameSettings.SfxVolume); // Quiet or silent when the player lowered the slider; volume 1 keeps the old loudness
         }
 
+        internal void PlaySfx(AudioSource loop) // Plays a nearby effect loop at the player's volume
+        { // Opens the loop check
+            loop.volume = GameSettings.SfxVolume; // Uses the same setting as one-shot effects
+            loop.UnPause(); // Continues when play resumes
+            if (!loop.isPlaying) loop.Play(); // Starts the loop once
+        } // Ends the loop check
+
         internal void Say(string text) => ShowGuide(text); // Shows a short guide message, for the parts
 
         internal void GoTo(string scene) => Leave(scene); // Fades out and opens another scene, for the parts

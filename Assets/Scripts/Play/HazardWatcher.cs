@@ -23,6 +23,7 @@ namespace LandGrand.Play // Level play scripts live here
         public AudioClip checkpointSound; // Played when the checkpoint flag is reached
 
         RollingBoulderWatcher rollingBoulders; // Optional part for boulder traps
+        LogRoller logs; // Optional part for log traps
         LevelController level; // The level these hazards belong to
         Vector2 lastGround; // Where the explorer last stood on safe ground
         int lastGroundFacing = 1; // Which way it was walking then
@@ -36,6 +37,7 @@ namespace LandGrand.Play // Level play scripts live here
         {
             level = owner; // Remember the level
             rollingBoulders = GetComponent<RollingBoulderWatcher>(); // The level only has this part if boulders can roll
+            logs = GetComponent<LogRoller>(); // Levels with logs share their live rolls
             lastGround = level.explorer.RespawnPoint; // Until the explorer stands somewhere else, the start is the safe spot
         }
 
@@ -54,7 +56,7 @@ namespace LandGrand.Play // Level play scripts live here
                 level.Say("Checkpoint reached!"); // Announces each flag
                 level.PlaySfx(checkpointSound); // Plays the ding
             } // Ends the flag check
-            if (TouchesSpikes(p) || TouchesRock(p) || (rollingBoulders != null && rollingBoulders.Hits(level.ExplorerBodyAt(p)))) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
+            if (TouchesSpikes(p) || TouchesRock(p) || TouchesRollingTrap(p)) StartCoroutine(Respawn(false)); // A trap: on Easy a short way back, otherwise the last checkpoint
             else if (p.y < pitDeathY) StartCoroutine(Respawn(true)); // The pit
         }
 
@@ -80,6 +82,13 @@ namespace LandGrand.Play // Level play scripts live here
                 if (rock.Hits(body.x, body.y, body.width, body.height, LevelClock.Now)) return true; // A falling or landed rock touched the body
             return false; // No rock touched the body
         } // Ends the hit check
+
+        bool TouchesRollingTrap(Vector2 feet) // Checks both kinds of roll against the same body box
+        { // Opens the roll check
+            if (rollingBoulders == null && logs == null) return false; // This trail has no rolling parts
+            var body = level.ExplorerBodyAt(feet); // Finds the box at the explorer's feet
+            return rollingBoulders?.Hits(body) == true || logs?.Hits(body) == true; // Either roll is the same trap
+        } // Ends the roll check
 
         Spot SafeSpotNearby() // A short way back from where the explorer last stood, on the same ground and clear of spikes (Easy rule)
         {

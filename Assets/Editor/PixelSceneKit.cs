@@ -26,6 +26,12 @@ internal static class PixelSceneKit // Helpers for the scene builders
         "lesson_hundred_islands", "lesson_callao_cave", "lesson_pagsanjan", "lesson_banaue", "lesson_cappadocia", // Five new lesson pictures
         "aragonite", "coquina", "flowstone", "dripstone", "volcanic_breccia", "ignimbrite", "zeolite", // Seven new item pictures
     }; // Ends the picture list
+    internal const string HillsHardArtScript = "Tools/Art/make_hills_hard_art.py"; // Makes the Hills Hard pictures
+    static readonly HashSet<string> HillsHardLessonAndItemPictures = new HashSet<string> // Shared Hard pictures used by several builders
+    { // Opens the picture list
+        "lesson_tarsier_forest", "lesson_antipolo_slope", "lesson_masungi", "lesson_pililla", "lesson_clew_bay", "lesson_rome_hills", "lesson_guilin", // Seven lesson pictures
+        "peridotite", "chlorite", "dacite", "quartzite", "travertine", "leucite", // Six item pictures
+    }; // Ends the picture list
     internal static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
     internal static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text and wide-screen edges
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
@@ -177,6 +183,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
         if (sprite == null) // A sprite has not been made or imported
         { // Opens the missing-file message
             string script = HillsNormalLessonAndItemPictures.Contains(path) ? HillsNormalArtScript : artScript; // Resolves the shared lesson and item pictures too
+            if (HillsHardLessonAndItemPictures.Contains(path)) script = HillsHardArtScript; // Names the Hard generator for shared pictures
             Debug.LogError($"Missing sprite {folder}{path}.png. Run python {script}"); // Say which file and generator to use
         } // Ends the missing-file message
         return sprite; // Give it back

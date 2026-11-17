@@ -200,7 +200,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
         controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
         BuildObjects(level, geometry, explorer, controller); // Builds the reused level objects
-        BuildHardObjects(level, geometry, explorer, controller); // Builds the placed boulders and ice
+        BuildHardObjects(level, geometry, explorer, controller); // Builds rolling traps and slippery surfaces from the layout
         BuildSoftSand(layout, geometry, controller); // Adds the soft sand part, its step sound and puffs (Hills Easy 3)
         BuildBatsAndCurrents(layout, geometry, controller); // Adds bat and current parts when the trail has those objects
         BuildResult(level, controller.result, root, font); // The Result Screen panel

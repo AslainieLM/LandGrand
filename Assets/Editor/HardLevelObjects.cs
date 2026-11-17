@@ -25,8 +25,11 @@ public static partial class LevelBuilder // Builds the new objects from any leve
             for (int i = 0; i < layout.RollingBoulders.Count; i++) // Builds each placed boulder
                 BuildRollingBoulder(layout.RollingBoulders[i], i, geometry.transform, watcher, explorer.dustFrames, rumble, roll); // Adds its view
         } // Ends the boulder setup
-        if (layout.IceZones.Count == 0) return; // Trails without ice need no ice part
-        level.gameObject.AddComponent<IceWatcher>().slideSound = HardSound("sfx_ice_slide.wav"); // Gives the ice its slide sound
+        if (layout.Logs.Count > 0) BuildLogs(layout, geometry.transform, level); // Only levels with logs need their part
+        if (layout.IceZones.Count == 0 && layout.MudZones.Count == 0) return; // Dry ground needs no slide part
+        var watcherForGround = level.gameObject.AddComponent<IceWatcher>(); // Both surfaces use the ice rule
+        if (layout.IceZones.Count > 0) watcherForGround.slideSound = HardSound("sfx_ice_slide.wav"); // Gives the ice its slide sound
+        if (layout.MudZones.Count > 0) BuildMudSplash(watcherForGround, geometry.transform); // Gives mud its sound and splash
         foreach (var ice in layout.IceZones) BuildIceGlints(ice, geometry.transform); // Adds glints to each strip of icy ground
     } // Ends the object build
 
@@ -56,6 +59,7 @@ public static partial class LevelBuilder // Builds the new objects from any leve
         var strips = layout.IceZones.Select(ice => (x: ice.X, w: ice.Width, name: "Ice Top", tile: "ice_top", script: HardArtScript)) // Each ice strip
             .Concat(layout.SandZones.Select(s => (x: s.X, w: s.Width, name: "Soft Sand Top", tile: "soft_top", script: HillsArtScript))) // Each soft sand strip
             .Concat(layout.Currents.Select(c => (x: c.X, w: c.Width, name: "Current Top", tile: "current_top", script: K.HillsNormalArtScript))) // Each river strip
+            .Concat(layout.MudZones.Select(m => (x: m.X, w: m.Width, name: "Mud Top", tile: "mud_top", script: K.HillsHardArtScript))) // Each mud strip
             .OrderBy(strip => strip.x); // Checks strips from left to right
         var top = ThemeSprite(art, art.GroundTop); // Loads the normal top for this theme
         float from = piece.xMin; // Starts at the left edge of the ground
@@ -96,6 +100,43 @@ public static partial class LevelBuilder // Builds the new objects from any leve
             view.glints[i] = glint; // Lets the view change its picture
         } // Ends the glint
     } // Ends the glint build
+
+    static void BuildLogs(LevelLayout layout, Transform parent, LevelController level) // Adds the log roll part and its pictures
+    { // Opens the log build
+        var roller = level.gameObject.AddComponent<LogRoller>(); // Shares live rolls with the hazard watcher
+        roller.warningFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"log_warn_{i:00}", K.HillsHardArtScript)).ToArray(); // Reads the two warning frames
+        roller.rollFrames = Enumerable.Range(0, 4).Select(i => K.Sprite(SpriteFolder, $"log_{i:00}", K.HillsHardArtScript)).ToArray(); // Reads the four roll frames
+        roller.views = layout.Logs.Select(rule => BuildLogView(rule, parent)).ToArray(); // Builds one view per route
+        roller.rollSound = level.gameObject.AddComponent<AudioSource>(); // Gives nearby logs a shared loop
+        roller.rollSound.clip = HillsHardSound("sfx_log_roll.wav"); // Loads the wooden rumble
+        roller.rollSound.loop = true; // The sound follows the time the roll is near
+        roller.rollSound.playOnAwake = false; // Waits for a roll
+    } // Ends the log build
+
+    static LogRoller.View BuildLogView(RollingLog rule, Transform parent) // Draws the warning at the spawn and the moving log
+    { // Opens the view build
+        var root = new GameObject("Rolling Log").transform; // Keeps both pictures together
+        root.SetParent(parent, false); // Puts the view under the level geometry
+        var warning = M.Renderer("Log Warning", null, 7, root); // Starts hidden above the ground
+        warning.transform.position = LevelGeometry.ToWorld(rule.Spawn, 2f); // Sits the four-pixel warning on the ground
+        var log = M.Renderer("Log", null, 19, root); // Rolls behind the explorer
+        return new LogRoller.View { warning = warning, log = log }; // Gives both pictures to the part
+    } // Ends the view build
+
+    static void BuildMudSplash(IceWatcher watcher, Transform parent) // Gives the mud its own sound and pictures
+    { // Opens the splash build
+        watcher.mudSlideSound = HillsHardSound("sfx_mud_squelch.wav"); // Plays once when a mud slide begins
+        watcher.mudSplashFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"mud_splash_{i:00}", K.HillsHardArtScript)).ToArray(); // Reads both mud splash frames
+        watcher.mudSplash = M.Renderer("Mud Splash", watcher.mudSplashFrames[0], 19, parent); // Follows the explorer's feet
+        watcher.mudSplash.enabled = false; // Waits for a slide
+    } // Ends the splash build
+
+    static AudioClip HillsHardSound(string name) // Loads one Hills Hard effect
+    { // Opens the sound lookup
+        var clip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name); // Finds the supplied recording
+        if (clip == null) Debug.LogError($"Missing Assets/Audio/{name}. Run: python Tools/Audio/make_hills_hard_audio.py"); // Names the right generator
+        return clip; // Gives the recording to the caller
+    } // Ends the sound lookup
 
     static Sprite HardSprite(string name) => K.Sprite(SpriteFolder, name, HardArtScript); // Loads the existing Hard sprite
     static AudioClip HardSound(string name) // Loads the existing Hard effect
