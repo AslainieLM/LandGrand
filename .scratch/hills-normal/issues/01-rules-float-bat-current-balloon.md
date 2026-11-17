@@ -30,12 +30,14 @@
    - The ambience override and the fallback to the table.
 
 **Checklist**
-- [ ] Rules have no Unity types; every constant matches `layouts.md`
-- [ ] Mountains moving platforms give the same positions as before (test)
-- [ ] EditMode tests pass (report the count; 296 before)
+- [x] Rules have no Unity types; every constant matches `layouts.md`
+- [x] Mountains moving platforms give the same positions as before (test)
+- [x] EditMode tests pass (report the count; 296 before)
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** done
+
+**Verified:** Unity 6000.6.8f1 EditMode, 334 passed, 0 failed, 0 skipped.
 
 **Builder to run:** none

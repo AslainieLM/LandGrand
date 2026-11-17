@@ -25,12 +25,14 @@
 
 **Blocked by:** 01–06
 
-**Status:** not started
+**Status:** done
+
+**Verified:** Three generators reproduced the reviewed previews. All six Unity builders passed. EditMode passed 360 of 360. The handover records the five-scene Play Mode smoke check and the manual checks still open.
 
 **Play checklist for the user** (copy it into the handover):
 - [ ] After Hills Easy 3, Next opens Hills Normal 1; the Hills Normal trail shows five stones
 - [ ] Each Normal level shows its banner, lesson, theme, background and goal (Boat Dock, Cave Mouth, Falls Landing, Ifugao House, Balloon Field)
-- [ ] N1: floats shake, then sink after a short wait; staying too long drops you in the water (short return); they rise back; the first float is safe to practise on
+- [ ] N1: floats shake, sink after a short wait and rise again. Practise over the safe pool. A fall into a water pit returns you to the furthest reached flag, or the start before the first flag.
 - [ ] N2: bats loop gently; a touch pushes you back a little and never to a flag; the cave plays drips, not birds; the bat sign is visible
 - [ ] N3: currents push the way their ripples point; the one against you is still walkable; jumps are unchanged
 - [ ] N4: one float, one bat loop and one current, each fair
@@ -41,3 +43,6 @@
 - [ ] Mountains and Hills Easy still play as before
 
 **Builder to run:** all of the above.
+
+- `CONTEXT.md` adds the five requested glossary terms.
+- `.scratch/hills-normal/HANDOVER.md` records every added or changed file and the exact builder commands.

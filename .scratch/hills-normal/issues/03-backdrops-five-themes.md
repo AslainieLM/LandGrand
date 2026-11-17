@@ -17,12 +17,52 @@
 4. Write the preview `.scratch/hills-normal/backdrop-preview.png`: each theme stacked into one 480×270 frame, plus each layer alone. Look at it, and fix stripes, seams and muddy colours.
 
 **Checklist**
-- [ ] 30 PNGs exist (5 themes × 6 layers), each 960×270, each tiling without a seam
-- [ ] The preview has been looked at; fixes listed
-- [ ] No existing backdrop was changed
+- [x] 30 PNGs exist (5 themes × 6 layers), each 960×270, each tiling without a seam
+- [x] The preview has been looked at; fixes listed
+- [x] No existing backdrop was changed
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** done
+
+**Verified:** 30 RGBA layers at 960×270 with matching edge columns. Opened the stacked and per-layer preview. Unity EditMode passed 334 of 334 tests.
 
 **Builder to run:** none (ticket 06)
+
+## Files
+
+- `Tools/Art/make_hills_normal_backdrops.py` draws the backdrops.
+- `.scratch/hills-normal/backdrop-preview.png` shows each 480×270 composition and its six layers.
+- Unity generated matching `.meta` files for the 30 sprites and five new folders.
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L0.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L1.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L2.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L3.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L4.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/FairyChimneys/L5.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L0.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L1.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L2.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L3.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L4.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/IslandHills/L5.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L0.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L1.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L2.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L3.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L4.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/LimestoneCave/L5.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L0.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L1.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L2.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L3.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L4.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiceTerraces/L5.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L0.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L1.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L2.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L3.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L4.png` (960 x 270)
+- `Assets/Art/Level/Sprites/Backdrop/RiverGorge/L5.png` (960 x 270)
+
+Preview fixes: softened the sky dither, broke up the water reflections on the rice terraces, and joined the waterfall to the far cliff. No tracked backdrop PNGs changed.

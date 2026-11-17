@@ -39,6 +39,10 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Icy ground**: a stretch of trail where the explorer takes time to speed up and slides before stopping.
 - **Hard checkpoints**: the three safe flags in each Hard level. Hazards return the explorer to the furthest flag reached, or to the start before the first flag.
 - **Soft sand**: a darker stretch of dune where the explorer walks more slowly, with a crunch and sand puffs. Jumps are not changed.
+- **Sinking float**: a bamboo raft that sinks after the explorer stands on it, then rises after the explorer leaves. It supports the explorer from above until it goes under.
+- **Gentle bat**: a bat that flies in a small loop and gives the explorer a short sideways push on contact.
+- **River current**: a shallow strip of flowing water that pushes a grounded explorer in the direction of the ripples.
+- **Hot-air balloon**: a moving platform that rises and falls. The explorer can stand on the basket's rim.
 - **Coming soon difficulty**: a difficulty that is open but has no levels yet. Tapping it says "Coming soon" instead of opening an empty trail.
 
 ## Landforms
@@ -46,4 +50,5 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Landform Description Screen**: the screen that reviews a completed landform, shows the explorer's trip totals and names the next landform.
 - **Episode complete**: the explorer has cleared all 15 levels of one landform across Easy, Normal and Hard.
 - **Unlock animation**: the opening padlock, fading grey and sparkles that the map shows the first time a landform opens.
+- **Level ambience**: the background sound of a trail, such as wind, a stream or cave drips. A trail can use its own ambience.
 - **Landform audio table**: the list that names each landform's level music and its ambience for Easy, Normal and Hard (wind for Mountains, stream and rain for Hills).

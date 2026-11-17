@@ -15,12 +15,26 @@
 4. Write the preview `.scratch/hills-normal/audio-preview.png`: waveforms and spectra. Check that there is no broadband hiss.
 
 **Checklist**
-- [ ] Four files exist with the exact names
-- [ ] Lengths and mean dB are reported and near the targets
-- [ ] The cave loop loops without a click; existing audio is unchanged
+- [x] Four files exist with the exact names
+- [x] Lengths and mean dB are reported and near the targets
+- [x] The cave loop loops without a click; existing audio is unchanged
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** done
+
+**Verified:** Four assets measured with ffmpeg. Decoded seam measured and final preview opened. Unity EditMode passed 334 of 334 tests.
 
 **Builder to run:** none (ticket 06)
+
+## Files
+
+- `Tools/Audio/make_hills_normal_audio.py` generates and measures the four audio files.
+- `Assets/Audio/amb_cave_drips.ogg` is 24.000 s at −21.9 dB mean.
+- `Assets/Audio/sfx_splash.wav` is 0.300 s at −24.0 dB mean.
+- `Assets/Audio/sfx_bat_flap.wav` is 0.250 s at −26.0 dB mean.
+- `Assets/Audio/sfx_burner.wav` is 0.500 s at −24.0 dB mean.
+- `.scratch/hills-normal/audio-preview.png` shows waveforms and averaged spectra from decoded assets.
+- Unity generated matching `.meta` files for the four new sounds.
+
+Refinements after reviewing the preview: added a second filter stage to soften high-end noise, softened the loudest cave drips, and smoothed the last sample step. The decoded seam steps are 0.003082 and 0.003571 full scale, similar to ordinary nearby sample steps. The spectra roll off at the high end. Listening in Unity is on the play checklist. No tracked sound files changed.
