@@ -84,6 +84,21 @@ EditorBuildSettings:
     path: Assets/Scenes/HillsEasy3.unity
     guid: 95ff46f9124959d48af6b5b07e39db60
   - enabled: 1
+    path: Assets/Scenes/HillsNormal1.unity
+    guid: 1f48cff358bae22498412eb46aeb3d1d
+  - enabled: 1
+    path: Assets/Scenes/HillsNormal2.unity
+    guid: cfe33fa4a443f394aa35b212b8e4b5d0
+  - enabled: 1
+    path: Assets/Scenes/HillsNormal3.unity
+    guid: 7352dcc9e487d194d94656847ebee0bb
+  - enabled: 1
+    path: Assets/Scenes/HillsNormal4.unity
+    guid: d8ab93ebea0e8ea41a9a6144bb0a8191
+  - enabled: 1
+    path: Assets/Scenes/HillsNormal5.unity
+    guid: c6a2fb4fdc3b98e48a6e180c02a81a9b
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:
