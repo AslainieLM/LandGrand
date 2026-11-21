@@ -32,6 +32,12 @@ internal static class PixelSceneKit // Helpers for the scene builders
         "lesson_tarsier_forest", "lesson_antipolo_slope", "lesson_masungi", "lesson_pililla", "lesson_clew_bay", "lesson_rome_hills", "lesson_guilin", // Seven lesson pictures
         "peridotite", "chlorite", "dacite", "quartzite", "travertine", "leucite", // Six item pictures
     }; // Ends the picture list
+    internal const string PlainsEasyArtScript = "Tools/Art/make_plains_easy_art.py"; // Makes the Plains Easy pictures
+    static readonly HashSet<string> PlainsEasyLessonAndItemPictures = new HashSet<string> // Shared Plains pictures for lessons, play and Profile
+    { // Opens the picture list
+        "lesson_central_luzon", "lesson_pangasinan", "lesson_isabela", // Three Plains lesson pictures
+        "siltstone", "halite", "gypsum", "mudstone", // Four Plains item pictures
+    }; // Ends the picture list
     internal static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
     internal static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text and wide-screen edges
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
@@ -184,6 +190,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
         { // Opens the missing-file message
             string script = HillsNormalLessonAndItemPictures.Contains(path) ? HillsNormalArtScript : artScript; // Resolves the shared lesson and item pictures too
             if (HillsHardLessonAndItemPictures.Contains(path)) script = HillsHardArtScript; // Names the Hard generator for shared pictures
+            if (PlainsEasyLessonAndItemPictures.Contains(path)) script = PlainsEasyArtScript; // Names the Plains generator for shared pictures
             Debug.LogError($"Missing sprite {folder}{path}.png. Run python {script}"); // Say which file and generator to use
         } // Ends the missing-file message
         return sprite; // Give it back

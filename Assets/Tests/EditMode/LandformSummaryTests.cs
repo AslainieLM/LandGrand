@@ -27,7 +27,16 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(summary.Sentences.All(s => s.Length <= 44)); // Fits the short reading lines
         } // Ends the Hills check
 
-        [TestCase(Episode.Plains, "bg_plains")] // Plains has a future review
+        [Test] // Runs the Plains check
+        public void PlainsHasFiveDraftLinesAndItsOwnPicture() // Checks the exact Plains summary
+        { // Starts the Plains check
+            var summary = LandformSummary.For(Episode.Plains); // Loads the Plains review
+            Assert.AreEqual("Plains", summary.Title); // Names the landform
+            Assert.AreEqual("bg_plains", summary.Picture); // Uses the Plains picture
+            Assert.IsTrue(summary.IsDraft); // Still needs a teacher's review
+            CollectionAssert.AreEqual(new[] { "Plains are wide, flat and low lands.", "Rivers, wind, ice and lava can make plains.", "Plains soil is often silt, sand and clay.", "Many people farm and live on plains.", "Some plains lie flat beside the sea." }, summary.Sentences); // Keeps the five draft lines
+        } // Ends the Plains check
+
         [TestCase(Episode.Plateaus, "bg_plateaus")] // Plateaus has a future review
         public void OtherLandformsHaveOnlyAComingSoonLine(Episode landform, string art) // Keeps the placeholders short
         { // Starts the check

@@ -44,6 +44,7 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Sinking float**: a bamboo raft that sinks after the explorer stands on it, then rises after the explorer leaves. It supports the explorer from above until it goes under.
 - **Gentle bat**: a bat that flies in a small loop and gives the explorer a short sideways push on contact.
 - **River current**: a shallow strip of flowing water that pushes a grounded explorer in the direction of the ripples.
+- **Straw bounce pile**: a low pile of rice straw. Landing on its top bounces the explorer high. Walking into its side does nothing.
 - **Hot-air balloon**: a moving platform that rises and falls. The explorer can stand on the basket's rim.
 - **Coming soon difficulty**: a difficulty that is open but has no levels yet. Tapping it says "Coming soon" instead of opening an empty trail.
 

@@ -1,3 +1,4 @@
+using System.IO; // Checks the Plains sprite folder
 using LandGrand.LandformMap; // Gives access to CloudDrift and CircleFlight
 using LandGrand.StartScreen; // Gives access to SpriteFlipbook
 using UnityEngine; // Gives access to GameObject, Sprite and Vector2
@@ -11,11 +12,21 @@ using M = global::MainMenuBuilder; // Short name for the Main Menu builder, whos
 internal static class LandformLife // Makes the small animations that belong to a landform
 {
     internal const string MapSprites = "Assets/Art/LandformMap/Sprites/"; // Landform Map PNGs
+    const string PlainsFolder = "Plains/"; // Holds the Plains map and menu sprites
     const string HillsArt = "Tools/Art/make_hills_easy_art.py"; // Script that draws the Hills life pictures
     const string MapArt = "Tools/Art/make_landform_map_art.py"; // Script that draws the cloud
 
     /// <summary>One Hills life picture, such as "tree_0" or "bird_1".</summary>
     internal static Sprite HillsSprite(string name) => K.Sprite(MapSprites, "Hills/" + name, HillsArt); // Loads it from the Hills folder
+
+    internal static void ConfigurePlainsSprites() // Imports the shared life art at the game's pixel scale
+    { // Opens the import
+        string folder = MapSprites + PlainsFolder; // The prepared Plains pictures
+        if (!Directory.Exists(folder)) throw new DirectoryNotFoundException($"Missing {folder}. Run python {K.PlainsEasyArtScript}"); // Names the generator for the missing folder
+        M.ConfigurePixelSprites(folder, _ => false); // Uses crisp sprites for map and menus
+    } // Ends the import
+
+    static Sprite PlainsSprite(string name) => K.Sprite(MapSprites, PlainsFolder + name, K.PlainsEasyArtScript); // Loads one prepared Plains life picture
 
     /// <summary>A cloud that drifts across the sky. The same slow drift on every landform.</summary>
     internal static CloudDrift Cloud(Transform parent) // Makes one drifting cloud
@@ -35,17 +46,33 @@ internal static class LandformLife // Makes the small animations that belong to 
     }
 
     /// <summary>A bird that flaps its wings and flies round on a slow oval.</summary>
-    internal static void Bird(Transform parent, Vector2 centerPixels, Vector2 radiusPixels, float secondsPerLap) // Makes one bird
-    {
-        var bird = M.Renderer("Bird", HillsSprite("bird_0"), 15, parent); // Bird picture, drawn in front of the picture
+    internal static void Bird(Transform parent, Vector2 centerPixels, Vector2 radiusPixels, float secondsPerLap) // Makes one Hills bird
+        => FlyingBird("Bird", parent, centerPixels, radiusPixels, secondsPerLap, new[] { HillsSprite("bird_0"), HillsSprite("bird_1") }); // Keeps the Hills wings
+
+    internal static void Egret(Transform parent, Vector2 centerPixels, Vector2 radiusPixels, float secondsPerLap) // Makes one Plains egret
+        => FlyingBird("Egret", parent, centerPixels, radiusPixels, secondsPerLap, new[] { PlainsSprite("egret_0"), PlainsSprite("egret_1") }); // Uses the white wings
+
+    static void FlyingBird(string name, Transform parent, Vector2 centerPixels, Vector2 radiusPixels, float secondsPerLap, Sprite[] frames) // Sets up the shared flight
+    { // Opens one bird
+        var bird = M.Renderer(name, frames[0], 15, parent); // Bird picture, drawn in front of the picture
         var flaps = bird.gameObject.AddComponent<SpriteFlipbook>(); // Flaps the wings
-        flaps.frames = new[] { HillsSprite("bird_0"), HillsSprite("bird_1") }; // Wings up, wings down
+        flaps.frames = frames; // Wings up, wings down
         flaps.framesPerSecond = 3f; // Quick flaps, like a small bird
         var flight = bird.gameObject.AddComponent<CircleFlight>(); // Flies round the oval
         flight.centerPixels = centerPixels; // Middle of the oval
         flight.radiusPixels = radiusPixels; // Size of the oval
         flight.secondsPerLap = secondsPerLap; // Time for one lap
     }
+
+    internal static void PlainsStandingLife(Transform parent, string name, string file, Vector2 bottom, float framesPerSecond, int order) // Sets a swaying plant or grazing animal on its spot
+    { // Opens the placement
+        var frames = new[] { PlainsSprite(file + "_0"), PlainsSprite(file + "_1") }; // Loads the two poses
+        var view = M.Renderer(name, frames[0], order, parent); // Draws the first pose
+        view.transform.position = M.Px(bottom.x, bottom.y - frames[0].rect.height / 2f); // Rests the bottom on the chosen row
+        var animation = view.gameObject.AddComponent<SpriteFlipbook>(); // Swaps the poses
+        animation.frames = frames; // Connects the two poses
+        animation.framesPerSecond = framesPerSecond; // Sets the sway or graze speed
+    } // Ends the placement
 
     /// <summary>A grass tuft that sways in the wind. Its bottom sits on screen row 268.</summary>
     internal static void Grass(Transform parent, float x) // Makes one grass tuft at a screen x

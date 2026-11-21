@@ -120,7 +120,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             var shelves = Collection.Shelves(new PlayerProgress()); // Reads the default shelves
             Assert.AreEqual(34, shelves[(int)Episode.Mountains].Slots.Count); // Keeps the Mountains count
             Assert.AreEqual(23, shelves[(int)Episode.Hills].Slots.Count); // Grows the Hills shelf by six
-            var kinds = ItemCatalog.All.Skip(44).ToArray(); // Reads the appended kinds
+            var kinds = ItemCatalog.All.Skip(44).Take(6).ToArray(); // Reads the six Hills Hard additions
             CollectionAssert.AreEqual(new[] { "peridotite", "chlorite", "dacite", "quartzite", "travertine", "leucite" }, kinds.Select(k => k.Id)); // Keeps the new kind order
             Assert.IsTrue(kinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Hills }) && k.Description.Length <= 80 && k.Picture == k.Id)); // Checks cards and shelf placement
             CollectionAssert.AreEqual(new[] { true, false, true, true, true, false }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels

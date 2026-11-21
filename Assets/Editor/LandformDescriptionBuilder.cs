@@ -23,6 +23,7 @@ public static class LandformDescriptionBuilder // Builds the review screen from 
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return; // Keeps any open scene work
         if (!File.Exists(DescriptionArt.Folder + "scroll_panel.png")) throw new FileNotFoundException("Missing Description scroll art. Run python Tools/Art/make_hard_art.py."); // Stops if the supplied art is missing
         M.ConfigurePixelSprites(DescriptionArt.Folder, _ => false); // Uses crisp pixel art for the buttons and panel
+        LandformLife.ConfigurePlainsSprites(); // Imports the Plains life used behind the review
         var font = M.EnsureFont(); // Loads the Micro 5 font
         if (font == null) return; // Stops when the shared font is missing
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single); // Starts with an empty scene

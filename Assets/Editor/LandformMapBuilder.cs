@@ -89,6 +89,7 @@ public static class LandformMapBuilder // Makes the Landform Map scene
         }
         regions[0].life = life.gameObject; // Keeps the existing Mountains animations
         regions[(int)Episode.Hills].life = HillsLife().gameObject; // Trees, stream and birds, shown only while Hills is open
+        regions[(int)Episode.Plains].life = PlainsLife().gameObject; // Rice, egrets and carabao while Plains is open
 
         // Controller: connects everything. The guide panel and Back icon are made here, last, so they draw on top.
         var controller = new GameObject("Landform Map").AddComponent<LandformMapController>(); // The map brain
@@ -105,6 +106,24 @@ public static class LandformMapBuilder // Makes the Landform Map scene
     }
 
     static Sprite S(string path) => K.Sprite(SpriteFolder, path, "Tools/Art/make_landform_map_art.py"); // Loads one Landform Map sprite
+
+    static Transform PlainsLife() // Makes the animations inside the Plains region
+    { // Opens the Plains map life
+        var life = new GameObject("Plains life").transform; // Holds the Plains map life
+        var rice = new (float x, float y, float framesPerSecond)[] // Bottom pixel and sway speed for each rice clump
+        { // Opens the rice spots
+            (30f, 170f, 1.2f), (70f, 182f, 1.5f), (140f, 168f, 1.7f), // The upper rice clumps
+            (190f, 160f, 1.3f), (200f, 218f, 1.6f), (150f, 228f, 1.4f), // The eastern and lower rice clumps
+        }; // Ends the rice spots
+        foreach (var spot in rice) // Places all six clumps at their authored spots
+            LandformLife.PlainsStandingLife(life, "Rice", "rice", new Vector2(spot.x, spot.y), spot.framesPerSecond, 2); // Sways the rice
+        LandformLife.PlainsStandingLife(life, "Carabao", "carabao", new Vector2(58f, 204f), 0.5f, 3); // Changes pose every two seconds
+        var center = new Vector2(120f, 152f); // Middle of the two egret paths
+        var radius = new Vector2(20f, 8f); // Width and height of each oval
+        LandformLife.Egret(life, center, radius, 14f); // The first egret circles in fourteen seconds
+        LandformLife.Egret(life, center, radius, 17f); // The second egret circles in seventeen seconds
+        return life; // The map shows this life only while Plains is open
+    } // Ends the Plains map life
 
     // Hills trees: x across, which hill line they stand on (true = far hill), and how fast they sway.
     static readonly (float x, bool far, float framesPerSecond)[] HillsTrees = // One entry per tree

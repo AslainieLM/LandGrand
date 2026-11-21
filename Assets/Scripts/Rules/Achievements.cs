@@ -36,7 +36,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     {
         static readonly int[] LastThreeHardLevels = { 5, 6, 7 }; // The last three levels of a Hard trail: Mountains Hard 5 to 7 are the Matterhorn, Kilimanjaro and Mauna Kea
 
-        /// <summary>The badges. Mountains keep their ids and order; the ten Hills badges come after them.</summary>
+        /// <summary>Mountains, Hills and Plains badges in their saved order.</summary>
         public static IReadOnlyList<Achievement> All { get; } = new[] // In Profile order
         {
             new Achievement("first_steps", "First Steps", "Clear your first level.", BadgeTier.Bronze, Episode.Mountains, p => p.ClearedLevelCount >= 1), // Any cleared level
@@ -64,6 +64,16 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             new Achievement("world_hills", "World Hills", "Clear Hills Hard 5 to 7.", BadgeTier.Silver, Episode.Hills, p => ClearedAll(p, Episode.Hills, Difficulty.Hard, LastThreeHardLevels)), // The last three Hills Hard trails
             new Achievement("steady_star", "Steady Star", "Get 3 stars on every Hills Hard level.", BadgeTier.Gold, Episode.Hills, p => StarsAll(p, Episode.Hills, Difficulty.Hard, 3, Numbers(Difficulty.Hard))), // Every Hills Hard level perfect
             new Achievement("hill_master", "Hill Master", "Clear every Hills level.", BadgeTier.Gold, Episode.Hills, p => p.IsEpisodeComplete(Episode.Hills)), // Finishes the Hills landform
+            new Achievement("salt_maker", "Salt Maker", "Clear Plains Easy 2.", BadgeTier.Silver, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Easy, 2)), // Clears the salt beds
+            new Achievement("straw_jumper", "Straw Jumper", "Clear Plains Easy 3.", BadgeTier.Silver, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Easy, 3)), // Clears the river plain
+            new Achievement("flat_star", "Flat Star", "Get 3 stars on every Plains Easy level.", BadgeTier.Gold, Episode.Plains, p => StarsAll(p, Episode.Plains, Difficulty.Easy, 3, Numbers(Difficulty.Easy))), // Gets three stars on each Easy trail
+            new Achievement("plain_collector", "Plain Collector", "Find every Plains rock and mineral.", BadgeTier.Gold, Episode.Plains, p => KindsAll(p, Episode.Plains)), // Fills the Plains shelf
+            new Achievement("philippine_plains", "Philippine Plains", "Clear Plains Normal 1 to 4.", BadgeTier.Silver, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Normal, 1, 2, 3, 4)), // Clears the first four Normal trails
+            new Achievement("delta_boater", "Delta Boater", "Clear Plains Normal 5.", BadgeTier.Gold, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Normal, 5)), // Clears the last Normal trail
+            new Achievement("prairie_ranger", "Prairie Ranger", "Clear a Plains Hard level.", BadgeTier.Silver, Episode.Plains, p => ClearedAny(p, Episode.Plains, Difficulty.Hard, Numbers(Difficulty.Hard))), // Clears any Plains Hard trail
+            new Achievement("world_plains", "World Plains", "Clear Plains Hard 5 to 7.", BadgeTier.Silver, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Hard, LastThreeHardLevels)), // Clears the last three Hard trails
+            new Achievement("steady_plains", "Steady Plains", "Get 3 stars on every Plains Hard level.", BadgeTier.Gold, Episode.Plains, p => StarsAll(p, Episode.Plains, Difficulty.Hard, 3, Numbers(Difficulty.Hard))), // Gets three stars on each Hard trail
+            new Achievement("plain_master", "Plain Master", "Clear every Plains level.", BadgeTier.Gold, Episode.Plains, p => p.IsEpisodeComplete(Episode.Plains)), // Finishes the Plains landform
         }; // Ends the badge catalog
 
         /// <summary>The achievement with this id, or null when there is none.</summary>

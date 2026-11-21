@@ -152,7 +152,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     {
         // Draft texts for Grade 5 (D-043). They need a teacher's review before final use (Q-04).
         public static readonly ItemKind Granite = new ItemKind("granite", "Granite", "A hard, speckled rock. It forms when melted rock cools slowly deep underground.", "granite", true, true, Episode.Mountains); // A rock, first taught in the Mountains lesson
-        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true, false, Episode.Mountains, Episode.Hills); // A mineral, taught in Mountains and shared with Hills
+        public static readonly ItemKind Quartz = new ItemKind("quartz", "Quartz", "A hard, glassy mineral that is often clear or white. It is found in granite.", "quartz", true, false, Episode.Mountains, Episode.Hills, Episode.Plains); // A mineral, taught in Mountains and shared with Hills and Plains
         public static readonly ItemKind Feldspar = new ItemKind("feldspar", "Feldspar", "A common mineral that is often pink or white. It is a main part of granite.", "feldspar", true, false, Episode.Mountains, Episode.Hills); // A mineral, taught in Mountains and shared with Hills
         public static readonly ItemKind Mica = new ItemKind("mica", "Mica", "A shiny mineral that peels into thin, flat sheets. It is found in granite.", "mica", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
 
@@ -166,15 +166,15 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Marble = new ItemKind("marble", "Marble", "A smooth rock, often white. It forms when limestone is heated and squeezed.", "marble", true, true, Episode.Mountains); // A rock changed by heat and squeezing
         public static readonly ItemKind Garnet = new ItemKind("garnet", "Garnet", "A dark red mineral that grows as small crystals inside squeezed rock.", "garnet", true, false, Episode.Mountains); // A mineral that grows in changed rock
 
-        public static readonly ItemKind Sandstone = new ItemKind("sandstone", "Sandstone", "A rock made of sand grains stuck together. It wears away in wind and rain.", "sandstone", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Clay = new ItemKind("clay", "Clay", "Very fine soil from weathered rock. It feels sticky when it is wet.", "clay", true, false, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
-        public static readonly ItemKind Conglomerate = new ItemKind("conglomerate", "Conglomerate", "A rock of round pebbles stuck in sand. Rivers rounded the pebbles long ago.", "conglomerate", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Shale = new ItemKind("shale", "Shale", "A rock made from mud that settled in water. It splits into thin layers.", "shale", true, true, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Sandstone = new ItemKind("sandstone", "Sandstone", "A rock made of sand grains stuck together. It wears away in wind and rain.", "sandstone", true, true, Episode.Mountains, Episode.Plains); // Draft Mountains kind, also on the Plains shelf
+        public static readonly ItemKind Clay = new ItemKind("clay", "Clay", "Very fine soil from weathered rock. It feels sticky when it is wet.", "clay", true, false, Episode.Mountains, Episode.Hills, Episode.Plains); // Draft kind on the Mountains, Hills and Plains shelves
+        public static readonly ItemKind Conglomerate = new ItemKind("conglomerate", "Conglomerate", "A rock of round pebbles stuck in sand. Rivers rounded the pebbles long ago.", "conglomerate", true, true, Episode.Mountains, Episode.Plains); // Draft Mountains kind, also on the Plains shelf
+        public static readonly ItemKind Shale = new ItemKind("shale", "Shale", "A rock made from mud that settled in water. It splits into thin layers.", "shale", true, true, Episode.Mountains, Episode.Plains); // Draft Mountains kind, also on the Plains shelf
         public static readonly ItemKind Basalt = new ItemKind("basalt", "Basalt", "A dark rock made from cooled lava. It often has tiny holes from gas.", "basalt", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Magnetite = new ItemKind("magnetite", "Magnetite", "A black mineral that sticks to a magnet. It makes the black sand in rivers.", "magnetite", true, false, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
         public static readonly ItemKind Sulfur = new ItemKind("sulfur", "Sulfur", "A bright yellow mineral. It forms around hot volcanic vents.", "sulfur", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Pyrite = new ItemKind("pyrite", "Pyrite", "Called fool's gold. Its shiny gold cubes are not real gold.", "pyrite", true, false, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Limestone = new ItemKind("limestone", "Limestone", "A pale rock made from shells under the sea. Heat can turn it into marble.", "limestone", true, true, Episode.Mountains, Episode.Hills); // Draft kind on the Mountains and Hills shelves
+        public static readonly ItemKind Limestone = new ItemKind("limestone", "Limestone", "A pale rock made from shells under the sea. Heat can turn it into marble.", "limestone", true, true, Episode.Mountains, Episode.Hills, Episode.Plains); // Draft kind on the Mountains, Hills and Plains shelves
         public static readonly ItemKind Gneiss = new ItemKind("gneiss", "Gneiss", "A rock with light and dark bands. Deep heat and squeezing make it.", "gneiss", true, true, Episode.Mountains); // Draft Mountains kind
 
         public static readonly ItemKind Scoria = new ItemKind("scoria", "Scoria", "A red-brown lava rock full of holes. Gas bubbles made the holes.", "scoria", true, true, Episode.Mountains); // Draft Mountains kind
@@ -212,8 +212,13 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Travertine = new ItemKind("travertine", "Travertine", "A cream rock made by spring water. Romans built with it.", "travertine", true, true, Episode.Hills); // Draft Hills rock
         public static readonly ItemKind Leucite = new ItemKind("leucite", "Leucite", "A white mineral with round crystals, found in some volcanic rock.", "leucite", true, false, Episode.Hills); // Draft Hills mineral
 
+        public static readonly ItemKind Siltstone = new ItemKind("siltstone", "Siltstone", "A smooth rock made of silt, finer than sand. Silt settles in quiet water.", "siltstone", true, true, Episode.Plains); // Draft Plains rock
+        public static readonly ItemKind Halite = new ItemKind("halite", "Halite", "Rock salt. It forms when salty sea or lake water dries up.", "halite", true, false, Episode.Plains); // Draft Plains mineral
+        public static readonly ItemKind Gypsum = new ItemKind("gypsum", "Gypsum", "A very soft white mineral left by drying sea water. It is used for plaster and chalk.", "gypsum", true, false, Episode.Plains); // Draft Plains mineral
+        public static readonly ItemKind Mudstone = new ItemKind("mudstone", "Mudstone", "A fine rock made from hardened mud and clay.", "mudstone", true, true, Episode.Plains); // Draft Plains rock
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite, Peridotite, Chlorite, Dacite, Quartzite, Travertine, Leucite }; // Appends the Hills Hard kinds
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite, Peridotite, Chlorite, Dacite, Quartzite, Travertine, Leucite, Siltstone, Halite, Gypsum, Mudstone }; // Appends the Plains Easy kinds
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -1631,6 +1636,121 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                         new RollingLog(8950f, 9170f, 1, 1.5f) // Uses the checked placement
                     }), // Ends the placements
                 "Guilin Karst"), // Shows the banner at the start
+
+            // Plains Easy trails (D-069). The layouts were checked at 84 pixels per second.
+            new LevelData(Episode.Plains, Difficulty.Easy, 1, // Central Luzon Plain
+                new Lesson("Plains", new[] // Draft lesson for Grade 5
+                { // Opens the lesson
+                    "Plains are wide, flat and low lands.", // Draft lesson line
+                    "Central Luzon has our biggest plain.", // Draft lesson line
+                    "Nueva Ecija is the Rice Granary.", // Draft lesson line
+                    "Flat land is easy to farm and build on.", // Draft lesson line
+                }, "lesson_central_luzon", true), // Shows the draft note
+                new[] // Five pickups
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Clay, new Spot(416f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Sandstone, new Spot(640f, 32f)), // On a low dike
+                    new Pickup(ItemCatalog.Shale, new Spot(2032f, 40f)), // On a ledge
+                    new Pickup(ItemCatalog.Siltstone, new Spot(3972f, 84f)), // Secret spot at the top of the three steps
+                    new Pickup(ItemCatalog.Clay, new Spot(4600f, 16f)), // Near the granary
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts on the ground
+                new[] { new Spot(2400f, 0f) }, // The checkpoint flag
+                new[] // Gaps and spike traps
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1500f, 0f), 48f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(2900f, 0f), 32f), // Spike trap
+                    new Hazard(HazardType.Pit, new Spot(3300f, 0f), 48f), // Gap in the ground
+                }, // Ends the hazards
+                new Spot(4740f, 0f), // Rice Granary at the goal
+                new[] // Draft lines for the Result Screen
+                { // Opens the review
+                    "Plains are wide, flat and low lands.", // Draft review line
+                    "Plain soil often has clay, silt and sand.", // Draft review line
+                    "Sand hardens into sandstone; silt into siltstone.", // Draft review line
+                }, // Ends the review
+                new LevelLayout(4800f, LevelTheme.RicePlain, // Width and theme
+                    new[] { B(400f, BoulderSize.Small), B(1000f, BoulderSize.Big), B(1900f, BoulderSize.Small), B(2700f, BoulderSize.Big), B(3600f, BoulderSize.Small), B(4200f, BoulderSize.Big) }, // Ground boulders
+                    new[] { L(600f, 32f, 80f), L(1200f, 28f, 64f), L(2000f, 40f, 64f), L(3000f, 28f, 80f), L(3800f, 28f, 48f), L(3860f, 56f, 64f), L(3940f, 84f, 64f) }), // Stone ledges
+                "Central Luzon Plain"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Easy, 2, // Pangasinan Salt Beds
+                new Lesson("Coastal Plains", new[] // Draft lesson for Grade 5
+                { // Opens the lesson
+                    "Some plains lie flat beside the sea.", // Draft lesson line
+                    "Pangasinan means place of salt.", // Draft lesson line
+                    "Sea water dries in ponds and leaves salt.", // Draft lesson line
+                    "That salt is a mineral called halite.", // Draft lesson line
+                }, "lesson_pangasinan", true), // Shows the draft note
+                new[] // Five pickups
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Halite, new Spot(416f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Gypsum, new Spot(1132f, 28f)), // On a low ledge
+                    new Pickup(ItemCatalog.Quartz, new Spot(2032f, 40f)), // On a ledge
+                    new Pickup(ItemCatalog.Siltstone, new Spot(3112f, 84f)), // Secret spot on the upper ledge
+                    new Pickup(ItemCatalog.Halite, new Spot(4416f, 24f)), // On a boulder near the salt hut
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts on the ground
+                new[] { new Spot(2700f, 0f) }, // The checkpoint flag
+                new[] // Gaps and spike traps
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(800f, 0f), 48f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(1700f, 0f), 32f), // Spike trap
+                    new Hazard(HazardType.Pit, new Spot(3500f, 0f), 56f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(4000f, 0f), 32f), // Spike trap
+                }, // Ends the hazards
+                new Spot(5240f, 0f), // Salt Hut at the goal
+                new[] // Draft lines for the Result Screen
+                { // Opens the review
+                    "Coastal plains lie flat beside the sea.", // Draft review line
+                    "Drying sea water leaves halite and gypsum.", // Draft review line
+                    "Beach sand is mostly quartz, a tough mineral.", // Draft review line
+                }, // Ends the review
+                new LevelLayout(5400f, LevelTheme.SaltBeds, // Width and theme
+                    new[] { B(400f, BoulderSize.Small), B(1400f, BoulderSize.Big), B(2300f, BoulderSize.Small), B(4400f, BoulderSize.Small), B(4800f, BoulderSize.Big) }, // Ground boulders
+                    new[] { L(1100f, 28f, 80f), L(2000f, 40f, 64f), L(3000f, 40f, 64f), L(3080f, 84f, 72f), L(3250f, 28f, 64f), L(4600f, 28f, 64f) }), // Stone ledges
+                "Pangasinan Salt Beds"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Easy, 3, // Isabela River Plain
+                new Lesson("River Plains", new[] // Draft lesson for Grade 5
+                { // Opens the lesson
+                    "Rivers can build plains, too.", // Draft lesson line
+                    "The Cagayan is our longest river.", // Draft lesson line
+                    "Floods spread silt, sand and clay.", // Draft lesson line
+                    "Farmers grow crops on this rich soil.", // Draft lesson line
+                }, "lesson_isabela", true), // Shows the draft note
+                new[] // Five pickups
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Conglomerate, new Spot(366f, 24f)), // On the first boulder
+                    new Pickup(ItemCatalog.Mudstone, new Spot(1272f, 96f)), // Reached from the second pile
+                    new Pickup(ItemCatalog.Halite, new Spot(3066f, 0f)), // Between two spike traps
+                    new Pickup(ItemCatalog.Limestone, new Spot(3388f, 120f)), // Secret spot needs a bounce and double jump
+                    new Pickup(ItemCatalog.Conglomerate, new Spot(4716f, 24f)), // On a boulder near the farm shed
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts on the ground
+                new[] { new Spot(2500f, 0f) }, // The checkpoint flag
+                new[] // Gaps and spike traps
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(900f, 0f), 48f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(1500f, 0f), 32f), // Spike trap
+                    new Hazard(HazardType.Pit, new Spot(2100f, 0f), 56f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(3000f, 0f), 32f), // Spike trap
+                    new Hazard(HazardType.Spikes, new Spot(3100f, 0f), 32f), // Spike trap
+                    new Hazard(HazardType.Pit, new Spot(3800f, 0f), 56f), // Gap in the ground
+                    new Hazard(HazardType.Spikes, new Spot(4300f, 0f), 32f), // Spike trap
+                }, // Ends the hazards
+                new Spot(5240f, 0f), // Farm Shed at the goal
+                new[] // Draft lines for the Result Screen
+                { // Opens the review
+                    "Rivers spread soil when they flood a plain.", // Draft review line
+                    "Hardened mud and clay become mudstone.", // Draft review line
+                    "River gravel can harden into conglomerate.", // Draft review line
+                }, // Ends the review
+                new LevelLayout(5400f, LevelTheme.RiverPlain, // Width and theme
+                    new[] { B(350f, BoulderSize.Small), B(1700f, BoulderSize.Big), B(2800f, BoulderSize.Small), B(4050f, BoulderSize.Big), B(4700f, BoulderSize.Small) }, // Ground boulders
+                    new[] { L(1240f, 96f, 64f), L(1900f, 40f, 64f), L(2300f, 28f, 80f), L(3360f, 120f, 56f) }, // Stone ledges
+                    strawPiles: new[] { new StrawPile(600f), new StrawPile(1200f), new StrawPile(3300f), new StrawPile(4500f) }), // Four bounce piles
+                "Isabela River Plain"), // Start banner
         }; // Ends the catalog
 
         static LevelData HillsHard(int number, Lesson lesson, Pickup[] pickups, Hazard[] hazards, string[] review, LevelLayout layout, string banner) // Uses the shared Hard start, flags and goal

@@ -4,7 +4,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 { // Opens the block
     /// <summary>
     /// Which music and ambience files each landform uses (D-066), and which script makes each file. File names have no extension.
-    /// Plains and Plateaus have no own files yet, so they use the Mountains files and scripts.
+    /// Plateaus uses the Mountains files and scripts for now.
     /// </summary>
     public static class LandformAudio // The audio table for levels
     { // Opens the block
@@ -12,6 +12,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         { // Opens the block
             { Episode.Mountains, "bgm_mountains" }, // The Mountains tune
             { Episode.Hills, "bgm_hills" }, // The Hills tune
+            { Episode.Plains, "bgm_plains" }, // The Plains tune
         }; // Ends the music table
 
         static readonly Dictionary<Episode, Dictionary<Difficulty, string>> Ambience = new Dictionary<Episode, Dictionary<Difficulty, string>> // One ambience set per landform, by difficulty
@@ -28,12 +29,19 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     { Difficulty.Normal, "amb_stream_normal" }, // A stream
                     { Difficulty.Hard, "amb_rain_hard" }, // Rain
                 } }, // Ends Hills ambience
+            { Episode.Plains, new Dictionary<Difficulty, string> // Plains ambience
+                { // Opens Plains ambience
+                    { Difficulty.Easy, "amb_grass_easy" }, // Wind and crickets
+                    { Difficulty.Normal, "amb_wetland_normal" }, // Frogs and water birds
+                    { Difficulty.Hard, "amb_dry_hard" }, // Dry wind and far thunder
+                } }, // Ends Plains ambience
         }; // Ends the ambience table
 
         static readonly Dictionary<Episode, string> MusicScripts = new Dictionary<Episode, string> // The script that makes each tune
         { // Opens the block
             { Episode.Mountains, "make_mountains_audio.py" }, // Mountains tune
             { Episode.Hills, "make_hills_audio.py" }, // All Hills sounds come from one script (D-066)
+            { Episode.Plains, "make_plains_audio.py" }, // Makes the Plains tune
         }; // Ends the music script table
 
         static readonly Dictionary<string, string> AmbienceScripts = new Dictionary<string, string> // The generator for each ambience file
@@ -47,6 +55,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             { "amb_cave_drips", "make_hills_normal_audio.py" }, // The Callao Cave loop
             { "amb_wind_turbines", "make_hills_hard_audio.py" }, // The Pililla wind farm loop
             { "amb_city_hills", "make_hills_hard_audio.py" }, // The Seven Hills of Rome loop
+            { "amb_grass_easy", "make_plains_audio.py" }, // Makes the grass loop
+            { "amb_wetland_normal", "make_plains_audio.py" }, // Makes the wetland loop
+            { "amb_dry_hard", "make_plains_audio.py" }, // Makes the dry wind loop
         }; // Ends the ambience script table
 
         /// <summary>The level tune for this landform's levels.</summary>

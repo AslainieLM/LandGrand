@@ -28,6 +28,9 @@ public static partial class LevelBuilder // The theme half of the level builder
         public bool PauseBackdropDrift; // True when the backdrop uses the level clock
     }
 
+    const string HillsHardBackdropScript = "Tools/Art/make_hills_hard_backdrops.py"; // Draws the Hills Hard backdrops
+    const string PlainsEasyBackdropScript = "Tools/Art/make_plains_easy_backdrops.py"; // Draws the Plains Easy backdrops
+
     static readonly Dictionary<LevelTheme, ThemeArt> Themes = new Dictionary<LevelTheme, ThemeArt> // Every theme's art
     {
         [LevelTheme.Meadow] = new ThemeArt // Mountain Trail (Easy 1)
@@ -194,13 +197,16 @@ public static partial class LevelBuilder // The theme half of the level builder
             Backdrop = "Backdrop/FairyChimneys/", BackdropScript = "Tools/Art/make_hills_normal_backdrops.py", // The theme's six backdrop layers
             PauseBackdropDrift = true, // The new theme's drift waits with the level clock
         }, // Ends the theme
-        [LevelTheme.TarsierForest] = HillsHardTheme(LevelTheme.TarsierForest, "tarsier", "Tarsier Lookout", "tarsier_lookout", 24f, TarsierForestProps), // Uses the Tarsier Lookout art
-        [LevelTheme.RainySlope] = HillsHardTheme(LevelTheme.RainySlope, "slope", "Barangay Hall", "barangay_hall", 24f, RainySlopeProps), // Uses the Barangay Hall art
-        [LevelTheme.KarstRidge] = HillsHardTheme(LevelTheme.KarstRidge, "karst", "Spider-Web Bridge", "web_bridge", 24f, KarstRidgeProps), // Uses the Spider-Web Bridge art
-        [LevelTheme.WindHills] = HillsHardTheme(LevelTheme.WindHills, "wind", "Turbine Base", "turbine_base", 32f, WindHillsProps), // Uses the Turbine Base art
-        [LevelTheme.DrumlinBay] = HillsHardTheme(LevelTheme.DrumlinBay, "drumlin", "Stone Pier", "stone_pier", 24f, DrumlinBayProps), // Uses the Stone Pier art
-        [LevelTheme.CityHills] = HillsHardTheme(LevelTheme.CityHills, "city", "Temple Ruins", "temple_ruins", 24f, CityHillsProps), // Uses the Temple Ruins art
-        [LevelTheme.KarstTowers] = HillsHardTheme(LevelTheme.KarstTowers, "tower", "Raft Dock", "raft_dock", 24f, KarstTowersProps), // Uses the Raft Dock art
+        [LevelTheme.TarsierForest] = TrailTheme(LevelTheme.TarsierForest, "tarsier", "Tarsier Lookout", "tarsier_lookout", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, TarsierForestProps), // Uses the Tarsier Lookout art
+        [LevelTheme.RainySlope] = TrailTheme(LevelTheme.RainySlope, "slope", "Barangay Hall", "barangay_hall", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, RainySlopeProps), // Uses the Barangay Hall art
+        [LevelTheme.KarstRidge] = TrailTheme(LevelTheme.KarstRidge, "karst", "Spider-Web Bridge", "web_bridge", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, KarstRidgeProps), // Uses the Spider-Web Bridge art
+        [LevelTheme.WindHills] = TrailTheme(LevelTheme.WindHills, "wind", "Turbine Base", "turbine_base", 32f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, WindHillsProps), // Uses the Turbine Base art
+        [LevelTheme.DrumlinBay] = TrailTheme(LevelTheme.DrumlinBay, "drumlin", "Stone Pier", "stone_pier", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, DrumlinBayProps), // Uses the Stone Pier art
+        [LevelTheme.CityHills] = TrailTheme(LevelTheme.CityHills, "city", "Temple Ruins", "temple_ruins", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, CityHillsProps), // Uses the Temple Ruins art
+        [LevelTheme.KarstTowers] = TrailTheme(LevelTheme.KarstTowers, "tower", "Raft Dock", "raft_dock", 24f, PixelSceneKit.HillsHardArtScript, HillsHardBackdropScript, KarstTowersProps), // Uses the Raft Dock art
+        [LevelTheme.RicePlain] = TrailTheme(LevelTheme.RicePlain, "rice", "Rice Granary", "rice_granary", 24f, PixelSceneKit.PlainsEasyArtScript, PlainsEasyBackdropScript, RicePlainProps), // Central Luzon Plain
+        [LevelTheme.SaltBeds] = TrailTheme(LevelTheme.SaltBeds, "salt", "Salt Hut", "salt_hut", 24f, PixelSceneKit.PlainsEasyArtScript, PlainsEasyBackdropScript, SaltBedsProps), // Pangasinan Salt Beds
+        [LevelTheme.RiverPlain] = TrailTheme(LevelTheme.RiverPlain, "river", "Farm Shed", "farm_shed", 22f, PixelSceneKit.PlainsEasyArtScript, PlainsEasyBackdropScript, RiverPlainProps), // Lowers the shed by the two clear rows at its base
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -425,20 +431,48 @@ public static partial class LevelBuilder // The theme half of the level builder
         PlaceHillsNormalProp(level, parent, "Far Balloon", balloons, 6493f, 120f, 1, 0.75f); // Fits left of the spikes at 6500
     } // Ends the chimney decor
 
-    static ThemeArt HillsHardTheme(LevelTheme theme, string tile, string goalName, string goalSprite, float goalY, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props) // Sets the art shared by these theme entries
+    static void RicePlainProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds rice and animals to the plain
+    { // Opens the rice decorations
+        RepeatTrailProp(level, parent, "rice_tuft", PixelSceneKit.PlainsEasyArtScript, 90f, 140f, 5f, 7); // Rice along the trail
+        PlacePlainsAnimals(level, parent, "carabao", new[] { 700f, 2200f, 4000f }, 8f); // Grazing carabao
+        PlacePlainsAnimals(level, parent, "egret", new[] { 1100f, 2600f, 3500f }, 5f); // White birds
+    } // Ends the rice decorations
+
+    static void SaltBedsProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds mounds, palms and birds to the salt beds
+    { // Opens the salt decorations
+        RepeatTrailProp(level, parent, "salt_mound", PixelSceneKit.PlainsEasyArtScript, 240f, 360f, 4f, 3); // Mounds of salt
+        RepeatTrailProp(level, parent, "palm_tree", HillsArtScript, 450f, 600f, 20f, 3); // Reuses the palms from Hills Easy
+        PlacePlainsAnimals(level, parent, "egret", new[] { 1300f, 3900f }, 5f); // Coastal birds
+    } // Ends the salt decorations
+
+    static void RiverPlainProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds corn and carabao to the river plain
+    { // Opens the river decorations
+        RepeatTrailProp(level, parent, "corn_stalk", PixelSceneKit.PlainsEasyArtScript, 140f, 120f, 14f, 3, 2, // Places the two corn poses along the trail
+            index => 1f / (1.2f + index % 3 * 0.3f)); // Corn sways at 1.2, 1.5 or 1.8 frames per second
+        PlacePlainsAnimals(level, parent, "carabao", new[] { 1000f, 4250f }, 8f); // Grazing carabao
+    } // Ends the river decorations
+
+    static void PlacePlainsAnimals(LevelData level, Transform parent, string name, float[] targets, float y) // Places the two-frame animals near the authored spots
+    { // Opens the animal group
+        var frames = TrailPropFrames(name, 2, PixelSceneKit.PlainsEasyArtScript); // Loads both poses once
+        for (int i = 0; i < targets.Length; i++) // Places each animal
+            FindAndPlaceTrailProp(level, parent, name, frames, targets[i], y, 4, 1.5f + i * 0.5f); // Varies swaps from 1.5 to 2.5 seconds
+    } // Ends the animal group
+
+    static ThemeArt TrailTheme(LevelTheme theme, string tile, string goalName, string goalSprite, float goalY, string artScript, string backdropScript, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props) // Reads the ground, goal and backdrop for a trail
         => new ThemeArt // Gives this theme its own artwork
         { // Opens the theme
             GroundTop = tile + "_top", Soil = tile + "_soil", Ledge = "ledge_" + tile, BoulderEnding = "_" + tile, // Builds the supplied tile names
             GoalName = goalName, GoalSprite = goalSprite, GoalOffset = new Vector2(24f, goalY), // Places the authored goal sprite
             Props = props, // Builds this theme's decoration
-            ArtScript = PixelSceneKit.HillsHardArtScript, // Names the ground and prop generator
-            Backdrop = $"Backdrop/{theme}/", BackdropScript = "Tools/Art/make_hills_hard_backdrops.py", // Names the backdrop folder and generator
+            ArtScript = artScript, // Names the ground and prop generator
+            Backdrop = $"Backdrop/{theme}/", BackdropScript = backdropScript, // Names the backdrop folder and generator
             PauseBackdropDrift = true, // Holds moving art when the level clock stops
         }; // Ends the theme
 
     static void TarsierForestProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds vines and blinking tarsiers
     { // Opens the forest decor
-        RepeatHillsHardProp(level, parent, "vine", 140f, 260f, 12f, 3); // Hangs vines along the trail
+        RepeatTrailProp(level, parent, "vine", PixelSceneKit.HillsHardArtScript, 140f, 260f, 12f, 3); // Hangs vines along the trail
         PlaceHillsHardProps(level, parent, "tarsier", new[] { 900f, 4300f, 7700f }, 20f, 4, 2, 2.5f); // Places three tarsiers
     } // Ends the forest decor
 
@@ -451,25 +485,25 @@ public static partial class LevelBuilder // The theme half of the level builder
 
     static void KarstRidgeProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds rock points and rope rails
     { // Opens the ridge decor
-        RepeatHillsHardProp(level, parent, "karst_spike", 160f, 340f, 8f, 3); // Spreads small limestone points
+        RepeatTrailProp(level, parent, "karst_spike", PixelSceneKit.HillsHardArtScript, 160f, 340f, 8f, 3); // Spreads small limestone points
         PlaceHillsHardProps(level, parent, "rope_rail", new[] { 2600f, 5900f }, 6f, 3); // Shows rope rails beside the trail
     } // Ends the ridge decor
 
     static void WindHillsProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds far turbines and moving grass
     { // Opens the windy decor
         PlaceHillsHardProps(level, parent, "turbine_far", new[] { 1000f, 3900f, 7200f }, 40f, 1, 2, 0.5f); // Turns three distant turbines
-        RepeatHillsHardProp(level, parent, "wind_grass", 80f, 180f, 5f, 7, 2); // Bends grass along the trail
+        RepeatTrailProp(level, parent, "wind_grass", PixelSceneKit.HillsHardArtScript, 80f, 180f, 5f, 7, 2); // Bends grass along the trail
     } // Ends the windy decor
 
     static void DrumlinBayProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds stone walls and sheep
     { // Opens the bay decor
-        RepeatHillsHardProp(level, parent, "stone_wall", 300f, 600f, 5f, 3); // Spreads low walls beside the trail
+        RepeatTrailProp(level, parent, "stone_wall", PixelSceneKit.HillsHardArtScript, 300f, 600f, 5f, 3); // Spreads low walls beside the trail
         PlaceHillsHardProps(level, parent, "sheep", new[] { 1800f, 4400f, 8100f }, 6f, 4, 2); // Places three sheep
     } // Ends the bay decor
 
     static void CityHillsProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds cypresses and broken columns
     { // Opens the city decor
-        RepeatHillsHardProp(level, parent, "cypress", 220f, 500f, 16f, 3); // Spreads tall trees along the trail
+        RepeatTrailProp(level, parent, "cypress", PixelSceneKit.HillsHardArtScript, 220f, 500f, 16f, 3); // Spreads tall trees along the trail
         PlaceHillsHardProps(level, parent, "column_broken", new[] { 2900f, 6900f }, 12f, 3); // Places two pieces of old columns
     } // Ends the city decor
 
@@ -479,31 +513,32 @@ public static partial class LevelBuilder // The theme half of the level builder
         PlaceHillsHardProps(level, parent, "cormorant", new[] { 2300f, 5000f, 8400f }, 10f, 4, 2); // Places three birds beside the trail
     } // Ends the river decor
 
-    static void RepeatHillsHardProp(LevelData level, Transform parent, string name, float first, float spacing, float y, int order, int count = 1) // Places the regular row of props
+    static void RepeatTrailProp(LevelData level, Transform parent, string name, string artScript, float first, float spacing, float y, int order, int count = 1, System.Func<int, float> secondsPerFrameAt = null) // Fits a row of still or moving props
     { // Opens the row
-        var frames = HillsHardPropFrames(name, count); // Loads each picture once
+        var frames = TrailPropFrames(name, count, artScript); // Loads each picture once
         var placed = new List<float>(); // Remembers the props already placed in this row
         float end = level.Goal.X - 90f; // Leaves the same clear space at the goal as Normal
         for (float target = first; target < end; target += spacing) // Starts from each planned interval
         { // Opens the placement
-            float x = PlaceHillsHardProp(level, parent, name, frames, target, y, order, 1f, candidate => placed.All(previous => Mathf.Abs(candidate - previous) >= spacing / 2f)); // Keeps half the planned spacing between props
+            float secondsPerFrame = secondsPerFrameAt?.Invoke(placed.Count) ?? 1f; // Uses the row's frame time or the one-second default
+            float x = FindAndPlaceTrailProp(level, parent, name, frames, target, y, order, secondsPerFrame, candidate => placed.All(previous => Mathf.Abs(candidate - previous) >= spacing / 2f)); // Keeps half the planned spacing between props
             placed.Add(x); // Keeps neighbors apart
         } // Ends the placement
     } // Ends the row
 
     static void PlaceHillsHardProps(LevelData level, Transform parent, string name, float[] targets, float y, int order, int count = 1, float seconds = 1f) // Places props at their listed landmarks
     { // Opens the group
-        var frames = HillsHardPropFrames(name, count); // Loads each picture once
-        foreach (float target in targets) PlaceHillsHardProp(level, parent, name, frames, target, y, order, seconds); // Finds the nearest spot to each landmark
+        var frames = TrailPropFrames(name, count, PixelSceneKit.HillsHardArtScript); // Loads each picture once
+        foreach (float target in targets) FindAndPlaceTrailProp(level, parent, name, frames, target, y, order, seconds); // Finds the nearest spot to each landmark
     } // Ends the group
 
-    static Sprite[] HillsHardPropFrames(string name, int count) // Loads the still picture or its numbered frames
-        => Enumerable.Range(0, count).Select(i => PixelSceneKit.Sprite(SpriteFolder, count == 1 ? $"Props/{name}" : $"Props/{name}_{i:00}", PixelSceneKit.HillsHardArtScript)).ToArray(); // Uses the Hard generator in any missing-file message
+    static Sprite[] TrailPropFrames(string name, int count, string artScript) // Loads the still picture or its numbered frames
+        => Enumerable.Range(0, count).Select(i => PixelSceneKit.Sprite(SpriteFolder, count == 1 ? $"Props/{name}" : $"Props/{name}_{i:00}", artScript)).ToArray(); // Names the prop generator in missing-file messages
 
-    static float PlaceHillsHardProp(LevelData level, Transform parent, string name, Sprite[] frames, float target, float y, int order, float seconds, System.Func<float, bool> spacingFits = null) // Finds and draws a safe decoration
+    static float FindAndPlaceTrailProp(LevelData level, Transform parent, string name, Sprite[] frames, float target, float y, int order, float seconds, System.Func<float, bool> spacingFits = null) // Finds and draws a safe decoration
     { // Opens the prop build
         float halfWidth = frames.Max(frame => frame.rect.width) / 2f; // Fits the widest pose
-        float? x = NearestHillsPropSpot(level, target, halfWidth, halfWidth, level.Goal.X - 90f, level.Layout.Width, spacingFits); // Searches the safe trail for the nearest fit
+        float? x = NearestTrailPropSpot(level, target, halfWidth, halfWidth, level.Goal.X - 90f, level.Layout.Width, spacingFits); // Searches the safe trail for the nearest fit
         if (!x.HasValue) throw new System.InvalidOperationException($"{level.SceneName}: {name} near x {target} has no fitting spot."); // Reports any prop that could not fit
         if (Mathf.Abs(x.Value - target) > 64f) Debug.Log($"{level.SceneName}: moved {name} from x {target} to {x.Value} ({Mathf.Abs(x.Value - target)} px)."); // Reports moves beyond the spec's limit
         PlaceHillsNormalProp(level, parent, name, frames, x.Value, y, order, seconds); // Reuses the existing decoration renderer and level clock
@@ -524,7 +559,7 @@ public static partial class LevelBuilder // The theme half of the level builder
         for (float target = start; target < end; target += spacing) // Starts each placement around the intended interval
         { // Opens a placement
             float min = Mathf.Max(start, last + spacing / 2f); // Gives each decoration room
-            float? x = NearestHillsPropSpot(level, target, halfWidth, min, end, spacing / 2f); // Finds an open spot near this interval
+            float? x = NearestTrailPropSpot(level, target, halfWidth, min, end, spacing / 2f); // Finds an open spot near this interval
             if (!x.HasValue) // This stretch is too crowded to place the prop
             { // Opens the fit warning
                 Debug.LogWarning($"{level.SceneName}: {name} near x {target} refused by the fit check."); // Reports the prop that could not be placed
@@ -535,9 +570,9 @@ public static partial class LevelBuilder // The theme half of the level builder
         } // Ends a placement
     } // Ends recurring placement
 
-    static float? NearestHillsPropSpot(LevelData level, float target, float halfWidth, float min, float max, float reach, System.Func<float, bool> spacingFits = null) // Finds the closest usable whole pixel in this stretch
+    static float? NearestTrailPropSpot(LevelData level, float target, float halfWidth, float min, float max, float reach, System.Func<float, bool> spacingFits = null) // Finds the closest usable whole pixel in this stretch
     { // Opens the search
-        bool Fits(float x) => x >= min && x < max && HillsPropFits(level, x, halfWidth) && (spacingFits?.Invoke(x) ?? true); // Keeps both spacing and trail clearance
+        bool Fits(float x) => x >= min && x < max && TrailPropFits(level, x, halfWidth) && (spacingFits?.Invoke(x) ?? true); // Keeps both spacing and trail clearance
         if (Fits(target)) return target; // The planned interval is already clear
         for (int step = 1; step <= reach; step++) // Looks one more pixel out on each side
         { // Opens the step
@@ -549,14 +584,14 @@ public static partial class LevelBuilder // The theme half of the level builder
 
     static void PlaceHillsNormalProp(LevelData level, Transform parent, string name, Sprite[] frames, float x, float y, int order, float seconds = 1f) // Builds one safe decoration
     { // Opens the prop build
-        if (!HillsPropFits(level, x, frames[0].rect.width / 2f)) // Checks the full picture before placing it
+        if (!TrailPropFits(level, x, frames[0].rect.width / 2f)) // Checks the full picture before placing it
         { // Opens the fit warning
             Debug.LogWarning($"{level.SceneName}: {name} at x {x} refused by the fit check."); // Leaves the trail clear and reports the conflict
             return; // Does not place an overlapping prop
         } // Ends the fit warning
         var view = M.Renderer(name, frames[0], order, parent); // Draws the prop with its authored layer order
         view.transform.position = LevelGeometry.ToWorld(x, y); // Keeps its middle at the given spot
-        if (frames.Length == 1) return; // A still prop is done
+        if (frames.Length == 1) return; // A still prop needs no animation component
         var animation = view.gameObject.AddComponent<LevelPropAnimation>(); // Gives it an animation that pauses with the game
         animation.frames = frames; // Connects the pose pictures
         animation.secondsPerFrame = seconds; // Uses this prop's frame time
@@ -568,7 +603,7 @@ public static partial class LevelBuilder // The theme half of the level builder
         float halfWidth = sprite.rect.width / 2f; // Half the picture width, so the whole picture is checked
         for (float x = start; x < level.Goal.X - 90f; x += spacing) // Spaces the props out until the goal
         { // Tests one place
-            if (!HillsPropFits(level, x, halfWidth)) continue; // Skips any place over a gap, ledge or boulder
+            if (!TrailPropFits(level, x, halfWidth)) continue; // Skips any place over a gap, ledge or boulder
             var prop = M.Renderer(name, sprite, order, parent); // Draws the decoration
             prop.transform.position = LevelGeometry.ToWorld(x, centreY); // Puts its middle at the given height
         } // Moves to the next place
@@ -577,13 +612,13 @@ public static partial class LevelBuilder // The theme half of the level builder
     static void HillsAnimal(LevelData level, Transform parent, string name, Sprite[] frames, float x, float centreY, float seconds) // One animal that swaps its two pictures on a timer
     { // Starts the animal
         float halfWidth = frames[0].rect.width / 2f; // Half the picture width, so the whole animal is checked
-        if (!HillsPropFits(level, x, halfWidth)) { Debug.LogWarning($"{name} at x {x} is refused by the fit check and is not placed"); return; } // Report the refused spot and do not move the animal
+        if (!TrailPropFits(level, x, halfWidth)) { Debug.LogWarning($"{name} at x {x} is refused by the fit check and is not placed"); return; } // Report the refused spot and do not move the animal
         var animal = M.Renderer(name, frames[0], 4, parent); // Draws it behind the explorer
         animal.transform.position = LevelGeometry.ToWorld(x, centreY); // Puts its middle at the given spot
         Loop(animal.gameObject, frames, 1f / seconds); // Swaps the frames every given number of seconds
     } // Ends the animal
 
-    static bool HillsPropFits(LevelData level, float x, float halfWidth) // The shared check plus the Hills ground and water rules
+    static bool TrailPropFits(LevelData level, float x, float halfWidth) // Keeps props clear of terrain and trail objects
     { // Opens the block
         bool Overlaps(float left, float right) => x + halfWidth >= left && x - halfWidth <= right; // One overlap test for both ledges and sand
         var layout = level.Layout; // The placed objects
@@ -593,7 +628,8 @@ public static partial class LevelBuilder // The theme half of the level builder
             && !layout.Pools.Any(p => Overlaps(p.X, p.X + p.Width)) // Keeps safe water clear as well as water pits
             && !layout.MudZones.Any(m => Overlaps(m.X, m.X + m.Width)) // Leaves the whole mud stretch visible
             && !layout.Logs.Any(l => Overlaps(Mathf.Min(l.Spawn, l.End) - 8f, Mathf.Max(l.Spawn, l.End) + 8f)) // Keeps the log route and its edges clear
-            && !layout.Currents.Any(c => Overlaps(c.X, c.X + Mathf.Min(16f, c.Width))); // Leaves the start of the current visible
+            && !layout.Currents.Any(c => Overlaps(c.X, c.X + Mathf.Min(16f, c.Width))) // Leaves the start of the current visible
+            && !layout.StrawPiles.Any(p => Overlaps(p.X - 8f, p.X + StrawPile.Width + 8f)); // Leaves eight pixels around each straw pile
     } // Ends the block
 
     static void GroundProps(LevelData level, Transform parent, string name, float start, float spacing) // Places one kind of ground decoration

@@ -42,6 +42,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
             Debug.LogError($"Missing art. Run: python Tools/Art/make_landform_map_art.py and python {ArtScript}"); // Tell the user what to do
             return; // Stop before building a broken scene
         }
+        LandformLife.ConfigurePlainsSprites(); // Imports the Plains menu life before building
         M.ConfigurePixelSprites(DescriptionArt.Folder, _ => false); // Loads the crisp book button before building
         var font = M.EnsureFont(); // The pixel font at 2x (decision D-050)
         if (font == null) return; // EnsureFont already said what is wrong
@@ -158,7 +159,7 @@ public static class SelectionBuilder // Makes the difficulty and level selection
         snow.area = new Rect(0f, 28f, 480f, 180f); snow.count = 50; snow.windPixelsPerSecond = new Vector2(10f, 6f); // Light snow over the whole picture
         sets[(int)Episode.Mountains] = mountains.gameObject; // Mountains set
         sets[(int)Episode.Hills] = HillsMenuLife(); // Hills set
-        sets[(int)Episode.Plains] = CloudOnly("Plains life"); // Plains has only the cloud
+        sets[(int)Episode.Plains] = PlainsMenuLife(); // Plains adds egrets and grass
         sets[(int)Episode.Plateaus] = CloudOnly("Plateaus life"); // Plateaus has only the cloud
         return sets; // The backdrop turns on just the picked one
     }
@@ -173,6 +174,19 @@ public static class SelectionBuilder // Makes the difficulty and level selection
         foreach (float x in new[] { 30f, 110f, 190f, 290f, 370f, 450f }) LandformLife.Grass(life, x); // Six grass tufts along the bottom
         return life.gameObject; // The backdrop shows it only for Hills
     }
+
+    static GameObject PlainsMenuLife() // Makes the Plains menu animations
+    { // Opens the menu life
+        var life = new GameObject("Plains life").transform; // Holds the Plains menu life
+        LandformLife.Cloud(life); // Uses the shared cloud
+        var center = new Vector2(330f, 60f); // Middle of the egret paths
+        var radius = new Vector2(24f, 10f); // Width and height of each oval
+        LandformLife.Egret(life, center, radius, 12f); // The first egret circles in twelve seconds
+        LandformLife.Egret(life, center, radius, 15f); // The second egret circles in fifteen seconds
+        foreach (float x in new[] { 30f, 110f, 190f, 290f, 370f, 450f }) // Sets out six tufts along the bottom
+            LandformLife.PlainsStandingLife(life, "Grass", "grass", new Vector2(x, 268f), 1.5f, 5); // Rests each tuft on row 268
+        return life.gameObject; // Only the Plains menu uses this life
+    } // Ends the menu life
 
     /// <summary>A landform's life set with only the drifting cloud (for landforms that have no other life yet).</summary>
     static GameObject CloudOnly(string name) // Makes a set with just a cloud

@@ -133,7 +133,6 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
             Tiled("Ledge", ThemeSprite(art, art.Ledge), r, 6, geometry.transform); // Draws the theme ledge
             solids.Add(r); // Solid like a boulder: it blocks the sides and the head, and holds the explorer from above, so nobody walks through it
         }
-        geometry.solids = solids.ToArray(); // Ground, boulders and ledges
 
         BuildGoal(level, art, geometry.transform); // The cave, arch or stone pile, with its flag
         var checkpoints = new SpriteRenderer[level.Checkpoints.Count]; // One flag per safe point
@@ -199,6 +198,8 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         var bar = controller.progressBar = parts.AddComponent<TrailProgressBar>(); // The trail bar
         controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
         controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
+        BuildStrawPiles(layout, geometry.transform, solids, controller); // Builds the solid piles and connects the bounce part
+        geometry.solids = solids.ToArray(); // Ground, boulders, ledges and straw piles
         BuildObjects(level, geometry, explorer, controller); // Builds the reused level objects
         BuildHardObjects(level, geometry, explorer, controller); // Builds rolling traps and slippery surfaces from the layout
         BuildSoftSand(layout, geometry, controller); // Adds the soft sand part, its step sound and puffs (Hills Easy 3)
@@ -233,6 +234,30 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         Directory.CreateDirectory(Path.GetDirectoryName(path)); // Make the Scenes folder if it is missing
         EditorSceneManager.SaveScene(scene, path); // Save the scene
     }
+
+    static void BuildStrawPiles(LevelLayout layout, Transform parent, List<Rect> solids, LevelController controller) // Builds the straw pile art, boxes and bounce sounds
+    { // Opens the pile build
+        if (layout.StrawPiles.Count == 0) return; // No new part on levels without piles
+        var watcher = controller.gameObject.AddComponent<StrawBounceWatcher>(); // One part handles every pile
+        watcher.normal = K.Sprite(SpriteFolder, "straw_pile", K.PlainsEasyArtScript); // Shows the resting pile
+        watcher.squash = K.Sprite(SpriteFolder, "straw_pile_squash", K.PlainsEasyArtScript); // Shows the pile pressed down
+        watcher.bitsFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"Props/straw_bits_{i:00}", K.PlainsEasyArtScript)).ToArray(); // Loads the two bits poses
+        watcher.bounceSound = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_straw_bounce.wav"); // Loads the bounce sound
+        if (watcher.bounceSound == null) Debug.LogError("Missing Assets/Audio/sfx_straw_bounce.wav. Run: python Tools/Audio/make_plains_audio.py"); // Names the sound generator
+        watcher.views = new StrawBounceWatcher.View[layout.StrawPiles.Count]; // Matches the layout order
+        for (int i = 0; i < layout.StrawPiles.Count; i++) // Builds each pile
+        { // Opens one pile
+            var pile = layout.StrawPiles[i]; // Takes the left edge from the layout
+            float middle = pile.X + StrawPile.Width / 2f; // Finds the center of the pile
+            var art = M.Renderer($"Straw Pile {i + 1}", watcher.normal, 6, parent); // Draws the pile at boulder depth
+            art.transform.position = LevelGeometry.ToWorld(middle, StrawPile.Height / 2f); // Sits the pile on the ground
+            var bits = M.Renderer("Straw Bits", watcher.bitsFrames[0], 19, art.transform); // Draws straw just behind the explorer
+            bits.transform.position = LevelGeometry.ToWorld(middle, StrawPile.Height + 3f); // The bits start above the pile's top
+            bits.enabled = false; // The bits wait for the first bounce
+            watcher.views[i] = new StrawBounceWatcher.View { pile = art, bits = bits }; // Connects the two renderers
+            solids.Add(new Rect(pile.X + 1f, 0f, StrawPile.Width - 2f, StrawPile.Height - 1f)); // Sets the box inside the dark outline
+        } // Ends one pile
+    } // Ends the pile build
 
     static void BuildVents(LevelLayout layout, Transform parent) // Each steam vent: its rim in the ground, a warning wisp and a puff above it (D-055)
     {

@@ -120,6 +120,15 @@ EditorBuildSettings:
     path: Assets/Scenes/HillsHard7.unity
     guid: 5e6ca37a0e046d448ad4604cf4cb7499
   - enabled: 1
+    path: Assets/Scenes/PlainsEasy1.unity
+    guid: 3e2183a54881e2c4dbeb2c3831476794
+  - enabled: 1
+    path: Assets/Scenes/PlainsEasy2.unity
+    guid: 41be88a38eae0e040b5bea6c5b360b22
+  - enabled: 1
+    path: Assets/Scenes/PlainsEasy3.unity
+    guid: 9052feb801ada33438502d15a7871206
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:

@@ -13,7 +13,9 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Easy)); // Hills Easy has data
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Normal)); // Hills Normal has its five trails
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has seven trails
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Easy)); // The open Plains card says Coming soon
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Easy)); // Plains Easy has three trails
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Plains Normal still says Coming soon
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Plains Hard waits for data
         }
 
         [Test] // Checks the new route from Easy to Normal
@@ -112,8 +114,21 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(p.IsEpisodeUnlocked(Episode.Plains)); // The map can open Plains
             Assert.IsTrue(p.ShouldAnimateUnlock(Episode.Plains, false)); // The first visit shows the unlock
             Assert.IsFalse(p.ShouldAnimateUnlock(Episode.Plains, true)); // The seen flag prevents a repeat
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains)); // Tapping Plains still says Coming soon
+            Assert.IsTrue(p.IsLevelAvailable(Episode.Plains, Difficulty.Easy, 1)); // Plains Easy 1 opens from the map
+            Assert.IsNotNull(LevelCatalog.Find(Episode.Plains, Difficulty.Easy, 1)); // The first trail has playable data
         } // Ends the check
+
+        [Test] // Checks the end of Plains Easy
+        public void PlainsEasy3OpensTheNormalCardAndHidesNext() // The open card still waits for level data
+        { // Starts the Plains route check
+            var p = new PlayerProgress(); // Starts a new save
+            foreach (var trail in LevelCatalog.All) // Uses the trails that come before Plains Normal
+                p.RecordClear(trail.Episode, trail.Difficulty, trail.Number, 1); // Clears each trail with one star
+            Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Plains, Difficulty.Normal)); // Shows the open Normal card
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Tapping it says Coming soon
+            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Plains, Difficulty.Easy, 3).Step); // The Result Screen hides Next
+            Assert.IsFalse(p.IsEpisodeUnlocked(Episode.Plateaus)); // Plateaus still needs a full Plains clear
+        } // Ends the Plains route check
 
         static void ClearMountains(PlayerProgress p) // Clears all 15 Mountains levels
         {

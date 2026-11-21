@@ -35,10 +35,20 @@ namespace LandGrand.Rules // Holds the plain game rules
             "People farm, live and use wind on hills.", // How people use hills
         }, "bg_hills", true); // Uses the Hills picture and draft note
 
+        static readonly LandformSummary Plains = new LandformSummary("Plains", new[] // The five draft lines for Plains (D-069)
+        { // Starts the Plains lines
+            "Plains are wide, flat and low lands.", // What plains are
+            "Rivers, wind, ice and lava can make plains.", // How plains form
+            "Plains soil is often silt, sand and clay.", // What plains soil holds
+            "Many people farm and live on plains.", // How people use plains
+            "Some plains lie flat beside the sea.", // Where some plains lie
+        }, "bg_plains", true); // Uses the Plains picture and draft note
+
         static readonly Dictionary<Episode, LandformSummary> Reviews = new Dictionary<Episode, LandformSummary> // The finished reviews, by landform
         { // Starts the table
             { Episode.Mountains, Mountains }, // Mountains has its full review
             { Episode.Hills, Hills }, // Hills has its review too
+            { Episode.Plains, Plains }, // Adds the Plains review
         }; // Ends the table
 
         public static LandformSummary For(Episode episode) => Reviews.TryGetValue(episode, out var review) ? review : ComingSoon(episode); // Other landforms wait for their reviews

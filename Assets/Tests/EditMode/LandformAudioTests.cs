@@ -7,7 +7,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
     {
         [TestCase(Episode.Mountains, "bgm_mountains")] // Mountains keeps its tune
         [TestCase(Episode.Hills, "bgm_hills")] // Hills has its own tune
-        [TestCase(Episode.Plains, "bgm_mountains")] // Plains uses the Mountains tune for now
+        [TestCase(Episode.Plains, "bgm_plains")] // Plains has its own tune
         [TestCase(Episode.Plateaus, "bgm_mountains")] // Plateaus uses the Mountains tune for now
         public void MusicFor_PicksTheLandformTune(Episode landform, string file) // One tune per landform
         {
@@ -20,12 +20,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [TestCase(Episode.Hills, Difficulty.Easy, "amb_stream_easy")] // Hills Easy has a stream
         [TestCase(Episode.Hills, Difficulty.Normal, "amb_stream_normal")] // Hills Normal has a stream
         [TestCase(Episode.Hills, Difficulty.Hard, "amb_rain_hard")] // Hills Hard has rain
+        [TestCase(Episode.Plains, Difficulty.Easy, "amb_grass_easy")] // Uses the Plains Easy loop
+        [TestCase(Episode.Plains, Difficulty.Normal, "amb_wetland_normal")] // Uses the Plains Normal loop
+        [TestCase(Episode.Plains, Difficulty.Hard, "amb_dry_hard")] // Uses the Plains Hard loop
         public void AmbienceFor_PicksTheLandformAndDifficulty(Episode landform, Difficulty difficulty, string file) // Landform and difficulty choose the sound
         {
             Assert.AreEqual(file, LandformAudio.AmbienceFor(landform, difficulty)); // The file name, without extension
         }
 
-        [TestCase(Episode.Plains)] // Plains has no own sounds yet
         [TestCase(Episode.Plateaus)] // Plateaus has no own sounds yet
         public void AmbienceFor_OtherLandformsUseTheMountainsSounds(Episode landform) // Falls back to Mountains
         {
@@ -37,7 +39,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
 
         [TestCase(Episode.Mountains, "make_mountains_audio.py")] // Mountains tune comes from the Mountains script
         [TestCase(Episode.Hills, "make_hills_audio.py")] // Hills tune comes from the Hills script
-        [TestCase(Episode.Plains, "make_mountains_audio.py")] // Plains uses the Mountains script, like its tune
+        [TestCase(Episode.Plains, "make_plains_audio.py")] // Uses the Plains music script
         [TestCase(Episode.Plateaus, "make_mountains_audio.py")] // Plateaus uses the Mountains script, like its tune
         public void MusicScriptFor_NamesTheScriptThatMakesTheTune(Episode landform, string script) // The script name for the tune
         {
@@ -50,7 +52,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [TestCase(Episode.Hills, Difficulty.Easy, "make_hills_audio.py")] // Hills Easy stream, from the Hills script
         [TestCase(Episode.Hills, Difficulty.Normal, "make_hills_audio.py")] // Hills Normal stream, from the Hills script
         [TestCase(Episode.Hills, Difficulty.Hard, "make_hills_audio.py")] // Hills Hard rain, from the Hills script
-        [TestCase(Episode.Plains, Difficulty.Hard, "make_hard_audio.py")] // Plains Hard uses the Mountains script
+        [TestCase(Episode.Plains, Difficulty.Easy, "make_plains_audio.py")] // Makes the Plains Easy loop
+        [TestCase(Episode.Plains, Difficulty.Normal, "make_plains_audio.py")] // Makes the Plains Normal loop
+        [TestCase(Episode.Plains, Difficulty.Hard, "make_plains_audio.py")] // Makes the Plains Hard loop
         public void AmbienceScriptFor_NamesTheScriptThatMakesTheFile(Episode landform, Difficulty difficulty, string script) // The script name for the ambience
         {
             Assert.AreEqual(script, LandformAudio.AmbienceScriptFor(landform, difficulty)); // The Python file name

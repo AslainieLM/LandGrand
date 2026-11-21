@@ -47,7 +47,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var shelves = Collection.Shelves(p); // Every shelf
             Assert.AreEqual(2, shelves[(int)Episode.Mountains].FoundCount); // Both are on the Mountains shelf
             Assert.AreEqual(1, shelves[(int)Episode.Hills].FoundCount); // Only quartz is on the Hills shelf
-            Assert.AreEqual(0, shelves[(int)Episode.Plains].FoundCount); // Plains has no kinds yet
+            Assert.AreEqual(1, shelves[(int)Episode.Plains].FoundCount); // Quartz is also on the Plains shelf
+            Assert.AreEqual(2, Collection.FoundCount(p)); // A shared kind counts only once overall
         }
 
         [Test] // Unity runs this method as a Test
@@ -76,15 +77,25 @@ namespace LandGrand.Rules.Tests // Test code lives here
         }
 
         [Test] // Unity runs this method as a Test
-        public void LandformsWithoutItemKinds_AreComingSoon() // Plains and Plateaus wait for their levels
+        public void LandformsWithoutItemKinds_AreComingSoon() // Empty shelves wait for item kinds
         {
             var shelves = Collection.Shelves(new PlayerProgress()); // Shelves of a fresh profile
             Assert.IsFalse(shelves[1].IsComingSoon); // Hills has its kinds now (D-066)
             Assert.AreEqual(23, shelves[1].Slots.Count); // Ten from Easy, seven from Normal and six from Hard
-            Assert.IsTrue(shelves[2].IsComingSoon); // Plains
+            Assert.IsFalse(shelves[2].IsComingSoon); // Plains has its Easy kinds
+            CollectionAssert.AreEqual(new[] { "quartz", "sandstone", "clay", "conglomerate", "shale", "limestone", "siltstone", "halite", "gypsum", "mudstone" }, shelves[2].Slots.Select(slot => slot.Kind.Id)); // The full Plains shelf in catalog order
             Assert.IsTrue(shelves[3].IsComingSoon); // Plateaus
-            Assert.AreEqual(0, shelves[2].Slots.Count); // No slots on a "Coming soon" shelf
+            Assert.AreEqual(0, shelves[3].Slots.Count); // No slots on a "Coming soon" shelf
         }
+
+        [Test] // Runs the Plains kind check
+        public void PlainsKinds_AppendAfterTheHillsKinds() // Keeps the saved catalog order
+        { // Starts the kind check
+            var kinds = ItemCatalog.All.Skip(50).ToArray(); // Reads the four new kinds
+            CollectionAssert.AreEqual(new[] { "siltstone", "halite", "gypsum", "mudstone" }, kinds.Select(k => k.Id)); // Keeps the new kind order
+            CollectionAssert.AreEqual(new[] { true, false, false, true }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels
+            Assert.IsTrue(kinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Plains }))); // Each draft kind stays on the Plains shelf
+        } // Ends the kind check
 
         [Test] // Unity runs this method as a Test
         public void FreshProfile_HasNothingFound() // Every slot is still hidden
@@ -92,7 +103,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(50, Collection.TotalCount); // Thirty-four Mountains kinds and sixteen Hills-only kinds
+            Assert.AreEqual(54, Collection.TotalCount); // Adds four Plains-only kinds
         }
 
         [Test] // Unity runs this method as a Test
