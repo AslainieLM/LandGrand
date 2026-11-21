@@ -186,6 +186,62 @@ SYMBOLS = {  # One pattern per badge
         "....######....", "...########...", "..##########..", ".############.", ".############.",
         ".oooooooooooo.", ".############.", "##oooooooooo##", "##o########o##", "##oooooooooo##",
         ".############."],
+    "salt_maker": [  # A white salt heap with a small rake (D-069, Plains)
+        "...........#..", "...........#..", "...........#..", "...........#..",  # Rake handle, rows 0-3
+        "........#####.", "........#.#.#.",  # Rake head and teeth, rows 4-5
+        "....##........", "...####.......", "..######......", ".########.....", "##########....",  # Salt heap, rows 6-10
+        "oooooooooo....",  # Shade at the bottom, row 11
+    ],
+    "straw_jumper": [  # A golden straw pile with an up arrow (D-069, Plains)
+        ".......#......", "......###.....", ".....#####....",  # Arrow head, rows 0-2
+        "......##......", "......##......", "......##......",  # Arrow shaft, rows 3-5
+        "....######....", "..##########..", ".############.",  # Straw pile, rows 6-8
+        "##o###o###o###", "##############", "oooooooooooooo",  # Straw texture and shade, rows 9-11
+    ],
+    "flat_star": [  # A star over a flat green horizon line (D-069, Plains)
+        "......#.......", ".....###......", "...#######....", "....#####.....",  # Star top, rows 0-3
+        ".....###......", "....##.##.....", "...##...##....",  # Star bottom, rows 4-6
+        "..............",  # Gap, row 7
+        "##############", "oooooooooooooo",  # Flat horizon line and shade, rows 8-9
+    ],
+    "plain_collector": [  # A small bag with a grey-white halite cube (D-069, Plains)
+        "..........####", "..........####", "..........oooo", "..........oooo",  # Salt cube, rows 0-3
+        "..............",  # Gap, row 4
+        "...#######....", "..#########...", ".###########..",  # Bag top, rows 5-7
+        ".ooooooooooo..", ".###########..", ".###########..", ".ooooooooooo..",  # Bag body, rows 8-11
+    ],
+    "philippine_plains": [  # Green rice stalks (D-069, Plains Philippines)
+        "..#...#...#...", ".###.###.###..",  # Rice heads, rows 0-1
+        "..#...#...#...", "..#...#...#...", "..#...#...#...",  # Stalks, rows 2-4
+        "..o...o...o...", "..o...o...o...", "..o...o...o...", "..o...o...o...",  # Stalks in shade, rows 5-8
+        "##############", "oooooooooooooo",  # Field line and shade, rows 9-10
+    ],
+    "delta_boater": [  # A small boat on water (D-069, Plains)
+        "......#.......", ".....##.......", "....###.......", "...####.......", "......#.......",  # Mast and sail, rows 0-4
+        "..############", ".############.", "..##########..",  # Boat hull, rows 5-7
+        "oooooooooooooo", ".oo..oo..oo..o",  # Water, rows 8-9
+    ],
+    "prairie_ranger": [  # A ranger hat over tall grass (D-069, Plains)
+        "....######....", "....######....", "...########...",  # Hat crown, rows 0-2
+        "##############",  # Hat brim, row 3
+        "..............",  # Gap, row 4
+        "#.#..#.#..#.#.", "##.##.##.##.##", "##############", "oooooooooooooo",  # Tall grass and shade, rows 5-8
+    ],
+    "world_plains": [  # A small globe with a flat green band (D-069, Plains)
+        "....######....", "..##########..", ".############.", ".############.",  # Globe top, rows 0-3
+        ".oooooooooooo.", ".oooooooooooo.",  # Flat green band, rows 4-5
+        ".############.", "..##########..", "....######....",  # Globe bottom, rows 6-8
+    ],
+    "steady_plains": [  # Three stars in a row over grass (D-069, Plains)
+        ".#...#...#....", "###.###.###...", "#.#.#.#.#.#...",  # Three small stars, rows 0-2
+        "..............",  # Gap, row 3
+        "##############", "oooooooooooooo",  # Grass and shade, rows 4-5
+    ],
+    "plain_master": [  # A crown over a flat plain with a rice field (D-069, Plains)
+        "#..#..#..#..#.", "##.##.##.##.##", "##############", "##############",  # Crown, rows 0-3
+        "..............",  # Gap, row 4
+        "oooooooooooooo", "#.#.#.#.#.#.#.", "oooooooooooooo", "#.#.#.#.#.#.#.", "oooooooooooooo",  # Plain and rice field, rows 5-9
+    ],
 }
 
 STAR5 = ["..#..", ".###.", "#####", ".###.", ".#.#."]  # A small star, 5x5
@@ -222,6 +278,9 @@ BADGES = [  # id, tier
     ("pasture_pal", "silver"), ("dune_surfer", "silver"), ("rolling_star", "gold"), ("hill_collector", "gold"),  # Hills Easy badges (D-066)
     ("philippine_hills", "silver"), ("balloon_rider", "gold"),  # Hills Normal badges (D-066)
     ("slope_ranger", "silver"), ("world_hills", "silver"), ("steady_star", "gold"), ("hill_master", "gold"),  # Hills Hard badges (D-066)
+    ("salt_maker", "silver"), ("straw_jumper", "silver"), ("flat_star", "gold"), ("plain_collector", "gold"),  # Plains badges, part 1 (D-069)
+    ("philippine_plains", "silver"), ("delta_boater", "gold"), ("prairie_ranger", "silver"), ("world_plains", "silver"),  # Plains badges, part 2 (D-069)
+    ("steady_plains", "gold"), ("plain_master", "gold"),  # Plains badges, part 3 (D-069)
 ]
 CX, CY, R = 16.0, 13.5, 13.0  # Medal centre and outer radius
 

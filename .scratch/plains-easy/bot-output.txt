@@ -1,0 +1,10 @@
+check: straw 600: bounces 1, highest feet 100.6 px (15 + 400^2/1800 = 103.9)
+check: straw 600 plus a double jump at the top: highest feet 128.0 px (+ 230^2/1800 = 29.4)
+check: walking into the pile's side: bounces 0, x 595.0 (stops at 595)
+-- Regression, Hills Easy at walk 84 (expect E1 56.8, E2 62.4, E3 70.1):
+E1 56.8  E2 62.4  E3 70.1  
+-- Plains Easy:
+E1 Central Luzon Plain: bot GOAL 56.8s (goal); bounces 0; pickups 5/5 reachable lint clean
+E2 Pangasinan Salt Beds: bot GOAL 62.4s (goal); bounces 0; pickups 5/5 reachable lint clean
+E3 Isabela River Plain: bot GOAL 62.2s (goal); bounces 4; pickups 5/5 reachable lint clean
+   without straw piles: needs a pile -> pickups [mudstone(1272,96) limestone(3388,120)], ledges [L(1240,96) L(3360,120)]
