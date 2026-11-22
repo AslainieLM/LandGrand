@@ -2,7 +2,7 @@
 
 Planned on 2026-11-22 in a grilling session (two rounds, eight questions). The user accepted every recommendation. It follows the D-069 outline. Plains Easy and Plains Normal are built, reviewed and played ("all passed"; `f0b8ff6`, `7af9350`). This is the last part of Plains: when all 15 Plains levels are cleared, Plateaus opens.
 
-**Build split (same as Plains Normal):** Claude made the art, backgrounds, sound and bot-checked layouts. ChatGPT/Codex writes the C# only. Claude reviews the build, then the user plays the checklist.
+**Build split (changed 2026-11-22):** Claude made the art, backgrounds, sound and bot-checked layouts. A Claude Code session builds the C#, one ticket per session (`/implement`, then `/code-review`), from `SESSION-PROMPT.md`; there is no Codex hand-over. Then the user plays the checklist.
 
 ## 1. Rules that are already settled (do not change)
 
@@ -172,7 +172,7 @@ All are from Wikipedia, checked 2026-11-22; the details are in `kinds-research.m
 
 ## 7. Layout data
 
-See `layouts.md`; ChatGPT must copy the numbers exactly.
+See `layouts.md`; the builder must copy the numbers exactly.
 
 ## 8. Assets (made by Claude; do not edit)
 

@@ -1,6 +1,6 @@
-# Codex: start here (Plains Hard 1–7)
+# Build: start here (Plains Hard 1–7)
 
-You are building **Plains Hard 1–7** for LandGrand, a Unity 6000.6.9f1 2D pixel-art game for Grade 5 pupils. **The art, backgrounds, sound and bot-checked layouts are already made by Claude. Your job is the C# code.**
+You are building **Plains Hard 1–7** for LandGrand, a Unity 6000.6.9f1 2D pixel-art game for Grade 5 pupils. **The art, backgrounds, sound and bot-checked layouts are already made by Claude. A Claude Code session builds the C# code, one ticket per session, from `SESSION-PROMPT.md` (no Codex hand-over).**
 
 ## Read first
 
@@ -28,6 +28,7 @@ You are building **Plains Hard 1–7** for LandGrand, a Unity 6000.6.9f1 2D pixe
 - **Commits and vault:** do not commit or push; do not edit the vault (`D:\LandGrand\LandGrand-Sources`).
 - **Changes:** anything not in the spec is a change. Ask first, and list it in `HANDOVER.md` under "Changes not in the spec".
 - **End each ticket** with the Unity builder command(s) to run, or "none".
+- **Ticket status:** when a ticket is finished, set its Status line to `done (<date>, <test count>)`.
 
 ## Commands (Editor closed)
 
