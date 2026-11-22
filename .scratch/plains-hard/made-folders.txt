@@ -1,0 +1,7 @@
+FrozenPlain
+GangesPlain
+LimestonePlain
+Pampas
+Prairie
+Savanna
+Steppe

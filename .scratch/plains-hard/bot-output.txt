@@ -1,0 +1,30 @@
+-- Regression, Hills Hard at walk 84 (expect 112.6-132.0 s):
+H1 112.6  H2 112.6  H3 115.5  H4 125.8  H5 126.4  H6 130.5  H7 132.0  
+-- Plains Hard:
+H1 Great Plains: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean   (re-run after moving the straw piles to 2050, 4550, 6900)
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   logs: 6 left, 3 right; bot jumped 8 oncoming, stopped and hopped 0 from behind
+H2 Serengeti: bot GOAL 115.7s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.9 s
+   bats (s in loop span / pushes): 650:1.95/1, 2000:2.00/1, 3650:2.05/1, 5000:2.05/1, 6100:2.05/1, 7600:2.05/1
+H3 Pampas: bot GOAL 115.0s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 114.1-115.7 s
+   logs: 3 left, 2 right; bot jumped 6 oncoming, stopped and hopped 0 from behind
+   bats (s in loop span / pushes): 2740:2.43/2, 5230:1.57/2, 7560:2.20/3
+H4 West Siberian Plain: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   floats (s standing): 3028:0.28, 6528:0.28
+H5 Nullarbor Plain: bot GOAL 115.5s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.2 s
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1800:1.48/1, 2150:0.98/2, 3800:1.48/1, 4600:1.48/1, 5950:1.12/2, 9150:1.48/1
+H6 Indo-Gangetic Plain: bot GOAL 123.8s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 123.8-123.8 s
+   floats (s standing): 1232:0.02, 1312:0.30, 2032:0.02, 3832:0.33, 3912:0.33, 5032:0.02, 5112:0.32, 6232:0.33, 6312:0.02, 7432:0.02, 8032:0.02, 8112:0.30
+   currents (s in strip): 550R:3.95, 2500L:9.07, 4100L:9.88, 5650R:3.38, 6500L:9.52, 8300L:10.10
+H7 Mongolian Steppe: bot GOAL 118.0s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 118.1-119.2 s
+   logs: 2 left, 2 right; bot jumped 2 oncoming, stopped and hopped 0 from behind
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1300:2.05/1, 5800:1.60/2
+   currents (s in strip): 2480L:7.40, 7300L:5.83
