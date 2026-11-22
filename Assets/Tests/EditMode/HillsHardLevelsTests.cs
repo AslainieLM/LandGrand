@@ -122,7 +122,9 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.AreEqual(23, shelves[(int)Episode.Hills].Slots.Count); // Grows the Hills shelf by six
             var kinds = ItemCatalog.All.Skip(44).Take(6).ToArray(); // Reads the six Hills Hard additions
             CollectionAssert.AreEqual(new[] { "peridotite", "chlorite", "dacite", "quartzite", "travertine", "leucite" }, kinds.Select(k => k.Id)); // Keeps the new kind order
-            Assert.IsTrue(kinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Hills }) && k.Description.Length <= 80 && k.Picture == k.Id)); // Checks cards and shelf placement
+            Assert.IsTrue(kinds.All(k => k.IsDraft && k.Description.Length <= 80 && k.Picture == k.Id)); // Checks the original cards
+            Assert.IsTrue(kinds.Where(k => k.Id != "dacite").All(k => k.Landforms.SequenceEqual(new[] { Episode.Hills }))); // Keeps the other five Hills-only kinds
+            CollectionAssert.AreEqual(new[] { Episode.Hills, Episode.Plains }, ItemCatalog.Dacite.Landforms); // Dacite stays on Hills and joins Plains
             CollectionAssert.AreEqual(new[] { true, false, true, true, true, false }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels
             Assert.IsTrue(new[] { "limestone", "calcite", "andesite" }.All(id => ItemCatalog.Find(id).BelongsTo(Episode.Hills))); // Shared review kinds keep their old slots
             Assert.IsFalse(new[] { "basalt", "schist", "tuff" }.Any(id => ItemCatalog.Find(id).BelongsTo(Episode.Hills))); // These review kinds stay on Mountains

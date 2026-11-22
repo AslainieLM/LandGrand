@@ -129,6 +129,21 @@ EditorBuildSettings:
     path: Assets/Scenes/PlainsEasy3.unity
     guid: 9052feb801ada33438502d15a7871206
   - enabled: 1
+    path: Assets/Scenes/PlainsNormal1.unity
+    guid: e9ee1d6ed5db6324f81a2f25a0a52248
+  - enabled: 1
+    path: Assets/Scenes/PlainsNormal2.unity
+    guid: 027195caff2fb5c498ba05794ab2becf
+  - enabled: 1
+    path: Assets/Scenes/PlainsNormal3.unity
+    guid: d0bfa59d41dd5784c9ad9b9f042cbcde
+  - enabled: 1
+    path: Assets/Scenes/PlainsNormal4.unity
+    guid: 892b0aa72399d3d4993e62f73421bdc6
+  - enabled: 1
+    path: Assets/Scenes/PlainsNormal5.unity
+    guid: 0e133c1c5fb26bc42b646020e924e14e
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:

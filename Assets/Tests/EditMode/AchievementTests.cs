@@ -9,9 +9,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         static bool Earned(string id, PlayerProgress p) => AchievementCatalog.Find(id).IsEarned(p); // Short way to ask about one badge
 
         [Test] // Unity runs this method as a Test
-        public void Catalog_HasThirtyFiveBadges_InOrder() // Keeps each landform in order
+        public void CatalogIds_StayInSavedOrder() // Pins all thirty-five saved ids
         {
             CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master", "pasture_pal", "dune_surfer", "rolling_star", "hill_collector", "philippine_hills", "balloon_rider", "slope_ranger", "world_hills", "steady_star", "hill_master", "salt_maker", "straw_jumper", "flat_star", "plain_collector", "philippine_plains", "delta_boater", "prairie_ranger", "world_plains", "steady_plains", "plain_master" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
+        } // Ends the id check
+
+        [Test] // Checks the text on every badge card
+        public void CatalogHasDraftNamesAndHints() // Checks the badge cards and unknown ids
+        { // Starts the badge card check
             foreach (var a in AchievementCatalog.All) // Every badge
             {
                 Assert.IsFalse(string.IsNullOrEmpty(a.Name), a.Id); // A name
@@ -56,6 +61,21 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.IsTrue(Earned(badge, progress)); // The clear earns the badge
         } // Ends the clear check
 
+        [Test] // Checks the Plains Normal badges
+        public void PlainsNormalBadges_NeedTheirOwnClears() // Keeps the two badge goals separate
+        { // Starts the badge check
+            var progress = new PlayerProgress(); // Starts with a fresh profile
+            for (int n = 1; n <= 5; n++) progress.RecordClear(Episode.Hills, Difficulty.Normal, n, 3); // Clears a different landform
+            for (int n = 1; n <= 3; n++) progress.RecordClear(Episode.Plains, Difficulty.Normal, n, 1); // Clears the first three Plains trails
+            Assert.IsFalse(Earned("philippine_plains", progress)); // The fourth Plains trail is still needed
+            Assert.IsFalse(Earned("delta_boater", progress)); // The fifth Plains trail is still needed
+            progress.RecordClear(Episode.Plains, Difficulty.Normal, 4, 1); // Finishes the fourth Plains trail
+            Assert.IsTrue(Earned("philippine_plains", progress)); // Earns Philippine Plains
+            Assert.IsFalse(Earned("delta_boater", progress)); // Still needs the last trail
+            progress.RecordClear(Episode.Plains, Difficulty.Normal, 5, 1); // Finishes the fifth Plains trail
+            Assert.IsTrue(Earned("delta_boater", progress)); // Earns Delta Boater
+        } // Ends the badge check
+
         [Test] // Checks the Plains three-star badge
         public void FlatStar_NeedsThreeStarsOnEveryPlainsEasyLevel() // Checks the Easy trail
         { // Starts the star check
@@ -69,14 +89,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         } // Ends the star check
 
         [Test] // Checks the Plains collector badge
-        public void PlainCollector_NeedsAllTenPlainsKinds() // Counts the full Plains shelf
+        public void PlainCollector_NeedsAllSixteenPlainsKinds() // Counts the full Plains shelf
         { // Starts the collection check
             var progress = new PlayerProgress(); // Starts with a fresh profile
             var kinds = ItemCatalog.All.Where(kind => kind.BelongsTo(Episode.Plains)).ToArray(); // Reads the Plains shelf
-            Assert.AreEqual(10, kinds.Length); // The shelf has ten kinds
-            foreach (var kind in kinds.Take(9)) progress.RecordFoundKind(kind.Id); // Finds nine kinds
+            Assert.AreEqual(16, kinds.Length); // The shelf has sixteen kinds
+            foreach (var kind in kinds.Take(15)) progress.RecordFoundKind(kind.Id); // Finds fifteen kinds
             Assert.IsFalse(Earned("plain_collector", progress)); // One kind is still missing
-            progress.RecordFoundKind(kinds[9].Id); // Finds the tenth kind
+            progress.RecordFoundKind(kinds[15].Id); // Finds the last kind
             Assert.IsTrue(Earned("plain_collector", progress)); // The full shelf earns the badge
         } // Ends the collection check
 
@@ -94,7 +114,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         { // Starts the badge page check
             var progress = new PlayerProgress(); // Starts with a fresh profile
             for (int level = 1; level <= 3; level++) progress.RecordClear(Episode.Plains, Difficulty.Easy, level, 3); // Gets three stars on each Plains Easy level
-            foreach (var kind in ItemCatalog.All.Where(kind => kind.BelongsTo(Episode.Plains))) progress.RecordFoundKind(kind.Id); // Finds every kind on the Plains shelf
+            foreach (var kind in LevelCatalog.All.Where(level => level.Episode == Episode.Plains && level.Difficulty == Difficulty.Easy).SelectMany(level => level.Kinds).Distinct()) progress.RecordFoundKind(kind.Id); // Finds the kinds available in Plains Easy
             var mountains = AchievementCatalog.ForLandform(Episode.Mountains).Where(badge => badge.IsEarned(progress)); // Reads earned badges shown on the Mountains page
             CollectionAssert.AreEquivalent(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer" }, mountains.Select(badge => badge.Id)); // Only the general badges count
             Assert.IsFalse(AchievementCatalog.ForLandform(Episode.Hills).Any(badge => badge.IsEarned(progress))); // Hills badges need Hills progress

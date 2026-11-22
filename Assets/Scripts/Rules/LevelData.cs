@@ -157,9 +157,9 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Mica = new ItemKind("mica", "Mica", "A shiny mineral that peels into thin, flat sheets. It is found in granite.", "mica", true, false, Episode.Mountains); // A mineral, first taught in the Mountains lesson
 
         // Mountains Easy 2, volcanic mountains (D-055). Drafts like the rest (Q-04).
-        public static readonly ItemKind Andesite = new ItemKind("andesite", "Andesite", "A grey rock made when lava cools. Many Philippine volcanoes are made of it.", "andesite", true, true, Episode.Mountains, Episode.Hills); // A rock from cooled lava, taught in Mountains and shared with Hills
+        public static readonly ItemKind Andesite = new ItemKind("andesite", "Andesite", "A grey rock made when lava cools. Many Philippine volcanoes are made of it.", "andesite", true, true, Episode.Mountains, Episode.Hills, Episode.Plains); // A rock from cooled lava, taught in Mountains and shared with Hills and Plains
         public static readonly ItemKind Obsidian = new ItemKind("obsidian", "Obsidian", "A shiny black rock like glass. It forms when lava cools very fast.", "obsidian", true, true, Episode.Mountains); // Volcanic glass, a rock
-        public static readonly ItemKind Pumice = new ItemKind("pumice", "Pumice", "A light rock full of tiny holes from gas bubbles. Some pumice can float on water.", "pumice", true, true, Episode.Mountains); // A light, bubbly rock
+        public static readonly ItemKind Pumice = new ItemKind("pumice", "Pumice", "A light rock full of tiny holes from gas bubbles. Some pumice can float on water.", "pumice", true, true, Episode.Mountains, Episode.Plains); // A light, bubbly rock shared with Plains
 
         // Mountains Easy 3, folded mountains (D-055). Drafts like the rest (Q-04).
         public static readonly ItemKind Slate = new ItemKind("slate", "Slate", "A dark rock that splits into flat, smooth sheets. It forms when mud rock is squeezed.", "slate", true, true, Episode.Mountains); // A rock changed by squeezing
@@ -180,7 +180,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Scoria = new ItemKind("scoria", "Scoria", "A red-brown lava rock full of holes. Gas bubbles made the holes.", "scoria", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Hornblende = new ItemKind("hornblende", "Hornblende", "A black mineral shaped like long sticks. It is found in lava rock like andesite.", "hornblende", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Diorite = new ItemKind("diorite", "Diorite", "A rock with black and white spots. Magma cooled slowly underground to make it.", "diorite", true, true, Episode.Mountains); // Draft Mountains kind
-        public static readonly ItemKind Gold = new ItemKind("gold", "Gold", "A shiny yellow metal found in mountain rocks. It never rusts.", "gold", true, false, Episode.Mountains); // Draft Mountains kind
+        public static readonly ItemKind Gold = new ItemKind("gold", "Gold", "A shiny yellow metal found in mountain rocks. It never rusts.", "gold", true, false, Episode.Mountains, Episode.Plains); // Draft Mountains kind, also on the Plains shelf
         public static readonly ItemKind Tuff = new ItemKind("tuff", "Tuff", "A light rock made of volcanic ash. The ash was pressed together over time.", "tuff", true, true, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Hematite = new ItemKind("hematite", "Hematite", "A heavy mineral with iron in it. It leaves a red streak when rubbed.", "hematite", true, false, Episode.Mountains); // Draft Mountains kind
         public static readonly ItemKind Serpentinite = new ItemKind("serpentinite", "Serpentinite", "A smooth green rock that looks like snake skin. Few plants grow on its soil.", "serpentinite", true, true, Episode.Mountains); // Draft Mountains kind
@@ -207,7 +207,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
 
         public static readonly ItemKind Peridotite = new ItemKind("peridotite", "Peridotite", "A dark green rock from deep inside the Earth. It is full of olivine.", "peridotite", true, true, Episode.Hills); // Draft Hills rock
         public static readonly ItemKind Chlorite = new ItemKind("chlorite", "Chlorite", "A soft green mineral. It forms when rocks like basalt slowly change.", "chlorite", true, false, Episode.Hills); // Draft Hills mineral
-        public static readonly ItemKind Dacite = new ItemKind("dacite", "Dacite", "A pale grey volcanic rock with small light crystals.", "dacite", true, true, Episode.Hills); // Draft Hills rock
+        public static readonly ItemKind Dacite = new ItemKind("dacite", "Dacite", "A pale grey volcanic rock with small light crystals.", "dacite", true, true, Episode.Hills, Episode.Plains); // Draft Hills rock, also on the Plains shelf
         public static readonly ItemKind Quartzite = new ItemKind("quartzite", "Quartzite", "A very hard rock made when sandstone is heated and squeezed.", "quartzite", true, true, Episode.Hills); // Draft Hills rock
         public static readonly ItemKind Travertine = new ItemKind("travertine", "Travertine", "A cream rock made by spring water. Romans built with it.", "travertine", true, true, Episode.Hills); // Draft Hills rock
         public static readonly ItemKind Leucite = new ItemKind("leucite", "Leucite", "A white mineral with round crystals, found in some volcanic rock.", "leucite", true, false, Episode.Hills); // Draft Hills mineral
@@ -217,8 +217,11 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public static readonly ItemKind Gypsum = new ItemKind("gypsum", "Gypsum", "A very soft white mineral left by drying sea water. It is used for plaster and chalk.", "gypsum", true, false, Episode.Plains); // Draft Plains mineral
         public static readonly ItemKind Mudstone = new ItemKind("mudstone", "Mudstone", "A fine rock made from hardened mud and clay.", "mudstone", true, true, Episode.Plains); // Draft Plains rock
 
+        public static readonly ItemKind Peat = new ItemKind("peat", "Peat", "Soft brown matter made of old, wet plants. It is not a true rock yet, but in time it can become coal.", "peat", true, true, Episode.Plains); // Peat uses the rock shelf while its card explains the difference
+        public static readonly ItemKind Laterite = new ItemKind("laterite", "Laterite", "A red, iron-rich rock or soil of hot, wet places. People cut it into building blocks.", "laterite", true, true, Episode.Plains); // Draft Plains rock
+
         /// <summary>All kinds, in the order the levels introduce them. The Collection shelves keep this order.</summary>
-        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite, Peridotite, Chlorite, Dacite, Quartzite, Travertine, Leucite, Siltstone, Halite, Gypsum, Mudstone }; // Appends the Plains Easy kinds
+        public static IReadOnlyList<ItemKind> All { get; } = new[] { Granite, Quartz, Feldspar, Mica, Andesite, Obsidian, Pumice, Slate, Marble, Garnet, Sandstone, Clay, Conglomerate, Shale, Basalt, Magnetite, Sulfur, Pyrite, Limestone, Gneiss, Scoria, Hornblende, Diorite, Gold, Tuff, Hematite, Serpentinite, Chromite, Schist, Calcite, Trachyte, Tanzanite, Gabbro, Olivine, CoralStone, Limonite, Kaolinite, Aragonite, Coquina, Flowstone, Dripstone, VolcanicBreccia, Ignimbrite, Zeolite, Peridotite, Chlorite, Dacite, Quartzite, Travertine, Leucite, Siltstone, Halite, Gypsum, Mudstone, Peat, Laterite }; // Appends the two Plains Normal kinds
 
         /// <summary>The kind with this id, or null when there is none.</summary>
         public static ItemKind Find(string id) => All.FirstOrDefault(k => k.Id == id); // Looks the id up
@@ -1751,6 +1754,221 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
                     new[] { L(1240f, 96f, 64f), L(1900f, 40f, 64f), L(2300f, 28f, 80f), L(3360f, 120f, 56f) }, // Stone ledges
                     strawPiles: new[] { new StrawPile(600f), new StrawPile(1200f), new StrawPile(3300f), new StrawPile(4500f) }), // Four bounce piles
                 "Isabela River Plain"), // Start banner
+
+            // Plains Normal trails from the checked layouts (D-070).
+            new LevelData(Episode.Plains, Difficulty.Normal, 1, // Candaba Swamp
+                new Lesson("Wetland Plains", new[] // Four draft lesson lines from section 6
+                { // Opens the lesson
+                    "Some plains are wet and swampy.", // The authored lesson line
+                    "Candaba Swamp floods in the wet season.", // The authored lesson line
+                    "In the dry season, farmers plant there.", // The authored lesson line
+                    "Wild ducks rest there on long trips.", // The authored lesson line
+                }, "lesson_candaba", true), // Sets the lesson picture and draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Peat, new Spot(436f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Peat, new Spot(848f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(1132f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Siltstone, new Spot(2600f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Mudstone, new Spot(3424f, 48f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Peat, new Spot(4312f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Clay, new Spot(6716f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two checkpoint flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1700f, 0f), 104f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(3400f, 0f), 48f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(6000f, 0f), 192f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Spikes, new Spot(2900f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5300f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Bird Hide at the goal
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Wetlands are plains that hold water.", // The authored review line
+                    "Dead plants pile up in wetlands as peat.", // The authored review line
+                    "Over a long time, peat can turn into coal.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.CandabaWetland, // Width and theme
+                    new[] { B(420f, BoulderSize.Small), B(1400f, BoulderSize.Big), B(2700f, BoulderSize.Small), B(3900f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(5700f, BoulderSize.Big), B(6700f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1100f, 40f, 64f), L(4200f, 40f, 64f), L(4280f, 84f, 64f) }, // Ledges from the checked layout
+                    floats: new[] { new SinkingFloat(824f, 0f, 800f), new SinkingFloat(1728f, 0f, 1700f), new SinkingFloat(6032f, 0f, 6000f), new SinkingFloat(6112f, 0f, 6000f) }, // Rafts at their water line
+                    pools: new[] { new ShallowPool(800f, 96f) }), // The practice crossing has a safe floor
+                "Candaba Swamp"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Normal, 2, // Pinatubo Lahar Plain
+                new Lesson("Volcanic Plains", new[] // Four draft lesson lines from section 6
+                { // Opens the lesson
+                    "Volcanoes can bury and build plains.", // The authored lesson line
+                    "Mount Pinatubo erupted in 1991.", // The authored lesson line
+                    "Lahars are rivers of volcanic mud.", // The authored lesson line
+                    "Lahar mud covered towns and farms.", // The authored lesson line
+                }, "lesson_pinatubo_lahar", true), // Sets the lesson picture and draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Pumice, new Spot(916f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Dacite, new Spot(1032f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Andesite, new Spot(2200f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Pumice, new Spot(3224f, 36f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Dacite, new Spot(4012f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Andesite, new Spot(5432f, 28f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Pumice, new Spot(6816f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two checkpoint flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1300f, 0f), 96f), // Dry lahar gap
+                    new Hazard(HazardType.Pit, new Spot(3600f, 0f), 56f), // Dry lahar gap
+                    new Hazard(HazardType.Pit, new Spot(5700f, 0f), 96f), // Dry lahar gap
+                    new Hazard(HazardType.Spikes, new Spot(2900f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4900f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6600f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Lahar Marker at the goal
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Lahars carry volcanic sand and rock.", // The authored review line
+                    "Pumice is a light rock full of holes.", // The authored review line
+                    "Pinatubo's rocks include andesite and dacite.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.LaharPlain, // Width and theme
+                    new[] { B(900f, BoulderSize.Small), B(1700f, BoulderSize.Big), B(2600f, BoulderSize.Small), B(3200f, BoulderSize.Big), B(4500f, BoulderSize.Small), B(5300f, BoulderSize.Big), B(6800f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1000f, 40f, 64f), L(3900f, 40f, 64f), L(3980f, 84f, 64f), L(5400f, 28f, 64f) }, // Ledges from the checked layout
+                    crumbleLedges: new[] { new CrumbleLedge(1300f, 0f), new CrumbleLedge(1332f, 0f), new CrumbleLedge(1364f, 0f), new CrumbleLedge(5700f, 0f), new CrumbleLedge(5732f, 0f), new CrumbleLedge(5764f, 0f) }, // Both bridges start at ground level
+                    sandZones: new[] { new SandZone(500f, 200f), new SandZone(2000f, 300f), new SandZone(4100f, 350f), new SandZone(6150f, 300f) }), // Soft sand from the checked layout
+                "Pinatubo Lahar Plain"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Normal, 3, // Agno River Delta
+                new Lesson("Deltas", new[] // Four draft lesson lines from section 6
+                { // Opens the lesson
+                    "A delta forms where a river meets the sea.", // The authored lesson line
+                    "The river drops its sand and mud there.", // The authored lesson line
+                    "The Agno built the Pangasinan Plain.", // The authored lesson line
+                    "People pan for gold along the Agno.", // The authored lesson line
+                }, "lesson_agno", true), // Sets the lesson picture and draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Gold, new Spot(416f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Quartz, new Spot(700f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(1632f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Siltstone, new Spot(2650f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Gold, new Spot(3712f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Quartz, new Spot(5000f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Mudstone, new Spot(6716f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two checkpoint flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1300f, 0f), 48f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(3200f, 0f), 64f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(5200f, 0f), 56f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Spikes, new Spot(2800f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4500f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6500f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Fish Pen Hut at the goal
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Deltas are new land built by rivers.", // The authored review line
+                    "Gold can be panned from river sand.", // The authored review line
+                    "Quartz sand and silt fill the delta.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.RiverDelta, // Width and theme
+                    new[] { B(400f, BoulderSize.Small), B(1000f, BoulderSize.Big), B(2200f, BoulderSize.Small), B(3500f, BoulderSize.Big), B(5500f, BoulderSize.Big), B(6700f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1600f, 40f, 64f), L(3600f, 40f, 64f), L(3680f, 84f, 64f), L(6300f, 28f, 64f) }, // Ledges from the checked layout
+                    currents: new[] { new CurrentZone(600f, 200f, 1), new CurrentZone(1900f, 300f, -1), new CurrentZone(3900f, 400f, 1), new CurrentZone(5800f, 300f, -1) }), // Currents keep their listed directions
+                "Agno River Delta"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Normal, 4, // Agusan Marsh
+                new Lesson("Living on Wetlands", new[] // Four draft lesson lines from section 6
+                { // Opens the lesson
+                    "Agusan Marsh is a huge wetland in Mindanao.", // The authored lesson line
+                    "Some Manobo families live in floating homes.", // The authored lesson line
+                    "The marsh is a protected wetland.", // The authored lesson line
+                    "It was home to Lolong, a big crocodile.", // The authored lesson line
+                }, "lesson_agusan", true), // Sets the lesson picture and draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Peat, new Spot(516f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(932f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Mudstone, new Spot(1852f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Peat, new Spot(3150f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(4112f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Mudstone, new Spot(5150f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Peat, new Spot(6000f, 0f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two checkpoint flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(1800f, 0f), 104f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(3800f, 0f), 56f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(6200f, 0f), 64f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Spikes, new Spot(1200f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(4300f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(6600f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Floating House at the goal
+                new[] // Three draft review lines
+                { // Opens the review
+                    "Wetland soil is soft and full of old plants.", // The authored review line
+                    "Peat, clay and mud fill the marsh.", // The authored review line
+                    "Protecting wetlands keeps animals safe.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.FloatingVillage, // Width and theme
+                    new[] { B(500f, BoulderSize.Small), B(2600f, BoulderSize.Big), B(3500f, BoulderSize.Small), B(4500f, BoulderSize.Big), B(5600f, BoulderSize.Small), B(6800f, BoulderSize.Big) }, // Boulders in trail order
+                    new[] { L(900f, 40f, 64f), L(4000f, 40f, 64f), L(4080f, 84f, 64f), L(5800f, 28f, 64f) }, // Ledges from the checked layout
+                    sandZones: new[] { new SandZone(3000f, 300f) }, // Soft sand from the checked layout
+                    floats: new[] { new SinkingFloat(1828f, 0f, 1800f) }, // Rafts at their water line
+                    currents: new[] { new CurrentZone(5000f, 300f, 1) }), // Currents keep their listed directions
+                "Agusan Marsh"), // Start banner
+
+            new LevelData(Episode.Plains, Difficulty.Normal, 5, // Mekong Delta
+                new Lesson("River Deltas of the World", new[] // Four draft lesson lines from section 6
+                { // Opens the lesson
+                    "The Mekong Delta is in southern Vietnam.", // The authored lesson line
+                    "It is flat land built from river mud.", // The authored lesson line
+                    "People sell fruit from boats there.", // The authored lesson line
+                    "Laterite is red rock of hot, wet lands.", // The authored lesson line
+                }, "lesson_mekong", true), // Sets the lesson picture and draft flag
+                new[] // Seven pickups in trail order
+                { // Opens the pickups
+                    new Pickup(ItemCatalog.Laterite, new Spot(466f, 24f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Clay, new Spot(1132f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Laterite, new Spot(2076f, 40f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Siltstone, new Spot(2900f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Laterite, new Spot(4112f, 84f)), // Secret pickup on the high route
+                    new Pickup(ItemCatalog.Clay, new Spot(5100f, 0f)), // Pickup from the checked layout
+                    new Pickup(ItemCatalog.Mudstone, new Spot(6716f, 24f)), // Pickup from the checked layout
+                }, // Ends the pickups
+                new Spot(40f, 0f), // Starts at the left
+                new[] { new Spot(2400f, 0f), new Spot(4800f, 0f) }, // The two checkpoint flags
+                new[] // The listed pits and spikes
+                { // Opens the hazards
+                    new Hazard(HazardType.Pit, new Spot(2000f, 0f), 200f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(3600f, 0f), 200f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Pit, new Spot(5900f, 0f), 200f, isWater: true), // Water pit with the Normal checkpoint return
+                    new Hazard(HazardType.Spikes, new Spot(1500f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(3100f, 0f), 32f), // Spike strip
+                    new Hazard(HazardType.Spikes, new Spot(5300f, 0f), 32f), // Spike strip
+                }, // Ends the hazards
+                new Spot(7040f, 0f), // Market Pier at the goal
+                new[] // Three draft review lines
+                { // Opens the review
+                    "A delta is flat, low land at a river's mouth.", // The authored review line
+                    "River mud makes deltas good for farming.", // The authored review line
+                    "Laterite is red because of its iron.", // The authored review line
+                }, // Ends the review
+                new LevelLayout(7200f, LevelTheme.FloatingMarket, // Width and theme
+                    new[] { B(450f, BoulderSize.Small), B(1250f, BoulderSize.Big), B(2700f, BoulderSize.Small), B(4300f, BoulderSize.Big), B(5000f, BoulderSize.Small), B(6700f, BoulderSize.Small) }, // Boulders in trail order
+                    new[] { L(1100f, 40f, 64f), L(4000f, 40f, 64f), L(4080f, 84f, 64f), L(6400f, 28f, 64f) }, // Ledges from the checked layout
+                    movingPlatforms: new[] { new MovingPlatform(800f, 912f, 0f), new MovingPlatform(2000f, 2152f, 0f), new MovingPlatform(3600f, 3752f, 0f), new MovingPlatform(5900f, 6052f, 0f) }, // The four horizontal market boats
+                    pools: new[] { new ShallowPool(800f, 160f) }), // The practice crossing has a safe floor
+                "Mekong Delta"), // Start banner
         }; // Ends the catalog
 
         static LevelData HillsHard(int number, Lesson lesson, Pickup[] pickups, Hazard[] hazards, string[] review, LevelLayout layout, string banner) // Uses the shared Hard start, flags and goal

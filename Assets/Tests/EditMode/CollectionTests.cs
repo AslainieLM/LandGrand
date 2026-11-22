@@ -83,7 +83,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.IsFalse(shelves[1].IsComingSoon); // Hills has its kinds now (D-066)
             Assert.AreEqual(23, shelves[1].Slots.Count); // Ten from Easy, seven from Normal and six from Hard
             Assert.IsFalse(shelves[2].IsComingSoon); // Plains has its Easy kinds
-            CollectionAssert.AreEqual(new[] { "quartz", "sandstone", "clay", "conglomerate", "shale", "limestone", "siltstone", "halite", "gypsum", "mudstone" }, shelves[2].Slots.Select(slot => slot.Kind.Id)); // The full Plains shelf in catalog order
+            CollectionAssert.AreEqual(new[] { "quartz", "andesite", "pumice", "sandstone", "clay", "conglomerate", "shale", "limestone", "gold", "dacite", "siltstone", "halite", "gypsum", "mudstone", "peat", "laterite" }, shelves[2].Slots.Select(slot => slot.Kind.Id)); // The full Plains shelf in catalog order
             Assert.IsTrue(shelves[3].IsComingSoon); // Plateaus
             Assert.AreEqual(0, shelves[3].Slots.Count); // No slots on a "Coming soon" shelf
         }
@@ -91,11 +91,27 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Runs the Plains kind check
         public void PlainsKinds_AppendAfterTheHillsKinds() // Keeps the saved catalog order
         { // Starts the kind check
-            var kinds = ItemCatalog.All.Skip(50).ToArray(); // Reads the four new kinds
-            CollectionAssert.AreEqual(new[] { "siltstone", "halite", "gypsum", "mudstone" }, kinds.Select(k => k.Id)); // Keeps the new kind order
-            CollectionAssert.AreEqual(new[] { true, false, false, true }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels
+            var kinds = ItemCatalog.All.Skip(50).ToArray(); // Reads the six Plains-only kinds
+            CollectionAssert.AreEqual(new[] { "siltstone", "halite", "gypsum", "mudstone", "peat", "laterite" }, kinds.Select(k => k.Id)); // Keeps the new kind order
+            CollectionAssert.AreEqual(new[] { true, false, false, true, true, true }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels
             Assert.IsTrue(kinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Plains }))); // Each draft kind stays on the Plains shelf
         } // Ends the kind check
+
+        [Test] // Checks theme ids after Plains Easy
+        public void PlainsNormalThemes_AppendAfterRiverPlain() // Keeps the older theme values
+        { // Starts the theme order check
+            var expected = new[] { LevelTheme.RiverPlain, LevelTheme.CandabaWetland, LevelTheme.LaharPlain, LevelTheme.RiverDelta, LevelTheme.FloatingVillage, LevelTheme.FloatingMarket }; // The last Easy theme and the five additions
+            CollectionAssert.AreEqual(new[] { 31, 32, 33, 34, 35, 36 }, expected.Select(theme => (int)theme)); // Keeps the saved numeric order
+        } // Ends the theme order check
+
+        [Test] // Checks shelves for the newly shared kinds
+        public void PlainsNormalSharedKinds_KeepTheirOldShelves() // Keeps each find on its existing shelves
+        { // Starts the shelf check
+            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Hills, Episode.Plains }, ItemCatalog.Andesite.Landforms); // Andesite is on three shelves
+            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Pumice.Landforms); // Pumice stays on Mountains
+            CollectionAssert.AreEqual(new[] { Episode.Hills, Episode.Plains }, ItemCatalog.Dacite.Landforms); // Dacite stays on Hills
+            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Gold.Landforms); // Gold stays on Mountains
+        } // Ends the shelf check
 
         [Test] // Unity runs this method as a Test
         public void FreshProfile_HasNothingFound() // Every slot is still hidden
@@ -103,7 +119,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(54, Collection.TotalCount); // Adds four Plains-only kinds
+            Assert.AreEqual(56, Collection.TotalCount); // Includes six Plains-only kinds
         }
 
         [Test] // Unity runs this method as a Test

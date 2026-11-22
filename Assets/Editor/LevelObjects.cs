@@ -6,7 +6,7 @@ using UnityEngine; // Uses scene objects
 using M = global::MainMenuBuilder; // Reuses sprite helpers
 public static partial class LevelBuilder // Builds objects from shared level data
 { // Opens the builder
-    static void BuildObjects(LevelData data, LevelGeometry geometry, ExplorerMotor explorer, LevelController controller) // Builds the four object kinds
+    static void BuildObjects(LevelData data, ThemeArt art, LevelGeometry geometry, ExplorerMotor explorer, LevelController controller) // Builds the four object kinds
     { // Starts the object build
         var solids = new List<DynamicSolid>(); // Remembers moving and vanishing solids
         foreach (var ledge in data.Layout.CrumbleLedges) // Each breakable slab
@@ -33,8 +33,14 @@ public static partial class LevelBuilder // Builds objects from shared level dat
             var view = new GameObject("Moving Platform").AddComponent<MovingPlatformView>(); // Owns the moving solid
             view.transform.SetParent(geometry.transform, false); // Keeps it with the level
             view.x0 = platform.X0; view.x1 = platform.X1; view.top = platform.Top; // Exact travel endpoints
-            view.art = M.Renderer("Art", S("platform"), 6, view.transform); // Same depth as a ledge
-            view.art.transform.position = LevelGeometry.ToWorld(platform.X0 + 24f, platform.Top - 5f); // Starts at the near end
+            var sprite = art.PlatformSprite == null ? S("platform") : ThemeSprite(art, art.PlatformSprite); // Uses the standard slab or the theme picture
+            view.art = M.Renderer("Art", sprite, 6, view.transform); // Draws it at the same depth as a ledge
+            view.art.transform.position = LevelGeometry.ToWorld(platform.X0 + 24f, view.ArtCenterY); // Sets the deck at the solid top
+            if (art.PlatformLandSound != null) // A theme can add a sound on landing
+            { // Opens the sound setup
+                view.landSound = NormalSound(art.PlatformLandSound, art.PlatformLandSoundScript); // Loads the theme sound and names its script if missing
+                view.level = controller; // Reads the explorer's landing and plays the sound
+            } // Ends the sound setup
             solids.Add(view); // Makes it carry the explorer like a ledge
         } // Ends the platform build
         BuildFloats(data, geometry, controller, solids); // Adds the rafts and the water sounds
@@ -66,10 +72,10 @@ public static partial class LevelBuilder // Builds objects from shared level dat
             view.streaks = Enumerable.Range(0, 6).Select(i => M.Renderer("Streak " + i, null, 22, view.transform)).ToArray(); // Six streaks in front of the explorer
         } // Ends the gust build
     } // Ends the object build
-    static AudioClip NormalSound(string name) // Loads a Normal effect with a clear missing-file error
+    static AudioClip NormalSound(string name, string script = "Tools/Audio/make_normal_audio.py") // Loads a Normal effect with a clear missing-file error
     { // Starts the sound lookup
         var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/" + name); // Loads the existing recording
-        if (clip == null) Debug.LogError("Missing Assets/Audio/" + name + ". Run: python Tools/Audio/make_normal_audio.py"); // Names the repair command
+        if (clip == null) Debug.LogError("Missing Assets/Audio/" + name + ". Run: python " + script); // Names the repair command
         return clip; // Gives the sound to its view
     } // Ends the lookup
 } // Ends the builder

@@ -33,6 +33,7 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Crumbling ledge**: a slab that cracks after the explorer stands on it, disappears briefly, then returns. Several slabs can form a bridge over a pit.
 - **Falling rock**: a repeating trap with a shadow and pebble warning before a rock falls onto the trail.
 - **Moving platform**: a slab that travels back and forth and carries an explorer standing on it.
+- **Market boat**: a moving platform drawn as a river boat that carries the explorer across water.
 - **Wind gust**: a brief leftward push within a marked stretch of trail, preceded by visible wind streaks.
 - **Normal checkpoints**: the two safe flags in each Normal level. Hazards return the explorer to the furthest flag reached, or the start before either flag.
 - **Rolling boulder**: a trap that warns before rolling left along the ground. It skips a roll if the explorer is too close to its starting point.

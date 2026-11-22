@@ -14,7 +14,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Normal)); // Hills Normal has its five trails
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has seven trails
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Easy)); // Plains Easy has three trails
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Plains Normal still says Coming soon
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Plains Normal has five trails
             Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Plains Hard waits for data
         }
 
@@ -119,16 +119,35 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the check
 
         [Test] // Checks the end of Plains Easy
-        public void PlainsEasy3OpensTheNormalCardAndHidesNext() // The open card still waits for level data
+        public void PlainsEasy3OpensPlainsNormal1() // The first Normal trail is ready
         { // Starts the Plains route check
-            var p = new PlayerProgress(); // Starts a new save
-            foreach (var trail in LevelCatalog.All) // Uses the trails that come before Plains Normal
-                p.RecordClear(trail.Episode, trail.Difficulty, trail.Number, 1); // Clears each trail with one star
-            Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Plains, Difficulty.Normal)); // Shows the open Normal card
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Tapping it says Coming soon
-            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Plains, Difficulty.Easy, 3).Step); // The Result Screen hides Next
-            Assert.IsFalse(p.IsEpisodeUnlocked(Episode.Plateaus)); // Plateaus still needs a full Plains clear
+            var p = ClearedBeforePlainsNormal(); // Finishes Plains Easy
+            Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Plains, Difficulty.Normal)); // Opens the Normal card
+            var next = p.NextPlayableAfter(Episode.Plains, Difficulty.Easy, 3); // Reads the next step from the Result Screen
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Shows the Next button
+            Assert.AreEqual(Episode.Plains, next.Episode); // Stays in Plains
+            Assert.AreEqual(Difficulty.Normal, next.Difficulty); // Opens the Normal trail
+            Assert.AreEqual(1, next.Level); // Starts at the first Normal trail
         } // Ends the Plains route check
+
+        [Test] // Checks the end of Plains Normal
+        public void PlainsNormal5OpensHardCardAndHidesNext() // The Hard card waits for level data
+        { // Starts the final Normal check
+            var p = ClearedBeforePlainsNormal(); // Finishes Plains Easy
+            for (int n = 1; n <= 5; n++) p.RecordClear(Episode.Plains, Difficulty.Normal, n, 1); // Finishes all five Normal trails
+            Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Plains, Difficulty.Hard)); // Opens the Hard card
+            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Tapping Hard says Coming soon
+            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Plains, Difficulty.Normal, 5).Step); // Hides Next on the Result Screen
+            Assert.IsFalse(p.IsEpisodeUnlocked(Episode.Plateaus)); // Plateaus still needs the whole Plains trail
+        } // Ends the final Normal check
+
+        static PlayerProgress ClearedBeforePlainsNormal() // Builds a save ready for Plains Normal
+        { // Starts the save
+            var progress = new PlayerProgress(); // Starts with no clears
+            foreach (var trail in LevelCatalog.All) // Reads the available earlier trails
+                if (trail.Episode != Episode.Plains || trail.Difficulty == Difficulty.Easy) progress.RecordClear(trail.Episode, trail.Difficulty, trail.Number, 1); // Clears the trails before Plains Normal
+            return progress; // Opens Plains Normal
+        } // Ends the save setup
 
         static void ClearMountains(PlayerProgress p) // Clears all 15 Mountains levels
         {
