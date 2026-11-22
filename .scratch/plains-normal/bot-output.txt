@@ -1,0 +1,19 @@
+-- Regression, Hills Normal at walk 84 (expect N1 83.8, N2 85.9, N3 84.2, N4 86.2, N5 91.1):
+N1 83.8  N2 85.9  N3 84.2  N4 86.2  N5 91.1  
+-- Plains Normal:
+N1 Candaba Swamp: bot GOAL 83.8s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 83.8-83.8 s
+   floats (s standing): 824:0.25, 1728:0.30, 6032:0.02, 6112:0.32
+N2 Pinatubo Lahar Plain: bot GOAL 93.0s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 93.0-93.0 s
+   crumbling ledges: 6
+N3 Agno River Delta: bot GOAL 85.8s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 85.8-85.8 s
+   currents (s in strip): 600R:1.75, 1900L:5.37, 3900R:3.52, 5800L:5.57
+N4 Agusan Marsh: bot GOAL 85.2s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 85.2-85.2 s
+   floats (s standing): 1828:0.28
+   currents (s in strip): 5000R:2.63
+N5 Mekong Delta: bot GOAL 98.4s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 95.2-98.2 s
+   without moving platforms: FAILED (pit at x=2085)
