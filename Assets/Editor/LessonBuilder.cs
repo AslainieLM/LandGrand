@@ -47,6 +47,7 @@ public static class LessonBuilder // Makes the Lesson Screen scene
         M.ConfigurePixelSprites(SpriteFolder, _ => false); // Crisp pixel art for the lesson parts; this refreshes the assets, so the fonts are loaded after it
         M.ConfigurePixelSprites(ItemFolder, _ => false); // Crisp pixel art for the items
         LandformLife.ConfigurePlainsSprites(); // Imports the Plains life used behind the lesson
+        LandformLife.ConfigurePlateausSprites(); // Imports the Plateaus life used behind the lesson
         var font = M.EnsureFont(); // The pixel font at 2x, for all text (decision D-050)
         if (font == null) return; // EnsureFont already said what is wrong
         StartScreenBuilder.SetLandscapeOnly(); // Keep the game in landscape only (decision D-030)

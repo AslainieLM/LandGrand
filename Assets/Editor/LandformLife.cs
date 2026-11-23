@@ -28,6 +28,23 @@ internal static class LandformLife // Makes the small animations that belong to 
 
     static Sprite PlainsSprite(string name) => K.Sprite(MapSprites, PlainsFolder + name, K.PlainsEasyArtScript); // Loads one prepared Plains life picture
 
+    const string PlateausFolder = "Plateaus/"; // Holds the Plateaus map and menu sprites (D-072)
+
+    internal static void ConfigurePlateausSprites() // Imports the Plateaus life art at the game's pixel scale
+    { // Opens the import
+        string folder = MapSprites + PlateausFolder; // The prepared Plateaus pictures
+        if (!Directory.Exists(folder)) throw new DirectoryNotFoundException($"Missing {folder}. Run python {K.PlateausEasyArtScript}"); // Names the generator for the missing folder
+        M.ConfigurePixelSprites(folder, _ => false); // Uses crisp sprites for map and menus
+    } // Ends the import
+
+    static Sprite PlateausSprite(string name) => K.Sprite(MapSprites, PlateausFolder + name, K.PlateausEasyArtScript); // Loads one prepared Plateaus life picture
+
+    internal static void Hawk(Transform parent, Vector2 centerPixels, Vector2 radiusPixels, float secondsPerLap) // Makes one Plateaus hawk
+        => FlyingBird("Hawk", parent, centerPixels, radiusPixels, secondsPerLap, new[] { PlateausSprite("hawk_0"), PlateausSprite("hawk_1") }); // Flaps at the shared 3 frames per second
+
+    internal static void PlateausStandingLife(Transform parent, string name, string file, Vector2 bottom, float framesPerSecond, int order) // Sets a swaying tuft or a shining waterfall on its spot
+        => StandingLife(parent, name, new[] { PlateausSprite(file + "_0"), PlateausSprite(file + "_1") }, bottom, framesPerSecond, order); // Uses the Plateaus poses
+
     /// <summary>A cloud that drifts across the sky. The same slow drift on every landform.</summary>
     internal static CloudDrift Cloud(Transform parent) // Makes one drifting cloud
     {
@@ -65,8 +82,10 @@ internal static class LandformLife // Makes the small animations that belong to 
     }
 
     internal static void PlainsStandingLife(Transform parent, string name, string file, Vector2 bottom, float framesPerSecond, int order) // Sets a swaying plant or grazing animal on its spot
+        => StandingLife(parent, name, new[] { PlainsSprite(file + "_0"), PlainsSprite(file + "_1") }, bottom, framesPerSecond, order); // Loads the two Plains poses
+
+    static void StandingLife(Transform parent, string name, Sprite[] frames, Vector2 bottom, float framesPerSecond, int order) // Sets two poses on a spot, shared by Plains and Plateaus
     { // Opens the placement
-        var frames = new[] { PlainsSprite(file + "_0"), PlainsSprite(file + "_1") }; // Loads the two poses
         var view = M.Renderer(name, frames[0], order, parent); // Draws the first pose
         view.transform.position = M.Px(bottom.x, bottom.y - frames[0].rect.height / 2f); // Rests the bottom on the chosen row
         var animation = view.gameObject.AddComponent<SpriteFlipbook>(); // Swaps the poses

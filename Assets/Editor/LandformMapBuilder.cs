@@ -90,6 +90,7 @@ public static class LandformMapBuilder // Makes the Landform Map scene
         regions[0].life = life.gameObject; // Keeps the existing Mountains animations
         regions[(int)Episode.Hills].life = HillsLife().gameObject; // Trees, stream and birds, shown only while Hills is open
         regions[(int)Episode.Plains].life = PlainsLife().gameObject; // Rice, egrets and carabao while Plains is open
+        regions[(int)Episode.Plateaus].life = PlateausLife().gameObject; // Waterfall, grass and hawks while Plateaus is open (D-072)
 
         // Controller: connects everything. The guide panel and Back icon are made here, last, so they draw on top.
         var controller = new GameObject("Landform Map").AddComponent<LandformMapController>(); // The map brain
@@ -124,6 +125,24 @@ public static class LandformMapBuilder // Makes the Landform Map scene
         LandformLife.Egret(life, center, radius, 17f); // The second egret circles in seventeen seconds
         return life; // The map shows this life only while Plains is open
     } // Ends the Plains map life
+
+    static Transform PlateausLife() // Makes the animations inside the Plateaus region (D-072)
+    { // Opens the Plateaus map life
+        var life = new GameObject("Plateaus life").transform; // Holds the Plateaus map life
+        LandformLife.PlateausStandingLife(life, "Waterfall", "waterfall", new Vector2(396f, 168f), 4f, 2); // Falls from the top edge of the big mesa's lit face
+        var grass = new (float x, float y, float framesPerSecond)[] // Bottom pixel and sway speed for each tuft on the open ground
+        { // Opens the grass spots
+            (300f, 158f, 1.2f), (468f, 200f, 1.4f), // Left of the padlock and right of the big mesa
+            (350f, 240f, 1.6f), (262f, 252f, 1.8f), // Left of the label, below the trail
+        }; // Ends the grass spots
+        foreach (var spot in grass) // Places all four tufts at their spots
+            LandformLife.PlateausStandingLife(life, "Grass", "grass", new Vector2(spot.x, spot.y), spot.framesPerSecond, 2); // Sways the grass
+        var center = new Vector2(410f, 148f); // Middle of the two hawk paths, above the big mesa
+        var radius = new Vector2(20f, 8f); // Width and height of each oval
+        LandformLife.Hawk(life, center, radius, 14f); // The first hawk circles in fourteen seconds
+        LandformLife.Hawk(life, center, radius, 17f); // The second hawk circles in seventeen seconds
+        return life; // The map shows this life only while Plateaus is open
+    } // Ends the Plateaus map life
 
     // Hills trees: x across, which hill line they stand on (true = far hill), and how fast they sway.
     static readonly (float x, bool far, float framesPerSecond)[] HillsTrees = // One entry per tree

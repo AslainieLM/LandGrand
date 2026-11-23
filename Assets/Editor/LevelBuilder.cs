@@ -199,6 +199,7 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         controller.result = parts.AddComponent<ResultScreen>(); // "Level cleared!" panel
         controller.wind = parts.AddComponent<WindWatcher>(); // Gust push; levels without gusts stay calm
         BuildStrawPiles(layout, geometry.transform, solids, controller); // Builds the solid piles and connects the bounce part
+        BuildUpdrafts(layout, geometry.transform, controller); // Builds the wind columns and connects the updraft part (D-072)
         geometry.solids = solids.ToArray(); // Ground, boulders, ledges and straw piles
         BuildObjects(level, art, geometry, explorer, controller); // Builds the shared objects with this theme
         BuildHardObjects(level, geometry, explorer, controller); // Builds rolling traps and slippery surfaces from the layout
@@ -258,6 +259,37 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
             solids.Add(new Rect(pile.X + 1f, 0f, StrawPile.Width - 2f, StrawPile.Height - 1f)); // Sets the box inside the dark outline
         } // Ends one pile
     } // Ends the pile build
+
+    static void BuildUpdrafts(LevelLayout layout, Transform parent, LevelController controller) // Builds each cliff updraft view and its part (D-072 section 5)
+    { // Opens the updraft build
+        if (layout.Updrafts.Count == 0) return; // No new part on levels without updrafts
+        var watcher = controller.gameObject.AddComponent<UpdraftWatcher>(); // One part handles every column
+        watcher.columnFrames = Enumerable.Range(0, 4).Select(i => K.Sprite(SpriteFolder, $"updraft_{i:00}", K.PlateausEasyArtScript)).ToArray(); // Loads the four wind pictures
+        watcher.leafFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"Props/updraft_leaf_{i:00}", K.PlateausEasyArtScript)).ToArray(); // Loads the two leaf poses
+        watcher.dustFrames = Enumerable.Range(0, 2).Select(i => K.Sprite(SpriteFolder, $"Props/updraft_dust_{i:00}", K.PlateausEasyArtScript)).ToArray(); // Loads the two dust poses
+        var baseSprite = K.Sprite(SpriteFolder, "updraft_base", K.PlateausEasyArtScript); // Loads the rock crack at the foot
+        watcher.windSound = controller.gameObject.AddComponent<AudioSource>(); // A separate sound player for the loop
+        watcher.windSound.clip = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/sfx_updraft.wav"); // Loads the wind loop
+        if (watcher.windSound.clip == null) Debug.LogError("Missing Assets/Audio/sfx_updraft.wav. Run: python Tools/Audio/make_plateaus_audio.py"); // Names the sound generator
+        watcher.windSound.loop = true; // Plays while the explorer is inside
+        watcher.windSound.playOnAwake = false; // Starts silent
+        watcher.views = new UpdraftWatcher.View[layout.Updrafts.Count]; // Matches the layout order
+        for (int i = 0; i < layout.Updrafts.Count; i++) // Builds each column
+        { // Opens one column
+            var updraft = layout.Updrafts[i]; // Takes the left edge and hover height from the layout
+            float middle = updraft.X + Updraft.Width / 2f; // Finds the centre of the column
+            var holder = new GameObject($"Updraft {i + 1}").transform; // Groups this column's pictures
+            holder.SetParent(parent, false); // Keeps it under the level
+            var crack = M.Renderer("Base", baseSprite, 7, holder); // Draws the rock crack on the ground
+            crack.transform.position = LevelGeometry.ToWorld(middle, UpdraftWatcher.BaseHeight / 2f); // Its 8-pixel height sits on the ground line
+            float top = updraft.Top + UpdraftWatcher.HeadRoom; // The wind reaches the hovering head
+            var column = new Rect(updraft.X, UpdraftWatcher.BaseHeight, Updraft.Width, top - UpdraftWatcher.BaseHeight); // The wind area above the crack
+            var wind = Tiled("Wind", watcher.columnFrames[0], column, 5, holder); // Stacks the wind tiles up the column
+            var leaves = new[] { M.Renderer("Leaf 1", watcher.leafFrames[0], 18, holder), M.Renderer("Leaf 2", watcher.leafFrames[1], 18, holder) }; // Two leaves just behind the explorer
+            var dust = new[] { M.Renderer("Dust 1", watcher.dustFrames[0], 18, holder), M.Renderer("Dust 2", watcher.dustFrames[1], 18, holder) }; // Two dust specks just behind the explorer
+            watcher.views[i] = new UpdraftWatcher.View { column = wind, leaves = leaves, dust = dust }; // Connects the renderers
+        } // Ends one column
+    } // Ends the updraft build
 
     static void BuildVents(LevelLayout layout, Transform parent) // Each steam vent: its rim in the ground, a warning wisp and a puff above it (D-055)
     {
@@ -512,13 +544,14 @@ public static partial class LevelBuilder // Makes the level scenes; the theme ar
         Tiled(name, S(sprite), r, order, parent); // Loads the tile before drawing it
     } // Ends the tile lookup
 
-    static void Tiled(string name, Sprite sprite, Rect r, int order, Transform parent) // Draws a loaded tile across the area
+    static SpriteRenderer Tiled(string name, Sprite sprite, Rect r, int order, Transform parent) // Draws a loaded tile across the area and gives back its renderer
     { // Starts drawing
         var sr = M.Renderer(name, sprite, order, parent); // The renderer
         sr.drawMode = SpriteDrawMode.Tiled; // Repeat the tile instead of stretching it
         sr.tileMode = SpriteTileMode.Continuous; // Plain repeating
         sr.size = new Vector2(r.width, r.height) / LevelGeometry.PixelsPerUnit; // Area to fill, in units
         sr.transform.position = LevelGeometry.ToWorld(r.center.x, r.center.y); // Centred on the rectangle
+        return sr; // Lets a caller keep the renderer, such as the updraft wind
     }
 
     static Sprite Item(string path) => K.Sprite(ItemSprites, path, "Tools/Art/make_lesson_art.py"); // Loads one item picture

@@ -83,6 +83,7 @@ public static partial class LevelBuilder // The theme half of the level builder
     const string PlainsEasyBackdropScript = "Tools/Art/make_plains_easy_backdrops.py"; // Draws the Plains Easy backdrops
 
     const string PlainsNormalBackdropScript = "Tools/Art/make_plains_normal_backdrops.py"; // Draws the Plains Normal backdrops
+    const string PlateausEasyBackdropScript = "Tools/Art/make_plateaus_easy_backdrops.py"; // Draws the Plateaus Easy backdrops (D-072)
 
     static readonly Dictionary<LevelTheme, ThemeArt> Themes = new Dictionary<LevelTheme, ThemeArt> // Every theme's art
     {
@@ -272,6 +273,9 @@ public static partial class LevelBuilder // The theme half of the level builder
         [LevelTheme.LimestonePlain] = PlainsHardTheme(LevelTheme.LimestonePlain, "nullarbor", "Cave Entrance", "nullarbor_cave", LimestonePlainProps), // Nullarbor Plain; its bats stay bats
         [LevelTheme.GangesPlain] = PlainsHardTheme(LevelTheme.GangesPlain, "ganges", "Stilt House", "stilt_house", GangesPlainProps), // Indo-Gangetic Plain
         [LevelTheme.Steppe] = PlainsHardTheme(LevelTheme.Steppe, "steppe", "Ger", "ger", SteppeProps, hay: true, herd: "horse", frost: true), // Mongolian Steppe
+        [LevelTheme.PineapplePlateau] = TrailTheme(LevelTheme.PineapplePlateau, "pineapple", "Farm Lookout", "farm_lookout", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, PineapplePlateauProps), // Bukidnon Plateau (D-072)
+        [LevelTheme.LakePlateau] = TrailTheme(LevelTheme.LakePlateau, "lake", "Torogan", "torogan", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, LakePlateauProps), // Lake Lanao
+        [LevelTheme.FallsEdge] = TrailTheme(LevelTheme.FallsEdge, "falls", "Falls Viewing Deck", "falls_deck", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, FallsEdgeProps), // Maria Cristina Falls
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -517,6 +521,32 @@ public static partial class LevelBuilder // The theme half of the level builder
         PlacePlainsAnimals(level, parent, "carabao", new[] { 1000f, 4250f }, 8f); // Grazing carabao
     } // Ends the river decorations
 
+    static void PineapplePlateauProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds pineapples and hawks to the Bukidnon farm (D-072)
+    { // Opens the farm decorations
+        RepeatTrailProp(level, parent, "pineapple_plant", PixelSceneKit.PlateausEasyArtScript, 80f, 100f, 6f, 7); // A pineapple about every 100 px
+        PlateauHawks(level, parent, new[] { 900f, 2600f, 4100f }); // Three hawks high in the sky
+    } // Ends the farm decorations
+
+    static void LakePlateauProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds reeds and hawks to the Lake Lanao shore
+    { // Opens the lake decorations
+        RepeatTrailProp(level, parent, "lake_reed", PixelSceneKit.PlateausEasyArtScript, 120f, 160f, 8f, 7, 2, PlateauSway); // A swaying reed about every 160 px
+        PlateauHawks(level, parent, new[] { 1300f, 3900f }); // Two hawks high in the sky
+    } // Ends the lake decorations
+
+    static void FallsEdgeProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds ferns, falls mist and hawks at Maria Cristina Falls
+    { // Opens the falls decorations
+        RepeatTrailProp(level, parent, "fern", PixelSceneKit.PlateausEasyArtScript, 100f, 140f, 6f, 7, 2, PlateauSway); // A swaying fern about every 140 px; the fit check keeps 8 px from each column
+        var spray = TrailPropFrames("falls_spray", 2, PixelSceneKit.PlateausEasyArtScript); // Loads both mist poses once
+        PlaceHillsNormalProp(level, parent, "Falls Spray", spray, 5100f, 12f, 3, 0.5f); // Mist at 2 frames per second, at its exact spot near the deck
+        PlaceHillsNormalProp(level, parent, "Falls Spray", spray, 5180f, 12f, 3, 0.5f); // A second mist at its exact spot, past the row's goal margin
+        PlateauHawks(level, parent, new[] { 1800f, 3900f }); // Two hawks high in the sky
+    } // Ends the falls decorations
+
+    static float PlateauSway(int index) => 1f / (1.2f + index % 3 * 0.3f); // Sways at 1.2, 1.5 or 1.8 frames per second, like the corn
+
+    static void PlateauHawks(LevelData level, Transform parent, float[] targets) // Places the hawks high in the sky, swapping frames every 0.4 s
+        => PlaceTrailProps(level, parent, "hawk", PixelSceneKit.PlateausEasyArtScript, targets, 150f, 2, 2, 0.4f); // Centre y 150, behind the trail at order 2
+
     static void PlacePlainsAnimals(LevelData level, Transform parent, string name, float[] targets, float y, string artScript = PixelSceneKit.PlainsEasyArtScript, bool clearFullZones = false, int order = 4) // Places the two-frame animals near the authored spots
     { // Opens the animal group
         var frames = TrailPropFrames(name, 2, artScript); // Loads both poses once
@@ -716,7 +746,8 @@ public static partial class LevelBuilder // The theme half of the level builder
             && !layout.MudZones.Any(m => Overlaps(m.X, m.X + m.Width)) // Leaves the whole mud stretch visible
             && !layout.Logs.Any(l => Overlaps(Mathf.Min(l.Spawn, l.End) - 8f, Mathf.Max(l.Spawn, l.End) + 8f)) // Keeps the log route and its edges clear
             && !layout.Currents.Any(c => Overlaps(c.X, c.X + (clearFullZones ? c.Width : Mathf.Min(16f, c.Width)))) // Respects the trail cover needed for the current
-            && !layout.StrawPiles.Any(p => Overlaps(p.X - 8f, p.X + StrawPile.Width + 8f)); // Leaves eight pixels around each straw pile
+            && !layout.StrawPiles.Any(p => Overlaps(p.X - 8f, p.X + StrawPile.Width + 8f)) // Leaves eight pixels around each straw pile
+            && !layout.Updrafts.Any(u => Overlaps(u.X - 8f, u.X + Updraft.Width + 8f)); // Leaves eight pixels around each updraft column (D-072)
     } // Ends the block
 
     static void GroundProps(LevelData level, Transform parent, string name, float start, float spacing) // Places one kind of ground decoration
