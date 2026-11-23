@@ -1,0 +1,13 @@
+check: updraft 600: hovering at feet 67.5 (top 68) after 0.75 s (expect about 0.76 s)
+check: jump pressed while hovering: feet 68.0 (unchanged), double jump ready True
+check: walking off the top: grounded True, feet 64.0 (ledge top 64), x 641
+check: walking straight through: highest feet 38.3, then grounded True at x 718
+-- Regression, Hills Easy at walk 84 (expect E1 56.8, E2 62.4, E3 70.1):
+E1 56.8  E2 62.4  E3 70.1  
+-- Regression, Plains Easy at walk 84 (expect E1 56.8, E2 62.4, E3 62.2):
+E1 56.8  E2 62.4  E3 62.2  
+-- Plateaus Easy:
+E1 Bukidnon Plateau: bot GOAL 56.8s (goal); bounces 0; updrafts 0; pickups 5/5 reachable lint clean
+E2 Lake Lanao: bot GOAL 62.4s (goal); bounces 0; updrafts 0; pickups 5/5 reachable lint clean
+E3 Maria Cristina Falls: bot GOAL 62.5s (goal); bounces 0; updrafts 4; pickups 5/5 reachable lint clean
+   without updrafts: needs an updraft -> pickups [gibbsite(1272,112) cristobalite(3368,160)], ledges [L(1240,112) L(3340,160) L(4540,80)]
