@@ -89,14 +89,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         } // Ends the star check
 
         [Test] // Checks the Plains collector badge
-        public void PlainCollector_NeedsAllSixteenPlainsKinds() // Counts the full Plains shelf
+        public void PlainCollector_NeedsAllTwentyFourPlainsKinds() // Counts the full Plains shelf
         { // Starts the collection check
             var progress = new PlayerProgress(); // Starts with a fresh profile
             var kinds = ItemCatalog.All.Where(kind => kind.BelongsTo(Episode.Plains)).ToArray(); // Reads the Plains shelf
-            Assert.AreEqual(16, kinds.Length); // The shelf has sixteen kinds
-            foreach (var kind in kinds.Take(15)) progress.RecordFoundKind(kind.Id); // Finds fifteen kinds
+            Assert.AreEqual(24, kinds.Length); // The shelf has twenty-four kinds
+            foreach (var kind in kinds.Take(23)) progress.RecordFoundKind(kind.Id); // Finds twenty-three kinds
             Assert.IsFalse(Earned("plain_collector", progress)); // One kind is still missing
-            progress.RecordFoundKind(kinds[15].Id); // Finds the last kind
+            progress.RecordFoundKind(kinds[23].Id); // Finds the last kind
             Assert.IsTrue(Earned("plain_collector", progress)); // The full shelf earns the badge
         } // Ends the collection check
 

@@ -15,7 +15,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Hills, Difficulty.Hard)); // Hills Hard has seven trails
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Easy)); // Plains Easy has three trails
             Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Normal)); // Plains Normal has five trails
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Plains Hard waits for data
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Plains Hard has seven trails (D-071)
         }
 
         [Test] // Checks the new route from Easy to Normal
@@ -131,13 +131,15 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the Plains route check
 
         [Test] // Checks the end of Plains Normal
-        public void PlainsNormal5OpensHardCardAndHidesNext() // The Hard card waits for level data
+        public void PlainsNormal5OpensHardCardAndShowsNext() // The Hard card opens its first trail (D-071)
         { // Starts the final Normal check
             var p = ClearedBeforePlainsNormal(); // Finishes Plains Easy
             for (int n = 1; n <= 5; n++) p.RecordClear(Episode.Plains, Difficulty.Normal, n, 1); // Finishes all five Normal trails
             Assert.IsTrue(p.IsDifficultyUnlocked(Episode.Plains, Difficulty.Hard)); // Opens the Hard card
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Tapping Hard says Coming soon
-            Assert.AreEqual(NextStep.None, p.NextPlayableAfter(Episode.Plains, Difficulty.Normal, 5).Step); // Hides Next on the Result Screen
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plains, Difficulty.Hard)); // Tapping Hard opens its trail
+            var next = p.NextPlayableAfter(Episode.Plains, Difficulty.Normal, 5); // Reads the Result Screen route
+            Assert.AreEqual(NextStep.NextLevel, next.Step); // Shows Next on the Result Screen
+            Assert.AreEqual((Episode.Plains, Difficulty.Hard, 1), (next.Episode, next.Difficulty, next.Level)); // Points at Plains Hard 1
             Assert.IsFalse(p.IsEpisodeUnlocked(Episode.Plateaus)); // Plateaus still needs the whole Plains trail
         } // Ends the final Normal check
 

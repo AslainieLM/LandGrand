@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys, TarsierForest, RainySlope, KarstRidge, WindHills, DrumlinBay, CityHills, KarstTowers, RicePlain, SaltBeds, RiverPlain, CandabaWetland, LaharPlain, RiverDelta, FloatingVillage, FloatingMarket } // Adds the five Plains Normal themes
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys, TarsierForest, RainySlope, KarstRidge, WindHills, DrumlinBay, CityHills, KarstTowers, RicePlain, SaltBeds, RiverPlain, CandabaWetland, LaharPlain, RiverDelta, FloatingVillage, FloatingMarket, Prairie, Savanna, Pampas, FrozenPlain, LimestonePlain, GangesPlain, Steppe } // Adds the five Plains Normal themes, then the seven Plains Hard themes at the end
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list

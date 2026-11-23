@@ -13,11 +13,11 @@
    - Update the tests that expected 16 Plains kinds or a total of 56.
 
 **Checklist**
-- [ ] Enum and kind ids only appended
-- [ ] EditMode tests pass (report the count; 440 before)
+- [x] Enum and kind ids only appended
+- [x] EditMode tests pass (report the count; 440 before)
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** done (2026-11-23, 443 tests)
 
 **Builder to run:** none

@@ -31,11 +31,11 @@
    - **Regression:** Mountains, Hills, Plains Easy and Plains Normal data are unchanged.
 
 **Checklist**
-- [ ] Numbers exactly as in `layouts.md`; any change is reported, never made silently
-- [ ] EditMode tests pass (report the count)
+- [x] Numbers exactly as in `layouts.md`; any change is reported, never made silently
+- [x] EditMode tests pass (report the count)
 
 **Blocked by:** 01
 
-**Status:** not started
+**Status:** done (2026-11-23, 467 tests)
 
 **Builder to run:** none

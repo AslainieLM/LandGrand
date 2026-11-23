@@ -58,6 +58,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             { "amb_grass_easy", "make_plains_audio.py" }, // Makes the grass loop
             { "amb_wetland_normal", "make_plains_audio.py" }, // Makes the wetland loop
             { "amb_dry_hard", "make_plains_audio.py" }, // Makes the dry wind loop
+            { "amb_cold_plain", "make_plains_hard_audio.py" }, // Makes the West Siberian Plain cold wind (D-071)
         }; // Ends the ambience script table
 
         /// <summary>The level tune for this landform's levels.</summary>

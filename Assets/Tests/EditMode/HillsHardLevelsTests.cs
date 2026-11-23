@@ -133,7 +133,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         [Test] // Checks earlier layouts
         public void EarlierTrailsHaveNoMudOrLogs() // Keeps the new jobs limited to their own data
         { // Opens the check
-            var earlier = LevelCatalog.All.Except(All); // Gets the earlier trails
+            var earlier = LevelCatalog.All.TakeWhile(l => l.Episode != Episode.Hills || l.Difficulty != Difficulty.Hard); // Gets the trails before Hills Hard; Plains Hard later reuses logs (D-071)
             Assert.IsTrue(earlier.All(l => l.Layout.MudZones.Count == 0 && l.Layout.Logs.Count == 0)); // Earlier layouts keep the default lists
         } // Ends the check
     } // Ends the checks

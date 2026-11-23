@@ -29,7 +29,55 @@ public static partial class LevelBuilder // The theme half of the level builder
         public string BackdropScript; // Script that draws those layers
         public string ArtScript; // Script that draws the ground and goal for this theme
         public bool PauseBackdropDrift; // True when the backdrop uses the level clock
+        public string RollerFrames; // Prefix of the four roll frames; null uses "log" (D-071)
+        public string RollerWarnFrames; // Prefix of the two warning frames; null uses "log_warn"
+        public string RollerArtScript; // Script that draws the roller frames; null uses the Hills Hard art script
+        public string RollerSound; // File of the rolling loop; null uses "sfx_log_roll.wav"
+        public string RollerSoundScript; // Script that makes the rolling loop; null uses the Hills Hard audio script
+        public string BatFrames; // Prefix of the bat or herd frames; null uses "bat"
+        public int BatFrameCount; // Number of those frames; 0 uses 3
+        public string BatArtScript; // Script that draws those frames; null uses the Hills Normal art script
+        public string BatSound; // File of the touch sound; null uses "sfx_bat_flap.wav"
+        public string BatSoundScript; // Script that makes the touch sound; null uses the Hills Normal audio script
+        public float BatArtLift; // Pixels the picture sits above the rule's centre; the touch box does not move
+        public bool BatArtFacesLeft; // True when the frames face left, so the flip is reversed
+        public string IceTop; // Top tile of icy ground; null uses "ice_top"
+        public string IceTopScript; // Script that draws that tile; null uses the Hard art script
+        public string UsedRollerFrames => RollerFrames ?? DefaultRollerFrames; // Roll frames after the default
+        public string UsedRollerWarnFrames => RollerWarnFrames ?? DefaultRollerWarnFrames; // Warning frames after the default
+        public string UsedRollerSound => RollerSound ?? DefaultRollerSound; // Rolling loop after the default
+        public string UsedBatFrames => BatFrames ?? DefaultBatFrames; // Bat frames after the default
+        public int UsedBatFrameCount => BatFrameCount > 0 ? BatFrameCount : DefaultBatFrameCount; // Frame count after the default
+        public string UsedBatSound => BatSound ?? DefaultBatSound; // Touch sound after the default
+        public string UsedIceTop => IceTop ?? DefaultIceTop; // Ice tile after the default
     }
+
+    const string DefaultRollerFrames = "log"; // The Hills Hard log frames
+    const string DefaultRollerWarnFrames = "log_warn"; // The Hills Hard warning dust
+    const string DefaultRollerSound = "sfx_log_roll.wav"; // The wooden rumble
+    const string DefaultBatFrames = "bat"; // The Hills Normal bat
+    const int DefaultBatFrameCount = 3; // Three wing poses
+    const string DefaultBatSound = "sfx_bat_flap.wav"; // The soft wings
+    const string DefaultIceTop = "ice_top"; // The Mountains Hard ice tile
+    const string HillsHardAudioScript = "Tools/Audio/make_hills_hard_audio.py"; // Makes the log roll sound
+    const string HillsNormalAudioScript = "Tools/Audio/make_hills_normal_audio.py"; // Makes the bat flap sound
+    const string PlainsHardAudioScript = "Tools/Audio/make_plains_hard_audio.py"; // Makes the hay and hoof sounds (D-071)
+    const string PlainsHardBackdropScript = "Tools/Art/make_plains_hard_backdrops.py"; // Draws the Plains Hard backdrops (D-071)
+
+    /// <summary>The themes made before Plains Hard that set any roller, bat or ice field. Old themes must keep today's art, so this list stays empty (D-071).</summary>
+    internal static List<LevelTheme> OldThemesWithNewArt() => Themes.Where(t => t.Key < LevelTheme.Prairie).Where(t => // Checks every older theme
+        t.Value.RollerFrames != null || t.Value.RollerWarnFrames != null || t.Value.RollerArtScript != null || t.Value.RollerSound != null || t.Value.RollerSoundScript != null // Roller fields stay empty
+        || t.Value.BatFrames != null || t.Value.BatFrameCount != 0 || t.Value.BatArtScript != null || t.Value.BatSound != null || t.Value.BatSoundScript != null || t.Value.BatArtLift != 0f || t.Value.BatArtFacesLeft // Bat fields stay empty
+        || t.Value.IceTop != null || t.Value.IceTopScript != null).Select(t => t.Key).ToList(); // Ice fields stay empty
+
+    /// <summary>The roller, bat and ice picture names one theme uses after the defaults are applied.</summary>
+    internal static string[] ObjectArtNames(LevelTheme theme) // Lists the names in a fixed order for checks
+    { // Opens the lookup
+        var art = ArtFor(theme); // Finds the theme entry
+        return new[] { art.UsedRollerFrames, art.UsedRollerWarnFrames, art.UsedRollerSound, // Roller art and sound
+            art.UsedBatFrames, art.UsedBatFrameCount.ToString(), art.UsedBatSound, art.BatArtLift.ToString(), art.BatArtFacesLeft.ToString(), // Bat art and sound
+            art.UsedIceTop }; // Ice tile
+    } // Ends the lookup
 
     const string HillsHardBackdropScript = "Tools/Art/make_hills_hard_backdrops.py"; // Draws the Hills Hard backdrops
     const string PlainsEasyBackdropScript = "Tools/Art/make_plains_easy_backdrops.py"; // Draws the Plains Easy backdrops
@@ -217,6 +265,13 @@ public static partial class LevelBuilder // The theme half of the level builder
         [LevelTheme.RiverDelta] = TrailTheme(LevelTheme.RiverDelta, "delta", "Fish Pen Hut", "fish_pen_hut", 24f, PixelSceneKit.PlainsNormalArtScript, PlainsNormalBackdropScript, DeltaProps), // Agno River Delta
         [LevelTheme.FloatingVillage] = TrailTheme(LevelTheme.FloatingVillage, "agusan", "Floating House", "floating_house", 24f, PixelSceneKit.PlainsNormalArtScript, PlainsNormalBackdropScript, MarshProps), // Agusan Marsh
         [LevelTheme.FloatingMarket] = TrailTheme(LevelTheme.FloatingMarket, "mekong", "Market Pier", "market_pier", 24f, PixelSceneKit.PlainsNormalArtScript, PlainsNormalBackdropScript, MarketProps, platformSprite: "market_boat", platformLandSound: "sfx_boat_bump.wav", platformLandSoundScript: "Tools/Audio/make_plains_normal_audio.py"), // Mekong Delta
+        [LevelTheme.Prairie] = PlainsHardTheme(LevelTheme.Prairie, "prairie", "Hay Barn", "hay_barn", PrairieProps, hay: true), // Great Plains (D-071)
+        [LevelTheme.Savanna] = PlainsHardTheme(LevelTheme.Savanna, "savanna", "Kopje", "kopje", SavannaProps, herd: "wildebeest"), // Serengeti
+        [LevelTheme.Pampas] = PlainsHardTheme(LevelTheme.Pampas, "pampas", "Estancia Gate", "estancia_gate", PampasProps, hay: true, herd: "cattle"), // Pampas
+        [LevelTheme.FrozenPlain] = PlainsHardTheme(LevelTheme.FrozenPlain, "siberia", "Winter Hut", "winter_hut", FrozenPlainProps, frost: true), // West Siberian Plain
+        [LevelTheme.LimestonePlain] = PlainsHardTheme(LevelTheme.LimestonePlain, "nullarbor", "Cave Entrance", "nullarbor_cave", LimestonePlainProps), // Nullarbor Plain; its bats stay bats
+        [LevelTheme.GangesPlain] = PlainsHardTheme(LevelTheme.GangesPlain, "ganges", "Stilt House", "stilt_house", GangesPlainProps), // Indo-Gangetic Plain
+        [LevelTheme.Steppe] = PlainsHardTheme(LevelTheme.Steppe, "steppe", "Ger", "ger", SteppeProps, hay: true, herd: "horse", frost: true), // Mongolian Steppe
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -462,11 +517,11 @@ public static partial class LevelBuilder // The theme half of the level builder
         PlacePlainsAnimals(level, parent, "carabao", new[] { 1000f, 4250f }, 8f); // Grazing carabao
     } // Ends the river decorations
 
-    static void PlacePlainsAnimals(LevelData level, Transform parent, string name, float[] targets, float y, string artScript = PixelSceneKit.PlainsEasyArtScript, bool clearFullZones = false) // Places the two-frame animals near the authored spots
+    static void PlacePlainsAnimals(LevelData level, Transform parent, string name, float[] targets, float y, string artScript = PixelSceneKit.PlainsEasyArtScript, bool clearFullZones = false, int order = 4) // Places the two-frame animals near the authored spots
     { // Opens the animal group
         var frames = TrailPropFrames(name, 2, artScript); // Loads both poses once
         for (int i = 0; i < targets.Length; i++) // Places each animal
-            FindAndPlaceTrailProp(level, parent, name, frames, targets[i], y, 4, 1.5f + i * 0.5f, clearFullZones: clearFullZones); // Varies swaps from 1.5 to 2.5 seconds
+            FindAndPlaceTrailProp(level, parent, name, frames, targets[i], y, order, 1.5f + i * 0.5f, clearFullZones: clearFullZones); // Varies swaps from 1.5 to 2.5 seconds; the layer order defaults to 4
     } // Ends the animal group
 
     static ThemeArt TrailTheme(LevelTheme theme, string tile, string goalName, string goalSprite, float goalY, string artScript, string backdropScript, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props, float goalX = 24f, string platformSprite = null, string platformLandSound = null, string platformLandSoundScript = null) // Reads the ground, goal and backdrop for a trail
@@ -482,6 +537,24 @@ public static partial class LevelBuilder // The theme half of the level builder
             Backdrop = $"Backdrop/{theme}/", BackdropScript = backdropScript, // Names the backdrop folder and generator
             PauseBackdropDrift = true, // Holds moving art when the level clock stops
         }; // Ends the theme
+
+    static ThemeArt PlainsHardTheme(LevelTheme theme, string tile, string goalName, string goalSprite, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props, bool hay = false, string herd = null, bool frost = false) // A Plains Hard theme with its optional hay, herd and frost art (D-071)
+    { // Opens the theme
+        var art = TrailTheme(theme, tile, goalName, goalSprite, 24f, PixelSceneKit.PlainsHardArtScript, PlainsHardBackdropScript, props); // Ground, goal, props and backdrop
+        if (hay) // The theme draws its rollers as hay bales
+        { // Opens the hay art
+            art.RollerFrames = "hay"; art.RollerWarnFrames = "hay_warn"; art.RollerArtScript = PixelSceneKit.PlainsHardArtScript; // Hay frames and their script
+            art.RollerSound = "sfx_hay_roll.wav"; art.RollerSoundScript = PlainsHardAudioScript; // Soft rustle and its script
+        } // Ends the hay art
+        if (herd != null) // The theme draws its bats as a grazing herd
+        { // Opens the herd art
+            art.BatFrames = herd; art.BatFrameCount = 3; art.BatArtScript = PixelSceneKit.PlainsHardArtScript; // Three walk frames and their script
+            art.BatSound = "sfx_herd_hooves.wav"; art.BatSoundScript = PlainsHardAudioScript; // Soft hooves and their script
+            art.BatArtLift = 2f; art.BatArtFacesLeft = true; // Feet on the ground line; the frames face left
+        } // Ends the herd art
+        if (frost) { art.IceTop = "frost_top"; art.IceTopScript = PixelSceneKit.PlainsHardArtScript; } // Frozen ground tile and its script
+        return art; // Ready to build
+    } // Ends the theme
 
     static void TarsierForestProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds vines and blinking tarsiers
     { // Opens the forest decor

@@ -21,13 +21,13 @@
 8. **Regression check:** compare the Hills Hard scenes (logs), the Hills Normal scenes (bats) and the Mountains Hard scenes (ice) with the last commit. Log, bat and ice positions, sprites and timings must be identical (ignore the order the scene file lists objects in). Report the result.
 
 **Checklist**
-- [ ] `PlainsHard1`–`PlainsHard7` are built and in Build Settings, and link `bgm_plains` and `amb_dry_hard` (H4: `amb_cold_plain`)
-- [ ] No per-level or per-theme `if` in play scripts
-- [ ] Old logs, bats and ice are unchanged
-- [ ] EditMode tests pass (report the count)
+- [x] `PlainsHard1`–`PlainsHard7` are built and in Build Settings, and link `bgm_plains` and `amb_dry_hard` (H4: `amb_cold_plain`)
+- [x] No per-level or per-theme `if` in play scripts
+- [x] Old logs, bats and ice are unchanged
+- [x] EditMode tests pass (report the count)
 
 **Blocked by:** 01, 02
 
-**Status:** not started
+**Status:** done (2026-11-23, 475 tests)
 
 **Builder to run:** **LandGrand > Build Levels**, **Build Lesson Scene**, **Build Selection Scenes**, **Build Landform Map Scene**, **Build Landform Description Scene**, **Build Profile Scene**

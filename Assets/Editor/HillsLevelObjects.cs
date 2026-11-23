@@ -56,10 +56,16 @@ public static partial class LevelBuilder // Builds water, bats, currents and bal
     { // Opens the part builder
         if (layout.Bats.Count > 0) // This trail has bat loops
         { // Opens the flock builder
+            var art = ArtFor(layout.Theme); // The theme names the bat or herd art (D-071)
             var flock = controller.gameObject.AddComponent<BatFlock>(); // One optional part keeps all bats
-            flock.flap = HillsNormalSound("sfx_bat_flap.wav"); // Loads the soft touch sound
-            flock.frames = Enumerable.Range(0, 3).Select(i => HillsNormalSprite($"bat_{i:00}")).ToArray(); // Reads all three poses
-            flock.bats = layout.Bats.Select(rule => BuildBat(rule, flock.frames[0], geometry.transform)).ToArray(); // Draws each placed bat
+            flock.flap = ThemeSound(art.UsedBatSound, art.BatSoundScript ?? HillsNormalAudioScript); // Loads the soft touch sound
+            string prefix = art.UsedBatFrames; // The theme's frames, or the bat
+            int count = art.UsedBatFrameCount; // The theme's frame count, or three
+            string artScript = art.BatArtScript ?? K.HillsNormalArtScript; // The script that draws those frames
+            flock.frames = Enumerable.Range(0, count).Select(i => K.Sprite(SpriteFolder, $"{prefix}_{i:00}", artScript)).ToArray(); // Reads all the poses
+            flock.artLift = art.BatArtLift; // Raises the picture over the touch box
+            flock.artFacesLeft = art.BatArtFacesLeft; // Reverses the flip for left-facing frames
+            flock.bats = layout.Bats.Select(rule => BuildBat(rule, flock.frames[0], art.BatArtLift, geometry.transform)).ToArray(); // Draws each placed bat
         } // Ends the flock builder
         if (layout.Currents.Count == 0) return; // A trail without river strips needs no current part
         var watcher = controller.gameObject.AddComponent<CurrentWatcher>(); // One part supplies the ground push
@@ -67,11 +73,11 @@ public static partial class LevelBuilder // Builds water, bats, currents and bal
         watcher.strips = layout.Currents.Select(zone => BuildCurrentStrip(zone, watcher.frames[0], geometry.transform)).ToArray(); // Draws the marks for each strip
     } // Ends the part builder
 
-    static SpriteRenderer BuildBat(Bat rule, Sprite sprite, Transform parent) // Builds one visible bat in its start pose
+    static SpriteRenderer BuildBat(Bat rule, Sprite sprite, float lift, Transform parent) // Builds one visible bat in its start pose
     { // Opens the bat build
         var art = M.Renderer("Gentle Bat", sprite, 19, parent); // Draws it just behind the explorer
         var start = rule.PositionAt(0f); // Shows the first loop position
-        art.transform.position = LevelGeometry.ToWorld(Mathf.Round(start.X), Mathf.Round(start.Y)); // Starts on a whole pixel
+        art.transform.position = LevelGeometry.ToWorld(Mathf.Round(start.X), Mathf.Round(start.Y) + lift); // Starts on a whole pixel, raised by the theme's lift
         return art; // Gives the flock this view
     } // Ends the bat build
 

@@ -39,7 +39,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         [Test] // Runs the pile placement check
         public void OnlyRiverPlainHasTheFourSafePileSpots() // Verifies clearance on all four piles
         { // Starts the placement check
-            var trail = LevelCatalog.All.Single(level => level.Layout.StrawPiles.Count > 0); // Only one trail uses piles
+            var trail = LevelCatalog.All.Where(level => level.Episode != Episode.Plains || level.Difficulty != Difficulty.Hard).Single(level => level.Layout.StrawPiles.Count > 0); // Only one trail before Plains Hard uses piles (D-071)
             Assert.AreEqual("PlainsEasy3", trail.SceneName); // Mountains and Hills have no piles
             CollectionAssert.AreEqual(new[] { 600f, 1200f, 3300f, 4500f }, trail.Layout.StrawPiles.Select(p => p.X)); // Keeps all four starts
             float practicePileX = trail.Layout.StrawPiles.Min(pile => pile.X); // The leftmost pile is the practice pile

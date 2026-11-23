@@ -144,6 +144,27 @@ EditorBuildSettings:
     path: Assets/Scenes/PlainsNormal5.unity
     guid: 0e133c1c5fb26bc42b646020e924e14e
   - enabled: 1
+    path: Assets/Scenes/PlainsHard1.unity
+    guid: a81eb9ff24e39d448b3b8dc2c6e76dfa
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard2.unity
+    guid: f2b1a0fee7e8f9f4a9b1de46760b47b8
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard3.unity
+    guid: 0b4a12cd027e04248ac92db686c776de
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard4.unity
+    guid: 3a6c287a6b3c49a41897f38a0f4b1be2
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard5.unity
+    guid: 9b1c1c648f27cd04a906fee274ab6731
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard6.unity
+    guid: 21e3a0bb9ec546140845bfae7533a85d
+  - enabled: 1
+    path: Assets/Scenes/PlainsHard7.unity
+    guid: 1df9210c8dc77ae46a4fa07d9c549a98
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:

@@ -42,6 +42,6 @@
 
 **Blocked by:** 01, 02, 03
 
-**Status:** not started
+**Status:** done (2026-11-23, 475 tests)
 
 **Builder to run:** none (everything is built in ticket 03)

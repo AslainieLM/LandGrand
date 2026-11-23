@@ -44,6 +44,12 @@ internal static class PixelSceneKit // Helpers for the scene builders
         "lesson_candaba", "lesson_pinatubo_lahar", "lesson_agno", "lesson_agusan", "lesson_mekong", // The five lesson pictures
         "peat", "laterite", // The two item pictures
     }; // Ends the picture list
+    internal const string PlainsHardArtScript = "Tools/Art/make_plains_hard_art.py"; // Makes the Plains Hard pictures (D-071)
+    static readonly HashSet<string> PlainsHardLessonAndItemPictures = new HashSet<string> // Shared Plains Hard pictures
+    { // Opens the picture list
+        "lesson_great_plains", "lesson_serengeti", "lesson_pampas", "lesson_siberia", "lesson_nullarbor", "lesson_ganges", "lesson_steppe", // The seven lesson pictures
+        "chalk", "loess", "flint", // The three item pictures
+    }; // Ends the picture list
     internal static readonly Vector2 CanvasCenter = new Vector2(240f, 135f); // Middle of the 480x270 screen
     internal static readonly Color32 Ink = new Color32(31, 26, 36, 255); // Dark outline colour for text and wide-screen edges
     const string AudioFolder = "Assets/Audio/"; // Music and sound files
@@ -198,6 +204,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
             if (HillsHardLessonAndItemPictures.Contains(path)) script = HillsHardArtScript; // Names the Hard generator for shared pictures
             if (PlainsEasyLessonAndItemPictures.Contains(path)) script = PlainsEasyArtScript; // Names the Plains generator for shared pictures
             if (PlainsNormalLessonAndItemPictures.Contains(path)) script = PlainsNormalArtScript; // Names the generator for the new lesson and item pictures
+            if (PlainsHardLessonAndItemPictures.Contains(path)) script = PlainsHardArtScript; // Names the Plains Hard generator for its lesson and item pictures
             Debug.LogError($"Missing sprite {folder}{path}.png. Run python {script}"); // Say which file and generator to use
         } // Ends the missing-file message
         return sprite; // Give it back
