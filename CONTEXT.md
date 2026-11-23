@@ -49,10 +49,12 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Hay bale**: a rolling log drawn as a round bale of hay.
 - **Herd**: a gentle bat drawn as a grazing animal that walks on the ground and nudges the explorer away.
 - **Hot-air balloon**: a moving platform that rises and falls. The explorer can stand on the basket's rim.
+- **Cliff updraft**: a column of rising wind at a plateau cliff. Standing in it lifts the explorer to its top, where the explorer hovers.
 - **Coming soon difficulty**: a difficulty that is open but has no levels yet. Tapping it says "Coming soon" instead of opening an empty trail.
 
 ## Landforms
 
+- **Plateau**: a high landform with a flat top and steep sides.
 - **Landform Description Screen**: the screen that reviews a completed landform, shows the explorer's trip totals and names the next landform.
 - **Episode complete**: the explorer has cleared all 15 levels of one landform across Easy, Normal and Hard.
 - **Hills complete** means the explorer has cleared all 15 Hills levels. Next Episode after Hills Hard 7 opens the Hills Landform Description Screen. Plains unlocks and shows "Coming soon" on the map.
