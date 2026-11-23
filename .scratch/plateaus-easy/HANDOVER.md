@@ -93,24 +93,24 @@ Complete (ticket 04, 2026-11-24). Built in four ticket sessions; this file is th
 
 ## Play checklist (from ticket 04)
 
-- [ ] **Unlock:** after all 15 Plains levels, the map plays the one-time Plateaus unlock; the Plateaus region shows a waterfall, grass and two hawks.
-- [ ] **Menus:** the Plateaus difficulty and level screens show hawks and grass; Normal and Hard say "Coming soon".
-- [ ] **Music:** Plateaus levels play the new Plateaus music and the dry wind with a hawk.
-- [ ] **E1 Bukidnon Plateau:** pineapple farm look, Farm Lookout goal; basalt, andesite and hematite join the Plateaus shelf; the halloysite card opens on first find (secret spot on the three-step climb).
-- [ ] **E2 Lake Lanao:** lake look, torogan goal; tuff, volcanic breccia and goethite cards; the halloysite review on the high ledge.
-- [ ] **E3 Maria Cristina Falls:**
+- [x] **Unlock:** after all 15 Plains levels, the map plays the one-time Plateaus unlock; the Plateaus region shows a waterfall, grass and two hawks.
+- [x] **Menus:** the Plateaus difficulty and level screens show hawks and grass; Normal and Hard say "Coming soon".
+- [x] **Music:** Plateaus levels play the new Plateaus music and the dry wind with a hawk.
+- [x] **E1 Bukidnon Plateau:** pineapple farm look, Farm Lookout goal; basalt, andesite and hematite join the Plateaus shelf; the halloysite card opens on first find (secret spot on the three-step climb).
+- [x] **E2 Lake Lanao:** lake look, torogan goal; tuff, volcanic breccia and goethite cards; the halloysite review on the high ledge.
+- [x] **E3 Maria Cristina Falls:**
   - the first updraft is on safe ground; standing in it lifts you slowly with a soft whoosh, leaves and dust
   - at the top you hover; walking right puts you on the ledge; jumping inside does nothing
   - walking straight through only lifts you a little
   - the updraft at 1200 reaches the gibbsite ledge; the one at 3300 reaches the cristobalite secret
   - the goethite review sits between the two spikes
   - pausing freezes the wind, leaves and sound
-- [ ] **Length:** each level takes about 1 minute (bot 57–63 s; the limit is 120 s).
-- [ ] **Profile:** the Plateaus shelf shows 10 kinds; the Plateaus badge page shows 11 badges; Updraft Rider and Philippine Plateaus after E3; High Star after 3 stars on all three.
-- [ ] **Regression:** Plains Easy 3 straw piles, Hills Hard logs and Mountains Hard ice look and move as before. Spot-check one Plains Hard level.
+- [x] **Length:** each level takes about 1 minute (bot 57–63 s; the limit is 120 s).
+- [x] **Profile:** the Plateaus shelf shows 10 kinds; the Plateaus badge page shows 11 badges; Updraft Rider and Philippine Plateaus after E3; High Star after 3 stars on all three.
+- [x] **Regression:** Plains Easy 3 straw piles, Hills Hard logs and Mountains Hard ice look and move as before. Spot-check one Plains Hard level.
 
 Also look at, from "Not checked in the Editor":
 
-- [ ] The goal pictures (Farm Lookout, Torogan, Falls Viewing Deck) stand on the ground, not floating or sunk.
-- [ ] The updraft wind column has no visible seam where it meets its base.
-- [ ] The 11 Plateaus badges fit the 5×3 badge page without overflow.
+- [x] The goal pictures (Farm Lookout, Torogan, Falls Viewing Deck) stand on the ground, not floating or sunk.
+- [x] The updraft wind column has no visible seam where it meets its base.
+- [x] The 11 Plateaus badges fit the 5×3 badge page without overflow.

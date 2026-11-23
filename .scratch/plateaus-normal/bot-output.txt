@@ -1,0 +1,19 @@
+N1 83.8  N2 93.0  N3 85.8  N4 85.2  N5 98.4  
+-- Plateaus Normal:
+N1 Table Mountain: bot GOAL 98.4s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 95.2-98.2 s
+   without moving platforms: FAILED (pit at x=2085)
+   N2 Monument Valley without updrafts: needs an updraft -> pickups [hematite(2522,112)]
+N2 Monument Valley: bot GOAL 93.0s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 93.0-93.0 s
+   crumbling ledges: 6
+N3 Grand Canyon: bot GOAL 85.8s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 85.8-85.8 s
+   currents (s in strip): 600R:1.75, 1900L:5.37, 3900R:3.52, 5800L:5.57
+   N4 Mount Roraima without updrafts: needs an updraft -> pickups [sandstone(3072,112) quartz(5068,144)]
+N4 Mount Roraima: bot GOAL 83.8s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 83.8-83.8 s
+   floats (s standing): 1828:0.28, 6208:0.00
+N5 Salar de Uyuni: bot GOAL 85.8s (goal); pickups 7/7 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 85.3-86.4 s
+   bats (s in loop span / pushes): 1900:2.05/1, 3000:2.12/3, 5000:2.05/1
