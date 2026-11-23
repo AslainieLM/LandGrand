@@ -51,6 +51,8 @@ namespace LandGrand.Play // Level play scripts live here
         public int Facing => facing; // Tells which way the explorer was walking
 
         public float ExternalPushX { get; set; } // Wind speed added to walking
+        public float UpdraftTop { get; set; } = float.NaN; // The hover height of the updraft around the feet; NaN means no updraft (D-072)
+        Updraft riseRule; // The updraft rule for the current hover height, kept so no new rule is made each frame
         internal float CurrentPushX { get; set; } // River speed added only while grounded
         internal bool BatPushActive => batPushLeft > 0f; // The bat part flashes only during a push
         float batPushLeft; // Time left for the current bat push
@@ -117,8 +119,9 @@ namespace LandGrand.Play // Level play scripts live here
             if (dir != 0 && batStep < dt) facing = dir; // A bat push ignores the held walk direction
             bool startedGrounded = grounded; // Keeps the old sand footing when this step begins with a jump
 
-            bool pressed = input.JumpPressed; // Jump pressed this frame
-            jumpBufferLeft = pressed ? jumpBufferSeconds : jumpBufferLeft - dt; // Remember a press for a moment
+            bool inUpdraft = !float.IsNaN(UpdraftTop); // The watcher found an updraft around the feet
+            bool pressed = input.JumpPressed && !inUpdraft; // Jump pressed this frame; a press inside an updraft does nothing
+            jumpBufferLeft = inUpdraft ? 0f : pressed ? jumpBufferSeconds : jumpBufferLeft - dt; // Remember a press for a moment; an updraft forgets it
             bool canGroundJump = grounded || (Time.time - lastGroundedTime <= coyoteSeconds && !jumpedFromGround); // On the ground or just off an edge
             if (jumpBufferLeft > 0f && canGroundJump) // A ground jump
             {
@@ -150,6 +153,7 @@ namespace LandGrand.Play // Level play scripts live here
                 if (normalTime == 0f) velocity.x = speed; // Shows motion during the push
             } // Ends the push movement
             velocity.y = Mathf.Max(velocity.y - gravity * dt, -maxFallSpeed); // Gravity keeps the same jump and fall
+            if (inUpdraft) Ride(dt); // Inside an updraft the wind replaces gravity
             MoveX(velocity.x * normalTime); // Walks only in the rest of the frame
             MoveY(velocity.y * dt); // Move up or down, landing on solids and ledges
             float inside = Mathf.Clamp(position.x, size.x / 2f, geometry.width - size.x / 2f); // Find the point inside the level
@@ -159,6 +163,16 @@ namespace LandGrand.Play // Level play scripts live here
             Apply(); // Show the new place
             Animate(); // Pick the picture
         }
+
+        void Ride(float dt) // Lifts the explorer in an updraft (D-072 section 5)
+        { // Opens the ride
+            if (riseRule == null || riseRule.Top != UpdraftTop) riseRule = new Updraft(0f, UpdraftTop); // Makes the rule only when the hover height changes
+            grounded = false; // The wind holds the explorer off the ground
+            StandingOn = null; // No support carries the explorer in the wind
+            jumpedFromGround = true; // No ground jump in the air
+            airJumpUsed = false; // The double jump is ready on leaving, as after a launch
+            velocity.y = riseRule.RiseVelocity(position.y, dt); // Rises at most 90 px/s and stops at the hover height
+        } // Ends the ride
 
         void Carry() // Follows the dynamic top the explorer stood on last frame
         { // Opens the carry check
