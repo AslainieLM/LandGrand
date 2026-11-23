@@ -179,7 +179,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
             var next = p.NextPlayableAfter(Episode.Plains, Difficulty.Hard, 7); // Reads the Result Screen route
             Assert.AreEqual(NextStep.NextEpisode, next.Step); // Result opens the Landform Description Screen
             Assert.AreEqual(Episode.Plateaus, next.Episode); // Points to the next landform
-            Assert.IsFalse(LevelCatalog.HasLevels(Episode.Plateaus, Difficulty.Easy)); // Plateaus still says Coming soon
+            Assert.IsTrue(LevelCatalog.HasLevels(Episode.Plateaus, Difficulty.Easy)); // Plateaus Easy has its trails now (D-072)
         } // Ends the check
 
         [Test] // Checks the four Plains Hard badges
@@ -205,7 +205,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         [Test] // Checks that older trails keep their data
         public void EarlierTrailsKeepTheirCountsAndObjects() // Plains Hard adds trails without changing the old ones
         { // Opens the check
-            var earlier = LevelCatalog.All.Except(All).ToArray(); // Gets the older trails
+            var earlier = LevelCatalog.All.Except(All).Where(l => l.Episode != Episode.Plateaus).ToArray(); // Gets the older trails; Plateaus came after Plains Hard (D-072)
             Assert.AreEqual(38, earlier.Length); // Mountains 15, Hills 15, Plains Easy 3 and Plains Normal 5
             Assert.IsTrue(earlier.All(l => l.Layout.Theme < LevelTheme.Prairie)); // No old trail uses a Plains Hard theme
             Assert.IsTrue(earlier.SelectMany(l => l.Layout.Bats).All(b => b.RadiusY > 0f)); // Old bats keep flying loops

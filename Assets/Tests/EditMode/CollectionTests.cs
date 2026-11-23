@@ -84,8 +84,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.AreEqual(23, shelves[1].Slots.Count); // Ten from Easy, seven from Normal and six from Hard
             Assert.IsFalse(shelves[2].IsComingSoon); // Plains has its Easy kinds
             CollectionAssert.AreEqual(new[] { "granite", "quartz", "feldspar", "mica", "andesite", "pumice", "sandstone", "clay", "conglomerate", "shale", "limestone", "gold", "tuff", "calcite", "dacite", "siltstone", "halite", "gypsum", "mudstone", "peat", "laterite", "chalk", "loess", "flint" }, shelves[2].Slots.Select(slot => slot.Kind.Id)); // The full Plains shelf of 24 kinds in catalog order
-            Assert.IsTrue(shelves[3].IsComingSoon); // Plateaus
-            Assert.AreEqual(0, shelves[3].Slots.Count); // No slots on a "Coming soon" shelf
+            Assert.IsFalse(shelves[3].IsComingSoon); // Plateaus has its Easy kinds now (D-072)
+            Assert.AreEqual(10, shelves[3].Slots.Count); // Six shared kinds and four Plateaus-only kinds
         }
 
         [Test] // Runs the Plains kind check
@@ -94,7 +94,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var kinds = ItemCatalog.All.Skip(50).Take(6).ToArray(); // Reads the six Plains Easy and Normal kinds
             CollectionAssert.AreEqual(new[] { "siltstone", "halite", "gypsum", "mudstone", "peat", "laterite" }, kinds.Select(k => k.Id)); // Keeps the new kind order
             CollectionAssert.AreEqual(new[] { true, false, false, true, true, true }, kinds.Select(k => k.IsRock)); // Checks rock and mineral labels
-            Assert.IsTrue(kinds.All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Plains }))); // Each draft kind stays on the Plains shelf
+            Assert.IsTrue(kinds.Where(k => k.Id != "laterite").All(k => k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Plains }))); // Each other draft kind stays on the Plains shelf
+            Assert.IsTrue(ItemCatalog.Laterite.IsDraft); // Laterite is still a draft
+            CollectionAssert.AreEqual(new[] { Episode.Plains, Episode.Plateaus }, ItemCatalog.Laterite.Landforms); // Laterite stays on Plains and joins Plateaus (D-072)
         } // Ends the kind check
 
         [Test] // Checks theme ids after Plains Easy
@@ -107,7 +109,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Checks shelves for the newly shared kinds
         public void PlainsNormalSharedKinds_KeepTheirOldShelves() // Keeps each find on its existing shelves
         { // Starts the shelf check
-            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Hills, Episode.Plains }, ItemCatalog.Andesite.Landforms); // Andesite is on three shelves
+            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Hills, Episode.Plains, Episode.Plateaus }, ItemCatalog.Andesite.Landforms); // Andesite keeps its three shelves and joins Plateaus (D-072)
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Pumice.Landforms); // Pumice stays on Mountains
             CollectionAssert.AreEqual(new[] { Episode.Hills, Episode.Plains }, ItemCatalog.Dacite.Landforms); // Dacite stays on Hills
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Gold.Landforms); // Gold stays on Mountains
@@ -116,8 +118,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Runs the Plains Hard kind check
         public void PlainsHardKinds_AppendAfterThePlainsNormalKinds() // Keeps the saved catalog order
         { // Starts the kind check
-            Assert.AreEqual(59, ItemCatalog.All.Count); // Three kinds were added at the end
-            var kinds = ItemCatalog.All.Skip(56).ToArray(); // Reads the three Plains Hard kinds
+            Assert.AreEqual(63, ItemCatalog.All.Count); // Four Plateaus kinds came after these three (D-072)
+            var kinds = ItemCatalog.All.Skip(56).Take(3).ToArray(); // Reads the three Plains Hard kinds
             CollectionAssert.AreEqual(new[] { "chalk", "loess", "flint" }, kinds.Select(k => k.Id)); // Keeps the new kind order
             CollectionAssert.AreEqual(new[] { "Chalk", "Loess", "Flint" }, kinds.Select(k => k.Name)); // Checks the names
             CollectionAssert.AreEqual(new[] { "chalk", "loess", "flint" }, kinds.Select(k => k.Picture)); // Checks the picture names
@@ -132,14 +134,14 @@ namespace LandGrand.Rules.Tests // Test code lives here
         { // Starts the theme order check
             var expected = new[] { LevelTheme.FloatingMarket, LevelTheme.Prairie, LevelTheme.Savanna, LevelTheme.Pampas, LevelTheme.FrozenPlain, LevelTheme.LimestonePlain, LevelTheme.GangesPlain, LevelTheme.Steppe }; // The last Normal theme and the seven additions
             CollectionAssert.AreEqual(new[] { 36, 37, 38, 39, 40, 41, 42, 43 }, expected.Select(theme => (int)theme)); // Keeps the saved numeric order
-            Assert.AreEqual(44, System.Enum.GetValues(typeof(LevelTheme)).Length); // Nothing else was added
+            Assert.AreEqual(47, System.Enum.GetValues(typeof(LevelTheme)).Length); // Only the three Plateaus Easy themes came after them (D-072)
         } // Ends the theme order check
 
         [Test] // Checks shelves for the kinds that join Plains Hard
         public void PlainsHardSharedKinds_KeepTheirOldShelves() // Keeps each find on its existing shelves
         { // Starts the shelf check
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Granite.Landforms); // Granite stays on Mountains
-            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Tuff.Landforms); // Tuff stays on Mountains
+            CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains, Episode.Plateaus }, ItemCatalog.Tuff.Landforms); // Tuff stays on Mountains and Plains and joins Plateaus (D-072)
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Hills, Episode.Plains }, ItemCatalog.Calcite.Landforms); // Calcite stays on Mountains and Hills
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Plains }, ItemCatalog.Mica.Landforms); // Mica stays on Mountains
             CollectionAssert.AreEqual(new[] { Episode.Mountains, Episode.Hills, Episode.Plains }, ItemCatalog.Feldspar.Landforms); // Feldspar stays on Mountains and Hills
@@ -151,7 +153,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
             var p = new PlayerProgress(); // A brand new profile
             Assert.IsTrue(Collection.Shelves(p).SelectMany(s => s.Slots).All(slot => !slot.IsFound)); // No slot is found
             Assert.AreEqual(0, Collection.FoundCount(p)); // Nothing found
-            Assert.AreEqual(59, Collection.TotalCount); // Includes nine Plains-only kinds
+            Assert.AreEqual(63, Collection.TotalCount); // Includes nine Plains-only and four Plateaus-only kinds
         }
 
         [Test] // Unity runs this method as a Test

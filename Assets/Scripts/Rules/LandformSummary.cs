@@ -44,11 +44,21 @@ namespace LandGrand.Rules // Holds the plain game rules
             "Some plains lie flat beside the sea.", // Where some plains lie
         }, "bg_plains", true); // Uses the Plains picture and draft note
 
+        static readonly LandformSummary Plateaus = new LandformSummary("Plateaus", new[] // The five draft lines for Plateaus (D-072)
+        { // Starts the Plateaus lines
+            "Plateaus are high lands with flat tops.", // What plateaus are
+            "Their sides are steep, like a table.", // Their shape
+            "Lava, rivers and wind shape plateaus.", // What shapes plateaus
+            "Rivers can cut deep canyons in them.", // What rivers do to them
+            "Many people farm on high plateaus.", // How people use plateaus
+        }, "bg_plateaus", true); // Uses the Plateaus picture and draft note
+
         static readonly Dictionary<Episode, LandformSummary> Reviews = new Dictionary<Episode, LandformSummary> // The finished reviews, by landform
         { // Starts the table
             { Episode.Mountains, Mountains }, // Mountains has its full review
             { Episode.Hills, Hills }, // Hills has its review too
             { Episode.Plains, Plains }, // Adds the Plains review
+            { Episode.Plateaus, Plateaus }, // Adds the Plateaus review (D-072)
         }; // Ends the table
 
         public static LandformSummary For(Episode episode) => Reviews.TryGetValue(episode, out var review) ? review : ComingSoon(episode); // Other landforms wait for their reviews

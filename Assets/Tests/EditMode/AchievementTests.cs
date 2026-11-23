@@ -9,9 +9,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         static bool Earned(string id, PlayerProgress p) => AchievementCatalog.Find(id).IsEarned(p); // Short way to ask about one badge
 
         [Test] // Unity runs this method as a Test
-        public void CatalogIds_StayInSavedOrder() // Pins all thirty-five saved ids
+        public void CatalogIds_StayInSavedOrder() // Pins all forty-six saved ids
         {
-            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master", "pasture_pal", "dune_surfer", "rolling_star", "hill_collector", "philippine_hills", "balloon_rider", "slope_ranger", "world_hills", "steady_star", "hill_master", "salt_maker", "straw_jumper", "flat_star", "plain_collector", "philippine_plains", "delta_boater", "prairie_ranger", "world_plains", "steady_plains", "plain_master" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order
+            CollectionAssert.AreEqual(new[] { "first_steps", "rock_hound", "crystal_finder", "star_explorer", "volcano_visitor", "summit_climber", "perfect_trail", "mountain_collector", "philippine_peaks", "top_of_the_world", "rock_scholar", "brave_hiker", "world_peaks", "hard_star", "mountain_master", "pasture_pal", "dune_surfer", "rolling_star", "hill_collector", "philippine_hills", "balloon_rider", "slope_ranger", "world_hills", "steady_star", "hill_master", "salt_maker", "straw_jumper", "flat_star", "plain_collector", "philippine_plains", "delta_boater", "prairie_ranger", "world_plains", "steady_plains", "plain_master", "updraft_rider", "table_top", "high_star", "plateau_collector", "philippine_plateaus", "canyon_explorer", "mesa_ranger", "world_plateaus", "steady_plateaus", "plateau_master", "land_grand_champion" }, AchievementCatalog.All.Select(a => a.Id).ToArray()); // Ids in order, with the eleven Plateaus ids last (D-072)
         } // Ends the id check
 
         [Test] // Checks the text on every badge card
@@ -29,7 +29,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [Test] // Unity runs this method as a Test
         public void Tiers_MatchTheBadgeOrder() // Keeps each badge tier
         {
-            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order
+            CollectionAssert.AreEqual(new[] { BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Bronze, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Silver, BadgeTier.Silver, BadgeTier.Gold, BadgeTier.Gold, BadgeTier.Gold }, AchievementCatalog.All.Select(a => a.Tier).ToArray()); // In order, with the eleven Plateaus tiers last (D-072)
         }
 
         [Test] // Unity runs this method as a Test
@@ -37,8 +37,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             CollectionAssert.AreEqual(AchievementCatalog.All.Take(15).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Mountains).Select(a => a.Id)); // The Mountains page keeps the first 15 in order
             CollectionAssert.AreEqual(AchievementCatalog.All.Skip(15).Take(10).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Hills).Select(a => a.Id)); // The Hills page is the ten after them
-            CollectionAssert.AreEqual(AchievementCatalog.All.Skip(25).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Plains).Select(a => a.Id)); // Plains gets the final ten
-            Assert.AreEqual(0, AchievementCatalog.ForLandform(Episode.Plateaus).Count); // Plateaus has no badges yet
+            CollectionAssert.AreEqual(AchievementCatalog.All.Skip(25).Take(10).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Plains).Select(a => a.Id)); // Plains gets the next ten
+            CollectionAssert.AreEqual(AchievementCatalog.All.Skip(35).Select(a => a.Id), AchievementCatalog.ForLandform(Episode.Plateaus).Select(a => a.Id)); // Plateaus gets the final eleven (D-072)
+            Assert.AreEqual(11, AchievementCatalog.ForLandform(Episode.Plateaus).Count); // Eleven Plateaus badges
         }
 
         [Test] // Unity runs this method as a Test
@@ -46,7 +47,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         {
             var p = new PlayerProgress(); // A brand new profile
             Assert.AreEqual(0, AchievementCatalog.EarnedCount(p)); // None
-            Assert.AreEqual(35, AchievementCatalog.All.Count); // Out of thirty-five
+            Assert.AreEqual(46, AchievementCatalog.All.Count); // Out of forty-six
         }
 
         [TestCase(2, "salt_maker")] // Salt Maker needs Plains Easy 2

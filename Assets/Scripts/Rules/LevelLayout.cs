@@ -4,7 +4,7 @@ using System.Linq; // Gives ToArray
 namespace LandGrand.Rules // Plain C# rules with no Unity types
 {
     /// <summary>How one level looks inside its landform: its ground, props and goal (CONTEXT.md "Level theme").</summary>
-    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys, TarsierForest, RainySlope, KarstRidge, WindHills, DrumlinBay, CityHills, KarstTowers, RicePlain, SaltBeds, RiverPlain, CandabaWetland, LaharPlain, RiverDelta, FloatingVillage, FloatingMarket, Prairie, Savanna, Pampas, FrozenPlain, LimestonePlain, GangesPlain, Steppe } // Adds the five Plains Normal themes, then the seven Plains Hard themes at the end
+    public enum LevelTheme { Meadow, Volcanic, FoldedRock, PineForest, AshGorge, MossyForest, SnowPeak, LavaSlope, StormRidge, EagleForest, BonsaiForest, GlacierHorn, EquatorSummit, SeaPeak, ChocolateHills, RollingPasture, SandDunes, IslandHills, LimestoneCave, RiverGorge, RiceTerraces, FairyChimneys, TarsierForest, RainySlope, KarstRidge, WindHills, DrumlinBay, CityHills, KarstTowers, RicePlain, SaltBeds, RiverPlain, CandabaWetland, LaharPlain, RiverDelta, FloatingVillage, FloatingMarket, Prairie, Savanna, Pampas, FrozenPlain, LimestonePlain, GangesPlain, Steppe, PineapplePlateau, LakePlateau, FallsEdge } // Adds the Plains Normal and Plains Hard themes, then the three Plateaus Easy themes at the end (D-072)
 
     /// <summary>The two boulder pictures: small is 32x24 pixels, big is 48x36.</summary>
     public enum BoulderSize { Small, Big } // Boulder list
@@ -71,10 +71,12 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
         public IReadOnlyList<MudZone> MudZones { get; } // Slippery mud stretches on the trail
         public IReadOnlyList<RollingLog> Logs { get; } // Logs that roll along the trail
         public IReadOnlyList<StrawPile> StrawPiles { get; } // Straw piles that launch the explorer
+        public IReadOnlyList<Updraft> Updrafts { get; } // Cliff updrafts that lift the explorer (D-072)
         public string AmbienceOverride { get; } // Optional ambience file name without its extension
 
-        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null, MudZone[] mudZones = null, RollingLog[] logs = null, StrawPile[] strawPiles = null) // Makes a layout
+        public LevelLayout(float width, LevelTheme theme, Boulder[] boulders, Ledge[] ledges, SteamVent[] vents = null, CrumbleLedge[] crumbleLedges = null, Rockfall[] rockfalls = null, MovingPlatform[] movingPlatforms = null, WindZone[] windZones = null, RollingBoulder[] rollingBoulders = null, IceZone[] iceZones = null, SandZone[] sandZones = null, SinkingFloat[] floats = null, Bat[] bats = null, CurrentZone[] currents = null, string ambienceOverride = null, ShallowPool[] pools = null, MudZone[] mudZones = null, RollingLog[] logs = null, StrawPile[] strawPiles = null, Updraft[] updrafts = null) // Makes a layout; the updrafts come last so old callers do not change
         {
+            Updrafts = (updrafts ?? new Updraft[0]).ToArray(); // Copy the updrafts; most levels have none
             MudZones = (mudZones ?? new MudZone[0]).ToArray(); // Copy the mud stretches
             Logs = (logs ?? new RollingLog[0]).ToArray(); // Copy the logs
             StrawPiles = (strawPiles ?? new StrawPile[0]).ToArray(); // Copy the straw piles

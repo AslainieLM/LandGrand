@@ -8,7 +8,7 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [TestCase(Episode.Mountains, "bgm_mountains")] // Mountains keeps its tune
         [TestCase(Episode.Hills, "bgm_hills")] // Hills has its own tune
         [TestCase(Episode.Plains, "bgm_plains")] // Plains has its own tune
-        [TestCase(Episode.Plateaus, "bgm_mountains")] // Plateaus uses the Mountains tune for now
+        [TestCase(Episode.Plateaus, "bgm_plateaus")] // Plateaus has its own tune (D-072)
         public void MusicFor_PicksTheLandformTune(Episode landform, string file) // One tune per landform
         {
             Assert.AreEqual(file, LandformAudio.MusicFor(landform)); // The file name, without extension
@@ -23,24 +23,18 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [TestCase(Episode.Plains, Difficulty.Easy, "amb_grass_easy")] // Uses the Plains Easy loop
         [TestCase(Episode.Plains, Difficulty.Normal, "amb_wetland_normal")] // Uses the Plains Normal loop
         [TestCase(Episode.Plains, Difficulty.Hard, "amb_dry_hard")] // Uses the Plains Hard loop
+        [TestCase(Episode.Plateaus, Difficulty.Easy, "amb_highland_easy")] // Uses the Plateaus Easy loop (D-072)
+        [TestCase(Episode.Plateaus, Difficulty.Normal, "amb_canyon_normal")] // Uses the Plateaus Normal loop (D-072)
+        [TestCase(Episode.Plateaus, Difficulty.Hard, "amb_highwind_hard")] // Uses the Plateaus Hard loop (D-072)
         public void AmbienceFor_PicksTheLandformAndDifficulty(Episode landform, Difficulty difficulty, string file) // Landform and difficulty choose the sound
         {
             Assert.AreEqual(file, LandformAudio.AmbienceFor(landform, difficulty)); // The file name, without extension
         }
 
-        [TestCase(Episode.Plateaus)] // Plateaus has no own sounds yet
-        public void AmbienceFor_OtherLandformsUseTheMountainsSounds(Episode landform) // Falls back to Mountains
-        {
-            foreach (Difficulty difficulty in System.Enum.GetValues(typeof(Difficulty))) // Easy, Normal and Hard
-            {
-                Assert.AreEqual(LandformAudio.AmbienceFor(Episode.Mountains, difficulty), LandformAudio.AmbienceFor(landform, difficulty), difficulty.ToString()); // Same as Mountains
-            }
-        }
-
         [TestCase(Episode.Mountains, "make_mountains_audio.py")] // Mountains tune comes from the Mountains script
         [TestCase(Episode.Hills, "make_hills_audio.py")] // Hills tune comes from the Hills script
         [TestCase(Episode.Plains, "make_plains_audio.py")] // Uses the Plains music script
-        [TestCase(Episode.Plateaus, "make_mountains_audio.py")] // Plateaus uses the Mountains script, like its tune
+        [TestCase(Episode.Plateaus, "make_plateaus_audio.py")] // Uses the Plateaus music script (D-072)
         public void MusicScriptFor_NamesTheScriptThatMakesTheTune(Episode landform, string script) // The script name for the tune
         {
             Assert.AreEqual(script, LandformAudio.MusicScriptFor(landform)); // The Python file name
@@ -55,6 +49,9 @@ namespace LandGrand.Rules.Tests // Test code lives here
         [TestCase(Episode.Plains, Difficulty.Easy, "make_plains_audio.py")] // Makes the Plains Easy loop
         [TestCase(Episode.Plains, Difficulty.Normal, "make_plains_audio.py")] // Makes the Plains Normal loop
         [TestCase(Episode.Plains, Difficulty.Hard, "make_plains_audio.py")] // Makes the Plains Hard loop
+        [TestCase(Episode.Plateaus, Difficulty.Easy, "make_plateaus_audio.py")] // Makes the Plateaus Easy loop (D-072)
+        [TestCase(Episode.Plateaus, Difficulty.Normal, "make_plateaus_audio.py")] // Makes the Plateaus Normal loop (D-072)
+        [TestCase(Episode.Plateaus, Difficulty.Hard, "make_plateaus_audio.py")] // Makes the Plateaus Hard loop (D-072)
         public void AmbienceScriptFor_NamesTheScriptThatMakesTheFile(Episode landform, Difficulty difficulty, string script) // The script name for the ambience
         {
             Assert.AreEqual(script, LandformAudio.AmbienceScriptFor(landform, difficulty)); // The Python file name

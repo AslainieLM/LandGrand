@@ -36,7 +36,7 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
     {
         static readonly int[] LastThreeHardLevels = { 5, 6, 7 }; // The last three levels of a Hard trail: Mountains Hard 5 to 7 are the Matterhorn, Kilimanjaro and Mauna Kea
 
-        /// <summary>Mountains, Hills and Plains badges in their saved order.</summary>
+        /// <summary>Mountains, Hills, Plains and Plateaus badges in their saved order.</summary>
         public static IReadOnlyList<Achievement> All { get; } = new[] // In Profile order
         {
             new Achievement("first_steps", "First Steps", "Clear your first level.", BadgeTier.Bronze, Episode.Mountains, p => p.ClearedLevelCount >= 1), // Any cleared level
@@ -74,12 +74,23 @@ namespace LandGrand.Rules // Plain C# rules with no Unity types
             new Achievement("world_plains", "World Plains", "Clear Plains Hard 5 to 7.", BadgeTier.Silver, Episode.Plains, p => ClearedAll(p, Episode.Plains, Difficulty.Hard, LastThreeHardLevels)), // Clears the last three Hard trails
             new Achievement("steady_plains", "Steady Plains", "Get 3 stars on every Plains Hard level.", BadgeTier.Gold, Episode.Plains, p => StarsAll(p, Episode.Plains, Difficulty.Hard, 3, Numbers(Difficulty.Hard))), // Gets three stars on each Hard trail
             new Achievement("plain_master", "Plain Master", "Clear every Plains level.", BadgeTier.Gold, Episode.Plains, p => p.IsEpisodeComplete(Episode.Plains)), // Finishes the Plains landform
+            new Achievement("updraft_rider", "Updraft Rider", "Clear Plateaus Easy 3.", BadgeTier.Silver, Episode.Plateaus, p => ClearedAll(p, Episode.Plateaus, Difficulty.Easy, 3)), // Clears Maria Cristina Falls (D-072)
+            new Achievement("table_top", "Table Top", "Clear Plateaus Normal 1.", BadgeTier.Silver, Episode.Plateaus, p => ClearedAll(p, Episode.Plateaus, Difficulty.Normal, 1)), // Clears Table Mountain
+            new Achievement("high_star", "High Star", "Get 3 stars on every Plateaus Easy level.", BadgeTier.Gold, Episode.Plateaus, p => StarsAll(p, Episode.Plateaus, Difficulty.Easy, 3, Numbers(Difficulty.Easy))), // Gets three stars on each Easy trail
+            new Achievement("plateau_collector", "Plateau Collector", "Find every Plateaus rock and mineral.", BadgeTier.Gold, Episode.Plateaus, p => KindsAll(p, Episode.Plateaus)), // Fills the Plateaus shelf
+            new Achievement("philippine_plateaus", "Philippine Plateaus", "Clear Plateaus Easy 1 to 3.", BadgeTier.Silver, Episode.Plateaus, p => ClearedAll(p, Episode.Plateaus, Difficulty.Easy, 1, 2, 3)), // Clears the three Philippine plateaus
+            new Achievement("canyon_explorer", "Canyon Explorer", "Clear Plateaus Normal 3.", BadgeTier.Gold, Episode.Plateaus, p => ClearedAll(p, Episode.Plateaus, Difficulty.Normal, 3)), // Clears the Grand Canyon
+            new Achievement("mesa_ranger", "Mesa Ranger", "Clear a Plateaus Hard level.", BadgeTier.Silver, Episode.Plateaus, p => ClearedAny(p, Episode.Plateaus, Difficulty.Hard, Numbers(Difficulty.Hard))), // Clears any Plateaus Hard trail
+            new Achievement("world_plateaus", "World Plateaus", "Clear Plateaus Hard 5 to 7.", BadgeTier.Silver, Episode.Plateaus, p => ClearedAll(p, Episode.Plateaus, Difficulty.Hard, LastThreeHardLevels)), // Clears the last three Hard trails
+            new Achievement("steady_plateaus", "Steady Plateaus", "Get 3 stars on every Plateaus Hard level.", BadgeTier.Gold, Episode.Plateaus, p => StarsAll(p, Episode.Plateaus, Difficulty.Hard, 3, Numbers(Difficulty.Hard))), // Gets three stars on each Hard trail
+            new Achievement("plateau_master", "Plateau Master", "Clear every Plateaus level.", BadgeTier.Gold, Episode.Plateaus, p => p.IsEpisodeComplete(Episode.Plateaus)), // Finishes the Plateaus landform
+            new Achievement("land_grand_champion", "Land Grand Champion", "Clear every level of every landform.", BadgeTier.Gold, Episode.Plateaus, p => ((Episode[])Enum.GetValues(typeof(Episode))).All(p.IsEpisodeComplete)), // Finishes all four landforms
         }; // Ends the badge catalog
 
         /// <summary>The achievement with this id, or null when there is none.</summary>
         public static Achievement Find(string id) => All.FirstOrDefault(a => a.Id == id); // Looks the id up
 
-        /// <summary>The badges on one landform's page, in Profile order. Mountains has 15 and Hills has 10.</summary>
+        /// <summary>The badges on one landform's page, in Profile order. Mountains has 15, Hills and Plains have 10, and Plateaus has 11.</summary>
         public static IReadOnlyList<Achievement> ForLandform(Episode landform) => All.Where(a => a.Landform == landform).ToArray(); // Keeps the catalog order
 
         /// <summary>How many badges the explorer has earned.</summary>
