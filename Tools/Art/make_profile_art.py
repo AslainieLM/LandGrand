@@ -242,6 +242,68 @@ SYMBOLS = {  # One pattern per badge
         "..............",  # Gap, row 4
         "oooooooooooooo", "#.#.#.#.#.#.#.", "oooooooooooooo", "#.#.#.#.#.#.#.", "oooooooooooooo",  # Plain and rice field, rows 5-9
     ],
+    "updraft_rider": [  # An explorer rising in a wind swirl (D-072, Plateaus)
+        "......##......", "......##......", "....######....", "......##......",  # Head, body and arms, rows 0-3
+        ".....#..#.....", "....#....#....",  # Legs, rows 4-5
+        "..............",  # Gap, row 6
+        ".oooooooooooo.", "..............", "...oooooooo...", "..............",  # Wind swirl, rows 7-10
+        ".....oooo.....", "......oo......",  # Swirl tip, rows 11-12
+    ],
+    "table_top": [  # A flat-topped mountain with rock layers (D-072, Plateaus)
+        "..............",  # Gap, row 0
+        "...########...", "..##########..", "..oooooooooo..",  # Flat top and a rock layer, rows 1-3
+        ".############.", ".############.", "oooooooooooooo",  # Steep sides and a layer, rows 4-6
+        "##############", "##############", "oooooooooooooo",  # Wide foot and its shade, rows 7-9
+    ],
+    "high_star": [  # A star over a flat-topped plateau (D-072, Plateaus)
+        "......#......", ".....###.....", "...#######...", "....#####....", "....##.##....",  # Star, rows 0-4
+        ".............",  # Gap, row 5
+        "...ooooooo...", "..ooooooooo..", "..ooooooooo..", ".ooooooooooo.", "ooooooooooooo",  # Flat-topped plateau, rows 6-10
+    ],
+    "plateau_collector": [  # A small bag with a dark basalt rock (D-072, Plateaus)
+        "..........ooo.", ".........ooooo", ".........ooooo", "..........ooo.",  # Round basalt rock, rows 0-3
+        "..............",  # Gap, row 4
+        "...#######....", "..#########...", ".###########..",  # Bag top, rows 5-7
+        ".ooooooooooo..", ".###########..", ".###########..", ".ooooooooooo..",  # Bag body, rows 8-11
+    ],
+    "philippine_plateaus": [  # A pineapple (D-072, Plateaus Philippines)
+        "o...o...o", ".o..o..o.", "..o.o.o..", "...ooo...",  # Leafy crown, rows 0-3
+        "..#####..", ".##o#o##.", ".#o#o#o#.", ".##o#o##.", ".#o#o#o#.", ".##o#o##.", "..#####..",  # Fruit with eyes, rows 4-10
+    ],
+    "canyon_explorer": [  # A deep canyon with a river at the bottom (D-072, Plateaus)
+        "####......####", "####......####", "#####....#####", "#####....#####",  # Canyon walls, rows 0-3
+        "######..######", "######oo######", "#####oo#######", "#####oo#######",  # Narrow gorge and river, rows 4-7
+        "######oo######", "##############",  # River bend and the floor, rows 8-9
+    ],
+    "mesa_ranger": [  # A ranger hat over a mesa (D-072, Plateaus)
+        "....######....", "....######....", "...########...",  # Hat crown, rows 0-2
+        "##############",  # Hat brim, row 3
+        "..............",  # Gap, row 4
+        "...########...", "..##########..", ".############.", "oooooooooooooo",  # Mesa and its shade, rows 5-8
+    ],
+    "world_plateaus": [  # A small globe with a flat brown band (D-072, Plateaus)
+        "....######....", "..##########..", ".############.", ".############.",  # Globe top, rows 0-3
+        ".oooooooooooo.", ".oooooooooooo.", ".oooooooooooo.",  # Flat band, rows 4-6
+        ".############.", "..##########..", "....######....",  # Globe bottom, rows 7-9
+    ],
+    "steady_plateaus": [  # Three stars over a plateau (D-072, Plateaus)
+        "..#...#...#..", ".###.###.###.", "..#...#...#..",  # Three small stars, rows 0-2
+        ".............",  # Gap, row 3
+        "..#########..", ".###########.", "ooooooooooooo",  # Plateau and its shade, rows 4-6
+    ],
+    "plateau_master": [  # A crown over a plateau (D-072, Plateaus)
+        "#..#..#..#..#.", "##.##.##.##.##", "##############", "##############",  # Crown, rows 0-3
+        "..............",  # Gap, row 4
+        "...oooooooo...", "..oooooooooo..", ".oooooooooooo.", "oooooooooooooo",  # Flat-topped plateau, rows 5-8
+    ],
+    "land_grand_champion": [  # A trophy with four small landforms: mountain, hill, plain, plateau (D-072)
+        ".#.............", ".#..........###", "###..##.....###", "###.####.##.###",  # Mountain, hill, plain and plateau, rows 0-3
+        "...............",  # Gap, row 4
+        "ooooooooooooooo",  # Trophy rim, row 5
+        ".#############.", "#.###########.#", ".#.#########.#.",  # Cup and handles, rows 6-8
+        "....#######....", ".....#####.....", "......###......",  # Cup bottom and stem, rows 9-11
+        ".....#####.....", "...#########...",  # Foot of the trophy, rows 12-13
+    ],
 }
 
 STAR5 = ["..#..", ".###.", "#####", ".###.", ".#.#."]  # A small star, 5x5
@@ -281,6 +343,9 @@ BADGES = [  # id, tier
     ("salt_maker", "silver"), ("straw_jumper", "silver"), ("flat_star", "gold"), ("plain_collector", "gold"),  # Plains badges, part 1 (D-069)
     ("philippine_plains", "silver"), ("delta_boater", "gold"), ("prairie_ranger", "silver"), ("world_plains", "silver"),  # Plains badges, part 2 (D-069)
     ("steady_plains", "gold"), ("plain_master", "gold"),  # Plains badges, part 3 (D-069)
+    ("updraft_rider", "silver"), ("table_top", "silver"), ("high_star", "gold"), ("plateau_collector", "gold"),  # Plateaus badges, part 1 (D-072)
+    ("philippine_plateaus", "silver"), ("canyon_explorer", "gold"), ("mesa_ranger", "silver"), ("world_plateaus", "silver"),  # Plateaus badges, part 2 (D-072)
+    ("steady_plateaus", "gold"), ("plateau_master", "gold"), ("land_grand_champion", "gold"),  # Plateaus badges, part 3 (D-072)
 ]
 CX, CY, R = 16.0, 13.5, 13.0  # Medal centre and outer radius
 
