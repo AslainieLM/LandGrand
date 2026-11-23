@@ -165,6 +165,15 @@ EditorBuildSettings:
     path: Assets/Scenes/PlainsHard7.unity
     guid: 1df9210c8dc77ae46a4fa07d9c549a98
   - enabled: 1
+    path: Assets/Scenes/PlateausEasy1.unity
+    guid: e7550878ab58d3443a90cd5138698777
+  - enabled: 1
+    path: Assets/Scenes/PlateausEasy2.unity
+    guid: 224d2df76369c9b498d63a27c7b51a46
+  - enabled: 1
+    path: Assets/Scenes/PlateausEasy3.unity
+    guid: c99c4cddd8263994aa79f9cae0efe57b
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:
