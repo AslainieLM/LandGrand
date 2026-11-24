@@ -50,6 +50,12 @@ internal static class PixelSceneKit // Helpers for the scene builders
         "lesson_great_plains", "lesson_serengeti", "lesson_pampas", "lesson_siberia", "lesson_nullarbor", "lesson_ganges", "lesson_steppe", // The seven lesson pictures
         "chalk", "loess", "flint", // The three item pictures
     }; // Ends the picture list
+    internal const string PlateausNormalArtScript = "Tools/Art/make_plateaus_normal_art.py"; // Makes the Plateaus Normal pictures (D-073)
+    static readonly HashSet<string> PlateausNormalLessonAndItemPictures = new HashSet<string> // Shared Plateaus Normal pictures
+    { // Opens the picture names
+        "ulexite", "lesson_table_mountain", "lesson_monument_valley", "lesson_grand_canyon", "lesson_roraima", "lesson_uyuni", // New item and lesson cards
+    }; // Ends the picture names
+
     internal const string PlateausEasyArtScript = "Tools/Art/make_plateaus_easy_art.py"; // Makes the Plateaus Easy pictures (D-072)
     static readonly HashSet<string> PlateausEasyLessonAndItemPictures = new HashSet<string> // Shared Plateaus Easy pictures
     { // Opens the picture list
@@ -212,6 +218,7 @@ internal static class PixelSceneKit // Helpers for the scene builders
             if (PlainsNormalLessonAndItemPictures.Contains(path)) script = PlainsNormalArtScript; // Names the generator for the new lesson and item pictures
             if (PlainsHardLessonAndItemPictures.Contains(path)) script = PlainsHardArtScript; // Names the Plains Hard generator for its lesson and item pictures
             if (PlateausEasyLessonAndItemPictures.Contains(path)) script = PlateausEasyArtScript; // Names the Plateaus Easy generator for its lesson and item pictures
+            if (PlateausNormalLessonAndItemPictures.Contains(path)) script = PlateausNormalArtScript; // Names the generator for the new item and lessons
             Debug.LogError($"Missing sprite {folder}{path}.png. Run python {script}"); // Say which file and generator to use
         } // Ends the missing-file message
         return sprite; // Give it back

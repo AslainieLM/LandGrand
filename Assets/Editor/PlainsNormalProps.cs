@@ -8,8 +8,8 @@ public static partial class LevelBuilder // Builds Plains Normal decorations
     static void CandabaProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds wetland plants and birds
     { // Starts the swamp props
         RepeatTrailProp(level, parent, "reed_tuft", PixelSceneKit.PlainsNormalArtScript, 120f, 260f, 7f, 3, clearFullZones: true); // Adds reeds along the swamp
-        PlacePlainsAnimals(level, parent, "duck", new[] { 1200f, 3000f, 5500f }, 5f, PixelSceneKit.PlainsNormalArtScript, clearFullZones: true); // Places the three ducks
-        PlacePlainsAnimals(level, parent, "egret", new[] { 2200f, 4600f }, 5f, clearFullZones: true); // Reuses the two-frame egrets
+        PlaceTrailAnimals(level, parent, "duck", new[] { 1200f, 3000f, 5500f }, 5f, PixelSceneKit.PlainsNormalArtScript, clearFullZones: true); // Places the three ducks
+        PlaceTrailAnimals(level, parent, "egret", new[] { 2200f, 4600f }, 5f, clearFullZones: true); // Reuses the two-frame egrets
     } // Ends the swamp props
 
     static void LaharProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds warning signs and reeds
@@ -22,7 +22,7 @@ public static partial class LevelBuilder // Builds Plains Normal decorations
     { // Starts the delta props
         PlaceTrailProps(level, parent, "fish_stakes", PixelSceneKit.PlainsNormalArtScript, new[] { 900f, 2500f, 4300f, 6100f }, 8f, 2, clearFullZones: true); // Places four groups of stakes
         PlaceTrailProps(level, parent, "bangka_plains", PixelSceneKit.PlainsNormalArtScript, new[] { 1800f, 5000f }, 6f, 3, clearFullZones: true); // Places two boats on the bank
-        PlacePlainsAnimals(level, parent, "egret", new[] { 3300f }, 5f, clearFullZones: true); // Reuses the Plains egret
+        PlaceTrailAnimals(level, parent, "egret", new[] { 3300f }, 5f, clearFullZones: true); // Reuses the Plains egret
     } // Ends the delta props
 
     static void MarshProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds marsh plants and crocodiles

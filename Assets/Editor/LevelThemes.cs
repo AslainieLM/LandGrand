@@ -20,6 +20,8 @@ public static partial class LevelBuilder // The theme half of the level builder
         public string BoulderEnding; // Added to "boulder_small" and "boulder_big", for example "_volcanic"
         public string GoalName; // Object name of the goal picture, for example "Cave"
         public string PlatformSprite; // Null uses the standard moving slab
+        public int PlatformArtAbove; // Zero puts the top row on the solid top
+        public string PlatformCable; // Null leaves the platform without a cable
         public string PlatformLandSound; // Null leaves the platform quiet
         public string PlatformLandSoundScript; // Names the script that makes the landing sound
         public string GoalSprite; // Sprite of the goal, for example "cave"
@@ -79,10 +81,18 @@ public static partial class LevelBuilder // The theme half of the level builder
             art.UsedIceTop }; // Ice tile
     } // Ends the lookup
 
+    internal static (int Above, string Cable) PlatformArtSettings(LevelTheme theme) // Reads the platform art settings for a theme
+    { // Opens the lookup
+        var art = ArtFor(theme); // Finds the theme entry
+        return (art.PlatformArtAbove, art.PlatformCable); // Returns the standing row offset and optional cable
+    } // Ends the lookup
+
     const string HillsHardBackdropScript = "Tools/Art/make_hills_hard_backdrops.py"; // Draws the Hills Hard backdrops
     const string PlainsEasyBackdropScript = "Tools/Art/make_plains_easy_backdrops.py"; // Draws the Plains Easy backdrops
 
     const string PlainsNormalBackdropScript = "Tools/Art/make_plains_normal_backdrops.py"; // Draws the Plains Normal backdrops
+    const string PlateausNormalBackdropScript = "Tools/Art/make_plateaus_normal_backdrops.py"; // Draws the five Plateaus Normal backdrops
+    const string PlateausNormalAudioScript = "Tools/Audio/make_plateaus_normal_audio.py"; // Makes the cable car and llama sounds
     const string PlateausEasyBackdropScript = "Tools/Art/make_plateaus_easy_backdrops.py"; // Draws the Plateaus Easy backdrops (D-072)
 
     static readonly Dictionary<LevelTheme, ThemeArt> Themes = new Dictionary<LevelTheme, ThemeArt> // Every theme's art
@@ -276,6 +286,11 @@ public static partial class LevelBuilder // The theme half of the level builder
         [LevelTheme.PineapplePlateau] = TrailTheme(LevelTheme.PineapplePlateau, "pineapple", "Farm Lookout", "farm_lookout", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, PineapplePlateauProps), // Bukidnon Plateau (D-072)
         [LevelTheme.LakePlateau] = TrailTheme(LevelTheme.LakePlateau, "lake", "Torogan", "torogan", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, LakePlateauProps), // Lake Lanao
         [LevelTheme.FallsEdge] = TrailTheme(LevelTheme.FallsEdge, "falls", "Falls Viewing Deck", "falls_deck", 24f, PixelSceneKit.PlateausEasyArtScript, PlateausEasyBackdropScript, FallsEdgeProps), // Maria Cristina Falls
+        [LevelTheme.TableTop] = TableTopArt(), // Table Mountain (D-073)
+        [LevelTheme.MesaValley] = PlateausNormalTheme(LevelTheme.MesaValley, "mesa", "Trading Post", "trading_post", MesaValleyProps), // Monument Valley
+        [LevelTheme.CanyonRim] = PlateausNormalTheme(LevelTheme.CanyonRim, "canyon", "Canyon Lookout", "canyon_lookout", CanyonRimProps), // Grand Canyon
+        [LevelTheme.TepuiTop] = PlateausNormalTheme(LevelTheme.TepuiTop, "tepui", "Explorer Camp", "explorer_camp", TepuiTopProps), // Mount Roraima
+        [LevelTheme.SaltFlat] = SaltFlatArt(), // Salar de Uyuni
     };
 
     static ThemeArt ArtFor(LevelTheme theme) // The art of a theme, or a clear error when the theme has no entry yet
@@ -503,22 +518,22 @@ public static partial class LevelBuilder // The theme half of the level builder
     static void RicePlainProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds rice and animals to the plain
     { // Opens the rice decorations
         RepeatTrailProp(level, parent, "rice_tuft", PixelSceneKit.PlainsEasyArtScript, 90f, 140f, 5f, 7); // Rice along the trail
-        PlacePlainsAnimals(level, parent, "carabao", new[] { 700f, 2200f, 4000f }, 8f); // Grazing carabao
-        PlacePlainsAnimals(level, parent, "egret", new[] { 1100f, 2600f, 3500f }, 5f); // White birds
+        PlaceTrailAnimals(level, parent, "carabao", new[] { 700f, 2200f, 4000f }, 8f); // Grazing carabao
+        PlaceTrailAnimals(level, parent, "egret", new[] { 1100f, 2600f, 3500f }, 5f); // White birds
     } // Ends the rice decorations
 
     static void SaltBedsProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds mounds, palms and birds to the salt beds
     { // Opens the salt decorations
         RepeatTrailProp(level, parent, "salt_mound", PixelSceneKit.PlainsEasyArtScript, 240f, 360f, 4f, 3); // Mounds of salt
         RepeatTrailProp(level, parent, "palm_tree", HillsArtScript, 450f, 600f, 20f, 3); // Reuses the palms from Hills Easy
-        PlacePlainsAnimals(level, parent, "egret", new[] { 1300f, 3900f }, 5f); // Coastal birds
+        PlaceTrailAnimals(level, parent, "egret", new[] { 1300f, 3900f }, 5f); // Coastal birds
     } // Ends the salt decorations
 
     static void RiverPlainProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds corn and carabao to the river plain
     { // Opens the river decorations
         RepeatTrailProp(level, parent, "corn_stalk", PixelSceneKit.PlainsEasyArtScript, 140f, 120f, 14f, 3, 2, // Places the two corn poses along the trail
             index => 1f / (1.2f + index % 3 * 0.3f)); // Corn sways at 1.2, 1.5 or 1.8 frames per second
-        PlacePlainsAnimals(level, parent, "carabao", new[] { 1000f, 4250f }, 8f); // Grazing carabao
+        PlaceTrailAnimals(level, parent, "carabao", new[] { 1000f, 4250f }, 8f); // Grazing carabao
     } // Ends the river decorations
 
     static void PineapplePlateauProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds pineapples and hawks to the Bukidnon farm (D-072)
@@ -547,7 +562,37 @@ public static partial class LevelBuilder // The theme half of the level builder
     static void PlateauHawks(LevelData level, Transform parent, float[] targets) // Places the hawks high in the sky, swapping frames every 0.4 s
         => PlaceTrailProps(level, parent, "hawk", PixelSceneKit.PlateausEasyArtScript, targets, 150f, 2, 2, 0.4f); // Centre y 150, behind the trail at order 2
 
-    static void PlacePlainsAnimals(LevelData level, Transform parent, string name, float[] targets, float y, string artScript = PixelSceneKit.PlainsEasyArtScript, bool clearFullZones = false, int order = 4) // Places the two-frame animals near the authored spots
+    static void TableTopProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Places swaying brush and rock hyraxes
+    { // Opens the props
+        RepeatTrailProp(level, parent, "fynbos", PixelSceneKit.PlateausNormalArtScript, 100f, 120f, 6f, 7, 2, PlateauSway); // Sways at 1.2 to 1.8 frames per second
+        PlaceTrailAnimals(level, parent, "dassie", new[] { 1700f, 4600f, 6500f }, 4f, PixelSceneKit.PlateausNormalArtScript); // Gives each hyrax a different swap time
+    } // Ends the props
+
+    static void MesaValleyProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Places desert shrubs and ravens
+    { // Opens the props
+        RepeatTrailProp(level, parent, "sagebrush", PixelSceneKit.PlateausNormalArtScript, 140f, 180f, 5f, 7); // Spaces the shrubs along the ground
+        PlaceTrailProps(level, parent, "raven", PixelSceneKit.PlateausNormalArtScript, new[] { 1500f, 4000f }, 150f, 2, 2, 0.4f); // Gives each raven two wing poses
+    } // Ends the props
+
+    static void CanyonRimProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Places pines and ravens
+    { // Opens the props
+        RepeatTrailProp(level, parent, "pinyon_pine", PixelSceneKit.PlateausNormalArtScript, 300f, 400f, 12f, 3, clearFullZones: true); // Keeps each pine out of the river currents
+        PlaceTrailProps(level, parent, "raven", PixelSceneKit.PlateausNormalArtScript, new[] { 2000f, 5200f }, 150f, 2, 2, 0.4f, clearFullZones: true); // Keeps the distant ravens clear of water and pits
+    } // Ends the props
+
+    static void TepuiTopProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Places pitcher plants and mist
+    { // Opens the props
+        RepeatTrailProp(level, parent, "pitcher_plant_tepui", PixelSceneKit.PlateausNormalArtScript, 150f, 200f, 6f, 7); // Keeps the plants clear of the trail objects
+        PlaceTrailProps(level, parent, "tepui_mist", PixelSceneKit.PlateausNormalArtScript, new[] { 1500f, 3500f, 6000f }, 14f, 3, 2, 0.5f); // Swaps mist frames twice per second
+    } // Ends the props
+
+    static void SaltFlatProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Places salt heaps and flamingos
+    { // Opens the props
+        RepeatTrailProp(level, parent, "salt_cone", PixelSceneKit.PlateausNormalArtScript, 200f, 300f, 4f, 3); // The fit check keeps heaps off the salt crust
+        PlaceTrailAnimals(level, parent, "flamingo", new[] { 2500f, 4400f, 6200f }, 8f, PixelSceneKit.PlateausNormalArtScript); // The fit check also keeps flamingos off the salt crust
+    } // Ends the props
+
+    static void PlaceTrailAnimals(LevelData level, Transform parent, string name, float[] targets, float y, string artScript = PixelSceneKit.PlainsEasyArtScript, bool clearFullZones = false, int order = 4) // Places the two-frame animals near the authored spots
     { // Opens the animal group
         var frames = TrailPropFrames(name, 2, artScript); // Loads both poses once
         for (int i = 0; i < targets.Length; i++) // Places each animal
@@ -567,6 +612,30 @@ public static partial class LevelBuilder // The theme half of the level builder
             Backdrop = $"Backdrop/{theme}/", BackdropScript = backdropScript, // Names the backdrop folder and generator
             PauseBackdropDrift = true, // Holds moving art when the level clock stops
         }; // Ends the theme
+
+    static ThemeArt PlateausNormalTheme(LevelTheme theme, string tile, string goalName, string goalSprite, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props) // Uses the shared Plateaus Normal art scripts
+        => TrailTheme(theme, tile, goalName, goalSprite, 24f, PixelSceneKit.PlateausNormalArtScript, PlateausNormalBackdropScript, props); // Places each goal at the same ground offset
+
+    static ThemeArt TableTopArt() // Sets the cable car art and sound
+    { // Opens the theme
+        var art = PlateausNormalTheme(LevelTheme.TableTop, "tabletop", "Cable Station", "cable_station", TableTopProps); // Loads the Table Mountain theme
+        art.PlatformSprite = "cable_car"; // Draws a car on the shared moving platform
+        art.PlatformArtAbove = 24; // Puts the cabin roof at the standing top
+        art.PlatformCable = "cable_line"; // Draws the cable behind the car
+        art.PlatformLandSound = "sfx_cable_car.wav"; // Plays a clunk when the explorer lands
+        art.PlatformLandSoundScript = PlateausNormalAudioScript; // Names the script for the clunk
+        return art; // Gives the builder the finished theme
+    } // Ends the theme
+
+    static ThemeArt SaltFlatArt() // Sets the salt crust and llama art
+    { // Opens the theme
+        var art = PlateausNormalTheme(LevelTheme.SaltFlat, "saltflat", "Salt Hotel", "salt_hotel", SaltFlatProps); // Loads the salt flat theme
+        art.BatFrames = "llama"; art.BatFrameCount = 3; art.BatArtScript = PixelSceneKit.PlateausNormalArtScript; // Draws the herd with three poses
+        art.BatSound = "sfx_llama.wav"; art.BatSoundScript = PlateausNormalAudioScript; // Uses the llama hum on contact
+        art.BatArtLift = 2f; art.BatArtFacesLeft = false; // Lifts the right-facing art above the rule's centre
+        art.IceTop = "salt_crust_top"; art.IceTopScript = PixelSceneKit.PlateausNormalArtScript; // Draws salt crust over the shared ice rule
+        return art; // Gives the builder the finished theme
+    } // Ends the theme
 
     static ThemeArt PlainsHardTheme(LevelTheme theme, string tile, string goalName, string goalSprite, System.Action<LevelData, List<Hazard>, Transform, ExplorerMotor> props, bool hay = false, string herd = null, bool frost = false) // A Plains Hard theme with its optional hay, herd and frost art (D-071)
     { // Opens the theme

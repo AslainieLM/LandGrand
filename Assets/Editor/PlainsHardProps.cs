@@ -17,7 +17,7 @@ public static partial class LevelBuilder // Builds Plains Hard decorations (D-07
     static void SavannaProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds acacias and zebras
     { // Starts the savanna props
         RepeatTrailProp(level, parent, "acacia_tree", PlainsHardArt, 300f, 900f, 24f, 1, clearFullZones: true); // Acacia trees every 900 px
-        PlacePlainsAnimals(level, parent, "zebra", new[] { 2600f, 7000f }, 8f, PlainsHardArt, clearFullZones: true, order: 2); // Two grazing zebras
+        PlaceTrailAnimals(level, parent, "zebra", new[] { 2600f, 7000f }, 8f, PlainsHardArt, clearFullZones: true, order: 2); // Two grazing zebras
     } // Ends the savanna props
 
     static void PampasProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds pampas grass and fences
@@ -40,13 +40,13 @@ public static partial class LevelBuilder // Builds Plains Hard decorations (D-07
     static void GangesPlainProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds wheat, egrets and reeds
     { // Starts the flood plain props
         RepeatTrailProp(level, parent, "wheat_sheaf", PlainsHardArt, 300f, 600f, 8f, 3, clearFullZones: true); // Wheat sheaves every 600 px on dry ground
-        PlacePlainsAnimals(level, parent, "egret", new[] { 2800f, 6800f }, 5f, clearFullZones: true); // Reuses the two-frame egrets
+        PlaceTrailAnimals(level, parent, "egret", new[] { 2800f, 6800f }, 5f, clearFullZones: true); // Reuses the two-frame egrets
         RepeatTrailProp(level, parent, "reed_tuft", PixelSceneKit.PlainsNormalArtScript, 450f, 500f, 7f, 3, clearFullZones: true); // Reuses the Plains Normal reeds every 500 px
     } // Ends the flood plain props
 
     static void SteppeProps(LevelData level, List<Hazard> pits, Transform parent, ExplorerMotor explorer) // Adds steppe grass and eagles
     { // Starts the steppe props
         RepeatTrailProp(level, parent, "steppe_grass", PlainsHardArt, 140f, 260f, 6f, 3, clearFullZones: true); // Steppe grass every 260 px
-        PlacePlainsAnimals(level, parent, "eagle", new[] { 3000f, 7600f }, 120f, ArtScript, clearFullZones: true, order: 1); // Reuses the eagle frames high in the sky
+        PlaceTrailAnimals(level, parent, "eagle", new[] { 3000f, 7600f }, 120f, ArtScript, clearFullZones: true, order: 1); // Reuses the eagle frames high in the sky
     } // Ends the steppe props
 } // Closes the trail props

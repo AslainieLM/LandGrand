@@ -35,7 +35,18 @@ public static partial class LevelBuilder // Builds objects from shared level dat
             view.x0 = platform.X0; view.x1 = platform.X1; view.top = platform.Top; // Exact travel endpoints
             var sprite = art.PlatformSprite == null ? S("platform") : ThemeSprite(art, art.PlatformSprite); // Uses the standard slab or the theme picture
             view.art = M.Renderer("Art", sprite, 6, view.transform); // Draws it at the same depth as a ledge
+            view.artAbove = art.PlatformArtAbove; // Places the standing row at the solid top
             view.art.transform.position = LevelGeometry.ToWorld(platform.X0 + 24f, view.ArtCenterY); // Sets the deck at the solid top
+            if (art.PlatformCable != null) // This platform hangs from a cable
+            { // Opens the cable build
+                var cable = ThemeSprite(art, art.PlatformCable) // Loads the strip from the theme's art
+                    ?? throw new System.InvalidOperationException($"Missing platform cable {art.PlatformCable}. Run python {art.ArtScript ?? ArtScript}."); // Stops with the generator command if the strip is missing
+                float left = platform.X0 - 16f; // Starts the cable before the platform route
+                float right = platform.X1 + 64f; // Ends the cable past the far edge of the car
+                float middle = platform.Top + art.PlatformArtAbove - 1f; // Lines up the cable with the hanger
+                float height = cable.rect.height; // Keeps the full height of the strip
+                Tiled("Platform Cable", cable, new Rect(left, middle - height / 2f, right - left, height), view.art.sortingOrder - 1, geometry.transform); // Draws a fixed strip behind the car
+            } // Ends the cable build
             if (art.PlatformLandSound != null) // A theme can add a sound on landing
             { // Opens the sound setup
                 view.landSound = NormalSound(art.PlatformLandSound, art.PlatformLandSoundScript); // Loads the theme sound and names its script if missing

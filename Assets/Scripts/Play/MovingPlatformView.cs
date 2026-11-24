@@ -7,6 +7,7 @@ namespace LandGrand.Play // Level play parts
     { // Opens the view
         public float x0, x1, top; // Saved layout placement
         public SpriteRenderer art; // Platform picture
+        public int artAbove; // Rows of the picture that sit above the solid top
         public AudioClip landSound; // A soft sound when the explorer lands
         public LevelController level; // Reads the explorer and plays the sound
         const float LandVolume = 0.6f; // Plays the bump below full volume
@@ -15,7 +16,7 @@ namespace LandGrand.Play // Level play parts
         Rect bounds; // Current solid shape
         public override Rect Bounds => bounds; // Shape used by the motor
         public override bool IsSolid => true; // Always supports the explorer
-        public float ArtCenterY => top - art.sprite.rect.height / 2f; // Puts the top row on the solid top
+        public float ArtCenterY => top - art.sprite.rect.height / 2f + artAbove; // Lines up the deck or roof with the solid top
         internal bool IsBuilt => art != null && art.sprite != null && (landSound == null || level != null); // Checks the picture and optional sound link
 
         void Start() // Starts after the level controller is set up
