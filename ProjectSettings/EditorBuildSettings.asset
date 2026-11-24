@@ -174,6 +174,21 @@ EditorBuildSettings:
     path: Assets/Scenes/PlateausEasy3.unity
     guid: c99c4cddd8263994aa79f9cae0efe57b
   - enabled: 1
+    path: Assets/Scenes/PlateausNormal1.unity
+    guid: 9422957adb2a5744890c85466d997d0d
+  - enabled: 1
+    path: Assets/Scenes/PlateausNormal2.unity
+    guid: 13c8d9b5531feff448c1e708c834c87b
+  - enabled: 1
+    path: Assets/Scenes/PlateausNormal3.unity
+    guid: 423e0450078d0ba40b7c3026c1006cee
+  - enabled: 1
+    path: Assets/Scenes/PlateausNormal4.unity
+    guid: 40bfc4e25658c5244b7891d7af800733
+  - enabled: 1
+    path: Assets/Scenes/PlateausNormal5.unity
+    guid: c0b226c06648b5f44b1d40baf5e27a8c
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects:
