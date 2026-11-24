@@ -18,6 +18,6 @@
 
 **Blocked by:** 01, 02
 
-**Status:** done (2026-11-24, 563 tests at the end of the build; restored after a planning script reset this line)
+**Status:** done (2026-11-24, 563 tests)
 
 **Builder to run:** the six builders (Codex runs them in batch mode; the user re-runs **LandGrand > Build Levels** only if the Editor shows stale scenes)

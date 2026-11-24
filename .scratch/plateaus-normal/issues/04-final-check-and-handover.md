@@ -20,6 +20,6 @@
 
 **Blocked by:** 01, 02, 03
 
-**Status:** done (2026-11-24, 563 tests at the end of the build; restored after a planning script reset this line)
+**Status:** done (2026-11-24, 563 tests)
 
 **Builder to run:** none (everything is built in ticket 03)

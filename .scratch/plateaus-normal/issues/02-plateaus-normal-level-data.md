@@ -11,6 +11,6 @@
 
 **Blocked by:** 01
 
-**Status:** done (2026-11-24, 563 tests at the end of the build; restored after a planning script reset this line)
+**Status:** done (2026-11-24, 558 tests)
 
 **Builder to run:** none
