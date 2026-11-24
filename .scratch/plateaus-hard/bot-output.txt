@@ -1,0 +1,72 @@
+-- Regression, Hills Hard at walk 84 (expect 112.6-132.0 s):
+H1 112.6  H2 112.6  H3 115.5  H4 125.8  H5 126.4  H6 130.5  H7 132.0  
+-- Regression, Plains Hard (expect the D-071 output: 112.6, 115.7, 115.0, 112.6, 115.5, 123.8, 118.0 s):
+H1 Great Plains: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   logs: 6 left, 3 right; bot jumped 8 oncoming, stopped and hopped 0 from behind
+H2 Serengeti: bot GOAL 115.7s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.9 s
+   bats (s in loop span / pushes): 650:1.95/1, 2000:2.00/1, 3650:2.05/1, 5000:2.05/1, 6100:2.05/1, 7600:2.05/1
+H3 Pampas: bot GOAL 115.0s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 114.1-115.7 s
+   logs: 3 left, 2 right; bot jumped 6 oncoming, stopped and hopped 0 from behind
+   bats (s in loop span / pushes): 2740:2.43/2, 5230:1.57/2, 7560:2.20/3
+H4 West Siberian Plain: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.6-112.6 s
+   floats (s standing): 3028:0.28, 6528:0.28
+   ice: 7 stretches, 3100 px
+H5 Nullarbor Plain: bot GOAL 115.5s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.2 s
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1800:1.48/1, 2150:0.98/2, 3800:1.48/1, 4600:1.48/1, 5950:1.12/2, 9150:1.48/1
+H6 Indo-Gangetic Plain: bot GOAL 123.8s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 123.8-123.8 s
+   floats (s standing): 1232:0.02, 1312:0.30, 2032:0.02, 3832:0.33, 3912:0.33, 5032:0.02, 5112:0.32, 6232:0.33, 6312:0.02, 7432:0.02, 8032:0.02, 8112:0.30
+   currents (s in strip): 550R:3.95, 2500L:9.07, 4100L:9.88, 5650R:3.38, 6500L:9.52, 8300L:10.10
+H7 Mongolian Steppe: bot GOAL 118.0s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 118.1-119.2 s
+   logs: 2 left, 2 right; bot jumped 2 oncoming, stopped and hopped 0 from behind
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1300:2.05/1, 5800:1.60/2
+   currents (s in strip): 2480L:7.40, 7300L:5.83
+   ice: 4 stretches, 1550 px
+-- Plateaus Hard:
+   H1 Deccan Plateau without vents: pickups [zeolite(1872,112) zeolite(5072,112) calcite(8292,112)]; ledges reached only with vents (found by the reach search) [L(1840,112) L(5040,112) L(8260,112)]
+H1 Deccan Plateau: bot GOAL 112.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 112.5-112.7 s
+   crumbling ledges: 11
+   vents: 3; the bot was launched 1 times on its run
+H2 Ethiopian Highlands: bot GOAL 114.7s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 114.4-116.8 s
+   crumbling ledges: 6
+   bats (s in loop span / pushes): 650:1.95/1, 2000:2.00/1, 5000:2.05/1, 7600:2.05/1
+H3 Tassili n'Ajjer: bot GOAL 124.4s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 124.1-125.0 s
+   gusts: 4 (0 over ice); bot pushed 9.3 s, waited 0.0 s
+   sand: 3 stretches, 950 px; bot on sand 18.7 s
+   H4 Mesa Verde without updrafts: pickups [sandstone(2272,112) sandstone(4568,144)]; ledges reached only with updrafts (found by the reach search) [L(2240,112) L(4540,144)]
+   H4 Mesa Verde without vertical slabs: pickups [coal(3584,112) coal(6080,112)]; ledges reached only with vertical slabs (found by the reach search) [L(3552,112) L(5992,112)]
+   H4 Mesa Verde without horizontal slabs: pickups [coal(1876,40) sandstone(7776,40)]
+H4 Mesa Verde: bot GOAL 128.3s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 126.6-133.9 s
+   balloons (s from arriving to jumping off): 3500:6.40, 5944:4.02
+   without moving platforms: FAILED (pit at x=1884)
+   without balloons: FAILED (pit at x=6085)
+H5 Antarctic Plateau: bot GOAL 117.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 115.5-117.4 s
+   gusts: 4 (3 over ice); bot pushed 10.8 s, waited 0.0 s
+   ice: 4 stretches, 2000 px
+H6 Loess Plateau: bot GOAL 121.6s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 121.6-121.6 s
+   crumbling ledges: 11
+   sand: 3 stretches, 1250 px; bot on sand 23.3 s
+   H7 Tibetan Plateau without updrafts: pickups [serpentinite(2072,112) serpentinite(7068,144)]; ledges reached only with updrafts (found by the reach search) [L(2040,112) L(7040,144)]
+   H7 Tibetan Plateau without vertical slabs: pickups [granite(4040,112)]; ledges reached only with vertical slabs (found by the reach search) [L(3948,112)]
+H7 Tibetan Plateau: bot GOAL 123.2s (goal); pickups 9/9 reachable lint clean
+   start-time shifts 0.25..3.25 s (every timed object out of phase): 13/13 reach the goal, 119.9-122.9 s
+   crumbling ledges: 11
+   bats (s in loop span / pushes): 1300:2.05/1, 2700:2.05/1, 5800:2.05/1
+   balloons (s from arriving to jumping off): 3900:4.83
+   without balloons: FAILED (pit at x=4041)
+   gusts: 3 (1 over ice); bot pushed 6.1 s, waited 6.4 s
+   ice: 4 stretches, 1550 px

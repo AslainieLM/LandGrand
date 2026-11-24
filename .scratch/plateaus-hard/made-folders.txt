@@ -1,0 +1,7 @@
+CliffDwellings
+DeccanTraps
+IcePlateau
+LoessTerraces
+RoofOfWorld
+SandstoneArches
+SimienHighlands
