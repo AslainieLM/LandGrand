@@ -11,13 +11,13 @@
 7. Regression: Plains Hard 2 herds, Plains Hard 4 frost, Plains Normal 5 boats and Plateaus Easy 3 updrafts unchanged against `HEAD`.
 
 **Checklist**
-- [ ] No per-level, per-landform or per-theme `if` in play scripts (D-061)
-- [ ] Old platforms, herds and ice unchanged
-- [ ] Goal offsets checked; any change reported
-- [ ] EditMode tests pass (report the count)
+- [x] No per-level, per-landform or per-theme `if` in play scripts (D-061)
+- [x] Old platforms, herds and ice unchanged
+- [x] Goal offsets checked; any change reported
+- [x] EditMode tests pass (report the count)
 
 **Blocked by:** 01, 02
 
-**Status:** not started
+**Status:** done (2026-11-24, 563 tests at the end of the build; restored after a planning script reset this line)
 
 **Builder to run:** the six builders (Codex runs them in batch mode; the user re-runs **LandGrand > Build Levels** only if the Editor shows stale scenes)

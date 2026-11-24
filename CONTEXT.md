@@ -34,6 +34,7 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Falling rock**: a repeating trap with a shadow and pebble warning before a rock falls onto the trail.
 - **Moving platform**: a slab that travels back and forth and carries an explorer standing on it.
 - **Market boat**: a moving platform drawn as a river boat that carries the explorer across water.
+- **Cable car** — a moving platform drawn as a cable car hanging from a cable.
 - **Wind gust**: a brief leftward push within a marked stretch of trail, preceded by visible wind streaks.
 - **Normal checkpoints**: the two safe flags in each Normal level. Hazards return the explorer to the furthest flag reached, or the start before either flag.
 - **Rolling boulder**: a trap that warns before rolling left along the ground. It skips a roll if the explorer is too close to its starting point.
@@ -48,6 +49,7 @@ Domain words used in the game, its code and its planning notes. The project vaul
 - **Straw bounce pile**: a low pile of rice straw. Landing on its top bounces the explorer high. Walking into its side does nothing.
 - **Hay bale**: a rolling log drawn as a round bale of hay.
 - **Herd**: a gentle bat drawn as a grazing animal that walks on the ground and nudges the explorer away.
+- **Llama herd** — a gentle herd drawn as llamas that nudges the explorer away.
 - **Hot-air balloon**: a moving platform that rises and falls. The explorer can stand on the basket's rim.
 - **Cliff updraft**: a column of rising wind at a plateau cliff. Standing in it lifts the explorer to its top, where the explorer hovers.
 - **Coming soon difficulty**: a difficulty that is open but has no levels yet. Tapping it says "Coming soon" instead of opening an empty trail.

@@ -7,11 +7,11 @@
 3. **Tests:** the Plateaus shelf has 24 kinds (assert the exact list); `Collection.TotalCount` is 64; the new ids come last; shared kinds keep their old shelves; update the tests that expected 10 Plateaus kinds or a total of 63.
 
 **Checklist**
-- [ ] Enum and kind ids only appended
-- [ ] EditMode tests pass (report the count; 524 before)
+- [x] Enum and kind ids only appended
+- [x] EditMode tests pass (report the count; 524 before)
 
 **Blocked by:** none
 
-**Status:** not started
+**Status:** done (2026-11-24, 563 tests at the end of the build; restored after a planning script reset this line)
 
 **Builder to run:** none
