@@ -38,7 +38,8 @@ namespace LandGrand.Rules.Tests // Test code lives here
             Assert.IsNull(LevelCatalog.Find(Episode.Plains, Difficulty.Hard, 8)); // Plains Hard ends after its seventh trail
             Assert.IsNotNull(LevelCatalog.Find(Episode.Plateaus, Difficulty.Easy, 1)); // Plateaus Easy has its first trail (D-072)
             Assert.IsNull(LevelCatalog.Find(Episode.Plateaus, Difficulty.Easy, 4)); // Plateaus Easy ends after the third trail
-            Assert.IsNull(LevelCatalog.Find(Episode.Plateaus, Difficulty.Normal, 1)); // Plateaus Normal still waits for its data
+            Assert.IsNotNull(LevelCatalog.Find(Episode.Plateaus, Difficulty.Normal, 1)); // Plateaus Normal starts at Table Mountain (D-073)
+            Assert.IsNull(LevelCatalog.Find(Episode.Plateaus, Difficulty.Normal, 6)); // Normal ends after its fifth trail
         }
 
         [Test] // Unity runs this method as a Test

@@ -90,7 +90,7 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         { // Starts the theme check
             var expected = new[] { LevelTheme.Steppe, LevelTheme.PineapplePlateau, LevelTheme.LakePlateau, LevelTheme.FallsEdge }; // The last Plains theme and the three additions
             CollectionAssert.AreEqual(new[] { 43, 44, 45, 46 }, expected.Select(theme => (int)theme)); // Keeps the saved numeric order
-            Assert.AreEqual(47, System.Enum.GetValues(typeof(LevelTheme)).Length); // Nothing else was added
+            Assert.AreEqual(52, System.Enum.GetValues(typeof(LevelTheme)).Length); // The five Normal themes follow the Easy themes
             var old = new[] { "Meadow", "Volcanic", "FoldedRock", "PineForest", "AshGorge", "MossyForest", "SnowPeak", "LavaSlope", "StormRidge", "EagleForest", "BonsaiForest", "GlacierHorn", "EquatorSummit", "SeaPeak", "ChocolateHills", "RollingPasture", "SandDunes", "IslandHills", "LimestoneCave", "RiverGorge", "RiceTerraces", "FairyChimneys", "TarsierForest", "RainySlope", "KarstRidge", "WindHills", "DrumlinBay", "CityHills", "KarstTowers", "RicePlain", "SaltBeds", "RiverPlain", "CandabaWetland", "LaharPlain", "RiverDelta", "FloatingVillage", "FloatingMarket", "Prairie", "Savanna", "Pampas", "FrozenPlain", "LimestonePlain", "GangesPlain", "Steppe" }; // The 44 themes before Plateaus
             for (int i = 0; i < old.Length; i++) Assert.AreEqual(old[i], ((LevelTheme)i).ToString(), "theme " + i); // Each old theme keeps its saved number
         } // Ends the theme check
@@ -107,14 +107,14 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         { // Starts the kind order check
             var old = new[] { "granite", "quartz", "feldspar", "mica", "andesite", "obsidian", "pumice", "slate", "marble", "garnet", "sandstone", "clay", "conglomerate", "shale", "basalt", "magnetite", "sulfur", "pyrite", "limestone", "gneiss", "scoria", "hornblende", "diorite", "gold", "tuff", "hematite", "serpentinite", "chromite", "schist", "calcite", "trachyte", "tanzanite", "gabbro", "olivine", "coral_stone", "limonite", "kaolinite", "aragonite", "coquina", "flowstone", "dripstone", "volcanic_breccia", "ignimbrite", "zeolite", "peridotite", "chlorite", "dacite", "quartzite", "travertine", "leucite", "siltstone", "halite", "gypsum", "mudstone", "peat", "laterite", "chalk", "loess", "flint" }; // The 59 kinds before Plateaus
             CollectionAssert.AreEqual(old, ItemCatalog.All.Take(59).Select(k => k.Id)); // Same ids in the same places
-            CollectionAssert.AreEqual(new[] { "halloysite", "goethite", "gibbsite", "cristobalite" }, ItemCatalog.All.Skip(59).Select(k => k.Id)); // The four Plateaus kinds come last
-            Assert.AreEqual(63, Collection.TotalCount); // The new total
+            CollectionAssert.AreEqual(new[] { "halloysite", "goethite", "gibbsite", "cristobalite", "ulexite" }, ItemCatalog.All.Skip(59).Select(k => k.Id)); // The four Easy kinds keep their places and ulexite comes last
+            Assert.AreEqual(64, Collection.TotalCount); // Counts every kind once
         } // Ends the kind order check
 
         [Test] // Checks the four new kinds
         public void PlateausKinds_AreDraftMineralsOnThePlateausShelfOnly() // Uses the spec text
         { // Starts the new kind check
-            var kinds = ItemCatalog.All.Skip(59).ToArray(); // Reads the four Plateaus kinds
+            var kinds = ItemCatalog.All.Skip(59).Take(4).ToArray(); // Reads the four Plateaus Easy kinds
             CollectionAssert.AreEqual(new[] { "Halloysite", "Goethite", "Gibbsite", "Cristobalite" }, kinds.Select(k => k.Name)); // Checks the names
             CollectionAssert.AreEqual(new[] { "halloysite", "goethite", "gibbsite", "cristobalite" }, kinds.Select(k => k.Picture)); // Checks the picture names
             Assert.IsTrue(kinds.All(k => !k.IsRock && k.IsDraft && k.Landforms.SequenceEqual(new[] { Episode.Plateaus }))); // Draft minerals on the Plateaus shelf only
@@ -136,11 +136,11 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the shared kind check
 
         [Test] // Checks the Plateaus shelf
-        public void PlateausShelf_HasTenKindsInCatalogOrder() // Six shared and four new kinds
+        public void PlateausShelf_HasTwentyFourKindsInCatalogOrder() // Checks the full Easy and Normal shelf
         { // Starts the shelf check
             var shelf = Collection.Shelves(new PlayerProgress())[(int)Episode.Plateaus]; // The Plateaus shelf of a fresh profile
             Assert.AreEqual(Episode.Plateaus, shelf.Landform); // It is the Plateaus shelf
-            CollectionAssert.AreEqual(new[] { "andesite", "basalt", "tuff", "hematite", "volcanic_breccia", "laterite", "halloysite", "goethite", "gibbsite", "cristobalite" }, shelf.Slots.Select(s => s.Kind.Id)); // The exact list in catalog order
+            CollectionAssert.AreEqual(new[] { "granite", "quartz", "andesite", "sandstone", "conglomerate", "shale", "basalt", "limestone", "gneiss", "tuff", "hematite", "schist", "volcanic_breccia", "ignimbrite", "quartzite", "siltstone", "halite", "gypsum", "laterite", "halloysite", "goethite", "gibbsite", "cristobalite", "ulexite" }, shelf.Slots.Select(s => s.Kind.Id)); // The exact list in catalog order
             Assert.IsFalse(shelf.IsComingSoon); // It is not "Coming soon"
         } // Ends the shelf check
 
@@ -148,8 +148,46 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         public void OlderShelves_KeepTheirSizes() // Only Plateaus grew
         { // Starts the size check
             var shelves = Collection.Shelves(new PlayerProgress()); // Every shelf of a fresh profile
-            CollectionAssert.AreEqual(new[] { 34, 23, 24, 10 }, shelves.Select(s => s.Slots.Count)); // Mountains, Hills, Plains and Plateaus
+            CollectionAssert.AreEqual(new[] { 34, 23, 24, 24 }, shelves.Select(s => s.Slots.Count)); // Mountains, Hills, Plains and Plateaus
         } // Ends the size check
+
+        [Test] // Checks the new theme values
+        public void PlateausNormalThemes_AppendAfterFallsEdge() // Keeps the existing theme values
+        { // Starts the theme check
+            var themes = new[] { LevelTheme.TableTop, LevelTheme.MesaValley, LevelTheme.CanyonRim, LevelTheme.TepuiTop, LevelTheme.SaltFlat }; // Lists the five themes in trail order
+            CollectionAssert.AreEqual(new[] { 47, 48, 49, 50, 51 }, themes.Select(theme => (int)theme)); // Keeps the five new values at the end
+        } // Ends the theme check
+
+        [Test] // Checks the new mineral
+        public void Ulexite_IsADraftMineralOnThePlateausShelfOnly() // Reads the item through its saved id
+        { // Starts the mineral check
+            var mineral = ItemCatalog.Find("ulexite"); // Finds the new kind by id
+            Assert.AreSame(ItemCatalog.All.Last(), mineral); // Keeps it at the end of the catalog
+            Assert.AreEqual("Ulexite", mineral.Name); // Checks the card name
+            Assert.AreEqual("ulexite", mineral.Picture); // Checks the sprite name
+            Assert.AreEqual("A soft white mineral made of thin fibres. Light passes through it, so it is called TV rock.", mineral.Description); // Checks the approved draft wording
+            Assert.IsTrue(mineral.IsDraft); // Leaves teacher review open
+            Assert.IsFalse(mineral.IsRock); // Lists the kind as a mineral
+            CollectionAssert.AreEqual(new[] { Episode.Plateaus }, mineral.Landforms); // Limits the kind to the Plateaus shelf
+        } // Ends the mineral check
+
+        [TestCase("sandstone", Episode.Mountains, Episode.Plains)] // Keeps sandstone on both old shelves
+        [TestCase("quartzite", Episode.Hills)] // Keeps quartzite on Hills
+        [TestCase("granite", Episode.Mountains, Episode.Plains)] // Keeps granite on both old shelves
+        [TestCase("shale", Episode.Mountains, Episode.Plains)] // Keeps shale on both old shelves
+        [TestCase("siltstone", Episode.Plains)] // Keeps siltstone on Plains
+        [TestCase("conglomerate", Episode.Mountains, Episode.Plains)] // Keeps conglomerate on both old shelves
+        [TestCase("limestone", Episode.Mountains, Episode.Hills, Episode.Plains)] // Keeps limestone on all three old shelves
+        [TestCase("schist", Episode.Mountains)] // Keeps schist on Mountains
+        [TestCase("quartz", Episode.Mountains, Episode.Hills, Episode.Plains)] // Keeps quartz on all three old shelves
+        [TestCase("gneiss", Episode.Mountains)] // Keeps gneiss on Mountains
+        [TestCase("halite", Episode.Plains)] // Keeps halite on Plains
+        [TestCase("gypsum", Episode.Plains)] // Keeps gypsum on Plains
+        [TestCase("ignimbrite", Episode.Hills)] // Keeps ignimbrite on Hills
+        public void PlateausNormalSharedKind_KeepsItsOldShelves(string id, params Episode[] oldShelves) // Checks each new share
+        { // Starts the shelf check
+            CollectionAssert.AreEqual(oldShelves.Append(Episode.Plateaus), ItemCatalog.Find(id).Landforms); // Adds Plateaus after the original shelves
+        } // Ends the shelf check
 
         [Test] // Checks the saved badge order
         public void OlderBadgeIds_DidNotMove() // The Plateaus badges come last
@@ -259,13 +297,13 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the star check
 
         [Test] // Checks the collector badge
-        public void PlateauCollector_NeedsAllTenPlateausKinds() // Counts the full Plateaus shelf
+        public void PlateauCollector_NeedsTheFullPlateausShelf() // Counts the full Plateaus shelf
         { // Starts the collection check
             var p = new PlayerProgress(); // A brand new profile
             var kinds = ItemCatalog.All.Where(k => k.BelongsTo(Episode.Plateaus)).ToArray(); // The Plateaus shelf
-            foreach (var kind in kinds.Take(9)) p.RecordFoundKind(kind.Id); // Finds nine kinds
+            foreach (var kind in kinds.Take(kinds.Length - 1)) p.RecordFoundKind(kind.Id); // Finds all but the last kind
             Assert.IsFalse(Earned("plateau_collector", p)); // One kind is still missing
-            p.RecordFoundKind(kinds[9].Id); // Finds the last kind
+            p.RecordFoundKind(kinds.Last().Id); // Finds the last kind
             Assert.IsTrue(Earned("plateau_collector", p)); // The full shelf earns it
         } // Ends the collection check
     } // Ends the checks

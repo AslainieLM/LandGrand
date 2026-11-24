@@ -103,9 +103,9 @@ namespace LandGrand.Rules.Tests // Holds the plain rule tests
         } // Ends the updraft check
 
         [Test] // Checks that only one trail has updrafts
-        public void OnlyFallsEdgeHasUpdrafts() // No other level in the catalog has them
+        public void OnlyFallsEdgeHasUpdraftsAmongTheEarlierTrails() // Checks trails shipped before Plateaus Normal
         { // Starts the catalog check
-            var withUpdrafts = LevelCatalog.All.Where(l => l.Layout.Updrafts.Count > 0).Select(l => l.SceneName); // Every trail with a column
+            var withUpdrafts = LevelCatalog.All.Where(l => (l.Episode < Episode.Plateaus || l.Difficulty == Difficulty.Easy) && l.Layout.Updrafts.Count > 0).Select(l => l.SceneName); // Checks earlier landforms and the Plateaus Easy trails
             CollectionAssert.AreEqual(new[] { "PlateausEasy3" }, withUpdrafts); // Only Maria Cristina Falls
         } // Ends the catalog check
     } // Ends the Plateaus checks

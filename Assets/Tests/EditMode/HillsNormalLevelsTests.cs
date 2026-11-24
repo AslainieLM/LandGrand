@@ -138,7 +138,7 @@ namespace LandGrand.Rules.Tests // Tests the plain level data
             var newKinds = ItemCatalog.All.Skip(37).Take(7).ToArray(); // Reads only the Normal kinds
             CollectionAssert.AreEqual(new[] { "aragonite", "coquina", "flowstone", "dripstone", "volcanic_breccia", "ignimbrite", "zeolite" }, newKinds.Select(k => k.Id)); // Stable catalog order
             Assert.IsTrue(newKinds.All(k => k.IsDraft && k.Landforms[0] == Episode.Hills && k.Description.Length <= 80 && k.Picture == k.Id)); // Hills draft pictures and short item cards
-            Assert.IsTrue(newKinds.Where(k => k.Id != "volcanic_breccia").All(k => k.Landforms.SequenceEqual(new[] { Episode.Hills }))); // The other six stay on the Hills shelf only
+            Assert.IsTrue(newKinds.Where(k => k.Id != "volcanic_breccia" && k.Id != "ignimbrite").All(k => k.Landforms.SequenceEqual(new[] { Episode.Hills }))); // The other five stay on the Hills shelf only
             CollectionAssert.AreEqual(new[] { Episode.Hills, Episode.Plateaus }, ItemCatalog.VolcanicBreccia.Landforms); // Volcanic breccia stays on Hills and joins Plateaus (D-072)
             CollectionAssert.AreEqual(new[] { false, true, true, true, true, true, false }, newKinds.Select(k => k.IsRock)); // The authored mineral and rock labels
         } // Ends the check
